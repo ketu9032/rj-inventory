@@ -1,0 +1,44 @@
+.flex {
+  display: flex;
+  justify-content: space-around;
+}
+
+.account-holder-box {
+  border: 1px solid;
+  margin: 10px;
+  padding: 10px;
+  width: 100%;
+  color: white;
+}
+.account-holder-name {
+  font-size: 18px;
+  font-weight: bolder;
+  vertical-align: super;
+}
+
+.mat-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  mat-card-title {
+    vertical-align: -webkit-baseline-middle;
+  }
+}
+.box-1 {
+  background: linear-gradient(60deg, #ec407a, #d81b60);
+}
+.box-2 {
+  background: linear-gradient(60deg, #ffa726, #fb8c00);
+}
+.box-3 {
+  background: linear-gradient(60deg, #66bb6a, #43a047);
+}
+.box-4 {
+  background: linear-gradient(60deg, #26c6da, #00acc1);
+}
+.box-5 {
+  background: linear-gradient(60deg, #605ea8, #2f2fb2);
+}
+.box-6 {
+  background: linear-gradient(60deg, #c24a4a, #c01515);
+}

@@ -1,0 +1,109 @@
+<div class="container">
+  <h1 mat-dialog-title> {{ !this.data ? 'Add user' : 'Update user' }} </h1>
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>First name</mat-label>
+      <input matInput formControlName="first_name" />
+    </mat-form-field>
+    <div>
+      <ng-container
+        *ngIf="
+          formGroup.controls.first_name.touched &&
+          !formGroup.controls.first_name.value
+        "
+      >
+        <span class="error">First name is Required</span>
+      </ng-container>
+    </div>
+
+    <mat-form-field>
+      <mat-label>Last name</mat-label>
+      <input matInput formControlName="last_name" />
+    </mat-form-field>
+
+    <div>
+      <ng-container
+        *ngIf="
+          formGroup.controls.last_name.touched &&
+          !formGroup.controls.last_name.value
+        "
+      >
+        <span class="error">Last name is Required</span>
+        <br />
+      </ng-container>
+    </div>
+
+    <mat-form-field>
+      <mat-label>User Name</mat-label>
+      <input matInput formControlName="user_name" />
+    </mat-form-field>
+    <div>
+      <ng-container
+        *ngIf="
+          formGroup.controls.user_name.touched &&
+          !formGroup.controls.user_name.value
+        "
+      >
+        <span class="error">User name is Required</span>
+        <br />
+      </ng-container>
+    </div>
+
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" required />
+    </mat-form-field>
+    <div>
+      <ng-container
+        *ngIf="
+          formGroup.controls.email.errors &&
+          !formGroup.controls.email.errors.required
+        "
+      >
+        <span class="error">Please enter correct email address</span>
+        <br />
+      </ng-container>
+      <ng-container
+        *ngIf="
+          formGroup.controls.email.touched && !formGroup.controls.email.value
+        "
+      >
+        <span class="error">Email is Required</span>
+      </ng-container>
+    </div>
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        formControlName="password"
+        type="password"
+        minlength="6"
+      />
+    </mat-form-field>
+    <div>
+      <ng-container
+        *ngIf="
+          formGroup.controls.password.touched &&
+          !formGroup.controls.password.value
+        "
+      >
+        <span class="error">Password is Required</span>
+        <br />
+      </ng-container>
+    </div>
+    <br />
+
+    <div class="btn-update">
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!formGroup.valid"
+        type="submit"
+      >
+        <span>
+          {{ !this.data ? 'Save' : 'Update' }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
