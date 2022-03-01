@@ -21,11 +21,6 @@ router.use('/', async (req, res, next) => {
     return next();
   });
 
-router.post('/api/users', users.create);
-router.put('/api/users', users.update);
 router.delete('/api/users', users.delete);
-router.get('/api/users', users.findAll);
-router.get('/api/users/get-users', users.findUserName);
-router.put('/api/users/change-password', users.changePassword);
 
 module.exports = router;
