@@ -1,105 +1,88 @@
 <div class="container">
   <h1 mat-dialog-title> {{ !this.data ? 'Add user' : 'Update user' }} </h1>
   <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-    <mat-form-field>
-      <mat-label>First name</mat-label>
-      <input matInput formControlName="first_name" />
-    </mat-form-field>
-    <div>
-      <ng-container
-        *ngIf="
-          formGroup.controls.first_name.touched &&
-          !formGroup.controls.first_name.value
-        "
-      >
-        <span class="error">First name is Required</span>
-      </ng-container>
-    </div>
 
-    <mat-form-field>
-      <mat-label>Last name</mat-label>
-      <input matInput formControlName="last_name" />
-    </mat-form-field>
 
-    <div>
-      <ng-container
-        *ngIf="
-          formGroup.controls.last_name.touched &&
-          !formGroup.controls.last_name.value
-        "
-      >
-        <span class="error">Last name is Required</span>
-        <br />
-      </ng-container>
-    </div>
 
     <mat-form-field>
       <mat-label>User Name</mat-label>
-      <input matInput formControlName="user_name" />
+      <input matInput formControlName="username" />
     </mat-form-field>
     <div>
-      <ng-container
-        *ngIf="
-          formGroup.controls.user_name.touched &&
-          !formGroup.controls.user_name.value
-        "
-      >
+      <ng-container *ngIf="
+          formGroup.controls.username.touched &&
+          !formGroup.controls.username.value
+        ">
         <span class="error">User name is Required</span>
-        <br />
       </ng-container>
     </div>
 
     <mat-form-field>
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email" required />
+      <mat-label>Mobile Number</mat-label>
+      <input matInput formControlName="mobilenumber" type="tel" type="number" />
     </mat-form-field>
     <div>
-      <ng-container
-        *ngIf="
-          formGroup.controls.email.errors &&
-          !formGroup.controls.email.errors.required
-        "
-      >
-        <span class="error">Please enter correct email address</span>
-        <br />
-      </ng-container>
-      <ng-container
-        *ngIf="
-          formGroup.controls.email.touched && !formGroup.controls.email.value
-        "
-      >
-        <span class="error">Email is Required</span>
+      <ng-container *ngIf="
+          formGroup.controls.mobilenumber.touched &&
+          !formGroup.controls.mobilenumber.value
+        ">
+        <span class="error">Mobile Number is Required</span>
       </ng-container>
     </div>
+
+
     <mat-form-field>
       <mat-label>Password</mat-label>
-      <input
-        matInput
-        formControlName="password"
-        type="password"
-        minlength="6"
-      />
+      <input matInput formControlName="password" type="password" minlength="6" />
     </mat-form-field>
     <div>
-      <ng-container
-        *ngIf="
+      <ng-container *ngIf="
           formGroup.controls.password.touched &&
           !formGroup.controls.password.value
-        "
-      >
+        ">
         <span class="error">Password is Required</span>
-        <br />
       </ng-container>
     </div>
-    <br />
+
+
+    <mat-form-field>
+      <mat-label>Select Role</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let role of roles" [value]="role">
+          {{role.value}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Opening Balance</mat-label>
+      <input matInput formControlName="openingbalance" type="number" />
+    </mat-form-field>
+    <div>
+      <ng-container *ngIf="
+          formGroup.controls.openingbalance.touched &&
+          !formGroup.controls.openingbalance.value
+        ">
+        <span class="error">Opening Balance is Required</span>
+
+      </ng-container>
+    </div>
+    <mat-form-field>
+      <mat-label>Permission</mat-label>
+      <input matInput formControlName="permission" />
+    </mat-form-field>
+    <div>
+      <ng-container *ngIf="
+          formGroup.controls.permission.touched &&
+          !formGroup.controls.permission.value
+        ">
+        <span class="error">Permission is Required</span>
+      </ng-container>
+    </div>
+
 
     <div class="btn-update">
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!formGroup.valid"
-        type="submit"
-      >
+      <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
         <span>
           {{ !this.data ? 'Save' : 'Update' }}
         </span>

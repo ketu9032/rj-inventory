@@ -36,6 +36,21 @@ exports.login = async (req, res) => {
   }
 };
 
+
+exports.findAll = async (req, res) => {
+  try {
+    const users = await pool.query(
+      `select id ,username, "role", mobilenumber, openingbalance, "permission" from users `
+    );
+
+    res.status(STATUS_CODE.SUCCESS).send(users.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     const { id } = req.query;
@@ -49,6 +64,57 @@ exports.delete = async (req, res) => {
       `delete from users where "id" = '${id}'`
     );
     res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+
+
+exports.add = async (req, res) => {
+  try {
+    const { username, role, mobilenumber, openingbalance, permission, password } = req.body;
+
+    if (!username || !role || !mobilenumber || !openingbalance || !permission || !password) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
+    await pool.query(
+      `INSERT INTO users
+      (username, "role", mobilenumber, openingbalance, "permission", "password")
+      VALUES('${username}', '${role}', '${mobilenumber}', '${openingbalance}', null, '${password}'); `
+    );
+
+   res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+
+exports.update = async (req, res) => {
+  try {
+    const {  id ,username, role, mobilenumber, openingbalance, permission, password } = req.body;
+    if (!id ||!username || !role || !mobilenumber || !openingbalance || !permission ||!password) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
+    await pool.query(
+      `UPDATE users
+      SET username='${username}', "role"='${role}', mobilenumber='${mobilenumber}', openingbalance='${openingbalance}', "permission"=null, "password"='${password}' where id = ${id};
+       `
+    );
+
+   res.status(STATUS_CODE.SUCCESS).send();
+
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

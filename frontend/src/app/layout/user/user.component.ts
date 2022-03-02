@@ -20,12 +20,13 @@ import { DeleteUserComponent } from './delete-user/delete-user.component';
 })
 export class UserComponent implements OnInit {
   displayedColumns: string[] = [
-    'first_name',
-    'last_name',
-    'user_name',
-    'email',
-    'password',
-    'date',
+    
+    'username',
+  
+    'mobilenumber',
+    'openingbalance',
+    'role',
+    'permission',
     'action'
   ];
   dataSource: any = [];

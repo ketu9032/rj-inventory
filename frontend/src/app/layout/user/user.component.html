@@ -7,31 +7,11 @@
   <br />
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="first_name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.first_name }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="last_name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.last_name }}
-        </td>
-      </ng-container>
-     
-
-      <ng-container matColumnDef="user_name">
+      <ng-container matColumnDef="username">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>User Name</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.user_name }}
+          {{ element.username }}
         </td>
-      </ng-container>
-
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
       </ng-container>
 
       <ng-container matColumnDef="password">
@@ -41,10 +21,29 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</th>
+      <ng-container matColumnDef="mobilenumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile Number</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.createdAt | date: 'short' }}
+          {{ element.mobilenumber }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="openingbalance">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Opening Balance</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.openingbalance }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+        <td mat-cell *matCellDef="let element">{{ element.role }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="permission">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Permission</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.permission }}
         </td>
       </ng-container>
 

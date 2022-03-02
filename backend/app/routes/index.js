@@ -22,5 +22,9 @@ router.use('/', async (req, res, next) => {
   });
 
 router.delete('/api/users', users.delete);
+router.get('/api/users', users.findAll);
+router.post('/api/users', users.add);
+router.put('/api/users', users.update);
+
 
 module.exports = router;

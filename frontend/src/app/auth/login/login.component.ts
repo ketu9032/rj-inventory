@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.authService
       .login(this.loginForm.value)
-      .pipe(takeUntil(this.destroy$))
+     // .pipe(takeUntil(this.destroy$))
       .subscribe(
         (response) => {
           localStorage.setItem('user', JSON.stringify(response));

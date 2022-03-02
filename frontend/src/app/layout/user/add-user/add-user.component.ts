@@ -12,6 +12,10 @@ import { UserService } from '../services/user.service';
 })
 export class AddUserComponent implements OnInit {
   formGroup: FormGroup;
+  roles = [
+    {value:"Owner"},
+    {value:"Employees"}
+  ]
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -31,22 +35,24 @@ export class AddUserComponent implements OnInit {
 
   initializeForm(): void {
     this.formGroup = this.formBuilder.group({
-      first_name: ['', Validators.required],
-      last_name: ['', Validators.required],
-      user_name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+      mobilenumber: ['', Validators.required],
+      openingbalance: ['', Validators.required],
+      role: ['', Validators.required],
+      permission: ['', Validators.required]
     });
   }
 
   saveUser(): void {
     this.userService
       .addUser({
+        username: this.formGroup.value.username,
         password: this.formGroup.value.password,
-        email: this.formGroup.value.email,
-        userName: this.formGroup.value.user_name,
-        firstName: this.formGroup.value.first_name,
-        lastName: this.formGroup.value.last_name,
+        mobilenumber: this.formGroup.value.mobilenumber,
+        openingbalance: this.formGroup.value.openingbalance,
+        role: this.formGroup.value.role,
+        permission: this.formGroup.value.permission
       })
       .subscribe(
         (response) => {
@@ -71,11 +77,12 @@ export class AddUserComponent implements OnInit {
     this.userService
       .editUser({
         id: this.data._id,
+        username: this.formGroup.value.user_name,
         password: this.formGroup.value.password,
-        email: this.formGroup.value.email,
-        userName: this.formGroup.value.user_name,
-        firstName: this.formGroup.value.first_name,
-        lastName: this.formGroup.value.last_name,
+        mobilenumber: this.formGroup.value.mobilenumber,
+        openingbalance: this.formGroup.value.openingbalance,
+        role: this.formGroup.value.role,
+        permission: this.formGroup.value.permission
       })
       .subscribe(
         (response) => {
@@ -106,11 +113,12 @@ export class AddUserComponent implements OnInit {
 
   fillForm() {
     this.formGroup.patchValue({
-      first_name: this.data.first_name,
-      last_name: this.data.last_name,
-      user_name: this.data.user_name,
-      email: this.data.email,
-      password: this.data.password
+      username: this.data.username,
+      password: this.data.password,
+      mobilenumber: this.formGroup.value.mobilenumber,
+      openingbalance: this.formGroup.value.openingbalance,
+      role: this.formGroup.value.role,
+      permission: this.formGroup.value.permission
     });
   }
 }
