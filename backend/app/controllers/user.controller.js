@@ -40,7 +40,7 @@ exports.login = async (req, res) => {
 exports.findAll = async (req, res) => {
   try {
     const users = await pool.query(
-      `select id ,username, "role", mobilenumber, openingbalance, "permission" from users `
+      `select id ,username, "role", mobilenumber, openingbalance, "permission", "password" from users order by id desc `
     );
 
     res.status(STATUS_CODE.SUCCESS).send(users.rows);

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
@@ -12,23 +12,27 @@ import { UserService } from '../services/user.service';
 })
 export class AddUserComponent implements OnInit {
   formGroup: FormGroup;
+  selectedRole: string
   roles = [
-    {value:"Owner"},
-    {value:"Employees"}
+    { value: "Owner" },
+    { value: "Employees" }
   ]
+
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialog: MatDialog,
+    public dialogRef: MatDialogRef<AddUserComponent>,
     private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
     private router: Router,
     private userService: UserService
+
   ) { }
 
   ngOnInit() {
     this.initializeForm();
-    if (this.data && this.data._id) {
+    if (this.data && this.data.id) {
       this.fillForm();
     }
   }
@@ -45,6 +49,7 @@ export class AddUserComponent implements OnInit {
   }
 
   saveUser(): void {
+
     this.userService
       .addUser({
         username: this.formGroup.value.username,
@@ -59,7 +64,7 @@ export class AddUserComponent implements OnInit {
           this.snackBar.open('User saved successfully', 'OK', {
             duration: 3000
           });
-          this.dialog.closeAll();
+          this.dialogRef.close(true);
         },
         (error) => {
           this.snackBar.open(
@@ -76,8 +81,8 @@ export class AddUserComponent implements OnInit {
   updateUser(): void {
     this.userService
       .editUser({
-        id: this.data._id,
-        username: this.formGroup.value.user_name,
+        id: this.data.id,
+        username: this.formGroup.value.username,
         password: this.formGroup.value.password,
         mobilenumber: this.formGroup.value.mobilenumber,
         openingbalance: this.formGroup.value.openingbalance,
@@ -89,7 +94,7 @@ export class AddUserComponent implements OnInit {
           this.snackBar.open('User updated Successfully', 'OK', {
             duration: 3000
           });
-          this.dialog.closeAll();
+          this.dialogRef.close(true);
         },
         (error) => {
           this.snackBar.open(
@@ -104,7 +109,7 @@ export class AddUserComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.data && this.data._id) {
+    if (this.data && this.data.id) {
       this.updateUser();
     } else {
       this.saveUser();
@@ -115,10 +120,10 @@ export class AddUserComponent implements OnInit {
     this.formGroup.patchValue({
       username: this.data.username,
       password: this.data.password,
-      mobilenumber: this.formGroup.value.mobilenumber,
-      openingbalance: this.formGroup.value.openingbalance,
-      role: this.formGroup.value.role,
-      permission: this.formGroup.value.permission
+      mobilenumber: this.data.mobilenumber,
+      openingbalance: this.data.openingbalance,
+      role: this.data.role,
+      permission: this.data.permission
     });
   }
 }

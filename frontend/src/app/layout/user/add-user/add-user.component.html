@@ -35,20 +35,41 @@
       <mat-label>Password</mat-label>
       <input matInput formControlName="password" type="password" minlength="6" />
     </mat-form-field>
-    <div>
+    <!-- <div>
       <ng-container *ngIf="
           formGroup.controls.password.touched &&
           !formGroup.controls.password.value
         ">
         <span class="error">Password is Required</span>
       </ng-container>
-    </div>
+    </div> -->
+
+    <!-- <mat-form-field>
+      <mat-label>Role</mat-label>
+      <input matInput formControlName="role"  />
+    </mat-form-field>
+    <div>
+      <ng-container *ngIf="
+          formGroup.controls.role.touched &&
+          !formGroup.controls.role.value
+        ">
+        <span class="error">Role is Required</span>
+      </ng-container>
+    </div> -->
+
+    <!--  -->
+    <!-- <mat-select [(ngModel)]="selectedValue"  name="food">
+      <mat-option *ngFor="let food of foods" [value]="food.value">
+        {{food.viewValue}}
+      </mat-option>
+    </mat-select> -->
+    <!--  -->
 
 
     <mat-form-field>
       <mat-label>Select Role</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let role of roles" [value]="role">
+     <mat-select [(ngModel)]="selectedRole" name="role">
+        <mat-option *ngFor="let role of roles" [value]="role.value" >
           {{role.value}}
         </mat-option>
       </mat-select>
@@ -71,14 +92,14 @@
       <mat-label>Permission</mat-label>
       <input matInput formControlName="permission" />
     </mat-form-field>
-    <div>
+    <!-- <div>
       <ng-container *ngIf="
           formGroup.controls.permission.touched &&
           !formGroup.controls.permission.value
         ">
         <span class="error">Permission is Required</span>
       </ng-container>
-    </div>
+    </div> -->
 
 
     <div class="btn-update">
@@ -87,6 +108,7 @@
           {{ !this.data ? 'Save' : 'Update' }}
         </span>
       </button>
+    
     </div>
   </form>
 </div>
