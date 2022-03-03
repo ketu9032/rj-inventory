@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { IUser } from 'src/app/models/user';
+import { IUserData } from 'src/app/models/user';
 import {
   PAGE_SIZE,
   PAGE_SIZE_OPTION
@@ -20,16 +20,15 @@ import { DeleteUserComponent } from './delete-user/delete-user.component';
 })
 export class UserComponent implements OnInit {
   displayedColumns: string[] = [
-    'username',
-    'mobilenumber',
-    'openingbalance',
+    'user_name',
+    'mobile_number',
+    'opening_balance',
     'role',
     'permission',
     'action'
   ];
   dataSource: any = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  public data: IUser[] = [];
   public pageSize = PAGE_SIZE;
   public pageSizeOptions = PAGE_SIZE_OPTION;
   @ViewChild(MatSort) sort: MatSort;
@@ -42,7 +41,6 @@ export class UserComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-   
     this.getUser();
   }
 
@@ -50,7 +48,7 @@ export class UserComponent implements OnInit {
     this.loader = true;
     this.userService.getUser().subscribe(
       (newUser) => {
-        this.dataSource = new MatTableDataSource<IUser>(newUser);
+        this.dataSource = new MatTableDataSource<IUserData>(newUser);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loader = false;

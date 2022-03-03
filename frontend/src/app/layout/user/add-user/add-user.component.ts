@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { IUserData } from 'src/app/models/user';
 import { UserService } from '../services/user.service';
 
 @Component({
@@ -20,7 +21,7 @@ export class AddUserComponent implements OnInit {
 
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: IUserData,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<AddUserComponent>,
     private formBuilder: FormBuilder,
@@ -39,25 +40,25 @@ export class AddUserComponent implements OnInit {
 
   initializeForm(): void {
     this.formGroup = this.formBuilder.group({
-      username: ['', Validators.required],
+      userName: ['', Validators.required],
       password: ['', Validators.required],
-      mobilenumber: ['', Validators.required],
-      openingbalance: ['', Validators.required],
+      mobileNumber: ['', Validators.required],
+      openingBalance: ['', Validators.required],
       role: ['', Validators.required],
       permission: ['', Validators.required]
     });
   }
 
   saveUser(): void {
-
+    const { userName, password: password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
     this.userService
       .addUser({
-        username: this.formGroup.value.username,
-        password: this.formGroup.value.password,
-        mobilenumber: this.formGroup.value.mobilenumber,
-        openingbalance: this.formGroup.value.openingbalance,
-        role: this.formGroup.value.role,
-        permission: this.formGroup.value.permission
+        userName,
+        password,
+        mobileNumber,
+        openingBalance,
+        role,
+        permission
       })
       .subscribe(
         (response) => {
@@ -79,15 +80,16 @@ export class AddUserComponent implements OnInit {
   }
 
   updateUser(): void {
+    const { userName, password: password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
     this.userService
       .editUser({
         id: this.data.id,
-        username: this.formGroup.value.username,
-        password: this.formGroup.value.password,
-        mobilenumber: this.formGroup.value.mobilenumber,
-        openingbalance: this.formGroup.value.openingbalance,
-        role: this.formGroup.value.role,
-        permission: this.formGroup.value.permission
+        userName,
+        password,
+        mobileNumber,
+        openingBalance,
+        role,
+        permission
       })
       .subscribe(
         (response) => {
@@ -117,13 +119,14 @@ export class AddUserComponent implements OnInit {
   }
 
   fillForm() {
+    const { user_name: userName, password: password, mobile_number: mobileNumber, opening_balance: openingBalance, role: role, permission: permission } = this.data;
     this.formGroup.patchValue({
-      username: this.data.username,
-      password: this.data.password,
-      mobilenumber: this.data.mobilenumber,
-      openingbalance: this.data.openingbalance,
-      role: this.data.role,
-      permission: this.data.permission
+      userName,
+      password,
+      mobileNumber,
+      openingBalance,
+      role,
+      permission
     });
   }
 }

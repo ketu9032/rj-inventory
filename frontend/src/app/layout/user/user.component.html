@@ -8,10 +8,10 @@
   <br />
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="username">
+      <ng-container matColumnDef="user_name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>User Name</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.username }}
+          {{ element.user_name }}
         </td>
       </ng-container>
 
@@ -22,17 +22,17 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="mobilenumber">
+      <ng-container matColumnDef="mobile_number">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile Number</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.mobilenumber }}
+          {{ element.mobile_number }}
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="openingbalance">
+      <ng-container matColumnDef="opening_balance">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Opening Balance</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.openingbalance }}
+          {{ element.opening_balance }}
         </td>
       </ng-container>
 

@@ -1,8 +1,8 @@
 CREATE TABLE public.users (
-	username text NULL,
+	user_name text NULL,
 	"role" text NULL,
-	mobilenumber text NULL,
-	openingbalance text NULL,
+	mobile_number text NULL,
+	opening_balance text NULL,
 	"permission" jsonb NULL,
 	"password" text NULL
 );
