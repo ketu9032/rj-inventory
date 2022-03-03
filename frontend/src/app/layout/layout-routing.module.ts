@@ -69,22 +69,22 @@ const routes: Routes = [
       {
         path: 'transfer',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./transfer/transfer.module').then((m) => m.TransferModule)
       },
       {
         path: 'analysis',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./analysis/analysis.module').then((m) => m.AnalysisModule)
       },
       {
         path: 'rojMed',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./roj-med/roj-med.module').then((m) => m.RojMedModule)
       },
       {
         path: 'history',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./history/history.module').then((m) => m.HistoryModule)
       },
       
     ]
