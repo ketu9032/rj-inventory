@@ -49,7 +49,7 @@ const routes: Routes = [
       {
         path: 'suppliers',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./suppliers/suppliers.module').then((m) => m.SuppliersModule)
       },
       {
         path: 'purchaseQuotation',
