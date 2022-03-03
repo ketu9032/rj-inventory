@@ -5,8 +5,8 @@ const { pool } = require('./../db');
 
 exports.login = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
+    const { userName, password } = req.body;
+    if (!userName || !password) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -14,7 +14,7 @@ exports.login = async (req, res) => {
     }
 
     const users = await pool.query(
-      `select * from users where "password" = '${password}' and username  = '${username}'`
+      `select * from users where "password" = '${password}' and user_name  = '${userName}'`
     );
 
     if (users.rows.length === 0) {
@@ -24,7 +24,7 @@ exports.login = async (req, res) => {
       return;
     }
     const token = generateToken(
-      { password, username },
+      { password, userName },
       { expiresIn: 86400 }
     ).data;
 
@@ -44,7 +44,7 @@ exports.findAll = async (req, res) => {
     let offset = (pageSize * pageNumber) - pageSize;
 
     const users = await pool.query(
-      `select count(id) over() as total, id ,username, "role", mobilenumber, openingbalance, "permission", "password" from users order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
+      `select count(id) over() as total, id ,user_name, "role", mobile_number, opening_balance, "permission", "password" from users order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(users.rows);
@@ -79,9 +79,9 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const { username, role, mobilenumber, openingbalance, permission, password } = req.body;
+    const { userName, role, mobileNumber, openingBalance, permission, password } = req.body;
 
-    if (!username || !role || !mobilenumber || !openingbalance || !permission || !password) {
+    if (!userName || !role || !mobileNumber || !openingBalance || !permission || !password) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -89,8 +89,8 @@ exports.add = async (req, res) => {
     }
     await pool.query(
       `INSERT INTO users
-      (username, "role", mobilenumber, openingbalance, "permission", "password")
-      VALUES('${username}', '${role}', '${mobilenumber}', '${openingbalance}', null, '${password}'); `
+      (user_name, "role", mobile_number, opening_balance, "permission", "password")
+      VALUES('${userName}', '${role}', '${mobileNumber}', '${openingBalance}', null, '${password}'); `
     );
 
    res.status(STATUS_CODE.SUCCESS).send();
@@ -104,8 +104,8 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const {  id ,username, role, mobilenumber, openingbalance, permission, password } = req.body;
-    if (!id ||!username || !role || !mobilenumber || !openingbalance || !permission ||!password) {
+    const {  id ,userName, role, mobileNumber, openingBalance, permission, password } = req.body;
+    if (!id ||!userName || !role || !mobileNumber || !openingBalance || !permission ||!password) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -113,7 +113,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE users
-      SET username='${username}', "role"='${role}', mobilenumber='${mobilenumber}', openingbalance='${openingbalance}', "permission"=null, "password"='${password}' where id = ${id};
+      SET user_name='${userName}', "role"='${role}', mobile_number='${mobileNumber}', opening_balance='${openingBalance}', "permission"=null, "password"='${password}' where id = ${id};
        `
     );
 
