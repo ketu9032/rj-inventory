@@ -24,7 +24,7 @@ const routes: Routes = [
       {
         path: 'cdf',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./cdf/cdf.module').then((m) => m.CDFModule)
       },
       {
         path: 'customers',
