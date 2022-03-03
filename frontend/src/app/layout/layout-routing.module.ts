@@ -54,7 +54,7 @@ const routes: Routes = [
       {
         path: 'purchaseQuotation',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./purchase-quotation/purchase-quotation.module').then((m) => m.PurchaseQuotationModule)
       },
       {
         path: 'purchase',
