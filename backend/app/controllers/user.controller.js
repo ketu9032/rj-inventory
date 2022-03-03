@@ -39,8 +39,12 @@ exports.login = async (req, res) => {
 
 exports.findAll = async (req, res) => {
   try {
+    const {orderBy, direction, pageSize, pageNumber } = req.query;
+
+    let offset = (pageSize * pageNumber) - pageSize;
+
     const users = await pool.query(
-      `select id ,username, "role", mobilenumber, openingbalance, "permission", "password" from users order by id desc `
+      `select id ,username, "role", mobilenumber, openingbalance, "permission", "password" from users order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(users.rows);
