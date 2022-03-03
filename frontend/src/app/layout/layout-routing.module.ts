@@ -29,7 +29,7 @@ const routes: Routes = [
       {
         path: 'customers',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./Customers/customers.module').then((m) => m.CustomersModule)
       },
       {
         path: 'items',
