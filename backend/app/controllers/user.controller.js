@@ -39,12 +39,21 @@ exports.login = async (req, res) => {
 
 exports.findAll = async (req, res) => {
   try {
-    const {orderBy, direction, pageSize, pageNumber } = req.query;
+    const {orderBy, direction, pageSize, pageNumber, search } = req.query;
+    let searchQuery = 'where true'
+    if (search) {
+      searchQuery += ` and 
+        (user_name ilike '%${search}%' 
+          or mobile_number ilike '%${search}%' 
+          or opening_balance ilike '%${search}%' 
+          or role ilike '%${search}%' 
+        )` 
+    }
 
     let offset = (pageSize * pageNumber) - pageSize;
 
     const users = await pool.query(
-      `select count(id) over() as total, id ,user_name, "role", mobile_number, opening_balance, "permission", "password" from users order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
+      `select count(id) over() as total, id ,user_name, "role", mobile_number, opening_balance, "permission", "password" from users ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(users.rows);
@@ -79,9 +88,9 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const { userName, role, mobileNumber, openingBalance, permission, password } = req.body;
+    const { userName, role, mobileNumber, openingBalance, password } = req.body;
 
-    if (!userName || !role || !mobileNumber || !openingBalance || !permission || !password) {
+    if (!userName || !role || !mobileNumber || !openingBalance  || !password) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -89,8 +98,8 @@ exports.add = async (req, res) => {
     }
     await pool.query(
       `INSERT INTO users
-      (user_name, "role", mobile_number, opening_balance, "permission", "password")
-      VALUES('${userName}', '${role}', '${mobileNumber}', '${openingBalance}', null, '${password}'); `
+      (user_name, "role", mobile_number, opening_balance, "password")
+      VALUES('${userName}', '${role}', '${mobileNumber}', '${openingBalance}', '${password}'); `
     );
 
    res.status(STATUS_CODE.SUCCESS).send();
@@ -104,8 +113,8 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const {  id ,userName, role, mobileNumber, openingBalance, permission, password } = req.body;
-    if (!id ||!userName || !role || !mobileNumber || !openingBalance || !permission ||!password) {
+    const {  id ,userName, role, mobileNumber, openingBalance, password } = req.body;
+    if (!id ||!userName || !role || !mobileNumber || !openingBalance ||!password) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -113,7 +122,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE users
-      SET user_name='${userName}', "role"='${role}', mobile_number='${mobileNumber}', opening_balance='${openingBalance}', "permission"=null, "password"='${password}' where id = ${id};
+      SET user_name='${userName}', "role"='${role}', mobile_number='${mobileNumber}', opening_balance='${openingBalance}', "password"='${password}' where id = ${id};
        `
     );
 

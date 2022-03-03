@@ -50,7 +50,7 @@ export class AddUserComponent implements OnInit {
   }
 
   saveUser(): void {
-    const { userName, password: password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
+    const { userName, password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
     this.userService
       .addUser({
         userName,
@@ -80,7 +80,7 @@ export class AddUserComponent implements OnInit {
   }
 
   updateUser(): void {
-    const { userName, password: password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
+    const { userName, password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
     this.userService
       .editUser({
         id: this.data.id,

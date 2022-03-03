@@ -1,4 +1,5 @@
 <div class="login-page">
+  <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
   <div class="content">
     <form
       class="login-form"
@@ -12,13 +13,13 @@
       <div fxFlex fxlayout="row" fxlayout.lt-md="column">
         <div fxFlexFill>
           <mat-form-field class="w-100">
-            <input matInput placeholder="User Name" formControlName="username" />
+            <input matInput placeholder="User Name" formControlName="userName" />
           </mat-form-field>
           <mat-error>
             <span
               *ngIf="
-                !loginForm.get('username').value &&
-                loginForm.get('username').touched
+                !loginForm.get('userName').value &&
+                loginForm.get('userName').touched
               "
               >Username is Required</span
             >

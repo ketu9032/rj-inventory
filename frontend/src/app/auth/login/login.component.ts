@@ -14,6 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   private destroy$ = new Subject();
+  loader: boolean = false;
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -26,20 +27,23 @@ export class LoginComponent implements OnInit {
   }
   initializeForm(): void {
     this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
+      userName: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   onSubmit() {
+    this.loader = true;
     this.authService
       .login(this.loginForm.value)
       .subscribe(
         (response) => {
           localStorage.setItem('user', JSON.stringify(response));
           this.router.navigate(['/dashboard']);
+          this.loader = false;
         },
         (error) => {
+          this.loader = false;
           this.snackBar.open(error.message, 'Ok', {
             duration: 3000
           });
