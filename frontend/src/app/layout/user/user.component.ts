@@ -20,12 +20,11 @@ import { DeleteUserComponent } from './delete-user/delete-user.component';
 })
 export class UserComponent implements OnInit {
   displayedColumns: string[] = [
-    'first_name',
-    'last_name',
-    'user_name',
-    'email',
-    'password',
-    'date',
+    'username',
+    'mobilenumber',
+    'openingbalance',
+    'role',
+    'permission',
     'action'
   ];
   dataSource: any = [];
@@ -34,7 +33,8 @@ export class UserComponent implements OnInit {
   public pageSize = PAGE_SIZE;
   public pageSizeOptions = PAGE_SIZE_OPTION;
   @ViewChild(MatSort) sort: MatSort;
-
+  loader: boolean = false;
+  
   constructor(
     public dialog: MatDialog,
     private userService: UserService,
@@ -42,17 +42,21 @@ export class UserComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+   
     this.getUser();
   }
 
   getUser() {
+    this.loader = true;
     this.userService.getUser().subscribe(
       (newUser) => {
         this.dataSource = new MatTableDataSource<IUser>(newUser);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.loader = false;
       },
       (error) => {
+        this.loader = false;
         this.snackBar.open(error.error.message || error.message, 'Ok',{
           duration: 3000
         });
@@ -68,7 +72,9 @@ export class UserComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        this.getUser();
+        if (result) {
+          this.getUser();
+        }
       });
   }
   onEditNewUser(element) {
@@ -79,7 +85,9 @@ export class UserComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        this.getUser();
+        if (result) {
+          this.getUser();
+        }
       });
   }
   confirmDialog(id: string): void {
