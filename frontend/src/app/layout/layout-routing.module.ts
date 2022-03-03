@@ -44,7 +44,7 @@ const routes: Routes = [
       {
         path: 'salesQuotation',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./sales-quotation/sales-quotation.module').then((m) => m.SalesQuotationModule)
       },
       {
         path: 'suppliers',
