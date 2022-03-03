@@ -59,12 +59,12 @@ const routes: Routes = [
       {
         path: 'purchase',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./purchase/purchase.module').then((m) => m.PurchaseModule)
       },
       {
         path: 'expense',
         loadChildren: () =>
-          import('./user/user.module').then((m) => m.UserModule)
+          import('./expense/expense.module').then((m) => m.ExpenseModule)
       },
       {
         path: 'transfer',
