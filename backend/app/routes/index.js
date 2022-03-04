@@ -1,6 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 const users = require('./../controllers/user.controller');
+const customers = require('./../controllers/customer.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
 const { MESSAGES } = require('../constant/messages');
 const { verifyToken } = require('../utils/common');
@@ -25,6 +26,12 @@ router.delete('/api/users', users.delete);
 router.get('/api/users', users.findAll);
 router.post('/api/users', users.add);
 router.put('/api/users', users.update);
+
+
+router.delete('/api/customers', customers.delete);
+router.get('/api/customers', customers.findAll);
+router.post('/api/customers', customers.add);
+router.put('/api/customers', customers.update);
 
 
 module.exports = router;
