@@ -13,11 +13,11 @@ exports.login = async (req, res) => {
       return;
     }
 
-    const users = await pool.query(
+    const response = await pool.query(
       `select * from users where "password" = '${password}' and user_name  = '${userName}'`
     );
 
-    if (users.rows.length === 0) {
+    if (response.rows.length === 0) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.AUTH.USER_NOT_FOUND });
@@ -28,7 +28,7 @@ exports.login = async (req, res) => {
       { expiresIn: 86400 }
     ).data;
 
-    res.status(STATUS_CODE.SUCCESS).send({ ...users.rows[0], token });
+    res.status(STATUS_CODE.SUCCESS).send({ ...response.rows[0], token });
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
@@ -42,21 +42,21 @@ exports.findAll = async (req, res) => {
     const {orderBy, direction, pageSize, pageNumber, search } = req.query;
     let searchQuery = 'where true'
     if (search) {
-      searchQuery += ` and 
-        (user_name ilike '%${search}%' 
-          or mobile_number ilike '%${search}%' 
-          or opening_balance ilike '%${search}%' 
-          or role ilike '%${search}%' 
-        )` 
+      searchQuery += ` and
+        (user_name ilike '%${search}%'
+          or mobile_number ilike '%${search}%'
+          or opening_balance ilike '%${search}%'
+          or role ilike '%${search}%'
+        )`
     }
 
     let offset = (pageSize * pageNumber) - pageSize;
 
-    const users = await pool.query(
+    const response = await pool.query(
       `select count(id) over() as total, id ,user_name, "role", mobile_number, opening_balance, "permission", "password" from users ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
-    res.status(STATUS_CODE.SUCCESS).send(users.rows);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

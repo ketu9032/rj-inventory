@@ -24,12 +24,12 @@ exports.findAll = async (req, res) => {
 
     let offset = (pageSize * pageNumber) - pageSize;
 
-    const users = await pool.query(
+    const response = await pool.query(
       `select count(id) over() as total, id, company, first_name, address, email, mobile_no, due_limit, balance, other, tier
       FROM customers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
-    res.status(STATUS_CODE.SUCCESS).send(users.rows);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
@@ -102,6 +102,21 @@ exports.update = async (req, res) => {
 
    res.status(STATUS_CODE.SUCCESS).send();
 
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+exports.getCustomerDropDown = async (req, res) => {
+  try {
+
+    const response = await pool.query(
+      `select id, company FROM customers `
+    );
+
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

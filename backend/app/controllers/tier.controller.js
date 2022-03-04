@@ -16,12 +16,12 @@ exports.findAll = async (req, res) => {
 
     let offset = pageSize * pageNumber - pageSize;
 
-    const users = await pool.query(
+    const response = await pool.query(
       `select count(id) over() as total, id, code, name
       FROM tiers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
-    res.status(STATUS_CODE.SUCCESS).send(users.rows);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
@@ -58,8 +58,7 @@ exports.add = async (req, res) => {
       return;
     }
     await pool.query(
-      `INSERT INTO tiers
-      (code, name, address, email, mobile_no, due_limit, balance, other, tier)
+      `INSERT INTO tiers (code, name, address, email, mobile_no, due_limit, balance, other, tier)
       VALUES('${code}', '${name}');
       `
     );
@@ -83,12 +82,27 @@ exports.update = async (req, res) => {
       return;
     }
     await pool.query(
-      `UPDATE tiers
-      SET code='${code}', name='${name}' where id = ${id};
+      `UPDATE tiers SET code='${code}', name='${name}' where id = ${id};
        `
     );
 
     res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+
+exports.getTierDropDown = async (req, res) => {
+  try {
+
+    const response = await pool.query(
+      `select id, name, code FROM tiers `
+    );
+
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

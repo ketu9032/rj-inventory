@@ -28,17 +28,17 @@ router.get('/api/users', users.findAll);
 router.post('/api/users', users.add);
 router.put('/api/users', users.update);
 
-
 router.delete('/api/customers', customers.delete);
 router.get('/api/customers', customers.findAll);
 router.post('/api/customers', customers.add);
 router.put('/api/customers', customers.update);
-
+router.put('/api/getCustomerDropDown', customers.getCustomerDropDown);
 
 router.delete('/api/tiers', tiers.delete);
 router.get('/api/tiers', tiers.findAll);
 router.post('/api/tiers', tiers.add);
 router.put('/api/tiers', tiers.update);
+router.put('/api/getTierDropDown', tiers.getTierDropDown);
 
 
 module.exports = router;
