@@ -25,8 +25,25 @@ exports.findAll = async(req, res) => {
         let offset = (pageSize * pageNumber) - pageSize;
 
         const response = await pool.query(
-            `select count(id) over() as total, id, company, first_name, address, email, mobile_no, due_limit, balance, other, tier
-      FROM customers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
+            `
+            SELECT
+                Count(c.id) OVER() AS total,
+                c.id,
+                company,
+                first_name,
+                address,
+                email,
+                mobile_no,
+                due_limit,
+                balance,
+                other,
+                t.NAME AS tier 
+            FROM
+                customers c 
+                JOIN
+                tiers t 
+                ON t.id = c.tier_id 
+            ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
         );
 
         res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -61,9 +78,10 @@ exports.delete = async(req, res) => {
 
 exports.add = async(req, res) => {
     try {
-        const { company, firstName, address, email, mobileNo, dueLimit, balance, other, tier } = req.body;
 
-        if (!company || !firstName || !address || !email || !mobileNo || !dueLimit || !tier) {
+        const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier } = req.body;
+
+        if (!company || !firstName || !address || !email || !mobileNumber || !dueLimit || !tier) {
             res
                 .status(STATUS_CODE.BAD)
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -72,7 +90,7 @@ exports.add = async(req, res) => {
         await pool.query(
             `INSERT INTO customers
       (company, first_name, address, email, mobile_no, due_limit, balance, other, tier)
-      VALUES('${company}', '${firstName}', '${address}', '${email}', '${mobileNo}', '${dueLimit}', '${balance}', '${other}', '${tier}');
+      VALUES('${company}', '${firstName}', '${address}', '${email}', '${mobileNumber}', '${dueLimit}', '${balance}', '${other}', '${tier}');
       `
         );
 
@@ -87,8 +105,8 @@ exports.add = async(req, res) => {
 
 exports.update = async(req, res) => {
     try {
-        const { id, company, firstName, address, email, mobileNo, dueLimit, balance, other, tier } = req.body;
-        if (!company || !firstName || !address || !email || !mobileNo || !dueLimit || !tier) {
+        const { id, company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier } = req.body;
+        if (!company || !firstName || !address || !email || !mobileNumber || !dueLimit || !tier) {
             res
                 .status(STATUS_CODE.BAD)
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });

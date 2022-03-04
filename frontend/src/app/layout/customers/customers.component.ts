@@ -8,6 +8,7 @@ import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { AddCustomersComponent } from './add-customers/add-customers.component';
+import { DeleteCustomersComponent } from './delete-customers/delete-customers.component';
 import { CustomersService } from './services/customers.service';
 
 @Component({
@@ -113,10 +114,27 @@ export class CustomersComponent implements OnInit {
         }
       });
   }
+  confirmDialog(id: string): void {
+    this.dialog
+      .open(DeleteCustomersComponent, {
+        maxWidth: '400px',
+        data: id
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result && result.data === true) {
+          this.getCustomers();
+        }
+      });
+  }
   pageChanged(event: PageEvent) {
     this.tableParams.pageSize = event.pageSize;
     this.tableParams.pageNumber = event.pageIndex + 1;
     this.getCustomers();
+  }
+
+  openTires() {
+    
   }
 
 }

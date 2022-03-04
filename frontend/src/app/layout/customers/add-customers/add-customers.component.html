@@ -19,7 +19,7 @@
         <!-- userName start -->
         <mat-form-field>
             <mat-label>First Name</mat-label>
-            <input matInput formControlName=" firstName" />
+            <input matInput formControlName="firstName" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -35,6 +35,14 @@
             <mat-label>Address</mat-label>
             <textarea matInput formControlName="address"></textarea>
         </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.address.touched &&
+          !formGroup.controls.address.value
+        ">
+                <span class="error">Address is Required</span>
+            </ng-container>
+        </div>
 
         <!-- Email start -->
         <mat-form-field>
@@ -50,8 +58,9 @@
                 <br />
             </ng-container>
             <ng-container *ngIf="
-    formGroup.controls.email.touched && !formGroup.controls.email.value
-    ">
+       formGroup.controls.email.touched &&
+       !formGroup.controls.email.value
+       ">
                 <span class="error">Email is Required</span>
             </ng-container>
         </div>
@@ -69,17 +78,17 @@
                 <span class="error">Mobile Number is Required</span>
             </ng-container>
         </div>
-        <!-- Due LImit start -->
+        <!--dueLimit start -->
         <mat-form-field>
-            <mat-label>Due LImit</mat-label>
-            <input matInput formControlName="dueLImit" />
+            <mat-label>Due Limit</mat-label>
+            <input type="number" matInput formControlName="dueLimit" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.dueLImit.touched &&
-          !formGroup.controls.dueLImit.value
+          formGroup.controls.dueLimit.touched &&
+          !formGroup.controls.dueLimit.value
         ">
-                <span class="error">Due LImit is Required</span>
+                <span class="error">Due limit is Required</span>
             </ng-container>
         </div>
 
@@ -110,23 +119,31 @@
             </ng-container>
         </div>
 
-        <!-- Role start -->
+        <!-- tire start -->
         <mat-form-field>
             <mat-label>Select Tier</mat-label>
-            <mat-select formControlName="selectTier" name="role">
-                <mat-option *ngFor="let role of roles" [value]="role.value">
-                    {{role.value}}
+            <mat-select formControlName="tier" name="tier">
+                <mat-option *ngFor="let tire of tires" [value]="tire.id">
+                    {{tire.name}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.tier.touched &&
+          !formGroup.controls.tier.value
+        ">
+                <span class="error">Tier is Required</span>
+            </ng-container>
+        </div>
 
         <!-- button start -->
         <div class="btn-update">
             <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
-        <span>
-          {{ !this.data ? 'Save' : 'Update' }}
-        </span>
-      </button>
+                <span>
+                    {{ !this.data ? 'Save' : 'Update' }}
+                </span>
+            </button>
         </div>
     </form>
 </div>

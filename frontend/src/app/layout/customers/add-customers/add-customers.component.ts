@@ -3,8 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ICustomersData } from 'src/app/models/customers';
 import { IUserData } from 'src/app/models/user';
 import { CustomersService } from '../services/customers.service';
+import { TiersService } from '../services/tiers.service';
 
 @Component({
   selector: 'app-add-customers',
@@ -14,26 +16,25 @@ import { CustomersService } from '../services/customers.service';
 export class AddCustomersComponent implements OnInit {
   formGroup: FormGroup;
   selectedRole: string
-  roles = [
-    { value: "Owner" },
-    { value: "Employees" }
-  ]
+  tires = []
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: IUserData,
+    @Inject(MAT_DIALOG_DATA) public data: ICustomersData,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<AddCustomersComponent>,
     private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
     private router: Router,
+    private tiersService: TiersService,
     private customersService: CustomersService
   ) { }
 
   ngOnInit() {
     this.initializeForm();
-    // if (this.data && this.data.id) {
-    //   this.fillForm();
-    // }
+    this.getTierDropDown();
+    if (this.data && this.data.id) {
+      this.fillForm();
+    }
   }
 
   initializeForm(): void {
@@ -43,15 +44,15 @@ export class AddCustomersComponent implements OnInit {
       address: ['', Validators.required],
       email: ['', Validators.required],
       mobileNumber: ['', Validators.required],
-      dueLImit: ['', Validators.required],
+      dueLimit: ['', Validators.required],
       balance: ['', Validators.required],
       other: ['', Validators.required],
-      selectTier: ['', Validators.required],
+      tier: ['', Validators.required],
     });
   }
 
   saveUser(): void {
-    const { company, firstName, address, email, mobileNumber, dueLImit, balance, other, tier } = this.formGroup.value;
+    const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier } = this.formGroup.value;
     this.customersService
       .addCustomers({
         company,
@@ -59,7 +60,7 @@ export class AddCustomersComponent implements OnInit {
         address,
         email,
         mobileNumber,
-        dueLImit,
+        dueLimit,
         balance,
         other,
         tier
@@ -84,7 +85,7 @@ export class AddCustomersComponent implements OnInit {
   }
 
   updateCustomers(): void {
-    const { company, firstName, address, email, mobileNumber, dueLImit, balance, other, tier } = this.formGroup.value;
+    const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier } = this.formGroup.value;
     this.customersService
       .editCustomers({
         id: this.data.id,
@@ -93,7 +94,7 @@ export class AddCustomersComponent implements OnInit {
         address,
         email,
         mobileNumber,
-        dueLImit,
+        dueLimit,
         balance,
         other,
         tier
@@ -125,18 +126,37 @@ export class AddCustomersComponent implements OnInit {
     }
   }
 
-  // fillForm() {
-  //   const { company: company, first_ame: firstName, address: address, email: email, mobile_No: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier: tier } = this.data;
-  //   this.formGroup.patchValue({
-  //     company,
-  //     firstName,
-  //     address,
-  //     email,
-  //     mobileNumber,
-  //     dueLimit,
-  //     balance,
-  //     other,
-  //     tier
-  //   });
-  // }
+  fillForm() {
+    const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier: tier } = this.data;
+    this.formGroup.patchValue({
+      company,
+      firstName,
+      address,
+      email,
+      mobileNumber,
+      dueLimit,
+      balance,
+      other,
+      tier
+    });
+  }
+
+  getTierDropDown() {
+    this.tiersService
+      .getTierDropDown()
+      .subscribe(
+        (response) => {
+          this.tires =  response;
+        },
+        (error) => {
+          this.snackBar.open(
+            (error.error && error.error.message) || error.message,
+            'Ok', {
+            duration: 3000
+          }
+          );
+        },
+        () => { }
+      );
+  }
 }

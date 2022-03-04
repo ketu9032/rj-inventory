@@ -21,4 +21,5 @@ export class CustomersService {
   public removeCustomers(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
+
 }
