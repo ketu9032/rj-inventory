@@ -25,7 +25,7 @@ exports.findAll = async (req, res) => {
     let offset = (pageSize * pageNumber) - pageSize;
 
     const users = await pool.query(
-      `select count(id) over() as total, SELECT id, company, first_name, address, email, mobile_no, due_limit, balance, other, tier
+      `select count(id) over() as total, id, company, first_name, address, email, mobile_no, due_limit, balance, other, tier
       FROM customers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
