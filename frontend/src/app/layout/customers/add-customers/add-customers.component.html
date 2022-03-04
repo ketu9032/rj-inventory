@@ -1,0 +1,132 @@
+<div class="container">
+    <h1 mat-dialog-title> {{ !this.data ? 'Add Customers' : 'Update Customers' }} </h1>
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+        <!-- company start -->
+        <mat-form-field>
+            <mat-label>Company</mat-label>
+            <input matInput formControlName="company" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.company.touched &&
+          !formGroup.controls.company.value
+        ">
+                <span class="error">Company is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- userName start -->
+        <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName=" firstName" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.firstName.touched &&
+          !formGroup.controls.firstName.value
+        ">
+                <span class="error">First name is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- Address start -->
+        <mat-form-field>
+            <mat-label>Address</mat-label>
+            <textarea matInput formControlName="address"></textarea>
+        </mat-form-field>
+
+        <!-- Email start -->
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" required />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+      formGroup.controls.email.errors &&
+      !formGroup.controls.email.errors.required
+      ">
+                <span class="error">Please enter correct email address</span>
+                <br />
+            </ng-container>
+            <ng-container *ngIf="
+    formGroup.controls.email.touched && !formGroup.controls.email.value
+    ">
+                <span class="error">Email is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- mobileNumber start -->
+        <mat-form-field>
+            <mat-label>Mobile Number</mat-label>
+            <input matInput formControlName="mobileNumber" type="tel" type="number" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.mobileNumber.touched &&
+          !formGroup.controls.mobileNumber.value
+        ">
+                <span class="error">Mobile Number is Required</span>
+            </ng-container>
+        </div>
+        <!-- Due LImit start -->
+        <mat-form-field>
+            <mat-label>Due LImit</mat-label>
+            <input matInput formControlName="dueLImit" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.dueLImit.touched &&
+          !formGroup.controls.dueLImit.value
+        ">
+                <span class="error">Due LImit is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- Balance start -->
+        <mat-form-field>
+            <mat-label>Balance</mat-label>
+            <input matInput formControlName="balance" type="number" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.balance.touched &&
+          !formGroup.controls.balance.value
+        ">
+                <span class="error">Balance is Required</span>
+            </ng-container>
+        </div>
+        <!-- Other start -->
+        <mat-form-field>
+            <mat-label>Other</mat-label>
+            <input matInput formControlName="other" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.other.touched &&
+          !formGroup.controls.other.value
+        ">
+                <span class="error">Other is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- Role start -->
+        <mat-form-field>
+            <mat-label>Select Tier</mat-label>
+            <mat-select formControlName="selectTier" name="role">
+                <mat-option *ngFor="let role of roles" [value]="role.value">
+                    {{role.value}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- button start -->
+        <div class="btn-update">
+            <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
+        <span>
+          {{ !this.data ? 'Save' : 'Update' }}
+        </span>
+      </button>
+        </div>
+    </form>
+</div>
