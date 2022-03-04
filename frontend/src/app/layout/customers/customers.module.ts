@@ -8,9 +8,11 @@ import { MaterialModule } from 'src/app/shared/modules/material/material.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
+import { AddCustomersComponent } from './add-customers/add-customers.component';
+import { CustomersService } from './services/customers.service';
 
 @NgModule({
-  declarations: [CustomersComponent],
+  declarations: [CustomersComponent, AddCustomersComponent],
   imports: [
     CommonModule,
     CustomersRoutingModule,
@@ -23,7 +25,8 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [
-    CustomersComponent,
+    AddCustomersComponent
   ],
+  providers: [CustomersService]
 })
 export class CustomersModule { }
