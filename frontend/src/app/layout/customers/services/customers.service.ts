@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
+import { ICustomersParams } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
-import { IUserParams } from 'src/app/models/user';
 import { RestService } from 'src/app/shared/services';
 
 @Injectable({ providedIn: 'root'})
 export class CustomersService {
-  private url = 'api/users';
+  private url = 'api/customers';
 
   constructor(private restService: RestService) {}
 
-  public getUser(tablePrams: IMatTableParams) {
+  public getCustomers(tablePrams: IMatTableParams) {
     return this.restService.get<any>(`${this.url}?orderBy=${tablePrams.orderBy}&direction=${tablePrams.direction}&pageSize=${tablePrams.pageSize}&pageNumber=${tablePrams.pageNumber}&search=${tablePrams.search}`);
   }
-  public addUser(user: IUserParams) {
-    return this.restService.post(`${this.url}`, user);
+  public addCustomers(customers: ICustomersParams) {
+    return this.restService.post(`${this.url}`, customers);
   }
-  public editUser(user: IUserParams) {
-    return this.restService.put(`${this.url}`, user);
+  public editCustomers(customers: ICustomersParams) {
+    return this.restService.put(`${this.url}`, customers);
   }
-  public removeUser(id: string) {
+  public removeCustomers(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
 }

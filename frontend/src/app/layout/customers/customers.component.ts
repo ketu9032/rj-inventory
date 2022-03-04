@@ -4,8 +4,8 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
-import { IUserData } from 'src/app/models/user';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { AddCustomersComponent } from './add-customers/add-customers.component';
 import { CustomersService } from './services/customers.service';
@@ -17,11 +17,15 @@ import { CustomersService } from './services/customers.service';
 })
 export class CustomersComponent implements OnInit {
   displayedColumns: string[] = [
-    'user_name',
-    'mobile_number',
-    'opening_balance',
-    'role',
-    'permission',
+    'company',
+    'first_name',
+    'address',
+    'email',
+    'mobile_no',
+    'due_limit',
+    'balance',
+    'other',
+    'tier',
     'action'
   ];
   dataSource: any = [];
@@ -46,27 +50,27 @@ export class CustomersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getUser();
+    this.getCustomers();
   }
 
   sortData(sort: Sort) {
     this.tableParams.orderBy = sort.active;
     this.tableParams.direction = sort.direction;
     this.tableParams.pageNumber = 1;
-    this.getUser();
+    this.getCustomers();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
 
-  getUser() {
+  getCustomers() {
     this.loader = true;
-    this.customersService.getUser(this.tableParams).subscribe(
-      (newUser: any[]) => {
-        this.dataSource = new MatTableDataSource<IUserData>(newUser);
-        if (newUser.length > 0) {
-          this.totalRows = newUser[0].total;
+    this.customersService.getCustomers(this.tableParams).subscribe(
+      (newCustomers: any[]) => {
+        this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
+        if (newCustomers.length > 0) {
+          this.totalRows = newCustomers[0].total;
         }
         setTimeout(() => {
           this.paginator.pageIndex = this.tableParams.pageNumber - 1;
@@ -84,7 +88,7 @@ export class CustomersComponent implements OnInit {
     );
   }
 
-  onAddNewUser(): void {
+  onAddNewCustomers(): void {
     this.dialog
       .open(AddCustomersComponent, {
         width: '400px'
@@ -92,11 +96,11 @@ export class CustomersComponent implements OnInit {
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.getUser();
+          this.getCustomers();
         }
       });
   }
-  onEditNewUser(element) {
+  onEditNewCustomers(element) {
     this.dialog
       .open(AddCustomersComponent, {
         width: '400px',
@@ -105,14 +109,14 @@ export class CustomersComponent implements OnInit {
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.getUser();
+          this.getCustomers();
         }
       });
   }
   pageChanged(event: PageEvent) {
     this.tableParams.pageSize = event.pageSize;
     this.tableParams.pageNumber = event.pageIndex + 1;
-    this.getUser();
+    this.getCustomers();
   }
 
 }

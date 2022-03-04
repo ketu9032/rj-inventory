@@ -31,9 +31,9 @@ export class AddCustomersComponent implements OnInit {
 
   ngOnInit() {
     this.initializeForm();
-    if (this.data && this.data.id) {
-      this.fillForm();
-    }
+    // if (this.data && this.data.id) {
+    //   this.fillForm();
+    // }
   }
 
   initializeForm(): void {
@@ -51,15 +51,18 @@ export class AddCustomersComponent implements OnInit {
   }
 
   saveUser(): void {
-    const { userName, password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
+    const { company, firstName, address, email, mobileNumber, dueLImit, balance, other, tier } = this.formGroup.value;
     this.customersService
-      .addUser({
-        userName,
-        password,
+      .addCustomers({
+        company,
+        firstName,
+        address,
+        email,
         mobileNumber,
-        openingBalance,
-        role,
-        permission
+        dueLImit,
+        balance,
+        other,
+        tier
       })
       .subscribe(
         (response) => {
@@ -80,17 +83,20 @@ export class AddCustomersComponent implements OnInit {
       );
   }
 
-  updateUser(): void {
-    const { userName, password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
+  updateCustomers(): void {
+    const { company, firstName, address, email, mobileNumber, dueLImit, balance, other, tier } = this.formGroup.value;
     this.customersService
-      .editUser({
+      .editCustomers({
         id: this.data.id,
-        userName,
-        password,
+        company,
+        firstName,
+        address,
+        email,
         mobileNumber,
-        openingBalance,
-        role,
-        permission
+        dueLImit,
+        balance,
+        other,
+        tier
       })
       .subscribe(
         (response) => {
@@ -113,21 +119,24 @@ export class AddCustomersComponent implements OnInit {
 
   onSubmit() {
     if (this.data && this.data.id) {
-      this.updateUser();
+      this.updateCustomers();
     } else {
       this.saveUser();
     }
   }
 
-  fillForm() {
-    const { user_name: userName, password: password, mobile_number: mobileNumber, opening_balance: openingBalance, role: role, permission: permission } = this.data;
-    this.formGroup.patchValue({
-      userName,
-      password,
-      mobileNumber,
-      openingBalance,
-      role,
-      permission
-    });
-  }
+  // fillForm() {
+  //   const { company: company, first_ame: firstName, address: address, email: email, mobile_No: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier: tier } = this.data;
+  //   this.formGroup.patchValue({
+  //     company,
+  //     firstName,
+  //     address,
+  //     email,
+  //     mobileNumber,
+  //     dueLimit,
+  //     balance,
+  //     other,
+  //     tier
+  //   });
+  // }
 }
