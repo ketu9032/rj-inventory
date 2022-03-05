@@ -9,22 +9,23 @@ exports.findAll = async (req, res) => {
     let searchQuery = 'where true';
     if (search) {
       searchQuery += ` and
-        (code description '%${search}%'
-          or is_deleted ilike '%${search}%'
+        (description ilike '%${search}%'
           or user_name ilike '%${search}%'
-          or date ilike '%${search}%'
-          or name ilike '%${search}%'
+          or amount::text ilike '%${search}%'
+          or date::text ilike '%${search}%'
         )`;
     }
 
     let offset = pageSize * pageNumber - pageSize;
 
-    const response = await pool.query(
-      `select count(t.id) over() as total, t.id, description, t.is_deleted, amount, t.user_id, u.user_name, t.date
+    let query = `
+    select count(t.id) over() as total, t.id, description, t.is_deleted, amount, t.user_id, u.user_name, t.date
       FROM transfers t
       join users u
       on u.id = t.user_id  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
-    );
+
+console.log(query);
+    const response = await pool.query(query);
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
