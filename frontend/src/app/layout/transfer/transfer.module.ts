@@ -8,9 +8,11 @@ import { MaterialModule } from 'src/app/shared/modules/material/material.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
+import { AddTransferComponent } from './add-transfer/add-transfer.component';
+import { DeleteTransferComponent } from './delete-transfer/delete-transfer.component';
 
 @NgModule({
-  declarations: [TransferComponent],
+  declarations: [TransferComponent, AddTransferComponent, DeleteTransferComponent],
   imports: [
     CommonModule,
     TransferRoutingModule,
@@ -23,7 +25,7 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [
-    TransferComponent
+    TransferComponent, AddTransferComponent, DeleteTransferComponent
   ],
 })
 export class TransferModule { }
