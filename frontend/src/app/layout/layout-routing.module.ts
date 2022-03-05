@@ -29,7 +29,7 @@ const routes: Routes = [
       {
         path: 'customers',
         loadChildren: () =>
-          import('./Customers/customers.module').then((m) => m.CustomersModule)
+          import('./customers/customers.module').then((m) => m.CustomersModule)
       },
       {
         path: 'items',
@@ -86,7 +86,7 @@ const routes: Routes = [
         loadChildren: () =>
           import('./history/history.module').then((m) => m.HistoryModule)
       },
-      
+
     ]
   }
 ];

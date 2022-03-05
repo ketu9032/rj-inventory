@@ -1,5 +1,9 @@
 <div class="container">
     <h1 mat-dialog-title> {{ !this.data ? 'Add user' : 'Update user' }} </h1>
+
+    <mat-divider></mat-divider>
+    <br>
+
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
         <mat-form-field>
@@ -69,10 +73,12 @@
         </div>
         <div class="btn-update">
             <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
-        <span>
-          {{ !this.data ? 'Save' : 'Update' }}
-        </span>
-      </button>
+
+                <span>
+                    {{ !this.data ? 'Save' : 'Update' }}
+                </span>
+            </button>
         </div>
     </form>
 </div>
+

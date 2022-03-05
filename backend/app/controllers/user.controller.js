@@ -135,3 +135,16 @@ exports.update = async (req, res) => {
     });
   }
 };
+
+exports.getUserDropDown = async (req, res) => {
+  try {
+    const response = await pool.query(`select id, user_name FROM users `);
+
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
