@@ -73,7 +73,7 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const { code, name } = req.body;
+    const { code, name, id } = req.body;
 
     if (!code || !name) {
       res
