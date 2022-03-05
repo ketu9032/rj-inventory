@@ -6,6 +6,7 @@ import { RestService } from 'src/app/shared/services';
 @Injectable({ providedIn: 'root'})
 export class UserService {
   private url = 'api/users';
+  private getUserDropDownURL = 'api/getUserDropDown';
 
   constructor(private restService: RestService) {}
 
@@ -21,4 +22,8 @@ export class UserService {
   public removeUser(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
+  public getUserDropDown() {
+    return this.restService.get<any>(`${this.getUserDropDownURL}`);
+  }
+
 }

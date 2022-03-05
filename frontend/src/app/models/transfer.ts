@@ -1,6 +1,6 @@
 
 export interface ITransferData {
-  id: number,  userId: number, description: string, amount: number,  date: string
+  id: number,  user_id: number, description: string, amount: number,  date: string
  
 }
 

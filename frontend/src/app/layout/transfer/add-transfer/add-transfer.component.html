@@ -5,9 +5,9 @@
         <!-- Date start -->
         <mat-form-field color="accent">
             <mat-label>Date</mat-label>
-            <input matInput formControlName="date" type="date">
-            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-            <mat-datepicker #picker1></mat-datepicker>
+            <input matInput formControlName="date" [matDatepicker]="date">
+            <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+            <mat-datepicker #date></mat-datepicker>
         </mat-form-field>
 
 
@@ -44,8 +44,8 @@
         <mat-form-field>
             <mat-label>User To</mat-label>
             <mat-select formControlName="user" name="user">
-                <mat-option *ngFor="let role of roles" [value]="role.value">
-                    {{role.value}}
+                <mat-option *ngFor="let user of users" [value]="user.id">
+                    {{user.user_name}}
                 </mat-option>
             </mat-select>
         </mat-form-field>

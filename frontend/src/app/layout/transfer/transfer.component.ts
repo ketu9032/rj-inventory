@@ -21,7 +21,7 @@ export class TransferComponent implements OnInit {
     'date',
     'description',
     'amount',
-    'user',
+    'user_name',
     'action'
   ];
   dataSource: any = [];
@@ -128,5 +128,7 @@ export class TransferComponent implements OnInit {
     this.tableParams.pageNumber = event.pageIndex + 1;
     this.getTransfer();
   }
+
+
 
 }
