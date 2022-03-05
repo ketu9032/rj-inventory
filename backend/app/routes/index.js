@@ -3,6 +3,8 @@ const router = new express.Router();
 const users = require('./../controllers/user.controller');
 const customers = require('./../controllers/customer.controller');
 const transfers = require('./../controllers/transfer.controller');
+const suppliers = require('./../controllers/supplier.controller');
+
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
 const { MESSAGES } = require('../constant/messages');
@@ -41,12 +43,15 @@ router.post('/api/tiers', tiers.add);
 router.put('/api/tiers', tiers.update);
 router.get('/api/getTierDropDown', tiers.getTierDropDown);
 
-
-
 router.delete('/api/transfers', transfers.delete);
 router.get('/api/transfers', transfers.findAll);
 router.post('/api/transfers', transfers.add);
 router.put('/api/transfers', transfers.update);
+
+router.delete('/api/suppliers', suppliers.delete);
+router.get('/api/suppliers', suppliers.findAll);
+router.post('/api/suppliers', suppliers.add);
+router.put('/api/suppliers', suppliers.update);
 
 
 module.exports = router;
