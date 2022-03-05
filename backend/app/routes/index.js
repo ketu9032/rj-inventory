@@ -31,6 +31,7 @@ router.delete('/api/users', users.delete);
 router.get('/api/users', users.findAll);
 router.post('/api/users', users.add);
 router.put('/api/users', users.update);
+router.get('/api/getUserDropDown', users.getUserDropDown);
 
 router.delete('/api/customers', customers.delete);
 router.get('/api/customers', customers.findAll);
