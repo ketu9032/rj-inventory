@@ -1,0 +1,61 @@
+<div class="container">
+    <h1 mat-dialog-title> {{ !this.data ? 'Add Transfer' : 'Update Transfer' }} </h1>
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+        <!-- Date start -->
+        <mat-form-field color="accent">
+            <mat-label>Date</mat-label>
+            <input matInput formControlName="date" type="date">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+
+
+        <!-- Description start -->
+        <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+        formGroup.controls.description.touched &&
+        !formGroup.controls.description.value
+      ">
+                <span class="error">Description is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- Amount start -->
+        <mat-form-field>
+            <mat-label>Amount</mat-label>
+            <input matInput formControlName="amount" type="number" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.amount.touched &&
+          !formGroup.controls.amount.value
+        ">
+                <span class="error">Amount Balance is Required</span>
+
+            </ng-container>
+        </div>
+
+        <!-- Amount start -->
+        <mat-form-field>
+            <mat-label>User To</mat-label>
+            <mat-select formControlName="user" name="user">
+                <mat-option *ngFor="let role of roles" [value]="role.value">
+                    {{role.value}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div class="btn-update">
+            <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
+        <span>
+          {{ !this.data ? 'Save' : 'Update' }}
+        </span>
+      </button>
+        </div>
+    </form>
+</div>
