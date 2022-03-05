@@ -1,3 +1,5 @@
+import { CategoryComponent } from './cateogry/category.component';
+import { MatDialog } from '@angular/material/dialog';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -6,8 +8,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./expense.component.scss']
 })
 export class ExpenseComponent implements OnInit {
-  ngOnInit() { }
+  ngOnInit() {}
 
-  constructor() { }
+  constructor(public dialog: MatDialog) {}
 
+  openCategory() {
+    this.dialog
+      .open(CategoryComponent, {
+        width: 'auto',
+        height: '500px'
+      })
+      .afterClosed()
+      .subscribe((result) => {});
+  }
 }

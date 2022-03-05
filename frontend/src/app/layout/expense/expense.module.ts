@@ -1,3 +1,6 @@
+import { DeleteCategoryComponent } from './cateogry/delete-category/delete-category.component';
+import { AddCategoryComponent } from './cateogry/add-category/add-category.component';
+import { CategoryComponent } from './cateogry/category.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -10,7 +13,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 
 @NgModule({
-  declarations: [ExpenseComponent],
+  declarations: [
+    ExpenseComponent,
+    CategoryComponent,
+    AddCategoryComponent,
+    DeleteCategoryComponent
+  ],
   imports: [
     CommonModule,
     ExpenseRoutingModule,
@@ -23,7 +31,9 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [
-    ExpenseComponent
-  ],
+    CategoryComponent,
+    AddCategoryComponent,
+    DeleteCategoryComponent
+  ]
 })
-export class ExpenseModule { }
+export class ExpenseModule {}

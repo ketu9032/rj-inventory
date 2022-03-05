@@ -1,0 +1,110 @@
+import { CategoriesService } from './../../services/categories.service';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ITiersData } from 'src/app/models/tiers';
+
+@Component({
+  selector: 'app-add-category',
+  templateUrl: './add-category.component.html',
+  styleUrls: ['./add-category.component.scss']
+})
+export class AddCategoryComponent implements OnInit {
+  formGroup: FormGroup;
+  selectedRole: string
+  tires = []
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: ITiersData,
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<AddCategoryComponent>,
+    private formBuilder: FormBuilder,
+    public snackBar: MatSnackBar,
+    private categoriesService: CategoriesService,
+    ) { }
+
+  ngOnInit() {
+    this.initializeForm();
+    if (this.data && this.data.id) {
+      this.fillForm();
+    }
+  }
+
+  initializeForm(): void {
+    this.formGroup = this.formBuilder.group({
+      code: ['', Validators.required],
+      name: ['', Validators.required],
+
+    });
+  }
+
+  saveCategory(): void {
+    const { code, name } = this.formGroup.value;
+    this.categoriesService
+      .addCategory({
+        code,
+        name
+      })
+      .subscribe(
+        (response) => {
+          this.snackBar.open('Category saved successfully', 'OK', {
+            duration: 3000
+          });
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          this.snackBar.open(
+            (error.error && error.error.message) || error.message,
+            'Ok', {
+            duration: 3000
+          }
+          );
+        },
+        () => { }
+      );
+  }
+
+  updateCategory(): void {
+    const { code, name } = this.formGroup.value;
+    this.categoriesService
+      .editCategory({
+        id: this.data.id,
+        code,
+        name
+      })
+      .subscribe(
+        (response) => {
+          this.snackBar.open('Category updated Successfully', 'OK', {
+            duration: 3000
+          });
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          this.snackBar.open(
+            (error.error && error.error.message) || error.message,
+            'Ok', {
+            duration: 3000
+          }
+          );
+        },
+        () => { }
+      );
+  }
+
+  onSubmit() {
+    if (this.data && this.data.id) {
+      this.updateCategory();
+    } else {
+      this.saveCategory();
+    }
+  }
+
+  fillForm() {
+    const { code: code, name: name } = this.data;
+    this.formGroup.patchValue({
+      code,
+      name
+    });
+  }
+}
