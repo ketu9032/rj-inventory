@@ -58,7 +58,7 @@ exports.add = async (req, res) => {
       return;
     }
     await pool.query(
-      `INSERT INTO tiers (code, name, address, email, mobile_no, due_limit, balance, other, tier)
+      `INSERT INTO tiers (code, name)
       VALUES('${code}', '${name}');
       `
     );
