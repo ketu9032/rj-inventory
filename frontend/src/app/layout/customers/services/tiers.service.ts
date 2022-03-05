@@ -4,12 +4,12 @@ import { IMatTableParams } from 'src/app/models/table';
 import { ITiersParams } from 'src/app/models/tiers';
 import { RestService } from 'src/app/shared/services';
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class TiersService {
   private getTierDropDownURL = 'api/getTierDropDown';
-  private tierURL = '/api/tiers';
+  private tierURL = 'api/tiers';
 
-  constructor(private restService: RestService) {}
+  constructor(private restService: RestService) { }
 
   public getTierDropDown() {
     return this.restService.get<any>(`${this.getTierDropDownURL}`);
@@ -27,5 +27,4 @@ export class TiersService {
   public removeTiers(id: string) {
     return this.restService.delete(`${this.tierURL}?id=${id}`);
   }
- 
 }

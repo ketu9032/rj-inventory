@@ -2,9 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
-import { ICustomersData } from 'src/app/models/customers';
-import { CustomersService } from '../../services/customers.service';
+import { ITiersData } from 'src/app/models/tiers';
 import { TiersService } from '../../services/tiers.service';
 
 @Component({
@@ -18,7 +16,7 @@ export class AddTierComponent implements OnInit {
   tires = []
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ICustomersData,
+    @Inject(MAT_DIALOG_DATA) public data: ITiersData,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<AddTierComponent>,
     private formBuilder: FormBuilder,
@@ -28,9 +26,8 @@ export class AddTierComponent implements OnInit {
 
   ngOnInit() {
     this.initializeForm();
-  //  this.getTierDropDown();
     if (this.data && this.data.id) {
-    //  this.fillForm();
+      this.fillForm();
     }
   }
 
@@ -38,7 +35,7 @@ export class AddTierComponent implements OnInit {
     this.formGroup = this.formBuilder.group({
       code: ['', Validators.required],
       name: ['', Validators.required],
-      
+
     });
   }
 
@@ -68,79 +65,46 @@ export class AddTierComponent implements OnInit {
       );
   }
 
-  // updateCustomers(): void {
-  //   const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
-  //   this.customersService
-  //     .editCustomers({
-  //       id: this.data.id,
-  //       company,
-  //       firstName,
-  //       address,
-  //       email,
-  //       mobileNumber,
-  //       dueLimit,
-  //       balance,
-  //       other,
-  //       tierId
-  //     })
-  //     .subscribe(
-  //       (response) => {
-  //         this.snackBar.open('User updated Successfully', 'OK', {
-  //           duration: 3000
-  //         });
-  //         this.dialogRef.close(true);
-  //       },
-  //       (error) => {
-  //         this.snackBar.open(
-  //           (error.error && error.error.message) || error.message,
-  //           'Ok', {
-  //           duration: 3000
-  //         }
-  //         );
-  //       },
-  //       () => { }
-  //     );
-  // }
+  updateTier(): void {
+    const { code, name } = this.formGroup.value;
+    this.tiersService
+      .editTiers({
+        id: this.data.id,
+        code,
+        name
+      })
+      .subscribe(
+        (response) => {
+          this.snackBar.open('Tier updated Successfully', 'OK', {
+            duration: 3000
+          });
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          this.snackBar.open(
+            (error.error && error.error.message) || error.message,
+            'Ok', {
+            duration: 3000
+          }
+          );
+        },
+        () => { }
+      );
+  }
 
   onSubmit() {
     if (this.data && this.data.id) {
-  //    this.updateCustomers();
+      this.updateTier();
     } else {
       this.saveTier();
     }
   }
 
-  // fillForm() {
-  //   const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
-  //   this.formGroup.patchValue({
-  //     company,
-  //     firstName,
-  //     address,
-  //     email,
-  //     mobileNumber,
-  //     dueLimit,
-  //     balance,
-  //     other,
-  //     tier: tierId
-  //   });
-  // }
-
-  // getTierDropDown() {
-  //   this.tiersService
-  //     .getTierDropDown()
-  //     .subscribe(
-  //       (response) => {
-  //         this.tires =  response;
-  //       },
-  //       (error) => {
-  //         this.snackBar.open(
-  //           (error.error && error.error.message) || error.message,
-  //           'Ok', {
-  //           duration: 3000
-  //         }
-  //         );
-  //       },
-  //       () => { }
-  //     );
-  // }
+  fillForm() {
+    const { code: code, name: name } = this.data;
+    this.formGroup.patchValue({
+      code,
+      name
+    });
+  }
 }

@@ -1,20 +1,15 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
-import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
-import { IUserData } from 'src/app/models/user';
+import { ITiersData } from 'src/app/models/tiers';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { AddCustomersComponent } from '../add-customers/add-customers.component';
-import { DeleteCustomersComponent } from '../delete-customers/delete-customers.component';
-import { CustomersService } from '../services/customers.service';
 import { TiersService } from '../services/tiers.service';
 import { AddTierComponent } from './add-tier/add-tier.component';
+import { DeleteTierComponent } from './delete-tier/delete-tier.component';
 
 @Component({
   selector: 'app-tier-customers',
@@ -67,7 +62,7 @@ export class TierComponent implements OnInit {
     this.loader = true;
     this.tiersService.getTiers(this.tableParams).subscribe(
       (newTier: any[]) => {
-        this.dataSource = new MatTableDataSource<ICustomersData>(newTier);
+        this.dataSource = new MatTableDataSource<ITiersData>(newTier);
         if (newTier.length > 0) {
           this.totalRows = newTier[0].total;
         }
@@ -91,6 +86,7 @@ export class TierComponent implements OnInit {
     this.dialog
       .open(AddTierComponent, {
         width: '400px'
+        
       })
       .afterClosed()
       .subscribe((result) => {
@@ -102,7 +98,7 @@ export class TierComponent implements OnInit {
   onEditNewTier(element) {
     this.dialog
       .open(AddTierComponent, {
-        width: '400px',
+        width: '600px',
         data: element
       })
       .afterClosed()
@@ -114,7 +110,7 @@ export class TierComponent implements OnInit {
   }
   confirmDialog(id: string): void {
     this.dialog
-      .open(DeleteCustomersComponent, {
+      .open(DeleteTierComponent, {
         maxWidth: '400px',
         data: id
       })

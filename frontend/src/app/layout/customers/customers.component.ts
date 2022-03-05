@@ -136,15 +136,15 @@ export class CustomersComponent implements OnInit {
 
   openTires() {
     this.dialog
-    .open(TierComponent, {
-      width: '600px'
-    })
-    .afterClosed()
-    .subscribe((result) => {
-      if (result) {
-        this.getCustomers();
-      }
-    });
+      .open(TierComponent, {
+        width: 'auto',
+        height: '500px'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.getCustomers();
+        }
+      });
   }
-
 }
