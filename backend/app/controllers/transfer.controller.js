@@ -9,7 +9,10 @@ exports.findAll = async (req, res) => {
     let searchQuery = 'where true';
     if (search) {
       searchQuery += ` and
-        (code ilike '%${search}%'
+        (code description '%${search}%'
+          or is_deleted ilike '%${search}%'
+          or user_name ilike '%${search}%'
+          or date ilike '%${search}%'
           or name ilike '%${search}%'
         )`;
     }
@@ -17,8 +20,10 @@ exports.findAll = async (req, res) => {
     let offset = pageSize * pageNumber - pageSize;
 
     const response = await pool.query(
-      `select count(id) over() as total, id, code, name
-      FROM tiers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
+      `select count(t.id) over() as total, t.id, description, t.is_deleted, amount, t.user_id, u.user_name, t.date
+      FROM transfers t
+      join users u
+      on u.id = t.user_id  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -38,7 +43,7 @@ exports.delete = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    await pool.query(`delete from tiers where "id" = '${id}'`);
+    await pool.query(`delete from transfers where "id" = '${id}'`);
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -49,17 +54,17 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const { code, name } = req.body;
+    const { userId, description, amount, date } = req.body;
 
-    if (!code || !name) {
+    if (!userId || !description || !amount || !date) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
     await pool.query(
-      `INSERT INTO tiers (code, name)
-      VALUES('${code}', '${name}');
+      `INSERT INTO transfers (user_id, description, amount, date)
+      VALUES('${userId}', '${description}', '${amount}', '${date}');
       `
     );
 
@@ -73,32 +78,20 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const { code, name, id } = req.body;
+    const { userId, description, amount, date, id } = req.body;
 
-    if (!code || !name) {
+    if (!userId || !description || !amount || !date || !id) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
     await pool.query(
-      `UPDATE tiers SET code='${code}', name='${name}' where id = ${id};
+      `UPDATE transfers SET user_id='${userId}', description='${description}' , amount='${amount}', date='${date}' where id = ${id};
        `
     );
 
     res.status(STATUS_CODE.SUCCESS).send();
-  } catch (error) {
-    res.status(STATUS_CODE.ERROR).send({
-      message: error.message || MESSAGES.COMMON.ERROR
-    });
-  }
-};
-
-exports.getTierDropDown = async (req, res) => {
-  try {
-    const response = await pool.query(`select id, name, code FROM tiers `);
-
-    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
