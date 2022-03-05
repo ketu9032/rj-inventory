@@ -1,33 +1,30 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
+import { IUserData } from 'src/app/models/user';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { AddCustomersComponent } from './add-customers/add-customers.component';
-import { DeleteCustomersComponent } from './delete-customers/delete-customers.component';
-import { CustomersService } from './services/customers.service';
-import { TierComponent } from './tier/tier.component';
+import { AddCustomersComponent } from '../add-customers/add-customers.component';
+import { DeleteCustomersComponent } from '../delete-customers/delete-customers.component';
+import { CustomersService } from '../services/customers.service';
+import { TiersService } from '../services/tiers.service';
+import { AddTierComponent } from './add-tier/add-tier.component';
 
 @Component({
-  selector: 'app-customers',
-  templateUrl: './customers.component.html',
-  styleUrls: ['./customers.component.scss']
+  selector: 'app-tier-customers',
+  templateUrl: './tier.component.html',
+  styleUrls: ['./tier.component.scss']
 })
-export class CustomersComponent implements OnInit {
+export class TierComponent implements OnInit {
   displayedColumns: string[] = [
-    'company',
-    'first_name',
-    'address',
-    'email',
-    'mobile_no',
-    'due_limit',
-    'balance',
-    'other',
-    'tier_name',
+    'code',
+    'name',
     'action'
   ];
   dataSource: any = [];
@@ -47,32 +44,32 @@ export class CustomersComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private customersService: CustomersService,
+    private tiersService: TiersService,
     public snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
-    this.getCustomers();
+    this.getTier();
   }
 
   sortData(sort: Sort) {
     this.tableParams.orderBy = sort.active;
     this.tableParams.direction = sort.direction;
     this.tableParams.pageNumber = 1;
-    this.getCustomers();
+    this.getTier();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
 
-  getCustomers() {
+  getTier() {
     this.loader = true;
-    this.customersService.getCustomers(this.tableParams).subscribe(
-      (newCustomers: any[]) => {
-        this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
-        if (newCustomers.length > 0) {
-          this.totalRows = newCustomers[0].total;
+    this.tiersService.getTiers(this.tableParams).subscribe(
+      (newTier: any[]) => {
+        this.dataSource = new MatTableDataSource<ICustomersData>(newTier);
+        if (newTier.length > 0) {
+          this.totalRows = newTier[0].total;
         }
         setTimeout(() => {
           this.paginator.pageIndex = this.tableParams.pageNumber - 1;
@@ -90,28 +87,28 @@ export class CustomersComponent implements OnInit {
     );
   }
 
-  onAddNewCustomers(): void {
+  onAddNewTier(): void {
     this.dialog
-      .open(AddCustomersComponent, {
+      .open(AddTierComponent, {
         width: '400px'
       })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.getCustomers();
+          this.getTier();
         }
       });
   }
-  onEditNewCustomers(element) {
+  onEditNewTier(element) {
     this.dialog
-      .open(AddCustomersComponent, {
+      .open(AddTierComponent, {
         width: '400px',
         data: element
       })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.getCustomers();
+          this.getTier();
         }
       });
   }
@@ -124,27 +121,13 @@ export class CustomersComponent implements OnInit {
       .afterClosed()
       .subscribe((result) => {
         if (result && result.data === true) {
-          this.getCustomers();
+          this.getTier();
         }
       });
   }
   pageChanged(event: PageEvent) {
     this.tableParams.pageSize = event.pageSize;
     this.tableParams.pageNumber = event.pageIndex + 1;
-    this.getCustomers();
+    this.getTier();
   }
-
-  openTires() {
-    this.dialog
-    .open(TierComponent, {
-      width: '600px'
-    })
-    .afterClosed()
-    .subscribe((result) => {
-      if (result) {
-        this.getCustomers();
-      }
-    });
-  }
-
 }

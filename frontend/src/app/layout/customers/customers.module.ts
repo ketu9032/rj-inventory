@@ -10,9 +10,12 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { AddCustomersComponent } from './add-customers/add-customers.component';
 import { CustomersService } from './services/customers.service';
 import { CustomersRoutingModule } from './customers-routing.module';
+import { DeleteCustomersComponent } from './delete-customers/delete-customers.component';
+import { TierComponent } from './tier/tier.component';
+import { AddTierComponent } from './tier/add-tier/add-tier.component';
 
 @NgModule({
-  declarations: [CustomersComponent, AddCustomersComponent],
+  declarations: [CustomersComponent, AddCustomersComponent, DeleteCustomersComponent, TierComponent, AddTierComponent],
   imports: [
     CommonModule,
     CustomersRoutingModule,
@@ -25,7 +28,7 @@ import { CustomersRoutingModule } from './customers-routing.module';
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [
-    AddCustomersComponent],
+    AddCustomersComponent, DeleteCustomersComponent, TierComponent, AddTierComponent],
   providers: [CustomersService]
 })
 export class CustomersModule { }
