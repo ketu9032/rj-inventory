@@ -4,4 +4,5 @@ export interface IMatTableParams {
     orderBy: string;
     direction: string ;
     search: string;
+    active: boolean;
 }

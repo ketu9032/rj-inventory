@@ -47,30 +47,32 @@
         </mat-form-field>
 
         <mat-form-field>
-            <mat-label>Opening Balance</mat-label>
-            <input matInput formControlName="openingBalance" type="number" />
+            <mat-label>Balance</mat-label>
+            <input matInput formControlName="balance" type="number" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.openingBalance.touched &&
-          !formGroup.controls.openingBalance.value
+          formGroup.controls.balance.touched &&
+          !formGroup.controls.balance.value
         ">
-                <span class="error">Opening Balance is Required</span>
+                <span class="error">Balance is Required</span>
 
             </ng-container>
         </div>
-        <mat-form-field>
-            <mat-label>Permission</mat-label>
-            <input matInput formControlName="permission" />
-        </mat-form-field>
+
         <div>
-            <ng-container *ngIf="
-          formGroup.controls.permission.touched &&
-          !formGroup.controls.permission.value
-        ">
-                <span class="error">Permission is Required</span>
+            <mat-label>Permission</mat-label>
+            <br>
+            <br>
+
+            <ng-container *ngFor="let permission of (permissions | keyvalue)">
+                <span class="permission">
+                    <mat-checkbox (click)="onPermissionChange(permission.key)" [checked]="permission.value">{{permission.key}}</mat-checkbox>
+                </span>
             </ng-container>
         </div>
+
+        <br>
         <div class="btn-update">
             <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
 
@@ -81,4 +83,3 @@
         </div>
     </form>
 </div>
-

@@ -9,3 +9,9 @@ table {
 .margin{
   margin: 0 10px 0  10px;
 }
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

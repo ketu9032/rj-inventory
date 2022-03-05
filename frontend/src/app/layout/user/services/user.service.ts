@@ -11,7 +11,7 @@ export class UserService {
   constructor(private restService: RestService) {}
 
   public getUser(tablePrams: IMatTableParams) {
-    return this.restService.get<any>(`${this.url}?orderBy=${tablePrams.orderBy}&direction=${tablePrams.direction}&pageSize=${tablePrams.pageSize}&pageNumber=${tablePrams.pageNumber}&search=${tablePrams.search}`);
+    return this.restService.get<any>(`${this.url}?orderBy=${tablePrams.orderBy}&direction=${tablePrams.direction}&pageSize=${tablePrams.pageSize}&pageNumber=${tablePrams.pageNumber}&search=${tablePrams.search}&active=${tablePrams.active}`);
   }
   public addUser(user: IUserParams) {
     return this.restService.post(`${this.url}`, user);

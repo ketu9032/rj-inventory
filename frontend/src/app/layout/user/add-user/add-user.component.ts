@@ -1,6 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA
+} from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { IUserData } from 'src/app/models/user';
@@ -13,12 +17,25 @@ import { UserService } from '../services/user.service';
 })
 export class AddUserComponent implements OnInit {
   formGroup: FormGroup;
-  selectedRole: string
-  roles = [
-    { value: "Owner" },
-    { value: "Employees" }
-  ]
-
+  selectedRole: string;
+  roles = [{ value: 'Owner' }, { value: 'Employees' }];
+  permissions = {
+    dashboard: false,
+    cdf: false,
+    customers: false,
+    items: false,
+    sales: false,
+    sales_quotation: false,
+    suppliers: false,
+    purchase: false,
+    purchase_quotation: false,
+    expense: false,
+    transfer: false,
+    analysis: false,
+    roj_med: false,
+    users: false,
+    history: false
+  };
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IUserData,
@@ -28,8 +45,7 @@ export class AddUserComponent implements OnInit {
     public snackBar: MatSnackBar,
     private router: Router,
     private userService: UserService
-
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.initializeForm();
@@ -43,22 +59,22 @@ export class AddUserComponent implements OnInit {
       userName: ['', Validators.required],
       password: ['', Validators.required],
       mobileNumber: ['', Validators.required],
-      openingBalance: ['', Validators.required],
+      balance: [''],
       role: ['', Validators.required],
-      permission: ['', Validators.required]
     });
   }
 
   saveUser(): void {
-    const { userName, password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
+    const { userName, password, mobileNumber, balance, role } =
+      this.formGroup.value;
     this.userService
       .addUser({
         userName,
         password,
         mobileNumber,
-        openingBalance,
+        balance,
         role,
-        permission
+        permission: this.permissions
       })
       .subscribe(
         (response) => {
@@ -70,26 +86,28 @@ export class AddUserComponent implements OnInit {
         (error) => {
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
-            'Ok', {
-            duration: 3000
-          }
+            'Ok',
+            {
+              duration: 3000
+            }
           );
         },
-        () => { }
+        () => {}
       );
   }
 
   updateUser(): void {
-    const { userName, password, mobileNumber, openingBalance, role, permission } = this.formGroup.value;
+    const { userName, password, mobileNumber, balance, role } =
+      this.formGroup.value;
     this.userService
       .editUser({
         id: this.data.id,
         userName,
         password,
         mobileNumber,
-        openingBalance,
+        balance,
         role,
-        permission
+        permission: this.permissions
       })
       .subscribe(
         (response) => {
@@ -101,12 +119,13 @@ export class AddUserComponent implements OnInit {
         (error) => {
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
-            'Ok', {
-            duration: 3000
-          }
+            'Ok',
+            {
+              duration: 3000
+            }
           );
         },
-        () => { }
+        () => {}
       );
   }
 
@@ -119,14 +138,25 @@ export class AddUserComponent implements OnInit {
   }
 
   fillForm() {
-    const { user_name: userName, password: password, mobile_number: mobileNumber, opening_balance: openingBalance, role: role, permission: permission } = this.data;
+    const {
+      user_name: userName,
+      password: password,
+      mobile_number: mobileNumber,
+      balance: balance,
+      role: role,
+      permission
+    } = this.data;
     this.formGroup.patchValue({
       userName,
       password,
       mobileNumber,
-      openingBalance,
+      balance,
       role,
-      permission
     });
+    this.permissions = permission as any;
+  }
+
+  onPermissionChange(key: string) {
+    this.permissions[key] = !this.permissions[key];
   }
 }

@@ -23,9 +23,8 @@ export class UserComponent implements OnInit {
   displayedColumns: string[] = [
     'user_name',
     'mobile_number',
-    'opening_balance',
+    'balance',
     'role',
-    'permission',
     'action'
   ];
   dataSource: any = [];
@@ -41,6 +40,7 @@ export class UserComponent implements OnInit {
     orderBy: 'id',
     direction: "desc",
     search: '',
+    active: true
   }
 
   constructor(
@@ -130,6 +130,10 @@ export class UserComponent implements OnInit {
   pageChanged(event: PageEvent) {
     this.tableParams.pageSize = event.pageSize;
     this.tableParams.pageNumber = event.pageIndex + 1;
+    this.getUser();
+  }
+  toggleType() {
+    this.tableParams.active = !this.tableParams.active;
     this.getUser();
   }
 }
