@@ -6,6 +6,7 @@ import { RestService } from 'src/app/shared/services';
 @Injectable({ providedIn: 'root'})
 export class TransferService {
   private url = 'api/transfers';
+  
 
   constructor(private restService: RestService) {}
 
@@ -21,5 +22,7 @@ export class TransferService {
   public removeTransfer(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
+
+
 }
 
