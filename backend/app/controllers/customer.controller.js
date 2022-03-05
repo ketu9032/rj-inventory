@@ -37,7 +37,9 @@ exports.findAll = async(req, res) => {
                 due_limit,
                 balance,
                 other,
-                t.NAME AS tier 
+                tier_id as tier_id,
+                t.NAME AS tier_name,
+                t.code as tier_code 
             FROM
                 customers c 
                 JOIN
@@ -79,9 +81,9 @@ exports.delete = async(req, res) => {
 exports.add = async(req, res) => {
     try {
 
-        const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier } = req.body;
+        const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tierId } = req.body;
 
-        if (!company || !firstName || !address || !email || !mobileNumber || !dueLimit || !tier) {
+        if (!company || !firstName || !address || !email || !mobileNumber || !dueLimit || !tierId) {
             res
                 .status(STATUS_CODE.BAD)
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -89,8 +91,8 @@ exports.add = async(req, res) => {
         }
         await pool.query(
             `INSERT INTO customers
-      (company, first_name, address, email, mobile_no, due_limit, balance, other, tier)
-      VALUES('${company}', '${firstName}', '${address}', '${email}', '${mobileNumber}', '${dueLimit}', '${balance}', '${other}', '${tier}');
+      (company, first_name, address, email, mobile_no, due_limit, balance, other, tier_id)
+      VALUES('${company}', '${firstName}', '${address}', '${email}', '${mobileNumber}', '${dueLimit}', '${balance}', '${other}', '${tierId}');
       `
         );
 
@@ -105,8 +107,8 @@ exports.add = async(req, res) => {
 
 exports.update = async(req, res) => {
     try {
-        const { id, company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier } = req.body;
-        if (!company || !firstName || !address || !email || !mobileNumber || !dueLimit || !tier) {
+        const { id, company, firstName, address, email, mobileNumber, dueLimit, balance, other, tierId } = req.body;
+        if (!company || !firstName || !address || !email || !mobileNumber || !dueLimit || !tierId) {
             res
                 .status(STATUS_CODE.BAD)
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -114,7 +116,7 @@ exports.update = async(req, res) => {
         }
         await pool.query(
             `UPDATE customers
-      SET company='${company}', first_name='${firstName}', address='${address}', email='${email}', mobile_no='${mobileNumber}', due_limit='${dueLimit}', balance='${balance}', other='${other}', tier='${tier}' where id = ${id};
+      SET company='${company}', first_name='${firstName}', address='${address}', email='${email}', mobile_no='${mobileNumber}', due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}' where id = ${id};
        `
         );
 

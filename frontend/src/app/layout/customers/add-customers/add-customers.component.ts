@@ -52,7 +52,7 @@ export class AddCustomersComponent implements OnInit {
   }
 
   saveUser(): void {
-    const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier } = this.formGroup.value;
+    const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
     this.customersService
       .addCustomers({
         company,
@@ -63,7 +63,7 @@ export class AddCustomersComponent implements OnInit {
         dueLimit,
         balance,
         other,
-        tier
+        tierId
       })
       .subscribe(
         (response) => {
@@ -85,7 +85,7 @@ export class AddCustomersComponent implements OnInit {
   }
 
   updateCustomers(): void {
-    const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier } = this.formGroup.value;
+    const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
     this.customersService
       .editCustomers({
         id: this.data.id,
@@ -97,7 +97,7 @@ export class AddCustomersComponent implements OnInit {
         dueLimit,
         balance,
         other,
-        tier
+        tierId
       })
       .subscribe(
         (response) => {
@@ -127,7 +127,7 @@ export class AddCustomersComponent implements OnInit {
   }
 
   fillForm() {
-    const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier: tier } = this.data;
+    const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
     this.formGroup.patchValue({
       company,
       firstName,
@@ -137,7 +137,7 @@ export class AddCustomersComponent implements OnInit {
       dueLimit,
       balance,
       other,
-      tier
+      tier: tierId
     });
   }
 
