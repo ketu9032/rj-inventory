@@ -37,6 +37,7 @@ export class TransferComponent implements OnInit {
     orderBy: 'id',
     direction: "desc",
     search: '',
+    active: false
   }
 
   constructor(

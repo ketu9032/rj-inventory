@@ -1,28 +1,26 @@
 import { Injectable } from '@angular/core';
+import { ISuppliersParams } from 'src/app/models/suppliers';
 import { IMatTableParams } from 'src/app/models/table';
-import { ITransferParams } from 'src/app/models/transfer';
 import { RestService } from 'src/app/shared/services';
 
 @Injectable({ providedIn: 'root'})
-export class TransferService {
-  private url = 'api/transfers';
-  
+export class SuppliersService {
+  private url = 'api/suppliers';
 
   constructor(private restService: RestService) {}
 
-  public getTransfer(tablePrams: IMatTableParams) {
+  public getSuppliers(tablePrams: IMatTableParams) {
     return this.restService.get<any>(`${this.url}?orderBy=${tablePrams.orderBy}&direction=${tablePrams.direction}&pageSize=${tablePrams.pageSize}&pageNumber=${tablePrams.pageNumber}&search=${tablePrams.search}&active=${tablePrams.active}`);
   }
-  public addTransfer(transfer: ITransferParams) {
-    return this.restService.post(`${this.url}`, transfer);
+  public addSuppliers(suppliers: ISuppliersParams) {
+    return this.restService.post(`${this.url}`, suppliers);
   }
-  public editTransfer(transfer: ITransferParams) {
-    return this.restService.put(`${this.url}`, transfer);
+  public editSuppliers(suppliers: ISuppliersParams) {
+    return this.restService.put(`${this.url}`, suppliers);
   }
-  public removeTransfer(id: string) {
+  public removeSuppliers(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
 
 
 }
-

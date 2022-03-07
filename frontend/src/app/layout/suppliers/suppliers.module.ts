@@ -8,9 +8,11 @@ import { MaterialModule } from 'src/app/shared/modules/material/material.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
+import { AddSuppliersComponent } from './add-suppliers/add-suppliers.component';
+import { DeleteSuppliersComponent } from './delete-suppliers/delete-suppliers.component';
 
 @NgModule({
-  declarations: [SuppliersComponent],
+  declarations: [SuppliersComponent, AddSuppliersComponent, DeleteSuppliersComponent],
   imports: [
     CommonModule,
     SuppliersRoutingModule,
@@ -23,7 +25,7 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [
-    SuppliersComponent
+    SuppliersComponent, AddSuppliersComponent, DeleteSuppliersComponent
   ],
 })
 export class SuppliersModule { }

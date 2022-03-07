@@ -1,0 +1,71 @@
+<div class="container">
+    <h1 mat-dialog-title> {{ !this.data ? 'Add Suppliers' : 'Update Suppliers' }} </h1>
+    <mat-divider></mat-divider>
+    <br>
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+        <!-- company start -->
+        <mat-form-field>
+            <mat-label>Company</mat-label>
+            <input matInput formControlName="company" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.company.touched &&
+          !formGroup.controls.company.value
+        ">
+                <span class="error">Company is Required</span>
+            </ng-container>
+        </div>
+
+        <!--dueLimit start -->
+        <mat-form-field>
+            <mat-label>Due Limit</mat-label>
+            <input type="number" matInput formControlName="dueLimit" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.dueLimit.touched &&
+          !formGroup.controls.dueLimit.value
+        ">
+                <span class="error">Due limit is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- Balance start -->
+        <mat-form-field>
+            <mat-label>Balance</mat-label>
+            <input matInput formControlName="balance" type="number" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.balance.touched &&
+          !formGroup.controls.balance.value
+        ">
+                <span class="error">Balance is Required</span>
+            </ng-container>
+        </div>
+        <!-- Other start -->
+        <mat-form-field>
+            <mat-label>Other</mat-label>
+            <input matInput formControlName="other" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.other.touched &&
+          !formGroup.controls.other.value
+        ">
+                <span class="error">Other is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- button start -->
+        <div class="btn-update">
+            <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
+                <span>
+                    {{ !this.data ? 'Save' : 'Update' }}
+                </span>
+            </button>
+        </div>
+    </form>
+</div>
