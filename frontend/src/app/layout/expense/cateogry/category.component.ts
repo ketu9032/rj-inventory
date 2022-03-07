@@ -33,7 +33,8 @@ export class CategoryComponent implements OnInit {
     pageNumber: 1,
     orderBy: 'id',
     direction: 'desc',
-    search: ''
+    search: '',
+    active: false
   };
 
   constructor(
