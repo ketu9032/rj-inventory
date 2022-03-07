@@ -43,6 +43,7 @@ export class CustomersComponent implements OnInit {
     orderBy: 'id',
     direction: "desc",
     search: '',
+    active: false
   }
 
   constructor(

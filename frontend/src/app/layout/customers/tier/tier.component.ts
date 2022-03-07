@@ -35,6 +35,7 @@ export class TierComponent implements OnInit {
     orderBy: 'id',
     direction: "desc",
     search: '',
+    active: false
   }
 
   constructor(
