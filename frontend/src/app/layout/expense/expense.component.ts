@@ -16,7 +16,7 @@ export class ExpenseComponent implements OnInit {
     this.dialog
       .open(CategoryComponent, {
         width: 'auto',
-        height: '500px'
+        height: '550px'
       })
       .afterClosed()
       .subscribe((result) => {});

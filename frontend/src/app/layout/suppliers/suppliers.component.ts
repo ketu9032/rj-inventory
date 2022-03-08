@@ -37,7 +37,7 @@ export class SuppliersComponent implements OnInit {
     orderBy: 'id',
     direction: "desc",
     search: '',
-    active: false
+    active: true
   }
 
   constructor(
@@ -129,7 +129,8 @@ export class SuppliersComponent implements OnInit {
     this.tableParams.pageNumber = event.pageIndex + 1;
     this.getSuppliers();
   }
-
-
-
+  toggleType() {
+    this.tableParams.active = !this.tableParams.active;
+    this.getSuppliers();
+  }
 }

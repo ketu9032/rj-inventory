@@ -43,7 +43,7 @@ export class CustomersComponent implements OnInit {
     orderBy: 'id',
     direction: "desc",
     search: '',
-    active: false
+    active: true
   }
 
   constructor(
@@ -115,9 +115,9 @@ export class CustomersComponent implements OnInit {
           this.getCustomers();
         }
       });
-  }
-  confirmDialog(id: string): void {
-    this.dialog
+    }
+    confirmDialog(id: string): void {
+      this.dialog
       .open(DeleteCustomersComponent, {
         maxWidth: '400px',
         data: id
@@ -128,20 +128,25 @@ export class CustomersComponent implements OnInit {
           this.getCustomers();
         }
       });
-  }
-  pageChanged(event: PageEvent) {
-    this.tableParams.pageSize = event.pageSize;
+    }
+    pageChanged(event: PageEvent) {
+      this.tableParams.pageSize = event.pageSize;
     this.tableParams.pageNumber = event.pageIndex + 1;
     this.getCustomers();
   }
-
+  
   openTires() {
     this.dialog
-      .open(TierComponent, {
-        width: 'auto',
-        height: '500px'
-      })
-      .afterClosed()
-      .subscribe((result) => {});
+    .open(TierComponent, {
+      width: 'auto',
+      height: '500px'
+    })
+    .afterClosed()
+    .subscribe((result) => {});
+  }
+
+  toggleType() {
+    this.tableParams.active = !this.tableParams.active;
+    this.getCustomers();
   }
 }

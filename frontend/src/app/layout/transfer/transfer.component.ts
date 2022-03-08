@@ -37,7 +37,7 @@ export class TransferComponent implements OnInit {
     orderBy: 'id',
     direction: "desc",
     search: '',
-    active: false
+    active: true
   }
 
   constructor(
@@ -129,7 +129,10 @@ export class TransferComponent implements OnInit {
     this.tableParams.pageNumber = event.pageIndex + 1;
     this.getTransfer();
   }
-
+  toggleType() {
+    this.tableParams.active = !this.tableParams.active;
+    this.getTransfer();
+  }
 
 
 }
