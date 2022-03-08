@@ -23,7 +23,7 @@ export class CategoryComponent implements OnInit {
   displayedColumns: string[] = ['code', 'name', 'action'];
   dataSource: any = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  public defaultPageSize = PAGE_SIZE;
+  public defaultPageSize = 5;
   public pageSizeOptions = PAGE_SIZE_OPTION;
   @ViewChild(MatSort) sort: MatSort;
   loader: boolean = false;

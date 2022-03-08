@@ -1,18 +1,25 @@
 <div>
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
-    <div>
-        <mat-form-field>
-            <mat-label>Search...</mat-label>
-            <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getTransfer()">
-        </mat-form-field>
-        <button color="primary" class="margin" mat-raised-button (click)="getTransfer()">
+    <div class="header">
+        <div>
+            <mat-form-field>
+                <mat-label>Search...</mat-label>
+                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getTransfer()">
+            </mat-form-field>
+            <button color="primary" class="margin" mat-raised-button (click)="getTransfer()">
             Search
         </button>
 
-        <button color="primary" class="margin" mat-raised-button (click)="onAddNewUser()">
+            <button color="primary" class="margin" mat-raised-button (click)="onAddNewUser()">
             Add Transfer
         </button>
+        </div>
+
+        <div>
+            <mat-slide-toggle color="primary" (change)="toggleType()" [checked]="tableParams.active">Active</mat-slide-toggle>
+        </div>
     </div>
+
     <br />
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="id" matSortDirection="asc">

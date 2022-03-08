@@ -6,7 +6,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { IMatTableParams } from 'src/app/models/table';
 import { ITiersData } from 'src/app/models/tiers';
-import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
+import {  PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { TiersService } from '../services/tiers.service';
 import { AddTierComponent } from './add-tier/add-tier.component';
 import { DeleteTierComponent } from './delete-tier/delete-tier.component';
@@ -35,7 +35,7 @@ export class TierComponent implements OnInit {
     orderBy: 'id',
     direction: "desc",
     search: '',
-    active: false
+    active: true
   }
 
   constructor(
