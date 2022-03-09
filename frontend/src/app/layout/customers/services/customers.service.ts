@@ -2,15 +2,17 @@ import { Injectable } from '@angular/core';
 import { ICustomersParams } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Injectable({ providedIn: 'root'})
 export class CustomersService {
   private url = 'api/customers';
 
-  constructor(private restService: RestService) {}
+  constructor(private restService: RestService, private commonService: CommonService) {}
 
   public getCustomers(tablePrams: IMatTableParams) {
-    return this.restService.get<any>(`${this.url}?orderBy=${tablePrams.orderBy}&direction=${tablePrams.direction}&pageSize=${tablePrams.pageSize}&pageNumber=${tablePrams.pageNumber}&search=${tablePrams.search}`);
+    const queryString = this.commonService.toQueryString(tablePrams);
+    return this.restService.get<any>(`${this.url}${queryString}`);
   }
   public addCustomers(customers: ICustomersParams) {
     return this.restService.post(`${this.url}`, customers);

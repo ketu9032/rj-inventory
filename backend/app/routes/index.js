@@ -31,6 +31,8 @@ router.delete('/api/users', users.delete);
 router.get('/api/users', users.findAll);
 router.post('/api/users', users.add);
 router.put('/api/users', users.update);
+router.put('/api/users/changeStatus', users.changeStatus);
+
 router.get('/api/getUserDropDown', users.getUserDropDown);
 
 router.delete('/api/customers', customers.delete);
@@ -38,27 +40,32 @@ router.get('/api/customers', customers.findAll);
 router.post('/api/customers', customers.add);
 router.put('/api/customers', customers.update);
 router.get('/api/getCustomerDropDown', customers.getCustomerDropDown);
+router.put('/api/customers/changeStatus', customers.changeStatus);
 
 router.delete('/api/tiers', tiers.delete);
 router.get('/api/tiers', tiers.findAll);
 router.post('/api/tiers', tiers.add);
 router.put('/api/tiers', tiers.update);
 router.get('/api/getTierDropDown', tiers.getTierDropDown);
+router.put('/api/tiers/changeStatus', tiers.changeStatus);
 
 router.delete('/api/transfers', transfers.delete);
 router.get('/api/transfers', transfers.findAll);
 router.post('/api/transfers', transfers.add);
 router.put('/api/transfers', transfers.update);
+router.put('/api/transfers/changeStatus', transfers.changeStatus);
 
 router.delete('/api/suppliers', suppliers.delete);
 router.get('/api/suppliers', suppliers.findAll);
 router.post('/api/suppliers', suppliers.add);
 router.put('/api/suppliers', suppliers.update);
+router.put('/api/suppliers/changeStatus', suppliers.changeStatus);
 
 router.delete('/api/categories', categories.delete);
 router.get('/api/categories', categories.findAll);
 router.post('/api/categories', categories.add);
 router.put('/api/categories', categories.update);
+router.put('/api/categories/changeStatus', categories.changeStatus);
 router.get('/api/getCategoryDropDown', categories.getCategoryDropDown);
 
 module.exports = router;

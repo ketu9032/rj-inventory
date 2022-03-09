@@ -3,12 +3,13 @@ const { STATUS_CODE } = require('../constant/response-status');
 const { generateToken } = require('../utils/common');
 const { pool } = require('../db');
 
-exports.findAll = async (req, res) => {
-  try {
-    const { orderBy, direction, pageSize, pageNumber, search } = req.query;
-    let searchQuery = 'where true';
-    if (search) {
-      searchQuery += ` and
+exports.findAll = async(req, res) => {
+    try {
+        const { orderBy, direction, pageSize, pageNumber, search, active } = req.query;
+        let searchQuery = 'where true';
+        const offset = pageSize * pageNumber - pageSize;
+        if (search) {
+            searchQuery += ` and
         (company ilike '%${search}%'
           or first_name ilike '%${search}%'
           or address ilike '%${search}%'
@@ -19,12 +20,11 @@ exports.findAll = async (req, res) => {
           or other ilike '%${search}%'
           or tier ilike '%${search}%'
         )`;
-    }
+        }
+        searchQuery += ` and c.is_active = ${active}`;
 
-    let offset = pageSize * pageNumber - pageSize;
-
-    const response = await pool.query(
-      `
+        const response = await pool.query(
+            `
             SELECT
                 Count(c.id) OVER() AS total,
                 c.id,
@@ -45,128 +45,147 @@ exports.findAll = async (req, res) => {
                 tiers t
                 ON t.id = c.tier_id
             ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
-    );
+        );
 
-    res.status(STATUS_CODE.SUCCESS).send(response.rows);
-  } catch (error) {
-    res.status(STATUS_CODE.ERROR).send({
-      message: error.message || MESSAGES.COMMON.ERROR
-    });
-  }
+        res.status(STATUS_CODE.SUCCESS).send(response.rows);
+    } catch (error) {
+        res.status(STATUS_CODE.ERROR).send({
+            message: error.message || MESSAGES.COMMON.ERROR
+        });
+    }
 };
 
-exports.delete = async (req, res) => {
-  try {
-    const { id } = req.query;
-    if (!id) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
+exports.delete = async(req, res) => {
+    try {
+        const { id } = req.query;
+        if (!id) {
+            res
+                .status(STATUS_CODE.BAD)
+                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+            return;
+        }
+        await pool.query(`UPDATE customers
+        SET is_deleted = true where "id" = '${id}'`);
+        res.status(STATUS_CODE.SUCCESS).send();
+    } catch (error) {
+        res.status(STATUS_CODE.ERROR).send({
+            message: error.message || MESSAGES.COMMON.ERROR
+        });
     }
-    await pool.query(`delete from customers where "id" = '${id}'`);
-    res.status(STATUS_CODE.SUCCESS).send();
-  } catch (error) {
-    res.status(STATUS_CODE.ERROR).send({
-      message: error.message || MESSAGES.COMMON.ERROR
-    });
-  }
 };
 
-exports.add = async (req, res) => {
-  try {
-    const {
-      company,
-      firstName,
-      address,
-      email,
-      mobileNumber,
-      dueLimit,
-      balance,
-      other,
-      tierId
-    } = req.body;
+exports.add = async(req, res) => {
+    try {
+        const {
+            company,
+            firstName,
+            address,
+            email,
+            mobileNumber,
+            dueLimit,
+            balance,
+            other,
+            tierId
+        } = req.body;
 
-    if (
-      !company ||
-      !firstName ||
-      !address ||
-      !email ||
-      !mobileNumber ||
-      !dueLimit ||
-      !tierId
-    ) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
-    }
-    await pool.query(
-      `INSERT INTO customers
+        if (!company ||
+            !firstName ||
+            !address ||
+            !email ||
+            !mobileNumber ||
+            !dueLimit ||
+            !tierId
+        ) {
+            res
+                .status(STATUS_CODE.BAD)
+                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+            return;
+        }
+        await pool.query(
+            `INSERT INTO customers
       (company, first_name, address, email, mobile_no, due_limit, balance, other, tier_id)
       VALUES('${company}', '${firstName}', '${address}', '${email}', '${mobileNumber}', '${dueLimit}', '${balance}', '${other}', '${tierId}');
       `
-    );
+        );
 
-    res.status(STATUS_CODE.SUCCESS).send();
-  } catch (error) {
-    res.status(STATUS_CODE.ERROR).send({
-      message: error.message || MESSAGES.COMMON.ERROR
-    });
-  }
+        res.status(STATUS_CODE.SUCCESS).send();
+    } catch (error) {
+        res.status(STATUS_CODE.ERROR).send({
+            message: error.message || MESSAGES.COMMON.ERROR
+        });
+    }
 };
 
-exports.update = async (req, res) => {
-  try {
-    const {
-      id,
-      company,
-      firstName,
-      address,
-      email,
-      mobileNumber,
-      dueLimit,
-      balance,
-      other,
-      tierId
-    } = req.body;
-    if (
-      !company ||
-      !firstName ||
-      !address ||
-      !email ||
-      !mobileNumber ||
-      !dueLimit ||
-      !tierId ||
-      !id
-    ) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
-    }
-    await pool.query(
-      `UPDATE customers
+exports.update = async(req, res) => {
+    try {
+        const {
+            id,
+            company,
+            firstName,
+            address,
+            email,
+            mobileNumber,
+            dueLimit,
+            balance,
+            other,
+            tierId
+        } = req.body;
+        if (!company ||
+            !firstName ||
+            !address ||
+            !email ||
+            !mobileNumber ||
+            !dueLimit ||
+            !tierId ||
+            !id
+        ) {
+            res
+                .status(STATUS_CODE.BAD)
+                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+            return;
+        }
+        await pool.query(
+            `UPDATE customers
       SET company='${company}', first_name='${firstName}', address='${address}', email='${email}', mobile_no='${mobileNumber}', due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}' where id = ${id};
        `
-    );
+        );
 
-    res.status(STATUS_CODE.SUCCESS).send();
-  } catch (error) {
-    res.status(STATUS_CODE.ERROR).send({
-      message: error.message || MESSAGES.COMMON.ERROR
-    });
-  }
+        res.status(STATUS_CODE.SUCCESS).send();
+    } catch (error) {
+        res.status(STATUS_CODE.ERROR).send({
+            message: error.message || MESSAGES.COMMON.ERROR
+        });
+    }
 };
 
-exports.getCustomerDropDown = async (req, res) => {
-  try {
-    const response = await pool.query(`select id, company FROM customers `);
+exports.getCustomerDropDown = async(req, res) => {
+    try {
+        const response = await pool.query(`select id, company FROM customers where is_deleted = false and is_active = true`);
 
-    res.status(STATUS_CODE.SUCCESS).send(response.rows);
-  } catch (error) {
-    res.status(STATUS_CODE.ERROR).send({
-      message: error.message || MESSAGES.COMMON.ERROR
-    });
-  }
+        res.status(STATUS_CODE.SUCCESS).send(response.rows);
+    } catch (error) {
+        res.status(STATUS_CODE.ERROR).send({
+            message: error.message || MESSAGES.COMMON.ERROR
+        });
+    }
+};
+
+
+exports.changeStatus = async(req, res) => {
+    try {
+        const { id, status } = req.body;
+        if (!id) {
+            res
+                .status(STATUS_CODE.BAD)
+                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+            return;
+        }
+        await pool.query(`UPDATE customers
+      SET is_active = ${status} where "id" = '${id}'`);
+        res.status(STATUS_CODE.SUCCESS).send();
+    } catch (error) {
+        res.status(STATUS_CODE.ERROR).send({
+            message: error.message || MESSAGES.COMMON.ERROR
+        });
+    }
 };
