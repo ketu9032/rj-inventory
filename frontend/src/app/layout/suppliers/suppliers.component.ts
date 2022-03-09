@@ -19,7 +19,7 @@ import { SuppliersService } from './services/suppliers.service';
 export class SuppliersComponent implements OnInit {
   displayedColumns: string[] = [
     'company',
-    'dueLimit',
+    'due_limit',
     'balance',
     'other',
     'action'
