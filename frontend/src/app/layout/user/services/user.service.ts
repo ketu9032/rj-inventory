@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
-import { IUserParams } from 'src/app/models/user';
+import { IUserActiveParams, IUserParams } from 'src/app/models/user';
 import { RestService } from 'src/app/shared/services';
 
 @Injectable({ providedIn: 'root'})
 export class UserService {
   private url = 'api/users';
   private getUserDropDownURL = 'api/getUserDropDown';
+  private changeStatusURL = 'api/users/changeStatus';
 
   constructor(private restService: RestService) {}
 
@@ -24,6 +25,9 @@ export class UserService {
   }
   public getUserDropDown() {
     return this.restService.get<any>(`${this.getUserDropDownURL}`);
+  }
+  public changeStatus(user: IUserActiveParams) {
+    return this.restService.put(`${this.changeStatusURL}`, user);
   }
 
 }
