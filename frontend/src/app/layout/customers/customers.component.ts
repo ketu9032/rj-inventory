@@ -134,7 +134,7 @@ export class CustomersComponent implements OnInit {
     this.tableParams.pageNumber = event.pageIndex + 1;
     this.getCustomers();
   }
-  
+
   openTires() {
     this.dialog
     .open(TierComponent, {
@@ -149,4 +149,33 @@ export class CustomersComponent implements OnInit {
     this.tableParams.active = !this.tableParams.active;
     this.getCustomers();
   }
+
+  changeStatus(id: number): void {
+    this.customersService
+        .changeStatus({ id: id, status: !this.tableParams.active })
+        .subscribe(
+            (response) => {
+                if (!this.tableParams.active) {
+                    this.snackBar.open('Customers Active Successfully', 'OK', {
+                        duration: 3000
+                    })
+                } else {
+                    this.snackBar.open('Customers DActive Successfully', 'OK', {
+                        duration: 3000
+                    })
+                }
+    this.getCustomers();
+            },
+            (error) => {
+                this.snackBar.open(
+                    (error.error && error.error.message) || error.message,
+                    'Ok',
+                    {
+                        duration: 3000
+                    }
+                );
+            },
+            () => { }
+        );
+}
 }

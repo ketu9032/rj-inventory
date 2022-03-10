@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ICustomersParams } from 'src/app/models/customers';
+import { ICustomersActiveParams, ICustomersParams } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -7,6 +7,8 @@ import { CommonService } from 'src/app/shared/services/common.service';
 @Injectable({ providedIn: 'root'})
 export class CustomersService {
   private url = 'api/customers';
+  private customersChangeStatusURl = 'api/customers/changeStatus';
+
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -22,6 +24,9 @@ export class CustomersService {
   }
   public removeCustomers(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
+  }
+  public changeStatus(customers: ICustomersActiveParams) {
+    return this.restService.put(`${this.customersChangeStatusURl}`, customers);
   }
 
 }

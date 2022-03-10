@@ -6,3 +6,7 @@ export interface ICustomersData {
 export interface ICustomersParams {
   id?: number, company: string, firstName: string, address: string, email: string, mobileNumber: string, dueLimit: string, balance: number, other: string, tierId: number
 }
+
+export interface ICustomersActiveParams {
+    id: number, status: boolean
+}
