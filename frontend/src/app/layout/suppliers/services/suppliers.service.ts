@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ISuppliersParams } from 'src/app/models/suppliers';
+import { ISuppliersActiveParams, ISuppliersParams } from 'src/app/models/suppliers';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
 
 @Injectable({ providedIn: 'root'})
 export class SuppliersService {
   private url = 'api/suppliers';
+  private suppliersChangeStatusURL = 'api/suppliers/changeStatus';
 
   constructor(private restService: RestService) {}
 
@@ -21,6 +22,8 @@ export class SuppliersService {
   public removeSuppliers(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
-
+  public changeStatus(suppliers: ISuppliersActiveParams) {
+    return this.restService.put(`${this.suppliersChangeStatusURL}`, suppliers);
+  }
 
 }

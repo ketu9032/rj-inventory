@@ -9,10 +9,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { AddSuppliersComponent } from './add-suppliers/add-suppliers.component';
-import { DeleteSuppliersComponent } from './delete-suppliers/delete-suppliers.component';
 
 @NgModule({
-  declarations: [SuppliersComponent, AddSuppliersComponent, DeleteSuppliersComponent],
+  declarations: [SuppliersComponent, AddSuppliersComponent, ],
   imports: [
     CommonModule,
     SuppliersRoutingModule,
@@ -25,7 +24,7 @@ import { DeleteSuppliersComponent } from './delete-suppliers/delete-suppliers.co
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [
-    SuppliersComponent, AddSuppliersComponent, DeleteSuppliersComponent
+    SuppliersComponent, AddSuppliersComponent
   ],
 })
 export class SuppliersModule { }

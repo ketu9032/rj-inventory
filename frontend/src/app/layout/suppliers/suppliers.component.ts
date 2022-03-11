@@ -8,7 +8,6 @@ import { ISuppliersData } from 'src/app/models/suppliers';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { AddSuppliersComponent } from './add-suppliers/add-suppliers.component';
-import { DeleteSuppliersComponent } from './delete-suppliers/delete-suppliers.component';
 import { SuppliersService } from './services/suppliers.service';
 
 @Component({
@@ -110,19 +109,6 @@ export class SuppliersComponent implements OnInit {
         }
       });
   }
-  confirmDialog(id: string): void {
-    this.dialog
-      .open(DeleteSuppliersComponent, {
-        maxWidth: '400px',
-        data: id
-      })
-      .afterClosed()
-      .subscribe((result) => {
-        if (result && result.data === true) {
-          this.getSuppliers();
-        }
-      });
-  }
 
   pageChanged(event: PageEvent) {
     this.tableParams.pageSize = event.pageSize;
@@ -133,4 +119,34 @@ export class SuppliersComponent implements OnInit {
     this.tableParams.active = !this.tableParams.active;
     this.getSuppliers();
   }
+
+  changeStatus(id: number): void {
+    this.suppliersService
+        .changeStatus({ id: id, status: !this.tableParams.active })
+        .subscribe(
+            (response) => {
+                if (!this.tableParams.active) {
+                    this.snackBar.open('Suppliers Active Successfully', 'OK', {
+                        duration: 3000
+                    })
+                } else {
+                    this.snackBar.open('Suppliers DActive Successfully', 'OK', {
+                        duration: 3000
+                    })
+                }
+                this.getSuppliers();
+
+            },
+            (error) => {
+                this.snackBar.open(
+                    (error.error && error.error.message) || error.message,
+                    'Ok',
+                    {
+                        duration: 3000
+                    }
+                );
+            },
+            () => { }
+        );
+}
 }
