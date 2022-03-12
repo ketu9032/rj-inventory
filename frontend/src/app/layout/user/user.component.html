@@ -65,11 +65,14 @@
                         type="button" (click)="onEditNewUser(element)">
                         <mat-icon aria-label="Edit">edit</mat-icon>
                     </button>
-                    <button *ngIf="isLoggedInUserIsOwner" mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
-                        color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
-                        <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
-                    </button>
-
+                    <ng-container *ngIf="+element.balance === 0">
+                        <button *ngIf="isLoggedInUserIsOwner" mat-icon-button
+                            matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
+                            color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
+                            <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}
+                            </mat-icon>
+                        </button>
+                    </ng-container>
                 </td>
             </ng-container>
 

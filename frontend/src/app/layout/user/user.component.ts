@@ -54,8 +54,8 @@ export class UserComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-      const loggedInUser =   this.authService.getUserData()
-      this.isLoggedInUserIsOwner = loggedInUser.role.toLowerCase() === 'owner'? true :false;
+        const loggedInUser = this.authService.getUserData()
+        this.isLoggedInUserIsOwner = loggedInUser.role.toLowerCase() === 'owner' ? true : false;
         this.getUser();
     }
 
@@ -119,19 +119,6 @@ export class UserComponent implements OnInit {
                 }
             });
     }
-    //   confirmDialog(id: string): void {
-    //     this.dialog
-    //       .open(DeleteUserComponent, {
-    //         maxWidth: '400px',
-    //         data: id
-    //       })
-    //       .afterClosed()
-    //       .subscribe((result) => {
-    //         if (result && result.data === true) {
-    //           this.getUser();
-    //         }
-    //       });
-    //   }
 
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
