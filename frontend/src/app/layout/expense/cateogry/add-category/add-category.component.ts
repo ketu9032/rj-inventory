@@ -14,6 +14,8 @@ export class AddCategoryComponent implements OnInit {
   formGroup: FormGroup;
   selectedRole: string
   tires = []
+  isShowLoader = false;
+
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ITiersData,
@@ -41,6 +43,7 @@ export class AddCategoryComponent implements OnInit {
 
   saveCategory(): void {
     const { code, name } = this.formGroup.value;
+    this.isShowLoader = true;
     this.categoriesService
       .addCategory({
         code,
@@ -51,9 +54,11 @@ export class AddCategoryComponent implements OnInit {
           this.snackBar.open('Category saved successfully', 'OK', {
             duration: 3000
           });
+    this.isShowLoader = false;
           this.dialogRef.close(true);
         },
         (error) => {
+            this.isShowLoader = false;
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {
@@ -67,6 +72,8 @@ export class AddCategoryComponent implements OnInit {
 
   updateCategory(): void {
     const { code, name } = this.formGroup.value;
+    this.isShowLoader = true;
+
     this.categoriesService
       .editCategory({
         id: this.data.id,
@@ -75,12 +82,14 @@ export class AddCategoryComponent implements OnInit {
       })
       .subscribe(
         (response) => {
+            this.isShowLoader = false;
           this.snackBar.open('Category updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);
         },
         (error) => {
+            this.isShowLoader = false;
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {

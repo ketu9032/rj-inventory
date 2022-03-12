@@ -3,52 +3,60 @@
 </div>
 <mat-divider></mat-divider>
 <br>
-<div>
-    <mat-form-field>
-        <mat-label>Search...</mat-label>
-        <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getCategory()">
-    </mat-form-field>
-    <button color="primary" class="margin" mat-raised-button (click)="getCategory()">
-        Search
-    </button>
+<div class="header">
+    <div>
+        <mat-form-field>
+            <mat-label>Search...</mat-label>
+            <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getCategory()">
+        </mat-form-field>
+        <button color="primary" class="margin" mat-raised-button (click)="getCategory()">
+            Search
+        </button>
 
-    <button color="primary" mat-raised-button (click)="onAddCategory()">
-        Add Category
-    </button>
-
+        <button color="primary" mat-raised-button (click)="onAddCategory()">
+            Add Category
+        </button>
+    </div>
+    <div class="active">
+        <mat-slide-toggle color="primary" (change)="toggleType()" [checked]="tableParams.active">Active
+        </mat-slide-toggle>
+    </div>
 </div>
+<mat-spinner *ngIf="loader" class="inline-loader" diameter="20"></mat-spinner>
+
 <div class="mat-elevation-z8">
+    <table   mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="code"
+    matSortDirection="asc">
+    *ngIf="!loader"
 
-    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="code"
-        matSortDirection="asc">
-
-        <ng-container matColumnDef="code">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.code }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.code }}
+                </td>
+            </ng-container>
 
 
-        <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.name }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.name }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef>Actions</th>
-            <td mat-cell *matCellDef="let element">
-                <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
-                    (click)="onEditCategory(element)">
-                    <mat-icon aria-label="Edit">edit</mat-icon>
-                </button>
-                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="confirmDialog(element.id)">
-                    <mat-icon aria-label="Delete">delete</mat-icon>
-                </button>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let element">
+                    <button *ngIf="tableParams.active" mat-icon-button matTooltip="Click to Edit" color="primary"
+                        type="button" (click)="onEditCategory(element)">
+                        <mat-icon aria-label="Edit">edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
+                        color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
+                        <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>

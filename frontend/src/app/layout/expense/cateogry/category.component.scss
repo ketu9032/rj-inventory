@@ -11,6 +11,11 @@ table {
 .margin {
     margin: 0 8px 0 8px;
 }
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
 th {
     color: rgb(0, 0, 0);
@@ -19,4 +24,8 @@ th {
 
 td {
     color: rgb(73 70 70 / 87%);
+}
+.active{
+    margin-left: 30px;
+
 }

@@ -1,5 +1,5 @@
 import { CommonService } from './../../../shared/services/common.service';
-import { ICategoriesParams } from './../../../models/categories';
+import { ICategoriesActiveParams, ICategoriesParams } from './../../../models/categories';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
@@ -8,6 +8,8 @@ import { RestService } from 'src/app/shared/services';
 export class CategoriesService {
   private getTierDropDownURL = 'api/getCategoryDropDown';
   private url = 'api/categories';
+  private categoriesChangeStatusURL = 'api/categories/changeStatus';
+
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -27,5 +29,8 @@ export class CategoriesService {
   }
   public removeCategory(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
+  }
+  public changeStatus(category: ICategoriesActiveParams) {
+    return this.restService.put(`${this.categoriesChangeStatusURL}`, category);
   }
 }
