@@ -1,74 +1,51 @@
 <div class="login-page">
-  <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
-  <div class="content">
-    <form
-      class="login-form"
-      [formGroup]="loginForm"
-      (ngSubmit)="onSubmit()"
-      fxFlex
-    >
-      <div class="text-center">
-        <h2 class="app-name">Inventory</h2>
-      </div>
-      <div fxFlex fxlayout="row" fxlayout.lt-md="column">
-        <div fxFlexFill>
-          <mat-form-field class="w-100">
-            <input matInput placeholder="User Name" formControlName="userName" />
-          </mat-form-field>
-          <mat-error>
-            <span
-              *ngIf="
+
+    <div class="content">
+        <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" fxFlex>
+            <div class="text-center">
+                <h2 class="app-name">Inventory</h2>
+            </div>
+            <div fxFlex fxlayout="row" fxlayout.lt-md="column">
+                <div fxFlexFill>
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="User Name" formControlName="userName" />
+                    </mat-form-field>
+                    <mat-error>
+                        <span *ngIf="
                 !loginForm.get('userName').value &&
                 loginForm.get('userName').touched
-              "
-              >Username is Required</span
-            >
-          </mat-error>
-        </div>
-      </div>
-      <div fxFlex fxLayout="row" fxLayout.lt-md="column">
-        <div fxFlexFill>
-          <mat-form-field class="w-100">
-            <input
-              matInput
-              type="password"
-              placeholder="Password"
-              formControlName="password"
-            />
-          </mat-form-field>
-          <mat-error>
-            <span
-              *ngIf="
+              ">Username is Required</span>
+                    </mat-error>
+                </div>
+            </div>
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column">
+                <div fxFlexFill>
+                    <mat-form-field class="w-100">
+                        <input matInput type="password" placeholder="Password" formControlName="password" />
+                    </mat-form-field>
+                    <mat-error>
+                        <span *ngIf="
                 !loginForm.get('password').value &&
                 loginForm.get('password').touched
-              "
-              >Password is Required</span
-            >
-          </mat-error>
-        </div>
-      </div>
-      <div
-        fxFlex
-        fxLayout="row"
-        fxLayout.lt-md="column"
-        style="margin: 20px 0 30px 0"
-      >
-        <div fxFlex fxLayoutAlign="end">
-          <a href="javascript:void(0)">Forget Password</a>
-        </div>
-      </div>
-      <div fxFlex fxLayout="row" fxLayout.lt-md="column">
-        <div fxFlexFill>
-          <button
-            mat-raised-button
-            color="primary"
-            class="w-100"
-            [disabled]="!loginForm.valid"
-          >
-            Login
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
+              ">Password is Required</span>
+                    </mat-error>
+                </div>
+            </div>
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" style="margin: 20px 0 30px 0">
+                <div fxFlex fxLayoutAlign="end">
+                    <a href="javascript:void(0)">Forget Password</a>
+                </div>
+            </div>
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column">
+                <div fxFlexFill>
+                    <button mat-raised-button color="primary" class="w-100" [disabled]="!loginForm.valid || loader">
+                        <span *ngIf="!loader">
+                            Login
+                        </span>
+                        <mat-spinner *ngIf="loader" class="inline-loader" diameter="20"></mat-spinner>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>

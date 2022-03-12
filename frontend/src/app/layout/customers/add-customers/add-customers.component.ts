@@ -101,7 +101,7 @@ export class AddCustomersComponent implements OnInit {
       })
       .subscribe(
         (response) => {
-          this.snackBar.open('User updated Successfully', 'OK', {
+          this.snackBar.open('User updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);

@@ -58,7 +58,7 @@
                     <button *ngIf="tableParams.active" mat-icon-button matTooltip="Click to Edit" color="primary" type="button" (click)="onEditNewSuppliers(element)">
                         <mat-icon aria-label="Edit">edit</mat-icon>
                     </button>
-                    <button mat-icon-button matTooltip="{{tableParams.active? 'Click to DActive': 'Click to Active'}}" color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
+                    <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}" color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
                         <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
                     </button>
                 </td>

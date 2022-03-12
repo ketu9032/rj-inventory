@@ -1,3 +1,4 @@
+import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { ICustomersParams } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
@@ -7,24 +8,25 @@ import { RestService } from 'src/app/shared/services';
 @Injectable({ providedIn: 'root' })
 export class TiersService {
   private getTierDropDownURL = 'api/getTierDropDown';
-  private tierURL = 'api/tiers';
+  private url = 'api/tiers';
 
-  constructor(private restService: RestService) { }
+  constructor(private restService: RestService, private commonService: CommonService) { }
 
   public getTierDropDown() {
     return this.restService.get<any>(`${this.getTierDropDownURL}`);
   }
 
   public getTiers(tablePrams: IMatTableParams) {
-    return this.restService.get<any>(`${this.tierURL}?orderBy=${tablePrams.orderBy}&direction=${tablePrams.direction}&pageSize=${tablePrams.pageSize}&pageNumber=${tablePrams.pageNumber}&search=${tablePrams.search}`);
+    const queryString = this.commonService.toQueryString(tablePrams);
+    return this.restService.get<any>(`${this.url}${queryString}`);
   }
   public addTiers(tier: ITiersParams) {
-    return this.restService.post(`${this.tierURL}`, tier);
+    return this.restService.post(`${this.url}`, tier);
   }
   public editTiers(tier: ITiersParams) {
-    return this.restService.put(`${this.tierURL}`, tier);
+    return this.restService.put(`${this.url}`, tier);
   }
   public removeTiers(id: string) {
-    return this.restService.delete(`${this.tierURL}?id=${id}`);
+    return this.restService.delete(`${this.url}?id=${id}`);
   }
 }

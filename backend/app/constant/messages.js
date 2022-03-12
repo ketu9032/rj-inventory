@@ -2,6 +2,7 @@ const MESSAGES = {
     AUTH: {
         USER_NOT_FOUND: `User doesn't exists`,
         ACCOUNT_NOT_FOUND: `Account doesn't exists`,
+        ACCOUNT_DEACTIVATED: `Your account is de-activated please contact your administrator`,
         TYPE_NOT_FOUND: `Type doesn't exists`,
         MULTIPLE_USER_FOUND: `Multiple User found.`,
         USER_EXITS: `User already exits.`,

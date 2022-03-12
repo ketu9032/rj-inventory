@@ -82,7 +82,7 @@ export class AddTransferComponent implements OnInit {
       })
       .subscribe(
         (response) => {
-          this.snackBar.open('transfer updated Successfully', 'OK', {
+          this.snackBar.open('transfer updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);

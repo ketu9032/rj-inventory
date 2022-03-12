@@ -24,7 +24,13 @@ exports.login = async(req, res) => {
             return;
         }
         const user = response.rows[0];
-        const token = generateToken({ id: user.id, userName: user.user_name }, { expiresIn: 86400 }).data;
+        if (user.is_active === false) {
+          res
+              .status(STATUS_CODE.BAD)
+              .send({ message: MESSAGES.AUTH.ACCOUNT_DEACTIVATED });
+          return;
+      }
+        const token = generateToken({ id: user.id, userName: user.user_name, role: user.role }, { expiresIn: 86400 }).data;
 
         res.status(STATUS_CODE.SUCCESS).send({...user, token });
     } catch (error) {
@@ -38,6 +44,7 @@ exports.findAll = async(req, res) => {
     try {
         const { orderBy, direction, pageSize, pageNumber, search, active } =
         req.query;
+        const {tokenData} = res.locals;
         const offset = pageSize * pageNumber - pageSize;
         let searchQuery = 'where true';
         if (search) {
@@ -49,6 +56,10 @@ exports.findAll = async(req, res) => {
         )`;
         }
         searchQuery += ` and is_active = ${active}`;
+        if (tokenData.role.toLowerCase() !== 'owner') {
+          searchQuery += ` and id = ${tokenData.id}`;
+
+        }
         const response = await pool.query(
             `select count(id) over() as total, id ,user_name, "role", mobile_number, balance, "permission", "password", is_active from users ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
         );
@@ -134,15 +145,16 @@ exports.update = async(req, res) => {
     try {
         const { id, userName, role, mobileNumber, balance, password, permission } =
         req.body;
-        if (!id || !userName || !role || !mobileNumber || !balance || !password) {
+        if (!id  || !mobileNumber || !password) {
             res
                 .status(STATUS_CODE.BAD)
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
             return;
         }
+
         await pool.query(
             `UPDATE users
-      SET user_name='${userName}', "role"='${role}', mobile_number='${mobileNumber}', balance='${balance}', "password"='${password}', permission = '${JSON.stringify(
+      SET mobile_number='${mobileNumber}', "password"='${password}', permission = '${JSON.stringify(
         permission
       )}' where id = ${id};
        `

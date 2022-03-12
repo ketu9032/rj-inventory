@@ -156,11 +156,11 @@ export class CustomersComponent implements OnInit {
         .subscribe(
             (response) => {
                 if (!this.tableParams.active) {
-                    this.snackBar.open('Customers Active Successfully', 'OK', {
+                    this.snackBar.open('Customers active successfully', 'OK', {
                         duration: 3000
                     })
                 } else {
-                    this.snackBar.open('Customers DActive Successfully', 'OK', {
+                    this.snackBar.open('Customers de-active successfully', 'OK', {
                         duration: 3000
                     })
                 }

@@ -126,11 +126,11 @@ export class SuppliersComponent implements OnInit {
         .subscribe(
             (response) => {
                 if (!this.tableParams.active) {
-                    this.snackBar.open('Suppliers Active Successfully', 'OK', {
+                    this.snackBar.open('Suppliers active successfully', 'OK', {
                         duration: 3000
                     })
                 } else {
-                    this.snackBar.open('Suppliers DActive Successfully', 'OK', {
+                    this.snackBar.open('Suppliers de-active successfully', 'OK', {
                         duration: 3000
                     })
                 }

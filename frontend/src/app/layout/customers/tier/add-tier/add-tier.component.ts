@@ -75,7 +75,7 @@ export class AddTierComponent implements OnInit {
       })
       .subscribe(
         (response) => {
-          this.snackBar.open('Tier updated Successfully', 'OK', {
+          this.snackBar.open('Tier updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);

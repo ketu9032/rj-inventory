@@ -1,18 +1,23 @@
+import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { IUserActiveParams, IUserParams } from 'src/app/models/user';
 import { RestService } from 'src/app/shared/services';
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class UserService {
   private url = 'api/users';
   private getUserDropDownURL = 'api/getUserDropDown';
   private changeStatusURL = 'api/users/changeStatus';
 
-  constructor(private restService: RestService) {}
+  constructor(
+    private restService: RestService,
+    private commonService: CommonService
+  ) {}
 
   public getUser(tablePrams: IMatTableParams) {
-    return this.restService.get<any>(`${this.url}?orderBy=${tablePrams.orderBy}&direction=${tablePrams.direction}&pageSize=${tablePrams.pageSize}&pageNumber=${tablePrams.pageNumber}&search=${tablePrams.search}&active=${tablePrams.active}`);
+    const queryString = this.commonService.toQueryString(tablePrams);
+    return this.restService.get<any>(`${this.url}${queryString}`);
   }
   public addUser(user: IUserParams) {
     return this.restService.post(`${this.url}`, user);
@@ -29,5 +34,4 @@ export class UserService {
   public changeStatus(user: IUserActiveParams) {
     return this.restService.put(`${this.changeStatusURL}`, user);
   }
-
 }

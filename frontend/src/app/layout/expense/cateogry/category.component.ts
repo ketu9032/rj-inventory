@@ -34,7 +34,7 @@ export class CategoryComponent implements OnInit {
     orderBy: 'id',
     direction: 'desc',
     search: '',
-    active: false
+    active: true
   };
 
   constructor(

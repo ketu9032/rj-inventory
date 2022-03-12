@@ -1,3 +1,4 @@
+import { AuthService } from './../../../auth/auth.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -36,6 +37,8 @@ export class AddUserComponent implements OnInit {
     users: false,
     history: false
   };
+  isLoggedInUserIsOwner = false;
+  isShowLoader = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IUserData,
@@ -44,10 +47,14 @@ export class AddUserComponent implements OnInit {
     private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    const loggedInUser = this.authService.getUserData();
+    this.isLoggedInUserIsOwner =
+      loggedInUser.role.toLowerCase() === 'owner' ? true : false;
     this.initializeForm();
     if (this.data && this.data.id) {
       this.fillForm();
@@ -56,17 +63,41 @@ export class AddUserComponent implements OnInit {
 
   initializeForm(): void {
     this.formGroup = this.formBuilder.group({
-      userName: ['', Validators.required],
+      userName: [
+        {
+          value: '',
+          disabled:
+            !this.isLoggedInUserIsOwner ||
+            (this.data && this.data.id && this.isLoggedInUserIsOwner)
+        },
+        Validators.required
+      ],
       password: ['', Validators.required],
       mobileNumber: ['', Validators.required],
-      balance: [''],
-      role: ['', Validators.required],
+      balance: [
+        {
+          value: '',
+          disabled:
+            !this.isLoggedInUserIsOwner ||
+            (this.data && this.data.id && this.isLoggedInUserIsOwner)
+        }
+      ],
+      role: [
+        {
+          value: '',
+          disabled:
+            !this.isLoggedInUserIsOwner ||
+            (this.data && this.data.id && this.isLoggedInUserIsOwner)
+        },
+        Validators.required
+      ]
     });
   }
 
   saveUser(): void {
     const { userName, password, mobileNumber, balance, role } =
       this.formGroup.value;
+    this.isShowLoader = true;
     this.userService
       .addUser({
         userName,
@@ -81,9 +112,11 @@ export class AddUserComponent implements OnInit {
           this.snackBar.open('User saved successfully', 'OK', {
             duration: 3000
           });
+          this.isShowLoader = false;
           this.dialogRef.close(true);
         },
         (error) => {
+          this.isShowLoader = false;
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok',
@@ -99,6 +132,7 @@ export class AddUserComponent implements OnInit {
   updateUser(): void {
     const { userName, password, mobileNumber, balance, role } =
       this.formGroup.value;
+    this.isShowLoader = true;
     this.userService
       .editUser({
         id: this.data.id,
@@ -111,12 +145,14 @@ export class AddUserComponent implements OnInit {
       })
       .subscribe(
         (response) => {
-          this.snackBar.open('User updated Successfully', 'OK', {
+          this.snackBar.open('User updated successfully', 'OK', {
             duration: 3000
           });
+          this.isShowLoader = false;
           this.dialogRef.close(true);
         },
         (error) => {
+          this.isShowLoader = false;
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok',
@@ -151,12 +187,14 @@ export class AddUserComponent implements OnInit {
       password,
       mobileNumber,
       balance,
-      role,
+      role
     });
     this.permissions = permission as any;
   }
 
   onPermissionChange(key: string) {
-    this.permissions[key] = !this.permissions[key];
+    if (this.isLoggedInUserIsOwner) {
+      this.permissions[key] = !this.permissions[key];
+    }
   }
 }

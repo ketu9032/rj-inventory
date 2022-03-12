@@ -83,7 +83,7 @@ export class AddSuppliersComponent implements OnInit {
       })
       .subscribe(
         (response) => {
-          this.snackBar.open('Suppliers updated Successfully', 'OK', {
+          this.snackBar.open('Suppliers updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);

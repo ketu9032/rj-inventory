@@ -7,7 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { CustomersService } from '../Customers/services/customers.service';
+import { CustomersService } from '../customers/services/customers.service';
 import { ItemsService } from './services/items.service';
 
 @Component({

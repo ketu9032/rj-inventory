@@ -67,18 +67,20 @@
 
             <ng-container *ngFor="let permission of (permissions | keyvalue)">
                 <span class="permission">
-                    <mat-checkbox (click)="onPermissionChange(permission.key)" [checked]="permission.value">{{permission.key}}</mat-checkbox>
+                    <mat-checkbox [disabled]="!isLoggedInUserIsOwner" (click)="onPermissionChange(permission.key)"
+                        [checked]="permission.value">{{permission.key}}</mat-checkbox>
                 </span>
             </ng-container>
         </div>
 
         <br>
         <div class="btn-update">
-            <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
+            <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">
 
-                <span>
+                <span *ngIf="!isShowLoader">
                     {{ !this.data ? 'Save' : 'Update' }}
                 </span>
+                <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
             </button>
         </div>
     </form>

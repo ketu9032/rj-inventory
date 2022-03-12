@@ -75,7 +75,7 @@ export class AddCategoryComponent implements OnInit {
       })
       .subscribe(
         (response) => {
-          this.snackBar.open('Category updated Successfully', 'OK', {
+          this.snackBar.open('Category updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);

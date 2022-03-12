@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -43,14 +44,18 @@ export class UserComponent implements OnInit {
         search: '',
         active: true
     }
+    isLoggedInUserIsOwner = false
 
     constructor(
         public dialog: MatDialog,
         private userService: UserService,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        private authService: AuthService
     ) { }
 
     ngOnInit(): void {
+      const loggedInUser =   this.authService.getUserData()
+      this.isLoggedInUserIsOwner = loggedInUser.role.toLowerCase() === 'owner'? true :false;
         this.getUser();
     }
 
@@ -144,11 +149,11 @@ export class UserComponent implements OnInit {
             .subscribe(
                 (response) => {
                     if (!this.tableParams.active) {
-                        this.snackBar.open('User Active Successfully', 'OK', {
+                        this.snackBar.open('User active successfully', 'OK', {
                             duration: 3000
                         })
                     } else {
-                        this.snackBar.open('User DActive Successfully', 'OK', {
+                        this.snackBar.open('User de-active successfully', 'OK', {
                             duration: 3000
                         })
                     }
