@@ -14,6 +14,8 @@ export class AddTierComponent implements OnInit {
   formGroup: FormGroup;
   selectedRole: string
   tires = []
+  isShowLoader = false;
+
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ITiersData,
@@ -40,6 +42,7 @@ export class AddTierComponent implements OnInit {
   }
 
   saveTier(): void {
+      this.isShowLoader = true;
     const { code, name } = this.formGroup.value;
     this.tiersService
       .addTiers({
@@ -47,13 +50,16 @@ export class AddTierComponent implements OnInit {
         name
       })
       .subscribe(
-        (response) => {
+          (response) => {
+            this.isShowLoader = false;
           this.snackBar.open('Tier saved successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);
         },
+
         (error) => {
+            this.isShowLoader = false;
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {
@@ -67,6 +73,8 @@ export class AddTierComponent implements OnInit {
 
   updateTier(): void {
     const { code, name } = this.formGroup.value;
+    this.isShowLoader = true;
+
     this.tiersService
       .editTiers({
         id: this.data.id,
@@ -75,12 +83,16 @@ export class AddTierComponent implements OnInit {
       })
       .subscribe(
         (response) => {
+            this.isShowLoader = false;
+
           this.snackBar.open('Tier updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);
         },
         (error) => {
+            this.isShowLoader = false;
+
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {
