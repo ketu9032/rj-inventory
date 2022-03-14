@@ -1,5 +1,5 @@
 <div class="container">
-    <h1 mat-dialog-title> {{ !this.data ? 'Add Tier' : 'Update Tier' }} </h1>
+    <h1 mat-dialog-title><b> {{ !this.data ? 'Add Tier' : 'Update Tier' }} </b></h1>
     <mat-divider></mat-divider>
     <br>
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">

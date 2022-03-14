@@ -2,13 +2,14 @@ import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { ICustomersParams } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
-import { ITiersParams } from 'src/app/models/tiers';
+import { ITiersActiveParams, ITiersParams } from 'src/app/models/tiers';
 import { RestService } from 'src/app/shared/services';
 
 @Injectable({ providedIn: 'root' })
 export class TiersService {
   private getTierDropDownURL = 'api/getTierDropDown';
   private url = 'api/tiers';
+  private tiersChangeStatusURl = 'api/tiers/changeStatus';
 
   constructor(private restService: RestService, private commonService: CommonService) { }
 
@@ -28,5 +29,8 @@ export class TiersService {
   }
   public removeTiers(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
+  }
+  public changeStatus(tier: ITiersActiveParams) {
+    return this.restService.put(`${this.tiersChangeStatusURl}`, tier);
   }
 }

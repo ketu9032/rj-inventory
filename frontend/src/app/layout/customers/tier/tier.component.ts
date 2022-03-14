@@ -87,7 +87,7 @@ export class TierComponent implements OnInit {
     this.dialog
       .open(AddTierComponent, {
         width: '400px'
-        
+
       })
       .afterClosed()
       .subscribe((result) => {
@@ -109,22 +109,55 @@ export class TierComponent implements OnInit {
         }
       });
   }
-  confirmDialog(id: string): void {
-    this.dialog
-      .open(DeleteTierComponent, {
-        maxWidth: '400px',
-        data: id
-      })
-      .afterClosed()
-      .subscribe((result) => {
-        if (result && result.data === true) {
-          this.getTier();
-        }
-      });
-  }
+//   confirmDialog(id: string): void {
+//     this.dialog
+//       .open(DeleteTierComponent, {
+//         maxWidth: '400px',
+//         data: id
+//       })
+//       .afterClosed()
+//       .subscribe((result) => {
+//         if (result && result.data === true) {
+//           this.getTier();
+//         }
+//       });
+//   }
   pageChanged(event: PageEvent) {
     this.tableParams.pageSize = event.pageSize;
     this.tableParams.pageNumber = event.pageIndex + 1;
     this.getTier();
   }
+
+  toggleType() {
+    this.tableParams.active = !this.tableParams.active;
+    this.getTier();
+}
+changeStatus(id: number): void {
+    this.tiersService
+        .changeStatus({ id: id, status: !this.tableParams.active })
+        .subscribe(
+            (response) => {
+                if (!this.tableParams.active) {
+                    this.snackBar.open('Customers active successfully', 'OK', {
+                        duration: 3000
+                    })
+                } else {
+                    this.snackBar.open('Customers de-active successfully', 'OK', {
+                        duration: 3000
+                    })
+                }
+                this.getTier();
+            },
+            (error) => {
+                this.snackBar.open(
+                    (error.error && error.error.message) || error.message,
+                    'Ok',
+                    {
+                        duration: 3000
+                    }
+                );
+            },
+            () => { }
+        );
+}
 }

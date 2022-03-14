@@ -6,3 +6,7 @@ export interface ITiersData {
 export interface ITiersParams {
   id?: number, code: string, name: string
 }
+
+export interface ITiersActiveParams {
+    id: number, status: boolean
+}

@@ -4,8 +4,8 @@ table {
 
 .loader {
     position: absolute;
-    top: 45%;
-    left: 50%;
+    top: 50%;
+    left: 49%;
 }
 
 .margin {
@@ -19,4 +19,7 @@ th {
 
 td {
     color: rgb(73 70 70 / 87%);
+}
+.active{
+    margin-left: 30px;
 }

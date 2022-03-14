@@ -26,7 +26,7 @@ export class CategoryComponent implements OnInit {
     public defaultPageSize = 5;
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
-    loader: boolean = false;
+    loader: boolean = true;
     totalRows: number;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,

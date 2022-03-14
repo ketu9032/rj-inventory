@@ -116,19 +116,7 @@ export class CustomersComponent implements OnInit {
                 }
             });
     }
-    // confirmDialog(id: string): void {
-    //   this.dialog
-    //   .open(DeleteCustomersComponent, {
-    //     maxWidth: '400px',
-    //     data: id
-    //   })
-    //   .afterClosed()
-    //   .subscribe((result) => {
-    //     if (result && result.data === true) {
-    //       this.getCustomers();
-    //     }
-    //   });
-    // }
+
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;

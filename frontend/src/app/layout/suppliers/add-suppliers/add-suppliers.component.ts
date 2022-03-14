@@ -15,7 +15,7 @@ export class AddSuppliersComponent implements OnInit {
   formGroup: FormGroup;
   selectedRole: string
   users = []
-
+  isShowLoader = false
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ISuppliersData,
@@ -45,6 +45,7 @@ export class AddSuppliersComponent implements OnInit {
 
   saveSuppliers(): void {
     const { company, dueLimit, balance, other } = this.formGroup.value;
+    this.isShowLoader = true;
     this.suppliersService
       .addSuppliers({
         company,
@@ -54,12 +55,14 @@ export class AddSuppliersComponent implements OnInit {
       })
       .subscribe(
         (response) => {
+            this.isShowLoader = false;
           this.snackBar.open('Suppliers saved successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);
         },
         (error) => {
+            this.isShowLoader = false;
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {
@@ -73,6 +76,8 @@ export class AddSuppliersComponent implements OnInit {
 
   updateSuppliers(): void {
     const { company, dueLimit, balance, other } = this.formGroup.value;
+    this.isShowLoader = true;
+
     this.suppliersService
       .editSuppliers({
         id: this.data.id,
@@ -83,12 +88,16 @@ export class AddSuppliersComponent implements OnInit {
       })
       .subscribe(
         (response) => {
+            this.isShowLoader = false;
+
           this.snackBar.open('Suppliers updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);
         },
         (error) => {
+            this.isShowLoader = false;
+
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {
