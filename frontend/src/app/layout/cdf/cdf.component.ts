@@ -91,18 +91,18 @@ export class CDFComponent implements OnInit {
   //   );
   // }
 
-  // // onAddNewCustomers(): void {
-  // //   this.dialog
-  // //     .open(AddCustomersComponent, {
-  // //       width: '400px'
-  // //     })
-  // //     .afterClosed()
-  // //     .subscribe((result) => {
-  // //       if (result) {
-  // //         this.getItems();
-  // //       }
-  // //     });
-  // // }
+//   onAddNewCdf(): void {
+//     this.dialog
+//       .open(AddCdfComponent, {
+//         width: '400px'
+//       })
+//       .afterClosed()
+//       .subscribe((result) => {
+//         if (result) {
+//           this.getItems();
+//         }
+//       });
+//   }
 
   // // onEditNewCustomers(element) {
   // //   this.dialog
