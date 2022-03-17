@@ -9,9 +9,13 @@ import { MaterialModule } from 'src/app/shared/modules/material/material.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
+import { AddItemComponent } from './add-item/add-item.component';
+import { AddItemsCategoryComponent } from './cateogry/add-items-category/add-items-category.component';
+import { DeleteItemsCategoryComponent } from './cateogry/delete-items-category/delete-items-category.component';
+import { ItemsCategoryComponent } from './cateogry/items-category.component';
 
 @NgModule({
-  declarations: [ItemsComponent],
+  declarations: [ItemsComponent,AddItemComponent,ItemsCategoryComponent,AddItemsCategoryComponent,DeleteItemsCategoryComponent],
   imports: [
     CommonModule,
     ItemsRoutingModule,
@@ -24,7 +28,7 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [
-    ItemsComponent,
+    ItemsComponent,AddItemComponent
   ],
 })
 export class ItemsModule { }

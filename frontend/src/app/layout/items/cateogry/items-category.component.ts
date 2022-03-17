@@ -1,79 +1,70 @@
+import { ICategoriesData } from '../../../models/categories';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
-import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { AddCustomersComponent } from './add-customers/add-customers.component';
-import { DeleteCustomersComponent } from './delete-customers/delete-customers.component';
-import { CustomersService } from './services/customers.service';
-import { TierComponent } from './tier/tier.component';
+import {
+    PAGE_SIZE,
+    PAGE_SIZE_OPTION
+} from 'src/app/shared/global/table-config';
+import { AddItemsCategoryComponent } from './add-items-category/add-items-category.component';
+import { DeleteItemsCategoryComponent } from './delete-items-category/delete-items-category.component';
+import { ItemsCategoriesService } from '../services/items-categories.service';
 
 @Component({
-    selector: 'app-customers',
-    templateUrl: './customers.component.html',
-    styleUrls: ['./customers.component.scss']
+    selector: 'app-items-category',
+    templateUrl: './items-category.component.html',
+    styleUrls: ['./items-category.component.scss']
 })
-export class CustomersComponent implements OnInit {
-    displayedColumns: string[] = [
-        'company',
-        'first_name',
-        'address',
-        'email',
-        'mobile_no',
-        'due_limit',
-        'balance',
-        'other',
-        'tier_name',
-        'action'
-    ];
+export class ItemsCategoryComponent implements OnInit {
+    displayedColumns: string[] = ['code', 'name', 'action'];
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
-    public defaultPageSize = PAGE_SIZE;
+    public defaultPageSize = 5;
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
-    loader: boolean = false;
+    loader: boolean = true;
     totalRows: number;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
         orderBy: 'id',
-        direction: "desc",
+        direction: 'desc',
         search: '',
         active: true
-    }
+    };
 
     constructor(
         public dialog: MatDialog,
-        private customersService: CustomersService,
-        public snackBar: MatSnackBar
+        private itemsCategoriesService: ItemsCategoriesService,
+        public snackBar: MatSnackBar,
     ) { }
 
     ngOnInit(): void {
-        this.getCustomers();
+        this.getCategory();
     }
 
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
-        this.getCustomers();
+        this.getCategory();
     }
 
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
 
-    getCustomers() {
+    getCategory() {
         this.loader = true;
-        this.customersService.getCustomers(this.tableParams).subscribe(
-            (newCustomers: any[]) => {
-                this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
-                if (newCustomers.length > 0) {
-                    this.totalRows = newCustomers[0].total;
+        this.itemsCategoriesService.getCategory(this.tableParams).subscribe(
+            (newTier: any[]) => {
+                this.dataSource = new MatTableDataSource<ICategoriesData>(newTier);
+                if (newTier.length > 0) {
+                    this.totalRows = newTier[0].total;
                 }
                 setTimeout(() => {
                     this.paginator.pageIndex = this.tableParams.pageNumber - 1;
@@ -91,70 +82,72 @@ export class CustomersComponent implements OnInit {
         );
     }
 
-    onAddNewCustomers(): void {
+    onAddCategory(): void {
         this.dialog
-            .open(AddCustomersComponent, {
-                width: '500px',
-                height: '500px'
+            .open(AddItemsCategoryComponent, {
+                width: '400px'
             })
             .afterClosed()
             .subscribe((result) => {
                 if (result) {
-                    this.getCustomers();
+                    this.getCategory();
                 }
             });
     }
-    onEditNewCustomers(element) {
+    onEditCategory(element) {
         this.dialog
-            .open(AddCustomersComponent, {
-                width: '500px',
-                height: '500px',
+            .open(AddItemsCategoryComponent, {
+                width: '600px',
                 data: element
             })
             .afterClosed()
             .subscribe((result) => {
                 if (result) {
-                    this.getCustomers();
+                    this.getCategory();
                 }
             });
     }
-
+    confirmDialog(id: string): void {
+        this.dialog
+            .open(DeleteItemsCategoryComponent, {
+                maxWidth: '400px',
+                data: id
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result && result.data === true) {
+                    this.getCategory();
+                }
+            });
+    }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-        this.getCustomers();
-    }
-
-    openTires() {
-        this.dialog
-            .open(TierComponent, {
-                width: 'auto',
-                height: '550px'
-            })
-            .afterClosed()
-            .subscribe((result) => { });
+        this.getCategory();
     }
 
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
-        this.getCustomers();
-    }
+        this.getCategory();
 
+
+    }
     changeStatus(id: number): void {
-        this.customersService
+        this.itemsCategoriesService
             .changeStatus({ id: id, status: !this.tableParams.active })
             .subscribe(
                 (response) => {
                     if (!this.tableParams.active) {
-                        this.snackBar.open('Customers active successfully', 'OK', {
+                        this.snackBar.open('Category active successfully', 'OK', {
                             duration: 3000
                         })
                     } else {
-                        this.snackBar.open('Customers de-active successfully', 'OK', {
+                        this.snackBar.open('Category de-active successfully', 'OK', {
                             duration: 3000
                         })
                     }
-                    this.getCustomers();
+                    this.getCategory();
+
                 },
                 (error) => {
                     this.snackBar.open(

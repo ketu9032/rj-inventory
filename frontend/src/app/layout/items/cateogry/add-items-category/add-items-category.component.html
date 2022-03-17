@@ -1,0 +1,46 @@
+<div class="container">
+    <h1 mat-dialog-title> {{ !this.data ? 'Add Category' : 'Update Category' }} </h1>
+    <mat-divider></mat-divider>
+    <br>
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+        <!-- Code start -->
+        <mat-form-field>
+            <mat-label>Code</mat-label>
+            <input matInput formControlName="code" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.code.touched &&
+          !formGroup.controls.code.value
+        ">
+                <span class="error">Code is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- Name start -->
+        <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.name.touched &&
+          !formGroup.controls.name.value
+        ">
+                <span class="error">Name is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- button start -->
+        <div class="btn-update">
+            <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">
+                <span *ngIf="!isShowLoader">
+                    {{ !this.data ? 'Save' : 'Update' }}
+                </span>
+                <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
+
+            </button>
+        </div>
+    </form>
+</div>

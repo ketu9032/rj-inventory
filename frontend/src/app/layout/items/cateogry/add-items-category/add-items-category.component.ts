@@ -1,64 +1,60 @@
+import { ItemsCategoriesService } from '../../services/items-categories.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
-import { ISuppliersData } from 'src/app/models/suppliers';
-import { SuppliersService } from '../services/suppliers.service';
+import { ITiersData } from 'src/app/models/tiers';
 
 @Component({
-  selector: 'app-add-suppliers',
-  templateUrl: './add-suppliers.component.html',
-  styleUrls: ['./add-suppliers.component.scss']
+  selector: 'app-add-items-category',
+  templateUrl: './add-items-category.component.html',
+  styleUrls: ['./add-items-category.component.scss']
 })
-export class AddSuppliersComponent implements OnInit {
+export class AddItemsCategoryComponent implements OnInit {
   formGroup: FormGroup;
   selectedRole: string
-  users = []
-  isShowLoader = false
+  tires = []
+  isShowLoader = false;
+
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ISuppliersData,
+    @Inject(MAT_DIALOG_DATA) public data: ITiersData,
     public dialog: MatDialog,
-    public dialogRef: MatDialogRef<AddSuppliersComponent>,
+    public dialogRef: MatDialogRef<AddItemsCategoryComponent>,
     private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
-    private router: Router,
-    private suppliersService: SuppliersService,
-  ) { }
+    private itemsCategoriesService: ItemsCategoriesService,
+    ) { }
 
   ngOnInit() {
     this.initializeForm();
     if (this.data && this.data.id) {
-     this.fillForm();
+      this.fillForm();
     }
   }
 
   initializeForm(): void {
     this.formGroup = this.formBuilder.group({
-      company: ['', Validators.required],
-      dueLimit: ['', Validators.required],
-      balance: ['', Validators.required],
-      other: ['', Validators.required],
+      code: ['', Validators.required],
+      name: ['', Validators.required],
+
     });
   }
 
-  saveSuppliers(): void {
-    const { company, dueLimit, balance, other } = this.formGroup.value;
+  saveCategory(): void {
+    const { code, name } = this.formGroup.value;
     this.isShowLoader = true;
-    this.suppliersService
-      .addSuppliers({
-        company,
-        dueLimit,
-        balance,
-        other
+    this.itemsCategoriesService
+      .addCategory({
+        code,
+        name
       })
       .subscribe(
         (response) => {
-            this.isShowLoader = false;
-          this.snackBar.open('Suppliers saved successfully', 'OK', {
+          this.snackBar.open('Category saved successfully', 'OK', {
             duration: 3000
           });
+    this.isShowLoader = false;
           this.dialogRef.close(true);
         },
         (error) => {
@@ -74,29 +70,26 @@ export class AddSuppliersComponent implements OnInit {
       );
   }
 
-  updateSuppliers(): void {
-    const { company, dueLimit: dueLimit, balance, other } = this.formGroup.value;
+  updateCategory(): void {
+    const { code, name } = this.formGroup.value;
     this.isShowLoader = true;
-    this.suppliersService
-      .editSuppliers({
+
+    this.itemsCategoriesService
+      .editCategory({
         id: this.data.id,
-        company,
-        dueLimit,
-        balance,
-        other
+        code,
+        name
       })
       .subscribe(
         (response) => {
             this.isShowLoader = false;
-
-          this.snackBar.open('Suppliers updated successfully', 'OK', {
+          this.snackBar.open('Category updated successfully', 'OK', {
             duration: 3000
           });
           this.dialogRef.close(true);
         },
         (error) => {
             this.isShowLoader = false;
-
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {
@@ -110,21 +103,17 @@ export class AddSuppliersComponent implements OnInit {
 
   onSubmit() {
     if (this.data && this.data.id) {
-      this.updateSuppliers();
+      this.updateCategory();
     } else {
-      this.saveSuppliers();
+      this.saveCategory();
     }
   }
 
   fillForm() {
-    const { company, dueLimit: dueLimit, balance, other } = this.data;
+    const { code: code, name: name } = this.data;
     this.formGroup.patchValue({
-      company,
-      dueLimit,
-      balance,
-      other
+      code,
+      name
     });
   }
-
-
 }

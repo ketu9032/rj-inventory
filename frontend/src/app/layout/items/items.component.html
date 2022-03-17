@@ -10,6 +10,13 @@
             Search
         </button>
 
+        <button color="primary"  class="margin" mat-raised-button (click)="onAddNewItem()">
+            Add Item
+        </button>
+        <button color="primary"  class="margin" mat-raised-button (click)="openItemsCategory()">
+            Categories
+          </button>
+
         </div>
         <div>
             <mat-slide-toggle color="primary" (change)="toggleType()" [checked]="tableParams.active">Active

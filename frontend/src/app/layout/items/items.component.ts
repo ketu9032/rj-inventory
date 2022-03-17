@@ -8,6 +8,8 @@ import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { CustomersService } from '../customers/services/customers.service';
+import { AddItemComponent } from './add-item/add-item.component';
+import { ItemsCategoryComponent } from './cateogry/items-category.component';
 import { ItemsService } from './services/items.service';
 
 @Component({
@@ -90,18 +92,19 @@ export class ItemsComponent implements OnInit {
   //   );
   // }
 
-  // // onAddNewCustomers(): void {
-  // //   this.dialog
-  // //     .open(AddCustomersComponent, {
-  // //       width: '400px'
-  // //     })
-  // //     .afterClosed()
-  // //     .subscribe((result) => {
-  // //       if (result) {
-  // //         this.getItems();
-  // //       }
-  // //     });
-  // // }
+  onAddNewItem(): void {
+    this.dialog
+      .open(AddItemComponent, {
+        width: '500px',
+        height: '500px'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.getItems();
+        }
+      });
+  }
 
   // // onEditNewCustomers(element) {
   // //   this.dialog
@@ -131,6 +134,15 @@ export class ItemsComponent implements OnInit {
   // //     });
   // // }
 
+  openItemsCategory() {
+    this.dialog
+      .open(ItemsCategoryComponent, {
+        width: 'auto',
+        height: '550px'
+      })
+      .afterClosed()
+      .subscribe((result) => {});
+  }
   pageChanged(event: PageEvent) {
     this.tableParams.pageSize = event.pageSize;
     this.tableParams.pageNumber = event.pageIndex + 1;
