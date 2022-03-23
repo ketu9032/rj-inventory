@@ -1,8 +1,10 @@
 const Pool = require('pg').Pool
 exports.pool = new Pool({
-  user: 'postgres',
-  host: '173.208.211.61',
-  database: 'rj-inventory',
-  password: 'Realbotz@123',
+  user: 'ucyexxho',
+  host: 'salt.db.elephantsql.com',
+  database: 'ucyexxho',
+  password: 'B74MLPgNVtltXSiqaLpsFykbh1q-M1Do',
   port: 5432,
 })
+
+

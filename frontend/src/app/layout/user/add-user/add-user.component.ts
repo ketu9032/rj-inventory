@@ -189,7 +189,7 @@ export class AddUserComponent implements OnInit {
       balance,
       role
     });
-    this.permissions = permission as any;
+    this.permissions ={ ...this.permissions,...permission as any};
   }
 
   onPermissionChange(key: string) {
