@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ICustomersParams } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
+import { IItemParams } from 'src/app/models/item';
 
 @Injectable({ providedIn: 'root'})
 export class ItemsService {
@@ -14,10 +15,10 @@ export class ItemsService {
     const queryString = this.commonService.toQueryString(tablePrams);
     return this.restService.get<any>(`${this.url}${queryString}`);
   }
-  public addItems(customers: ICustomersParams) {
+  public addItems(customers: IItemParams) {
     return this.restService.post(`${this.url}`, customers);
   }
-  public editItems(customers: ICustomersParams) {
+  public editItems(customers: IItemParams) {
     return this.restService.put(`${this.url}`, customers);
   }
   public removeItems(id: string) {

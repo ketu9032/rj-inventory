@@ -1,0 +1,222 @@
+<h1 mat-dialog-title> {{ !this.data ? 'Add CDF' : 'Update CDF' }} </h1>
+<div class="container">
+    <mat-divider></mat-divider>
+    <br>
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+            <!-- Email start -->
+            <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" required />
+            </mat-form-field>
+            <div>
+                <ng-container *ngIf="
+          formGroup.controls.email.errors &&
+          !formGroup.controls.email.errors.required
+          ">
+                    <span class="error">Please enter correct email address</span>
+                    <br />
+                </ng-container>
+                <ng-container *ngIf="
+           formGroup.controls.email.touched &&
+           !formGroup.controls.email.value
+           ">
+                    <span class="error">Email is Required</span>
+                </ng-container>
+            </div>
+
+                <!-- first name start -->
+        <mat-form-field>
+            <mat-label>First Name & Last Name</mat-label>
+            <input matInput formControlName="firstName" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.firstName.touched &&
+          !formGroup.controls.firstName.value
+        ">
+                <span class="error">First name is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- company start -->
+        <mat-form-field>
+            <mat-label>Company Name</mat-label>
+            <input matInput formControlName="company" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.company.touched &&
+          !formGroup.controls.company.value
+        ">
+                <span class="error">Company is Required</span>
+            </ng-container>
+        </div>
+
+       <!-- Date start -->
+       <mat-form-field color="accent">
+        <mat-label>Business Started Date</mat-label>
+        <input matInput formControlName="date"  aria-current="date">
+         <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+        <mat-datepicker #date></mat-datepicker>
+    </mat-form-field>
+
+    <!-- <input mdInput
+       name="start_time"
+       #start_time="ngModel"
+       [mdDatepicker]="startDate"
+       [min]="minDate"
+       date="true"
+       [(ngModel)]="planModel.start_time"
+       placeholder="Choose a date">
+
+    <md-datepicker-toggle mdSuffix [for]="startDate"></md-datepicker-toggle>
+    <md-datepicker [startView]="dateStart" #startDate></md-datepicker> -->
+
+
+      <!-- Reference start -->
+      <mat-form-field>
+        <mat-label>Reference</mat-label>
+        <mat-select formControlName="reference" name="reference">
+            <mat-option *ngFor="let reference of references" [value]="reference.id">
+                {{reference.value}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div>
+        <ng-container *ngIf="
+      formGroup.controls.reference.touched &&
+      !formGroup.controls.reference.value
+    ">
+            <span class="error">Reference is Required</span>
+        </ng-container>
+    </div>
+
+       <!-- Reference Person start -->
+       <mat-form-field>
+        <mat-label>Reference Person</mat-label>
+        <input matInput formControlName="referencePerson" />
+    </mat-form-field>
+    <div>
+        <ng-container *ngIf="
+      formGroup.controls.referencePerson.touched &&
+      !formGroup.controls.referencePerson.value
+    ">
+            <span class="error">Reference Person is Required</span>
+        </ng-container>
+    </div>
+
+       <!-- List of Brands start -->
+       <mat-form-field>
+        <mat-label>List of Brands</mat-label>
+        <input matInput formControlName="listOfBrands" />
+    </mat-form-field>
+    <div>
+        <ng-container *ngIf="
+      formGroup.controls.listOfBrands.touched &&
+      !formGroup.controls.listOfBrands.value
+    ">
+            <span class="error">List of Brands is Required</span>
+        </ng-container>
+    </div>
+
+       <!-- List of Display Names start -->
+       <mat-form-field>
+        <mat-label>List of Display Names</mat-label>
+        <input matInput formControlName="listOfDisplayNames" />
+    </mat-form-field>
+    <div>
+        <ng-container *ngIf="
+      formGroup.controls.listOfDisplayNames.touched &&
+      !formGroup.controls.listOfDisplayNames.value
+    ">
+            <span class="error">List of Display Names is Required</span>
+        </ng-container>
+    </div>
+
+         <!-- List of Sites start -->
+         <mat-form-field>
+            <mat-label>List of Sites</mat-label>
+            <mat-select formControlName="ListOfSites" name="ListOfSites" multiple>
+                <mat-option *ngFor="let ListOfSite of ListOfSites" [value]="ListOfSite.id">
+                    {{ListOfSite.value}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.reference.touched &&
+          !formGroup.controls.reference.value
+        ">
+                <span class="error">List of Sites is Required</span>
+            </ng-container>
+        </div>
+
+        <!--  -->
+        <!-- <mat-card>
+            <mat-card-content>
+                <h2 class="example-h2">Select Employee</h2>
+                <section class="example-section">
+                    <mat-checkbox  [(ngModel)]="checked">Select All</mat-checkbox>
+                </section>
+                <section class="example-section" *ngFor="let r of ListOfSites">
+                    <mat-checkbox class="example-margin" [(ngModel)]="checked">{{r.name}}</mat-checkbox>
+                </section>
+            </mat-card-content>
+        </mat-card>  -->
+
+        <!-- Other start -->
+        <mat-form-field>
+            <mat-label>Other</mat-label>
+            <input matInput formControlName="other" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.other.touched &&
+          !formGroup.controls.other.value
+        ">
+                <span class="error">Other is Required</span>
+            </ng-container>
+        </div>
+
+          <!-- mobileNumber start -->
+          <mat-form-field>
+            <mat-label>Mobile Number</mat-label>
+            <input matInput formControlName="mobileNumber" type="tel" type="number" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.mobileNumber.touched &&
+          !formGroup.controls.mobileNumber.value
+        ">
+                <span class="error">Mobile Number is Required</span>
+            </ng-container>
+        </div>
+
+            <!-- Address start -->
+            <mat-form-field>
+                <mat-label>Address</mat-label>
+                <textarea matInput formControlName="address"></textarea>
+            </mat-form-field>
+            <div>
+                <ng-container *ngIf="
+              formGroup.controls.address.touched &&
+              !formGroup.controls.address.value
+            ">
+                    <span class="error">Address is Required</span>
+                </ng-container>
+            </div>
+
+
+        <!-- button start -->
+        <div class="btn-update">
+            <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">
+                <span *ngIf="!isShowLoader">
+
+                    {{ !this.data ? 'Save' : 'Update' }}
+                </span>
+                <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
+            </button>
+        </div>
+    </form>
+</div>

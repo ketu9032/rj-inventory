@@ -1,8 +1,8 @@
 import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
-import { ICustomersParams } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
+import { ICdfParams } from 'src/app/models/cdf';
 
 @Injectable({ providedIn: 'root'})
 export class CDFService {
@@ -10,17 +10,17 @@ export class CDFService {
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
-  public getItems(tablePrams: IMatTableParams) {
+  public getCdf(tablePrams: IMatTableParams) {
     const queryString = this.commonService.toQueryString(tablePrams);
     return this.restService.get<any>(`${this.url}${queryString}`);
   }
-  public addItems(customers: ICustomersParams) {
-    return this.restService.post(`${this.url}`, customers);
+  public addCdf(cdf: ICdfParams) {
+    return this.restService.post(`${this.url}`, cdf);
   }
-  public editItems(customers: ICustomersParams) {
-    return this.restService.put(`${this.url}`, customers);
+  public editCdf(cdf: ICdfParams) {
+    return this.restService.put(`${this.url}`, cdf);
   }
-  public removeItems(id: string) {
+  public removeCdf(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
 }

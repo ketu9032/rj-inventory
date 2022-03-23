@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -15,8 +15,11 @@ import { UserService } from '../../user/services/user.service';
 })
 export class AddExpenseComponent implements OnInit {
   formGroup: FormGroup;
-  selectedRole: string
-  users = []
+  selectedRole: string;
+  users = [];
+  myDate: string
+//   date = new FormControl(new Date());
+//   serializedDate = new FormControl(new Date().toISOString());
 
 
   constructor(
@@ -27,14 +30,14 @@ export class AddExpenseComponent implements OnInit {
     public snackBar: MatSnackBar,
     private router: Router,
     private userService: UserService,
-  ) { }
-
+    private datePipe: DatePipe
+  ) {  }
   ngOnInit() {
-    this.initializeForm();
-    this.getUserDropDown()
-    if (this.data && this.data.id) {
-      this.fillForm();
-    }
+      this.initializeForm();
+      this.getUserDropDown()
+      if (this.data && this.data.id) {
+          this.fillForm();
+        }
   }
 
   initializeForm(): void {

@@ -1,11 +1,11 @@
 <div class="container">
-    <h1 mat-dialog-title> {{ !this.data ? 'Add Transfer' : 'Update Transfer' }} </h1>
+    <h1 mat-dialog-title> {{ !this.data ? 'Add Expense' : 'Update Expense' }} </h1>
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
         <!-- Date start -->
         <mat-form-field color="accent">
             <mat-label>Date</mat-label>
-            <input matInput formControlName="date" [matDatepicker]="date">
+            <input matInput formControlName="date" [matDatepicker]="date.value">
             <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
             <mat-datepicker #date></mat-datepicker>
         </mat-form-field>

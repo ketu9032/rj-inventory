@@ -48,17 +48,17 @@ exports.delete = async(req, res) => {
 
 exports.add = async(req, res) => {
     try {
-        const { code, name } = req.body;
+        const { code, name, type } = req.body;
 
-        if (!code || !name) {
+        if (!code || !name || !type) {
             res
                 .status(STATUS_CODE.BAD)
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
             return;
         }
         await pool.query(
-            `INSERT INTO categories (code, name)
-      VALUES('${code}', '${name}');
+            `INSERT INTO categories (code, name, type)
+      VALUES('${code}', '${name}', '${type}');
       `
         );
 

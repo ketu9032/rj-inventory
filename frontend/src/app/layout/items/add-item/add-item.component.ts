@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { ICustomersData } from 'src/app/models/customers';
+import { IItemData } from 'src/app/models/item';
 import { ItemsService } from '../services/items.service';
 
 @Component({
@@ -16,54 +16,70 @@ export class AddItemComponent implements OnInit {
     selectedRole: string
     tires = []
     isShowLoader = false;
+    categories = [{ value: 'Bag', id: 1 }, { value: 'Balt', id: 2 }, { value: 'Mask', id: 3 }, { value: 'watch', id: 4 }];
+
 
 
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: ICustomersData,
+        @Inject(MAT_DIALOG_DATA) public data: IItemData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddItemComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
         private router: Router,
-        private itemsService:ItemsService
+        private itemsService: ItemsService
     ) { }
 
     ngOnInit() {
         this.initializeForm();
         if (this.data && this.data.id) {
-            this.fillForm();
+            // this.fillForm();
         }
     }
 
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            company: ['', Validators.required],
-            firstName: ['', Validators.required],
-            address: ['', Validators.required],
+            itemCode: ['', Validators.required],
+            itemName: ['', Validators.required],
+            category: ['', Validators.required],
+            comment: ['', Validators.required],
             email: ['', Validators.required],
-            mobileNumber: ['', Validators.required],
-            dueLimit: ['', Validators.required],
-            balance: ['', Validators.required],
-            other: ['', Validators.required],
-            tier: ['', Validators.required],
+            initQty: ['', Validators.required],
+            silver: ['', Validators.required],
+            retail: ['', Validators.required],
+            gold: ['', Validators.required],
+            indiaMart: ['', Validators.required],
+            dealer: ['', Validators.required],
         });
     }
 
     saveItems(): void {
-        const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
+        const { itemCode,
+            itemName,
+            category,
+            comment,
+            email,
+            initQty,
+            silver,
+            retail,
+            gold,
+            indiaMart,
+            dealer } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.itemsService
             .addItems({
-                company,
-                firstName,
-                address,
+                itemCode,
+                itemName,
+                category,
+                comment,
                 email,
-                mobileNumber,
-                dueLimit,
-                balance,
-                other,
-                tierId
+                initQty,
+                silver,
+                retail,
+                gold,
+                indiaMart,
+                dealer
             })
             .subscribe(
                 (response) => {
@@ -89,21 +105,33 @@ export class AddItemComponent implements OnInit {
     }
 
     updateItems(): void {
-        const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
+        const {    itemCode,
+            itemName,
+            category,
+            comment,
+            email,
+            initQty,
+            silver,
+            retail,
+            gold,
+            indiaMart,
+            dealer } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.itemsService
             .editItems({
                 id: this.data.id,
-                company,
-                firstName,
-                address,
+                itemCode,
+                itemName,
+                category,
+                comment,
                 email,
-                mobileNumber,
-                dueLimit,
-                balance,
-                other,
-                tierId
+                initQty,
+                silver,
+                retail,
+                gold,
+                indiaMart,
+                dealer
             })
             .subscribe(
                 (response) => {
@@ -136,20 +164,20 @@ export class AddItemComponent implements OnInit {
         }
     }
 
-    fillForm() {
-        const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
-        this.formGroup.patchValue({
-            company,
-            firstName,
-            address,
-            email,
-            mobileNumber,
-            dueLimit,
-            balance,
-            other,
-            tier: tierId
-        });
-    }
+    // fillForm() {
+    //     const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
+    //     this.formGroup.patchValue({
+    //         company,
+    //         firstName,
+    //         address,
+    //         email,
+    //         mobileNumber,
+    //         dueLimit,
+    //         balance,
+    //         other,
+    //         tier: tierId
+    //     });
+    // }
 
 
 }

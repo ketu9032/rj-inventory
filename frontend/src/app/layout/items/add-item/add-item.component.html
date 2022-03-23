@@ -1,48 +1,66 @@
-<h1 mat-dialog-title> {{ !this.data ? 'Add Customer' : 'Update Customer' }} </h1>
+<h1 mat-dialog-title> {{ !this.data ? 'Add Item' : 'Update Item' }} </h1>
 <div class="container">
     <mat-divider></mat-divider>
     <br>
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
-        <!-- company start -->
+        <!-- item code start -->
         <mat-form-field>
-            <mat-label>Company</mat-label>
-            <input matInput formControlName="company" />
+            <mat-label>Item Code</mat-label>
+            <input matInput formControlName="itemCode" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.company.touched &&
-          !formGroup.controls.company.value
+          formGroup.controls.itemCode.touched &&
+          !formGroup.controls.itemCode.value
         ">
-                <span class="error">Company is Required</span>
+                <span class="error">Item Code is Required</span>
             </ng-container>
         </div>
 
-        <!-- userName start -->
+        <!--Item Name start -->
         <mat-form-field>
-            <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstName" />
+            <mat-label>-Item Name</mat-label>
+            <input matInput formControlName="itemName" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.firstName.touched &&
-          !formGroup.controls.firstName.value
+          formGroup.controls.itemName.touched &&
+          !formGroup.controls.itemName.value
         ">
-                <span class="error">First name is Required</span>
+                <span class="error">Item name is Required</span>
             </ng-container>
         </div>
 
-        <!-- Address start -->
+        <!-- category start -->
         <mat-form-field>
-            <mat-label>Address</mat-label>
-            <textarea matInput formControlName="address"></textarea>
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="category" name="category">
+                <mat-option *ngFor="let category of categories" [value]="category.id">
+                    {{category.value}}
+                </mat-option>
+            </mat-select>
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.address.touched &&
-          !formGroup.controls.address.value
+              formGroup.controls.category.touched &&
+              !formGroup.controls.category.value
+            ">
+                <span class="error">Category is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- Comment start -->
+        <mat-form-field>
+            <mat-label>Comment</mat-label>
+            <textarea matInput formControlName="comment"></textarea>
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.comment.touched &&
+          !formGroup.controls.comment.value
         ">
-                <span class="error">Address is Required</span>
+                <span class="error">Comment is Required</span>
             </ng-container>
         </div>
 
@@ -67,77 +85,92 @@
             </ng-container>
         </div>
 
-        <!-- mobileNumber start -->
+        <!-- Init Qty start -->
         <mat-form-field>
-            <mat-label>Mobile Number</mat-label>
-            <input matInput formControlName="mobileNumber" type="tel" type="number" />
+            <mat-label>Init. Qty</mat-label>
+            <input matInput formControlName="initQty" type="number" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.mobileNumber.touched &&
-          !formGroup.controls.mobileNumber.value
+          formGroup.controls.initQty.touched &&
+          !formGroup.controls.initQty.value
         ">
-                <span class="error">Mobile Number is Required</span>
-            </ng-container>
-        </div>
-        <!--dueLimit start -->
-        <mat-form-field>
-            <mat-label>Due Limit</mat-label>
-            <input type="number" matInput formControlName="dueLimit" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.dueLimit.touched &&
-          !formGroup.controls.dueLimit.value
-        ">
-                <span class="error">Due limit is Required</span>
+                <span class="error">Init. Qty is Required</span>
             </ng-container>
         </div>
 
-        <!-- Balance start -->
+        <!--SILVER  start -->
         <mat-form-field>
-            <mat-label>Balance</mat-label>
-            <input matInput formControlName="balance" type="number" />
+            <mat-label>SILVER</mat-label>
+            <input type="number" matInput formControlName="silver" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.balance.touched &&
-          !formGroup.controls.balance.value
+          formGroup.controls.silver.touched &&
+          !formGroup.controls.silver.value
         ">
-                <span class="error">Balance is Required</span>
-            </ng-container>
-        </div>
-        <!-- Other start -->
-        <mat-form-field>
-            <mat-label>Other</mat-label>
-            <input matInput formControlName="other" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.other.touched &&
-          !formGroup.controls.other.value
-        ">
-                <span class="error">Other is Required</span>
+                <span class="error">silver is Required</span>
             </ng-container>
         </div>
 
-        <!-- tire start -->
+        <!-- RETAIL start -->
+
         <mat-form-field>
-            <mat-label>Select Tier</mat-label>
-            <mat-select formControlName="tier" name="tier">
-                <mat-option *ngFor="let tire of tires" [value]="tire.id">
-                    {{tire.name}}
-                </mat-option>
-            </mat-select>
+            <mat-label>RETAIL</mat-label>
+            <input matInput formControlName="retail" type="number" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.tier.touched &&
-          !formGroup.controls.tier.value
+          formGroup.controls.retail.touched &&
+          !formGroup.controls.retail.value
         ">
-                <span class="error">Tier is Required</span>
+                <span class="error">RETAIL is Required</span>
             </ng-container>
         </div>
+
+        <!-- Gold start -->
+        <mat-form-field>
+            <mat-label>GOLD</mat-label>
+            <input matInput formControlName="gold" type="number" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.gold.touched &&
+          !formGroup.controls.gold.value
+        ">
+                <span class="error">Gold is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- INDIAMART start -->
+        <mat-form-field>
+            <mat-label>INDIAMART</mat-label>
+            <input matInput formControlName="indiaMart" type="number" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.indiaMart.touched &&
+          !formGroup.controls.indiaMart.value
+        ">
+                <span class="error">India Mart is Required</span>
+            </ng-container>
+        </div>
+
+        <!-- DEALER start -->
+        <mat-form-field>
+            <mat-label>DEALER</mat-label>
+            <input matInput formControlName="dealer" type="number" />
+        </mat-form-field>
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.dealer.touched &&
+          !formGroup.controls.dealer.value
+        ">
+                <span class="error">DEALER is Required</span>
+            </ng-container>
+        </div>
+
+
 
         <!-- button start -->
         <div class="btn-update">

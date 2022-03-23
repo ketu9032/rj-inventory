@@ -6,6 +6,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { ItemsService } from '../items/services/items.service';
+import { AddCdfComponent } from './add-cdf/add-cdf.component';
 
 
 
@@ -91,18 +92,19 @@ export class CDFComponent implements OnInit {
   //   );
   // }
 
-//   onAddNewCdf(): void {
-//     this.dialog
-//       .open(AddCdfComponent, {
-//         width: '400px'
-//       })
-//       .afterClosed()
-//       .subscribe((result) => {
-//         if (result) {
-//           this.getItems();
-//         }
-//       });
-//   }
+  onAddNewCdf(): void {
+    this.dialog
+      .open(AddCdfComponent, {
+        width: '500px',
+        height: '500px'
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.getItems();
+        }
+      });
+  }
 
   // // onEditNewCustomers(element) {
   // //   this.dialog

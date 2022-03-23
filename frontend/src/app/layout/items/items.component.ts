@@ -19,6 +19,7 @@ import { ItemsService } from './services/items.service';
 })
 export class ItemsComponent implements OnInit {
   displayedColumns: string[] = [
+
     'code',
     'name',
     'int_qty',
