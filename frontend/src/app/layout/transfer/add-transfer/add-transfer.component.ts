@@ -18,6 +18,8 @@ export class AddTransferComponent implements OnInit {
   formGroup: FormGroup;
   selectedRole: string
   users = []
+  isShowLoader = false;
+
 
 
   constructor(
@@ -50,6 +52,8 @@ export class AddTransferComponent implements OnInit {
 
   saveTransfer(): void {
     const { user: userId, description, amount, date } = this.formGroup.value;
+    this.isShowLoader = true;
+
     this.transferService
       .addTransfer({
         userId, description, amount, date
@@ -59,9 +63,13 @@ export class AddTransferComponent implements OnInit {
           this.snackBar.open('Transfer saved successfully', 'OK', {
             duration: 3000
           });
+          this.isShowLoader = false;
+
           this.dialogRef.close(true);
         },
         (error) => {
+          this.isShowLoader = false;
+
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {
@@ -75,6 +83,8 @@ export class AddTransferComponent implements OnInit {
 
   updateTransfer(): void {
     const { user: userId, description, amount, date } = this.formGroup.value;
+    this.isShowLoader = true;
+
     this.transferService
       .editTransfer({
         id: this.data.id,
@@ -85,9 +95,13 @@ export class AddTransferComponent implements OnInit {
           this.snackBar.open('transfer updated successfully', 'OK', {
             duration: 3000
           });
+          this.isShowLoader = false;
+
           this.dialogRef.close(true);
         },
         (error) => {
+          this.isShowLoader = false;
+
           this.snackBar.open(
             (error.error && error.error.message) || error.message,
             'Ok', {

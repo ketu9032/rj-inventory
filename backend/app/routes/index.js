@@ -3,6 +3,7 @@ const router = new express.Router();
 const users = require('./../controllers/user.controller');
 const customers = require('./../controllers/customer.controller');
 const transfers = require('./../controllers/transfer.controller');
+const expense = require('./../controllers/expense.controller');
 const suppliers = require('./../controllers/supplier.controller');
 const categories = require('./../controllers/category.controller');
 
@@ -67,5 +68,11 @@ router.post('/api/categories', categories.add);
 router.put('/api/categories', categories.update);
 router.put('/api/categories/changeStatus', categories.changeStatus);
 router.get('/api/getCategoryDropDown', categories.getCategoryDropDown);
+
+router.delete('/api/expense', expense.delete);
+router.get('/api/expense', expense.findAll);
+router.post('/api/expense', expense.add);
+router.put('/api/expense', expense.update);
+router.put('/api/expense/changeStatus', expense.changeStatus);
 
 module.exports = router;

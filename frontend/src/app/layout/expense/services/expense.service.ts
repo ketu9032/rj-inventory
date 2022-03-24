@@ -7,7 +7,7 @@ import { IExpenseParams } from 'src/app/models/expense';
 
 @Injectable({ providedIn: 'root'})
 export class ExpenseService {
-  private url = 'api/transfers';
+  private url = 'api/expense';
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 

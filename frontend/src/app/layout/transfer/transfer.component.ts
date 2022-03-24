@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { IMatTableParams } from 'src/app/models/table';
 import { ITransferData } from 'src/app/models/transfer';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
+import { UserService } from '../user/services/user.service';
 import { AddTransferComponent } from './add-transfer/add-transfer.component';
 import { DeleteTransferComponent } from './delete-transfer/delete-transfer.component';
 import { TransferService } from './services/transfer.service';
@@ -133,6 +134,33 @@ export class TransferComponent implements OnInit {
     this.tableParams.active = !this.tableParams.active;
     this.getTransfer();
   }
-
+  changeStatus(id: number): void {
+    this.transferService
+        .changeStatus({ id: id, status: !this.tableParams.active })
+        .subscribe(
+            (response) => {
+                if (!this.tableParams.active) {
+                    this.snackBar.open('Transfer active successfully', 'OK', {
+                        duration: 3000
+                    })
+                } else {
+                    this.snackBar.open('Transfer de-active successfully', 'OK', {
+                        duration: 3000
+                    })
+                }
+                this.getTransfer();
+            },
+            (error) => {
+                this.snackBar.open(
+                    (error.error && error.error.message) || error.message,
+                    'Ok',
+                    {
+                        duration: 3000
+                    }
+                );
+            },
+            () => { }
+        );
+}
 
 }
