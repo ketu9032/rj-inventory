@@ -34,7 +34,8 @@ export class CategoryComponent implements OnInit {
         orderBy: 'id',
         direction: 'desc',
         search: '',
-        active: true
+        active: true,
+        type: 'Expense'
     };
 
     constructor(
@@ -128,6 +129,7 @@ export class CategoryComponent implements OnInit {
 
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
+        this.tableParams.pageNumber = 1;
         this.getCategory();
 
 

@@ -1,8 +1,9 @@
 export interface IMatTableParams {
     pageSize: number
-    pageNumber : number;
+    pageNumber: number;
     orderBy: string;
-    direction: string ;
+    direction: string;
     search: string;
     active: boolean;
+    [key: string]: any;
 }

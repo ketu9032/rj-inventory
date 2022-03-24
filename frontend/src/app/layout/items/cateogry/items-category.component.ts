@@ -34,7 +34,8 @@ export class ItemsCategoryComponent implements OnInit {
         orderBy: 'id',
         direction: 'desc',
         search: '',
-        active: true
+        active: true,
+        type: 'Item'
     };
 
     constructor(
