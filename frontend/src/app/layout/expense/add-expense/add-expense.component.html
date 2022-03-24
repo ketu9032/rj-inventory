@@ -1,3 +1,5 @@
+
+<!--  -->
 <div class="container">
     <h1 mat-dialog-title> {{ !this.data ? 'Add Expense' : 'Update Expense' }} </h1>
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
@@ -5,7 +7,7 @@
         <!-- Date start -->
         <mat-form-field color="accent">
             <mat-label>Date</mat-label>
-            <input matInput formControlName="date" [matDatepicker]="date.value">
+            <input matInput formControlName="date" [matDatepicker]="date">
             <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
             <mat-datepicker #date></mat-datepicker>
         </mat-form-field>
@@ -42,7 +44,7 @@
 
         <!-- Amount start -->
         <mat-form-field>
-            <mat-label>Select Category</mat-label>
+            <mat-label>User To</mat-label>
             <mat-select formControlName="user" name="user">
                 <mat-option *ngFor="let user of users" [value]="user.id">
                     {{user.user_name}}

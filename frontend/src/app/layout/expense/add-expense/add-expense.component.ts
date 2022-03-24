@@ -1,12 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { ITransferData } from 'src/app/models/transfer';
-import { IUserData } from 'src/app/models/user';
+import { IExpenseData } from 'src/app/models/expense';
 import { UserService } from '../../user/services/user.service';
+import { ExpenseService } from '../services/expense.service';
 
 @Component({
   selector: 'app-add-expense',
@@ -15,29 +15,27 @@ import { UserService } from '../../user/services/user.service';
 })
 export class AddExpenseComponent implements OnInit {
   formGroup: FormGroup;
-  selectedRole: string;
-  users = [];
-  myDate: string
-//   date = new FormControl(new Date());
-//   serializedDate = new FormControl(new Date().toISOString());
+  selectedRole: string
+  users = []
 
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ITransferData,
+    @Inject(MAT_DIALOG_DATA) public data: IExpenseData,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<AddExpenseComponent>,
     private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
     private router: Router,
+    private expenseService: ExpenseService,
     private userService: UserService,
-    private datePipe: DatePipe
-  ) {  }
+  ) { }
+
   ngOnInit() {
-      this.initializeForm();
-      this.getUserDropDown()
-      if (this.data && this.data.id) {
-          this.fillForm();
-        }
+    this.initializeForm();
+    this.getUserDropDown()
+    if (this.data && this.data.id) {
+      this.fillForm();
+    }
   }
 
   initializeForm(): void {
@@ -49,62 +47,62 @@ export class AddExpenseComponent implements OnInit {
     });
   }
 
-//   saveTransfer(): void {
-//     const { user: userId, description, amount, date } = this.formGroup.value;
-//     this.transferService
-//       .addTransfer({
-//         userId, description, amount, date
-//       })
-//       .subscribe(
-//         (response) => {
-//           this.snackBar.open('Transfer saved successfully', 'OK', {
-//             duration: 3000
-//           });
-//           this.dialogRef.close(true);
-//         },
-//         (error) => {
-//           this.snackBar.open(
-//             (error.error && error.error.message) || error.message,
-//             'Ok', {
-//             duration: 3000
-//           }
-//           );
-//         },
-//         () => { }
-//       );
-//   }
+  saveExpense(): void {
+    const { user: userId, description, amount, date } = this.formGroup.value;
+    this.expenseService
+      .addExpense({
+        userId, description, amount, date
+      })
+      .subscribe(
+        (response) => {
+          this.snackBar.open('Transfer saved successfully', 'OK', {
+            duration: 3000
+          });
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          this.snackBar.open(
+            (error.error && error.error.message) || error.message,
+            'Ok', {
+            duration: 3000
+          }
+          );
+        },
+        () => { }
+      );
+  }
 
-//   updateTransfer(): void {
-//     const { user: userId, description, amount, date } = this.formGroup.value;
-//     this.transferService
-//       .editTransfer({
-//         id: this.data.id,
-//         userId, description, amount, date
-//       })
-//       .subscribe(
-//         (response) => {
-//           this.snackBar.open('transfer updated successfully', 'OK', {
-//             duration: 3000
-//           });
-//           this.dialogRef.close(true);
-//         },
-//         (error) => {
-//           this.snackBar.open(
-//             (error.error && error.error.message) || error.message,
-//             'Ok', {
-//             duration: 3000
-//           }
-//           );
-//         },
-//         () => { }
-//       );
-//   }
+  updateExpense(): void {
+    const { user: userId, description, amount, date } = this.formGroup.value;
+    this.expenseService
+      .editExpense({
+        id: this.data.id,
+        userId, description, amount, date
+      })
+      .subscribe(
+        (response) => {
+          this.snackBar.open('transfer updated successfully', 'OK', {
+            duration: 3000
+          });
+          this.dialogRef.close(true);
+        },
+        (error) => {
+          this.snackBar.open(
+            (error.error && error.error.message) || error.message,
+            'Ok', {
+            duration: 3000
+          }
+          );
+        },
+        () => { }
+      );
+  }
 
   onSubmit() {
     if (this.data && this.data.id) {
-  //      this.updateTransfer();
+        this.updateExpense();
     } else {
-    //  this.saveTransfer();
+      this.saveExpense();
     }
   }
 

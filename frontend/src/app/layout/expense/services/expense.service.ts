@@ -3,24 +3,25 @@ import { Injectable } from '@angular/core';
 import { ICustomersParams } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
+import { IExpenseParams } from 'src/app/models/expense';
 
 @Injectable({ providedIn: 'root'})
 export class ExpenseService {
-  private url = 'api/customers';
+  private url = 'api/transfers';
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
-  public getItems(tablePrams: IMatTableParams) {
+  public getExpense(tablePrams: IMatTableParams) {
     const queryString = this.commonService.toQueryString(tablePrams);
     return this.restService.get<any>(`${this.url}${queryString}`);
   }
-  public addItems(customers: ICustomersParams) {
+  public addExpense(customers: IExpenseParams) {
     return this.restService.post(`${this.url}`, customers);
   }
-  public editItems(customers: ICustomersParams) {
+  public editExpense(customers: IExpenseParams) {
     return this.restService.put(`${this.url}`, customers);
   }
-  public removeItems(id: string) {
+  public removeExpense(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
 }

@@ -1,15 +1,15 @@
 .container {
-  .mat-form-field {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+    .mat-form-field {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-  .mat-dialog-title {
-    margin: 0 0 20px;
-    display: block;
+    .mat-dialog-title {
+      margin: 0 0 20px;
+      display: block;
+    }
+    .input {
+      width: 100%;
+    }
   }
-  .input {
-    width: 100%;
-  }
-}
