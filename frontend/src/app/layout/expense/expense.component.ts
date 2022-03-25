@@ -21,7 +21,7 @@ export class ExpenseComponent implements OnInit {
         'id',
         'date',
         'description',
-        'name',
+        'code',
         'amount',
         'user_name',
         'action',
@@ -100,19 +100,19 @@ export class ExpenseComponent implements OnInit {
             });
     }
 
-    // onEditNewExpense(element) {
-    //   this.dialog
-    //     .open(AddExpenseComponent, {
-    //       width: '400px',
-    //       data: element
-    //     })
-    //     .afterClosed()
-    //     .subscribe((result) => {
-    //       if (result) {
-    //         this.getExpense();
-    //       }
-    //     });
-    // }
+    onEditNewExpense(element) {
+        this.dialog
+            .open(AddExpenseComponent, {
+                width: '400px',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getExpense();
+                }
+            });
+    }
 
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
@@ -134,4 +134,34 @@ export class ExpenseComponent implements OnInit {
             .afterClosed()
             .subscribe((result) => { });
     }
+
+    changeStatus(id: number): void {
+        this.expenseService
+            .changeStatus({ id: id, status: !this.tableParams.active })
+            .subscribe(
+                (response) => {
+                    if (!this.tableParams.active) {
+                        this.snackBar.open('Expense active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    } else {
+                        this.snackBar.open('Expense de-active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    }
+                    this.getExpense()
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok',
+                        {
+                            duration: 3000
+                        }
+                    );
+                },
+                () => { }
+            );
+    }
+
 }

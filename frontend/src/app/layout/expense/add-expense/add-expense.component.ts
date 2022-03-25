@@ -60,7 +60,7 @@ export class AddExpenseComponent implements OnInit {
             })
             .subscribe(
                 (response) => {
-                    this.snackBar.open('Transfer saved successfully', 'OK', {
+                    this.snackBar.open('Expense saved successfully', 'OK', {
                         duration: 3000
                     });
                     this.isShowLoader = false;
@@ -90,7 +90,7 @@ export class AddExpenseComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-                    this.snackBar.open('transfer updated successfully', 'OK', {
+                    this.snackBar.open('Expense updated successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);

@@ -111,7 +111,7 @@ exports.changeStatus = async (req, res) => {
       return;
     }
     await pool.query(
-      `UPDATE expense SET is_active = ${status} where "id" = '${id}'`
+      `UPDATE expenses SET is_active = ${status} where "id" = '${id}'`
     );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
