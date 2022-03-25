@@ -137,6 +137,7 @@ export class CustomersComponent implements OnInit {
 
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
+        this.tableParams.pageNumber = 1;
         this.getCustomers();
     }
 
