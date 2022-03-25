@@ -20,7 +20,7 @@ exports.findAll = async (req, res) => {
     searchQuery += ` and t.is_active = ${active}`;
     let query = `
     select count(t.id) over() as total, t.id, description, t.is_deleted, amount, t.user_id, u.user_name, t.date
-      FROM transfers t
+      FROM expenses t
       join users u
       on u.id = t.user_id  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
 
@@ -44,7 +44,7 @@ exports.delete = async (req, res) => {
       return;
     }
     await pool.query(
-      `UPDATE transfers SET is_deleted = true  where "id" = '${id}'`
+      `UPDATE expenses SET is_deleted = true  where "id" = '${id}'`
     );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -65,7 +65,7 @@ exports.add = async (req, res) => {
       return;
     }
     await pool.query(
-      `INSERT INTO transfers (user_id, description, amount, date)
+      `INSERT INTO expenses (user_id, description, amount, date)
       VALUES('${userId}', '${description}', '${amount}', '${date}');
       `
     );
@@ -89,7 +89,7 @@ exports.update = async (req, res) => {
       return;
     }
     await pool.query(
-      `UPDATE transfers SET user_id='${userId}', description='${description}' , amount='${amount}', date='${date}' where id = ${id};
+      `UPDATE expenses SET user_id='${userId}', description='${description}' , amount='${amount}', date='${date}' where id = ${id};
        `
     );
 
@@ -111,7 +111,7 @@ exports.changeStatus = async (req, res) => {
       return;
     }
     await pool.query(
-      `UPDATE transfers SET is_active = ${status} where "id" = '${id}'`
+      `UPDATE expense SET is_active = ${status} where "id" = '${id}'`
     );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {

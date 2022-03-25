@@ -1,4 +1,3 @@
-import { DeleteCategoryComponent } from './delete-category/delete-category.component';
 import { ICategoriesData } from './../../../models/categories';
 import { CategoriesService } from './../services/categories.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -108,19 +107,7 @@ export class CategoryComponent implements OnInit {
                 }
             });
     }
-    confirmDialog(id: string): void {
-        this.dialog
-            .open(DeleteCategoryComponent, {
-                maxWidth: '400px',
-                data: id
-            })
-            .afterClosed()
-            .subscribe((result) => {
-                if (result && result.data === true) {
-                    this.getCategory();
-                }
-            });
-    }
+
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;

@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { IExpenseData } from 'src/app/models/expense';
 import { UserService } from '../../user/services/user.service';
+import { CategoriesService } from '../services/categories.service';
 import { ExpenseService } from '../services/expense.service';
 
 @Component({
@@ -17,6 +18,7 @@ export class AddExpenseComponent implements OnInit {
     formGroup: FormGroup;
     selectedRole: string
     users = []
+    categories = []
     isShowLoader = false;
 
     constructor(
@@ -28,11 +30,13 @@ export class AddExpenseComponent implements OnInit {
         private router: Router,
         private expenseService: ExpenseService,
         private userService: UserService,
+        private categoriesService: CategoriesService
     ) { }
 
     ngOnInit() {
         this.initializeForm();
         this.getUserDropDown()
+        this.getCategoryDropDown('Expense')
         if (this.data && this.data.id) {
             this.fillForm();
         }
@@ -50,7 +54,6 @@ export class AddExpenseComponent implements OnInit {
     saveExpense(): void {
         const { user: userId, description, amount, date } = this.formGroup.value;
         this.isShowLoader = true;
-
         this.expenseService
             .addExpense({
                 userId, description, amount, date
@@ -61,12 +64,10 @@ export class AddExpenseComponent implements OnInit {
                         duration: 3000
                     });
                     this.isShowLoader = false;
-
                     this.dialogRef.close(true);
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
@@ -131,6 +132,25 @@ export class AddExpenseComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.users = response
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+
+    }
+    getCategoryDropDown(type: string) {
+        this.categoriesService
+            .getCategoryDropDown(type)
+            .subscribe(
+                (response) => {
+                    this.categories = response
                 },
                 (error) => {
                     this.snackBar.open(

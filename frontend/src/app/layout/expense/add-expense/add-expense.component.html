@@ -27,6 +27,16 @@
             </ng-container>
         </div>
 
+          <!-- Category start -->
+          <mat-form-field>
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="user" name="user">
+                <mat-option *ngFor="let category of categories" [value]="category.id">
+                    {{category.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
         <!-- Amount start -->
         <mat-form-field>
             <mat-label>Amount</mat-label>
@@ -41,6 +51,8 @@
 
             </ng-container>
         </div>
+
+
 
         <!-- user start -->
         <mat-form-field>

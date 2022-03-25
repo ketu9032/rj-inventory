@@ -1,4 +1,3 @@
-import { DeleteCategoryComponent } from './cateogry/delete-category/delete-category.component';
 import { AddCategoryComponent } from './cateogry/add-category/add-category.component';
 import { CategoryComponent } from './cateogry/category.component';
 import { CommonModule } from '@angular/common';
@@ -19,7 +18,6 @@ import { AddExpenseComponent } from './add-expense/add-expense.component';
     AddExpenseComponent,
     CategoryComponent,
     AddCategoryComponent,
-    DeleteCategoryComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +33,6 @@ import { AddExpenseComponent } from './add-expense/add-expense.component';
   entryComponents: [
     CategoryComponent,
     AddCategoryComponent,
-    DeleteCategoryComponent
   ]
 })
 export class ExpenseModule {}

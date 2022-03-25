@@ -100,8 +100,15 @@ exports.update = async (req, res) => {
 
 exports.getCategoryDropDown = async (req, res) => {
   try {
+    const { type } = req.query;
+    if (!type) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
     const response = await pool.query(
-      `select id, name, code FROM categories where is_deleted = false and is_active = true `
+      `select id, code ,name FROM categories where  is_active = true and type = '${type}' `
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

@@ -5,9 +5,9 @@
         <div>
             <mat-form-field>
                 <mat-label>Search...</mat-label>
-                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getItems()">
+                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)=" getExpense()">
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="getItems()">
+            <button color="primary" class="margin" mat-raised-button (click)="getExpense()">
                 Search
             </button>
             <button color="primary" class="margin" mat-raised-button (click)="onAddNewExpense()">
@@ -51,10 +51,10 @@
             </td>
         </ng-container>
 
-        <ng-container matColumnDef="category">
+        <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
             <td mat-cell *matCellDef="let element">
-                {{ element.category}}
+                {{ element.name }}
             </td>
         </ng-container>
 
@@ -63,9 +63,9 @@
             <td mat-cell *matCellDef="let element">{{ element.amount | currency: 'INR' }}</td>
         </ng-container>
 
-            <ng-container matColumnDef="user">
+            <ng-container matColumnDef="user_name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
-            <td mat-cell *matCellDef="let element">{{ element.user | currency: 'INR' }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.user_name  }}</td>
         </ng-container>
 
 
@@ -84,7 +84,7 @@
         <ng-container matColumnDef="print">
             <th mat-header-cell *matHeaderCellDef>Print</th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button" (click)="onEditNewCustomers(element)">
+                <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button" (click)="onEditNewExpense(element)">
                     <mat-icon  aria-label="PRINT" color="primary">print</mat-icon>
                 </button>
 

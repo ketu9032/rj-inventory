@@ -6,15 +6,15 @@ import { RestService } from 'src/app/shared/services';
 
 @Injectable({ providedIn: 'root' })
 export class CategoriesService {
-    private getTierDropDownURL = 'api/getCategoryDropDown';
+    private getCategoryDropDownURL = 'api/getCategoryDropDown';
     private url = 'api/categories';
     private categoriesChangeStatusURL = 'api/categories/changeStatus';
 
 
     constructor(private restService: RestService, private commonService: CommonService) { }
 
-    public getCategoryDropDown() {
-        return this.restService.get<any>(`${this.getTierDropDownURL}`);
+    public getCategoryDropDown(type: string) {
+        return this.restService.get<any>(`${this.getCategoryDropDownURL}?type=${type}`);
     }
 
     public getCategory(tablePrams: IMatTableParams) {

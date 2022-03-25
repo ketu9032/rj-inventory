@@ -8,6 +8,8 @@ import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { ExpenseService } from './services/expense.service';
 import { AddExpenseComponent } from './add-expense/add-expense.component';
+import { MatTableDataSource } from '@angular/material/table';
+import { IExpenseData } from 'src/app/models/expense';
 
 @Component({
     selector: 'app-expense',
@@ -19,9 +21,9 @@ export class ExpenseComponent implements OnInit {
         'id',
         'date',
         'description',
-        'category',
+        'name',
         'amount',
-        'user',
+        'user_name',
         'action',
     ];
     dataSource: any = [];
@@ -47,45 +49,43 @@ export class ExpenseComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.getItems();
+        this.getExpense()
     }
-
-    getItems() { }
 
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
-        // this.getItems();
+        this.getExpense();
     }
 
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
 
-    // getItems() {
-    //   this.loader = true;
-    //   this.itemsService.getItems(this.tableParams).subscribe(
-    //     (newCustomers: any[]) => {
-    //       this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
-    //       if (newCustomers.length > 0) {
-    //         this.totalRows = newCustomers[0].total;
-    //       }
-    //       setTimeout(() => {
-    //         this.paginator.pageIndex = this.tableParams.pageNumber - 1;
-    //         this.paginator.length = +this.totalRows;
-    //       });
-    //       this.loader = false;
-    //     },
-    //     (error) => {
-    //       this.loader = false;
-    //       this.snackBar.open(error.error.message || error.message, 'Ok', {
-    //         duration: 3000
-    //       });
-    //     },
-    //     () => { }
-    //   );
-    // }
+    getExpense() {
+        this.loader = true;
+        this.expenseService.getExpense(this.tableParams).subscribe(
+            (newCustomers: any[]) => {
+                this.dataSource = new MatTableDataSource<IExpenseData>(newCustomers);
+                if (newCustomers.length > 0) {
+                    this.totalRows = newCustomers[0].total;
+                }
+                setTimeout(() => {
+                    this.paginator.pageIndex = this.tableParams.pageNumber - 1;
+                    this.paginator.length = +this.totalRows;
+                });
+                this.loader = false;
+            },
+            (error) => {
+                this.loader = false;
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
+    }
 
     onAddNewExpense(): void {
         this.dialog
@@ -95,52 +95,35 @@ export class ExpenseComponent implements OnInit {
             .afterClosed()
             .subscribe((result) => {
                 if (result) {
-                    this.getItems();
+                    this.getExpense();
                 }
             });
     }
 
-
-
-    // // onEditNewCustomers(element) {
-    // //   this.dialog
-    // //     .open(AddCustomersComponent, {
-    // //       width: '400px',
-    // //       data: element
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
-
-    // // confirmDialog(id: string): void {
-    // //   this.dialog
-    // //     .open(DeleteCustomersComponent, {
-    // //       maxWidth: '400px',
-    // //       data: id
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result && result.data === true) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
+    // onEditNewExpense(element) {
+    //   this.dialog
+    //     .open(AddExpenseComponent, {
+    //       width: '400px',
+    //       data: element
+    //     })
+    //     .afterClosed()
+    //     .subscribe((result) => {
+    //       if (result) {
+    //         this.getExpense();
+    //       }
+    //     });
+    // }
 
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-        //  this.getItems();
+        this.getExpense()
     }
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
-        // this.getItems();
+        this.getExpense()
     }
-
 
     openCategory() {
         this.dialog
