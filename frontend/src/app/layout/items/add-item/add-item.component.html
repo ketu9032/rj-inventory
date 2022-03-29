@@ -37,7 +37,7 @@
             <mat-label>Category</mat-label>
             <mat-select formControlName="category" name="category">
                 <mat-option *ngFor="let category of categories" [value]="category.id">
-                    {{category.value}}
+                    {{category.code}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -95,7 +95,6 @@
         </div>
 
         <!-- RETAIL start -->
-
         <mat-form-field>
             <mat-label>RETAIL</mat-label>
             <input matInput formControlName="retail" type="number" />

@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { IItemData } from 'src/app/models/item';
+import { ItemsCategoriesService } from '../services/items-categories.service';
 import { ItemsService } from '../services/items.service';
 
 @Component({
@@ -16,15 +17,14 @@ export class AddItemComponent implements OnInit {
     selectedRole: string
     tires = []
     isShowLoader = false;
-    categories = [{ value: 'Bag', id: 1 }, { value: 'Balt', id: 2 }, { value: 'Mask', id: 3 }, { value: 'watch', id: 4 }];
-
-
+    categories = []
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IItemData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddItemComponent>,
         private formBuilder: FormBuilder,
+        private itemsCategoriesService: ItemsCategoriesService,
         public snackBar: MatSnackBar,
         private router: Router,
         private itemsService: ItemsService
@@ -32,6 +32,7 @@ export class AddItemComponent implements OnInit {
 
     ngOnInit() {
         this.initializeForm();
+        this.getCategoriesDropDown('Item')
         if (this.data && this.data.id) {
             // this.fillForm();
         }
@@ -102,7 +103,7 @@ export class AddItemComponent implements OnInit {
     }
 
     updateItems(): void {
-        const {    itemCode,
+        const { itemCode,
             itemName,
             category,
             comment,
@@ -173,6 +174,23 @@ export class AddItemComponent implements OnInit {
     //         tier: tierId
     //     });
     // }
-
+    getCategoriesDropDown(type: string) {
+        this.itemsCategoriesService
+            .getCategoriesDropDown(type)
+            .subscribe(
+                (response) => {
+                    this.categories = response;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
 
 }

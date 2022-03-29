@@ -10,6 +10,7 @@ import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config'
 import { CustomersService } from '../customers/services/customers.service';
 import { AddItemComponent } from './add-item/add-item.component';
 import { ItemsCategoryComponent } from './cateogry/items-category.component';
+import { ItemsCategoriesService } from './services/items-categories.service';
 import { ItemsService } from './services/items.service';
 
 @Component({
@@ -45,9 +46,11 @@ export class ItemsComponent implements OnInit {
         active: true
     }
 
+
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
+
         public snackBar: MatSnackBar
     ) { }
 
@@ -153,4 +156,6 @@ export class ItemsComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         // this.getItems();
     }
+
+
 }
