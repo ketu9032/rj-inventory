@@ -7,6 +7,7 @@ import { RestService } from 'src/app/shared/services';
 @Injectable({ providedIn: 'root'})
 export class SalesQuotationsService {
   private url = 'api/customers';
+  private getTierDropDownURL = 'api/getTierDropDown';
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -22,5 +23,8 @@ export class SalesQuotationsService {
   }
   public removeItems(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
+  }
+  public getTierDropDown() {
+    return this.restService.get<any>(`${this.getTierDropDownURL}`);
   }
 }

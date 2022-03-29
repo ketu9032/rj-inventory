@@ -20,7 +20,7 @@
 
         <!--Item Name start -->
         <mat-form-field>
-            <mat-label>-Item Name</mat-label>
+            <mat-label>Item Name</mat-label>
             <input matInput formControlName="itemName" />
         </mat-form-field>
         <div>
@@ -64,26 +64,7 @@
             </ng-container>
         </div>
 
-        <!-- Email start -->
-        <mat-form-field>
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" required />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-      formGroup.controls.email.errors &&
-      !formGroup.controls.email.errors.required
-      ">
-                <span class="error">Please enter correct email address</span>
-                <br />
-            </ng-container>
-            <ng-container *ngIf="
-       formGroup.controls.email.touched &&
-       !formGroup.controls.email.value
-       ">
-                <span class="error">Email is Required</span>
-            </ng-container>
-        </div>
+
 
         <!-- Init Qty start -->
         <mat-form-field>

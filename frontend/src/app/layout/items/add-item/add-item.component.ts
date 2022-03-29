@@ -43,7 +43,6 @@ export class AddItemComponent implements OnInit {
             itemName: ['', Validators.required],
             category: ['', Validators.required],
             comment: ['', Validators.required],
-            email: ['', Validators.required],
             initQty: ['', Validators.required],
             silver: ['', Validators.required],
             retail: ['', Validators.required],
@@ -58,7 +57,6 @@ export class AddItemComponent implements OnInit {
             itemName,
             category,
             comment,
-            email,
             initQty,
             silver,
             retail,
@@ -73,7 +71,6 @@ export class AddItemComponent implements OnInit {
                 itemName,
                 category,
                 comment,
-                email,
                 initQty,
                 silver,
                 retail,
@@ -109,7 +106,6 @@ export class AddItemComponent implements OnInit {
             itemName,
             category,
             comment,
-            email,
             initQty,
             silver,
             retail,
@@ -125,7 +121,6 @@ export class AddItemComponent implements OnInit {
                 itemName,
                 category,
                 comment,
-                email,
                 initQty,
                 silver,
                 retail,
@@ -165,12 +160,12 @@ export class AddItemComponent implements OnInit {
     }
 
     // fillForm() {
-    //     const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
+    //     const { company: company, first_name: firstName, address: address, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
     //     this.formGroup.patchValue({
     //         company,
     //         firstName,
     //         address,
-    //         email,
+    //
     //         mobileNumber,
     //         dueLimit,
     //         balance,

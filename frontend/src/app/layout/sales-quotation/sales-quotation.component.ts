@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
+import { TiersService } from '../customers/services/tiers.service';
 import { ItemsService } from '../items/services/items.service';
 
 @Component({
@@ -42,14 +43,17 @@ export class SalesQuotationComponent implements OnInit {
         search: '',
         active: true
     }
+    tires = [];
 
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
+        private tiersService: TiersService,
         public snackBar: MatSnackBar
     ) { }
 
     ngOnInit(): void {
+        this.getTierDropDown()
         this.getItems();
     }
 
@@ -141,6 +145,23 @@ export class SalesQuotationComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         // this.getItems();
     }
-
+    getTierDropDown() {
+        this.tiersService
+            .getTierDropDown()
+            .subscribe(
+                (response) => {
+                    this.tires = response;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
 
 }

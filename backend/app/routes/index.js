@@ -6,6 +6,7 @@ const transfers = require('./../controllers/transfer.controller');
 const expense = require('./../controllers/expense.controller');
 const suppliers = require('./../controllers/supplier.controller');
 const categories = require('./../controllers/category.controller');
+// const item = require('./../controllers/item.controller');
 
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
@@ -33,7 +34,6 @@ router.get('/api/users', users.findAll);
 router.post('/api/users', users.add);
 router.put('/api/users', users.update);
 router.put('/api/users/changeStatus', users.changeStatus);
-
 router.get('/api/getUserDropDown', users.getUserDropDown);
 
 router.delete('/api/customers', customers.delete);
@@ -74,5 +74,12 @@ router.get('/api/expense', expense.findAll);
 router.post('/api/expense', expense.add);
 router.put('/api/expense', expense.update);
 router.put('/api/expense/changeStatus', expense.changeStatus);
+
+// router.delete('/api/item', item.delete);
+// router.get('/api/item', item.findAll);
+// router.post('/api/item', item.add);
+// router.put('/api/item', item.update);
+// router.get('/api/getItemDropDown', item.getItemDropDown);
+// router.put('/api/item/changeStatus', item.changeStatus);
 
 module.exports = router;
