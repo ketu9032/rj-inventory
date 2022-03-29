@@ -13,12 +13,17 @@ import { ItemsService } from '../services/items.service';
     styleUrls: ['./add-item.component.scss']
 })
 export class AddItemComponent implements OnInit {
+    displayedColumns: string[] = [
+        'name',
+        'qty',
+        'action'
+    ];
     formGroup: FormGroup;
     selectedRole: string
     tires = []
     isShowLoader = false;
     categories = []
-
+    dataSource: any = [];
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IItemData,
         public dialog: MatDialog,
@@ -50,6 +55,8 @@ export class AddItemComponent implements OnInit {
             gold: ['', Validators.required],
             indiaMart: ['', Validators.required],
             dealer: ['', Validators.required],
+            name: ['', Validators.required],
+            qty: ['', Validators.required],
         });
     }
 
@@ -63,7 +70,8 @@ export class AddItemComponent implements OnInit {
             retail,
             gold,
             indiaMart,
-            dealer } = this.formGroup.value;
+            dealer,
+        name, qty } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.itemsService
@@ -77,7 +85,7 @@ export class AddItemComponent implements OnInit {
                 retail,
                 gold,
                 indiaMart,
-                dealer
+                dealer,name, qty
             })
             .subscribe(
                 (response) => {
@@ -112,7 +120,7 @@ export class AddItemComponent implements OnInit {
             retail,
             gold,
             indiaMart,
-            dealer } = this.formGroup.value;
+            dealer,name, qty } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.itemsService
@@ -127,7 +135,7 @@ export class AddItemComponent implements OnInit {
                 retail,
                 gold,
                 indiaMart,
-                dealer
+                dealer,name, qty
             })
             .subscribe(
                 (response) => {

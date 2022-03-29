@@ -6,7 +6,7 @@ const transfers = require('./../controllers/transfer.controller');
 const expense = require('./../controllers/expense.controller');
 const suppliers = require('./../controllers/supplier.controller');
 const categories = require('./../controllers/category.controller');
-// const item = require('./../controllers/item.controller');
+const item = require('./../controllers/item.controller');
 
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
