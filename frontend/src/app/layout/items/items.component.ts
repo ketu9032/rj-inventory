@@ -20,13 +20,13 @@ import { ItemsService } from './services/items.service';
 })
 export class ItemsComponent implements OnInit {
     displayedColumns: string[] = [
-        'code',
-        'name',
+        'item_code',
+        'item_name',
         'int_qty',
         'purchased',
         'sold',
         'available',
-        'sliver_price',
+        'silver',
         'total',
         'action'
     ];
@@ -50,7 +50,6 @@ export class ItemsComponent implements OnInit {
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
-
         public snackBar: MatSnackBar
     ) { }
 
@@ -58,42 +57,42 @@ export class ItemsComponent implements OnInit {
         this.getItems();
     }
 
-    getItems() { }
+
 
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
-        // this.getItems();
+        this.getItems();
     }
 
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
 
-    // getItems() {
-    //   this.loader = true;
-    //   this.itemsService.getItems(this.tableParams).subscribe(
-    //     (newCustomers: any[]) => {
-    //       this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
-    //       if (newCustomers.length > 0) {
-    //         this.totalRows = newCustomers[0].total;
-    //       }
-    //       setTimeout(() => {
-    //         this.paginator.pageIndex = this.tableParams.pageNumber - 1;
-    //         this.paginator.length = +this.totalRows;
-    //       });
-    //       this.loader = false;
-    //     },
-    //     (error) => {
-    //       this.loader = false;
-    //       this.snackBar.open(error.error.message || error.message, 'Ok', {
-    //         duration: 3000
-    //       });
-    //     },
-    //     () => { }
-    //   );
-    // }
+    getItems() {
+      this.loader = true;
+      this.itemsService.getItems(this.tableParams).subscribe(
+        (newCustomers: any[]) => {
+          this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
+          if (newCustomers.length > 0) {
+            this.totalRows = newCustomers[0].total;
+          }
+          setTimeout(() => {
+            this.paginator.pageIndex = this.tableParams.pageNumber - 1;
+            this.paginator.length = +this.totalRows;
+          });
+          this.loader = false;
+        },
+        (error) => {
+          this.loader = false;
+          this.snackBar.open(error.error.message || error.message, 'Ok', {
+            duration: 3000
+          });
+        },
+        () => { }
+      );
+    }
 
     onAddNewItem(): void {
         this.dialog
@@ -109,33 +108,22 @@ export class ItemsComponent implements OnInit {
             });
     }
 
-    // // onEditNewCustomers(element) {
-    // //   this.dialog
-    // //     .open(AddCustomersComponent, {
-    // //       width: '400px',
-    // //       data: element
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
+    onEditNewItem(element) {
+      this.dialog
+        .open(AddItemComponent, {
+            width: '500px',
+            height: '500px',
+          data: element
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getItems();
+          }
+        });
+    }
 
-    // // confirmDialog(id: string): void {
-    // //   this.dialog
-    // //     .open(DeleteCustomersComponent, {
-    // //       maxWidth: '400px',
-    // //       data: id
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result && result.data === true) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
+
 
     openItemsCategory() {
         this.dialog
@@ -149,13 +137,40 @@ export class ItemsComponent implements OnInit {
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-        //  this.getItems();
+        this.getItems();
     }
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
-        // this.getItems();
+         this.getItems();
     }
-
+    changeStatus(id: number): void {
+        this.itemsService
+            .changeStatus({ id: id, status: !this.tableParams.active })
+            .subscribe(
+                (response) => {
+                    if (!this.tableParams.active) {
+                        this.snackBar.open('Item active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    } else {
+                        this.snackBar.open('Item de-active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    }
+                    this.getItems()
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok',
+                        {
+                            duration: 3000
+                        }
+                    );
+                },
+                () => { }
+            );
+    }
 
 }

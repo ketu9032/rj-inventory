@@ -7,12 +7,12 @@
         <!-- item code start -->
         <mat-form-field>
             <mat-label>Item Code</mat-label>
-            <input matInput formControlName="itemCode" />
+            <input matInput formControlName="item_code" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.itemCode.touched &&
-          !formGroup.controls.itemCode.value
+          formGroup.controls.item_code.touched &&
+          !formGroup.controls.item_code.value
         ">
                 <span class="error">Item Code is Required</span>
             </ng-container>
@@ -21,12 +21,12 @@
         <!--Item Name start -->
         <mat-form-field>
             <mat-label>Item Name</mat-label>
-            <input matInput formControlName="itemName" />
+            <input matInput formControlName="item_name" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.itemName.touched &&
-          !formGroup.controls.itemName.value
+          formGroup.controls.item_name.touched &&
+          !formGroup.controls.item_name.value
         ">
                 <span class="error">Item name is Required</span>
             </ng-container>
@@ -69,12 +69,12 @@
         <!-- Init Qty start -->
         <mat-form-field>
             <mat-label>Init. Qty</mat-label>
-            <input matInput formControlName="initQty" type="number" />
+            <input matInput formControlName="int_qty" type="number" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.initQty.touched &&
-          !formGroup.controls.initQty.value
+          formGroup.controls.int_qty.touched &&
+          !formGroup.controls.int_qty.value
         ">
                 <span class="error">Init. Qty is Required</span>
             </ng-container>
@@ -125,12 +125,12 @@
         <!-- INDIAMART start -->
         <mat-form-field>
             <mat-label>INDIAMART</mat-label>
-            <input matInput formControlName="indiaMart" type="number" />
+            <input matInput formControlName="india_mart" type="number" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.indiaMart.touched &&
-          !formGroup.controls.indiaMart.value
+          formGroup.controls.india_mart.touched &&
+          !formGroup.controls.india_mart.value
         ">
                 <span class="error">India Mart is Required</span>
             </ng-container>
@@ -149,8 +149,55 @@
                 <span class="error">DEALER is Required</span>
             </ng-container>
         </div>
+        <br>
+        <h1 mat-dialog-title>Supplier Details</h1>
+        <div class="supplier_details_table">
+            <!--Name start -->
+
+            <mat-form-field class="input_width">
+                <mat-label>Name</mat-label>
+                <input matInput formControlName="supplier_name" />
+            </mat-form-field>
+            <div>
+                <ng-container *ngIf="
+              formGroup.controls.supplier_name.touched &&
+              !formGroup.controls.supplier_name.value
+            ">
+
+                </ng-container>
+            </div>
 
 
+            <!-- Qty start -->
+
+            <mat-form-field class="input_width">
+                <mat-label>Qty</mat-label>
+                <input matInput formControlName="supplier_qty" type="number" />
+            </mat-form-field>
+            <div>
+                <ng-container *ngIf="
+          formGroup.controls.supplier_qty.touched &&
+          !formGroup.controls.supplier_qty.value
+        ">
+                </ng-container>
+            </div>
+
+
+            <!-- Qty start -->
+
+            <mat-form-field class="input_width">
+                <mat-label>Rate</mat-label>
+                <input matInput formControlName="supplier_rate" type="number" />
+            </mat-form-field>
+            <div class="error_text">
+                <ng-container *ngIf="
+          formGroup.controls.supplier_rate.touched &&
+          !formGroup.controls.supplier_rate.value
+        ">
+                </ng-container>
+            </div>
+
+        </div>
 
         <!-- button start -->
         <div class="btn-update">
@@ -168,85 +215,45 @@
 <br>
 <mat-divider class="mat-divider"></mat-divider>
 <br>
-<h1 mat-dialog-title>Supplier Details</h1>
+
 
 <div class="container">
 
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
-
-        <!--Name start -->
-        <mat-form-field>
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="name" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.name.touched &&
-          !formGroup.controls.name.value
-        ">
-                <span class="error">Name is Required</span>
-            </ng-container>
-        </div>
-
-        <!-- Init Qty start -->
-        <mat-form-field>
-            <mat-label>Qty</mat-label>
-            <input matInput formControlName="qty" type="number" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.qty.touched &&
-          !formGroup.controls.qty.value
-        ">
-                <span class="error">Qty is Required</span>
-            </ng-container>
-        </div>
-
-        <div class="btn-update">
-            <button mat-raised-button color="primary" type="submit">
-                <span *ngIf="!isShowLoader">
-
-                    ADD
-                </span>
-                <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
-            </button>
-        </div>
-
     </form>
 </div>
-    <br>
-    <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSource" matSort matSortActive="company" matSortDirection="asc">
-            <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-                <td mat-cell *matCellDef="let element">
-                    {{ element.name }}
-                </td>
-            </ng-container>
+<br>
+<div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="company" matSortDirection="asc">
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.name }}
+            </td>
+        </ng-container>
 
-            <ng-container matColumnDef="qty">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Int.Qty</th>
-                <td mat-cell *matCellDef="let element">
-                    {{ element.qty }}
-                </td>
-            </ng-container>
+        <ng-container matColumnDef="qty">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Int.Qty</th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.qty }}
+            </td>
+        </ng-container>
 
-            <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
-                <td mat-cell *matCellDef="let element">
-                    <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
-                        (click)="onEditNewCustomers(element)">
-                        <mat-icon aria-label="Edit">edit</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Click to Delete" color="warn"
-                        (click)="confirmDialog(element.id)">
-                        <mat-icon aria-label="Delete">delete</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
+        <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let element">
+                <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
+                    (click)="onEditNewCustomers(element)">
+                    <mat-icon aria-label="Edit">edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="confirmDialog(element.id)">
+                    <mat-icon aria-label="Delete">delete</mat-icon>
+                </button>
+            </td>
+        </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
-        </table>
-    </div>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
+    </table>
+</div>

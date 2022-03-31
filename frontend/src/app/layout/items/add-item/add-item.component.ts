@@ -39,59 +39,39 @@ export class AddItemComponent implements OnInit {
         this.initializeForm();
         this.getCategoriesDropDown('Item')
         if (this.data && this.data.id) {
-            // this.fillForm();
+            this.fillForm();
         }
     }
 
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            itemCode: ['', Validators.required],
-            itemName: ['', Validators.required],
+            item_code: ['', Validators.required],
+            item_name: ['', Validators.required],
             category: ['', Validators.required],
             comment: ['', Validators.required],
-            initQty: ['', Validators.required],
+            int_qty: ['', Validators.required],
             silver: ['', Validators.required],
             retail: ['', Validators.required],
             gold: ['', Validators.required],
-            indiaMart: ['', Validators.required],
+            india_mart: ['', Validators.required],
             dealer: ['', Validators.required],
-            name: ['', Validators.required],
-            qty: ['', Validators.required],
+            supplier_name: ['', Validators.required],
+            supplier_qty: ['', Validators.required],
+            supplier_rate: ['', Validators.required],
         });
     }
 
     saveItems(): void {
-        const { itemCode,
-            itemName,
-            category,
-            comment,
-            initQty,
-            silver,
-            retail,
-            gold,
-            indiaMart,
-            dealer,
-        name, qty } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,  supplier_name, supplier_qty, supplier_rate } = this.formGroup.value;
         this.isShowLoader = true;
-
         this.itemsService
             .addItems({
-                itemCode,
-                itemName,
-                category,
-                comment,
-                initQty,
-                silver,
-                retail,
-                gold,
-                indiaMart,
-                dealer,name, qty
+                item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, supplier_name, supplier_qty, supplier_rate
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-
-                    this.snackBar.open('User saved successfully', 'OK', {
+                    this.snackBar.open('Item saved successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
@@ -111,37 +91,18 @@ export class AddItemComponent implements OnInit {
     }
 
     updateItems(): void {
-        const { itemCode,
-            itemName,
-            category,
-            comment,
-            initQty,
-            silver,
-            retail,
-            gold,
-            indiaMart,
-            dealer,name, qty } = this.formGroup.value;
+        const {item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, supplier_name,supplier_qty, supplier_rate } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.itemsService
             .editItems({
-                id: this.data.id,
-                itemCode,
-                itemName,
-                category,
-                comment,
-                initQty,
-                silver,
-                retail,
-                gold,
-                indiaMart,
-                dealer,name, qty
+                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,  supplier_name, supplier_qty, supplier_rate
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
 
-                    this.snackBar.open('User updated successfully', 'OK', {
+                    this.snackBar.open('Item updated successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
@@ -168,20 +129,14 @@ export class AddItemComponent implements OnInit {
         }
     }
 
-    // fillForm() {
-    //     const { company: company, first_name: firstName, address: address, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
-    //     this.formGroup.patchValue({
-    //         company,
-    //         firstName,
-    //         address,
-    //
-    //         mobileNumber,
-    //         dueLimit,
-    //         balance,
-    //         other,
-    //         tier: tierId
-    //     });
-    // }
+    fillForm() {
+        const { item_code,
+            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, supplier_name, supplier_qty, supplier_rate } = this.data;
+        this.formGroup.patchValue({
+            item_code,
+            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, supplier_name, supplier_qty, supplier_rate
+        });
+    }
     getCategoriesDropDown(type: string) {
         this.itemsCategoriesService
             .getCategoriesDropDown(type)

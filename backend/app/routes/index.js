@@ -75,11 +75,11 @@ router.post('/api/expense', expense.add);
 router.put('/api/expense', expense.update);
 router.put('/api/expense/changeStatus', expense.changeStatus);
 
-// router.delete('/api/item', item.delete);
-// router.get('/api/item', item.findAll);
-// router.post('/api/item', item.add);
-// router.put('/api/item', item.update);
-// router.get('/api/getItemDropDown', item.getItemDropDown);
-// router.put('/api/item/changeStatus', item.changeStatus);
+router.delete('/api/item', item.delete);
+router.get('/api/item', item.findAll);
+router.post('/api/item', item.add);
+router.put('/api/item', item.update);
+router.get('/api/getItemDropDown', item.getItemDropDown);
+router.put('/api/item/changeStatus', item.changeStatus);
 
 module.exports = router;

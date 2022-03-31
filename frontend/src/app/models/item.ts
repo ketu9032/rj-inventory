@@ -1,11 +1,12 @@
 
 export interface IItemData {
-  id: number, itemCode: string, itemName: string,category: string, comment: string, initQty: number,  silver: number, retail: number, gold: number, indiaMart: number, dealer: number, name: string, qty:number
+  id: number, item_code: string, item_name: string,category: string, comment: string, int_qty: number,  silver: number, retail: number, gold: number, india_mart: number, dealer: number, supplier_name: string, supplier_qty:number, supplier_rate:number
 
 }
 
+
 export interface IItemParams {
-  id?: number,  itemCode: string, itemName: string, category: string, comment: string, initQty: number,  silver: number, retail: number, gold: number, indiaMart: number, dealer: number, name: string, qty:number
+  id?: number,  item_code: string, item_name: string, category: string, comment: string, int_qty: number,  silver: number, retail: number, gold: number, india_mart: number, dealer: number,supplier_name: string, supplier_qty:number, supplier_rate:number
 }
 
 export interface IItemActiveParams {
