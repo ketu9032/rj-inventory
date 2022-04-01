@@ -11,8 +11,8 @@ exports.findAll = async (req, res) => {
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
       searchQuery += ` and
-        (company ilike '%${search}%'
-          or item_code ilike '%${search}%'
+        (
+           item_code ilike '%${search}%'
           or item_name ilike '%${search}%'
           or int_qty ilike '%${search}%'
 
@@ -31,13 +31,11 @@ exports.findAll = async (req, res) => {
         item_name,
         int_qty,
         comment,
-
         silver,
         retail,
         gold,
         india_mart,
         dealer,
-
         supplier_name,
         supplier_qty,
         supplier_rate
@@ -79,13 +77,11 @@ exports.add = async (req, res) => {
       item_name,
       int_qty,
       comment,
-
       silver,
       retail,
       gold,
       india_mart,
       dealer,
-
       supplier_name,
       supplier_qty,
       supplier_rate
@@ -96,13 +92,11 @@ exports.add = async (req, res) => {
       !item_name ||
       !int_qty ||
       !comment ||
-
       !silver ||
       !retail ||
       !gold ||
       !india_mart ||
       !dealer ||
-
       !supplier_name ||
       !supplier_qty ||
       !supplier_rate
@@ -118,16 +112,14 @@ exports.add = async (req, res) => {
         item_name,
         int_qty,
         comment,
-
         silver,
         retail,
         gold,
         india_mart,
         dealer,
-
         supplier_name,
         supplier_qty,
-        supplier_rate,
+        supplier_rate
          )
       VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}','${supplier_name}','${supplier_qty}', '${supplier_rate}');
       `
@@ -149,13 +141,11 @@ exports.update = async (req, res) => {
       item_name,
       int_qty,
       comment,
-
       silver,
       retail,
       gold,
       india_mart,
       dealer,
-
       supplier_name,
       supplier_qty,
       supplier_rate
@@ -165,13 +155,11 @@ exports.update = async (req, res) => {
       !item_name ||
       !int_qty ||
       !comment ||
-
       !silver ||
       !retail ||
       !gold ||
       !india_mart ||
       !dealer ||
-
       !supplier_name ||
       !supplier_qty ||
       !supplier_rate ||
@@ -198,7 +186,7 @@ exports.update = async (req, res) => {
 exports.getItemDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, company FROM item where is_deleted = false and is_active = true`
+      `select id,  item_code FROM item where is_deleted = false and is_active = true`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

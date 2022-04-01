@@ -7,6 +7,7 @@ import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { TiersService } from '../customers/services/tiers.service';
 import { ItemsService } from '../items/services/items.service';
+import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
 
 @Component({
     selector: 'app-sales-quotation',
@@ -94,18 +95,18 @@ export class SalesQuotationComponent implements OnInit {
     //   );
     // }
 
-    // // onAddNewCustomers(): void {
-    // //   this.dialog
-    // //     .open(AddCustomersComponent, {
-    // //       width: '400px'
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
+    onAddNewCreateQuotation(): void {
+      this.dialog
+        .open(CreateQuotationComponent, {
+          width: '400px'
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getItems();
+          }
+        });
+    }
 
     // // onEditNewCustomers(element) {
     // //   this.dialog

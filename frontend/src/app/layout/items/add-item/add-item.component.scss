@@ -1,16 +1,21 @@
-.container {
-  .mat-form-field {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  .mat-dialog-title {
-    margin: 0 0 20px;
-    display: block;
-  }
-  .input {
-    width: 100%;
-  }
+// .container {
+//   .mat-form-field {
+//     width: 100%;
+//     display: flex;
+//     flex-direction: column;
+//   }
+//   .mat-dialog-title {
+//     margin: 0 0 20px;
+//     display: block;
+//   }
+//   .input {
+//     width: 100%;
+//   }
+// }
+.item-form{
+    mat-form-field {
+        margin-right: 50px;
+      }
 }
 table {
   width: 100%;
@@ -29,11 +34,17 @@ td {
 }
 .supplier_details_table {
   display: flex;
-  .error_text{
-display: block;
+  width: 100%;
+  justify-content: space-between;
+
+  .add_button {
+    height: 35px;
+    width: 90px;
+    margin-top: 10px;
   }
-  .input_width {
-    width: 127px;
-    margin: 0 10px;
+
+  mat-form-field {
+    width: 168px;
   }
 }
+

@@ -43,14 +43,13 @@
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-            formGroup.controls.amount.touched &&
-            !formGroup.controls.amount.value
-            ">
+          formGroup.controls.amount.touched &&
+          !formGroup.controls.amount.value
+        ">
                 <span class="error">Amount Balance is Required</span>
 
             </ng-container>
         </div>
-        <!-- <mat-slide-toggle>{{!this.amount ? 'Cash in': 'Cash out'}}</mat-slide-toggle> -->
 
 
 
