@@ -11,15 +11,11 @@ exports.findAll = async (req, res) => {
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
       searchQuery += ` and
-        (company ilike '%${search}%'
-          or item_code ilike '%${search}%'
+        (
+           item_code ilike '%${search}%'
           or item_name ilike '%${search}%'
           or int_qty ilike '%${search}%'
-          or purchased ilike '%${search}%'
-          or sold ilike '%${search}%'
-          or available ilike '%${search}%'
           or silver ilike '%${search}%'
-          or total ilike '%${search}%'
           or supplier_name ilike '%${search}%'
           or supplier_qty ilike '%${search}%'
           or supplier_rate ilike '%${search}%'
@@ -33,15 +29,11 @@ exports.findAll = async (req, res) => {
         item_name,
         int_qty,
         comment,
-        purchased,
-        sold,
-        available,
         silver,
         retail,
         gold,
         india_mart,
         dealer,
-        total,
         supplier_name,
         supplier_qty,
         supplier_rate
@@ -83,15 +75,11 @@ exports.add = async (req, res) => {
       item_name,
       int_qty,
       comment,
-      purchased,
-      sold,
-      available,
       silver,
       retail,
       gold,
       india_mart,
       dealer,
-      total,
       supplier_name,
       supplier_qty,
       supplier_rate
@@ -102,15 +90,11 @@ exports.add = async (req, res) => {
       !item_name ||
       !int_qty ||
       !comment ||
-      !purchased ||
-      !sold ||
-      !available ||
-      !sliver ||
+      !silver ||
       !retail ||
       !gold ||
       !india_mart ||
       !dealer ||
-      !total ||
       !supplier_name ||
       !supplier_qty ||
       !supplier_rate
@@ -126,20 +110,16 @@ exports.add = async (req, res) => {
         item_name,
         int_qty,
         comment,
-        purchased,
-        sold,
-        available,
         silver,
         retail,
         gold,
         india_mart,
         dealer,
-        total,
         supplier_name,
         supplier_qty,
-        supplier_rate,
+        supplier_rate
          )
-      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${purchased}', '${sold}', '${available}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}','${total}','${supplier_name}','${supplier_qty}', '${supplier_rate}');
+      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}',  '${silver}', '${retail}','${gold}','${india_mart}','${dealer}','${supplier_name}','${supplier_qty}', '${supplier_rate}');
       `
     );
 
@@ -159,15 +139,11 @@ exports.update = async (req, res) => {
       item_name,
       int_qty,
       comment,
-      purchased,
-      sold,
-      available,
       silver,
       retail,
       gold,
       india_mart,
       dealer,
-      total,
       supplier_name,
       supplier_qty,
       supplier_rate
@@ -177,15 +153,11 @@ exports.update = async (req, res) => {
       !item_name ||
       !int_qty ||
       !comment ||
-      !purchased ||
-      !sold ||
-      !available ||
       !silver ||
       !retail ||
       !gold ||
       !india_mart ||
       !dealer ||
-      !total ||
       !supplier_name ||
       !supplier_qty ||
       !supplier_rate ||
@@ -198,7 +170,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE item
-      SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}',purchased='${purchased}', sold='${sold}', available='${available}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', total='${total}', supplier_name='${supplier_name}', supplier_qty='${supplier_qty}',supplier_rate='${supplier_rate}' where id = ${id};`
+      SET  item_code='${item_code}', item_name='${item_name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', supplier_name='${supplier_name}', supplier_qty='${supplier_qty}',supplier_rate='${supplier_rate}' where id = ${id};`
     );
 
     res.status(STATUS_CODE.SUCCESS).send();
@@ -212,7 +184,7 @@ exports.update = async (req, res) => {
 exports.getItemDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, company FROM item where is_deleted = false and is_active = true`
+      `select id,  item_code FROM item where is_deleted = false and is_active = true`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

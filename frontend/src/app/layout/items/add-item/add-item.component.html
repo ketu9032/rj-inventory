@@ -1,259 +1,227 @@
 <h1 mat-dialog-title> {{ !this.data ? 'Add Item' : 'Update Item' }} </h1>
-<div class="container">
-    <mat-divider></mat-divider>
-    <br>
-    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
-        <!-- item code start -->
-        <mat-form-field>
-            <mat-label>Item Code</mat-label>
-            <input matInput formControlName="item_code" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.item_code.touched &&
-          !formGroup.controls.item_code.value
-        ">
-                <span class="error">Item Code is Required</span>
-            </ng-container>
-        </div>
 
-        <!--Item Name start -->
-        <mat-form-field>
-            <mat-label>Item Name</mat-label>
-            <input matInput formControlName="item_name" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.item_name.touched &&
-          !formGroup.controls.item_name.value
-        ">
-                <span class="error">Item name is Required</span>
-            </ng-container>
-        </div>
-
-        <!-- category start -->
-        <mat-form-field>
-            <mat-label>Category</mat-label>
-            <mat-select formControlName="category" name="category">
-                <mat-option *ngFor="let category of categories" [value]="category.id">
-                    {{category.code}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-              formGroup.controls.category.touched &&
-              !formGroup.controls.category.value
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <div class="item-form">
+    <!--Item CODE start -->
+    <mat-form-field>
+        <mat-label>Item Code</mat-label>
+        <input matInput formControlName="item_code" />
+        <ng-container *ngIf="
+              formGroup.controls.item_code.touched &&
+              !formGroup.controls.item_code.value
             ">
-                <span class="error">Category is Required</span>
-            </ng-container>
-        </div>
+            <span class="error">Item Code is Required</span>
+        </ng-container>
+    </mat-form-field>
+    <!--Item Name start -->
+    <mat-form-field>
+        <mat-label>Item Name</mat-label>
+        <input matInput formControlName="item_name" />
+        <ng-container *ngIf="
+              formGroup.controls.item_name.touched &&
+              !formGroup.controls.item_name.value
+            ">
+            <span class="error">Item name is Required</span>
+        </ng-container>
+    </mat-form-field>
 
-        <!-- Comment start -->
-        <mat-form-field>
-            <mat-label>Comment</mat-label>
-            <textarea matInput formControlName="comment"></textarea>
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.comment.touched &&
-          !formGroup.controls.comment.value
-        ">
-                <span class="error">Comment is Required</span>
-            </ng-container>
-        </div>
+    <!-- category start -->
+    <mat-form-field>
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category" name="category">
+            <mat-option *ngFor="let category of categories" [value]="category.id">
+                {{category.code}}
+            </mat-option>
+        </mat-select>
+        <ng-container *ngIf="
+                  formGroup.controls.category.touched &&
+                  !formGroup.controls.category.value
+                ">
+            <span class="error">Category is Required</span>
+        </ng-container>
+    </mat-form-field>
 
+    <!-- Comment start -->
+    <mat-form-field>
+        <mat-label>Comment</mat-label>
+        <textarea matInput formControlName="comment"></textarea>
+        <ng-container *ngIf="
+              formGroup.controls.comment.touched &&
+              !formGroup.controls.comment.value
+            ">
+            <span class="error">Comment is Required</span>
+        </ng-container>
+    </mat-form-field>
 
+    <!-- Init Qty start -->
+    <mat-form-field>
+        <mat-label>Init. Qty</mat-label>
+        <input matInput formControlName="int_qty" type="number" />
+        <ng-container *ngIf="
+            formGroup.controls.int_qty.touched &&
+            !formGroup.controls.int_qty.value
+            ">
+            <span class="error">Init. Qty is Required</span>
+        </ng-container>
+    </mat-form-field>
 
-        <!-- Init Qty start -->
-        <mat-form-field>
-            <mat-label>Init. Qty</mat-label>
-            <input matInput formControlName="int_qty" type="number" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.int_qty.touched &&
-          !formGroup.controls.int_qty.value
-        ">
-                <span class="error">Init. Qty is Required</span>
-            </ng-container>
-        </div>
-
-        <!--SILVER  start -->
-        <mat-form-field>
-            <mat-label>SILVER</mat-label>
-            <input type="number" matInput formControlName="silver" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
+    <!--SILVER  start -->
+    <mat-form-field>
+        <mat-label>SILVER</mat-label>
+        <input type="number" matInput formControlName="silver" />
+        <ng-container *ngIf="
           formGroup.controls.silver.touched &&
           !formGroup.controls.silver.value
         ">
-                <span class="error">silver is Required</span>
-            </ng-container>
-        </div>
+            <span class="error">silver is Required</span>
+        </ng-container>
+    </mat-form-field>
 
-        <!-- RETAIL start -->
-        <mat-form-field>
-            <mat-label>RETAIL</mat-label>
-            <input matInput formControlName="retail" type="number" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
+    <!-- RETAIL start -->
+    <mat-form-field>
+        <mat-label>RETAIL</mat-label>
+        <input matInput formControlName="retail" type="number" />
+        <ng-container *ngIf="
           formGroup.controls.retail.touched &&
-          !formGroup.controls.retail.value
-        ">
-                <span class="error">RETAIL is Required</span>
-            </ng-container>
-        </div>
+          !formGroup.controls.retail.value">
+            <span class="error">RETAIL is Required</span>
+        </ng-container>
+    </mat-form-field>
 
-        <!-- Gold start -->
-        <mat-form-field>
-            <mat-label>GOLD</mat-label>
-            <input matInput formControlName="gold" type="number" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
+    <!-- Gold start -->
+    <mat-form-field>
+        <mat-label>GOLD</mat-label>
+        <input matInput formControlName="gold" type="number" />
+        <ng-container *ngIf="
           formGroup.controls.gold.touched &&
           !formGroup.controls.gold.value
         ">
-                <span class="error">Gold is Required</span>
-            </ng-container>
-        </div>
+            <span class="error">Gold is Required</span>
+        </ng-container>
+    </mat-form-field>
 
-        <!-- INDIAMART start -->
-        <mat-form-field>
-            <mat-label>INDIAMART</mat-label>
-            <input matInput formControlName="india_mart" type="number" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
+    <!-- INDIAMART start -->
+    <mat-form-field>
+        <mat-label>INDIAMART</mat-label>
+        <input matInput formControlName="india_mart" type="number" />
+        <ng-container *ngIf="
           formGroup.controls.india_mart.touched &&
           !formGroup.controls.india_mart.value
         ">
-                <span class="error">India Mart is Required</span>
-            </ng-container>
-        </div>
+            <span class="error">India Mart is Required</span>
+        </ng-container>
+    </mat-form-field>
 
-        <!-- DEALER start -->
-        <mat-form-field>
-            <mat-label>DEALER</mat-label>
-            <input matInput formControlName="dealer" type="number" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
+    <!-- DEALER start -->
+    <mat-form-field>
+        <mat-label>DEALER</mat-label>
+        <input matInput formControlName="dealer" type="number" />
+        <ng-container *ngIf="
           formGroup.controls.dealer.touched &&
           !formGroup.controls.dealer.value
         ">
-                <span class="error">DEALER is Required</span>
-            </ng-container>
-        </div>
-        <br>
-        <h1 mat-dialog-title>Supplier Details</h1>
-        <div class="supplier_details_table">
-            <!--Name start -->
+            <span class="error">DEALER is Required</span>
+        </ng-container>
+    </mat-form-field>
 
-            <mat-form-field class="input_width">
-                <mat-label>Name</mat-label>
-                <input matInput formControlName="supplier_name" />
-            </mat-form-field>
-            <div>
-                <ng-container *ngIf="
+    </div>
+    <!-- supplier form -->
+    <h1 mat-dialog-title>Supplier Details</h1>
+    <div class="supplier_details_table">
+        <!-- name start -->
+        <mat-form-field class="input_width">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="supplier_name" />
+
+            <ng-container *ngIf="
               formGroup.controls.supplier_name.touched &&
               !formGroup.controls.supplier_name.value
             ">
+                <span class="error">Name is Required</span>
+            </ng-container>
+        </mat-form-field>
+        <!-- Qty start -->
 
-                </ng-container>
-            </div>
-
-
-            <!-- Qty start -->
-
-            <mat-form-field class="input_width">
-                <mat-label>Qty</mat-label>
-                <input matInput formControlName="supplier_qty" type="number" />
-            </mat-form-field>
-            <div>
-                <ng-container *ngIf="
+        <mat-form-field>
+            <mat-label>Qty</mat-label>
+            <input matInput formControlName="supplier_qty" type="number" />
+            <ng-container *ngIf="
           formGroup.controls.supplier_qty.touched &&
           !formGroup.controls.supplier_qty.value
         ">
-                </ng-container>
-            </div>
+                <span class="error">Qty is Required</span>
+            </ng-container>
+        </mat-form-field>
 
+        <!-- rate start -->
 
-            <!-- Qty start -->
-
-            <mat-form-field class="input_width">
-                <mat-label>Rate</mat-label>
-                <input matInput formControlName="supplier_rate" type="number" />
-            </mat-form-field>
-            <div class="error_text">
-                <ng-container *ngIf="
+        <mat-form-field class="input_width">
+            <mat-label>Rate</mat-label>
+            <input matInput formControlName="supplier_rate" type="number" />
+            <ng-container *ngIf="
           formGroup.controls.supplier_rate.touched &&
           !formGroup.controls.supplier_rate.value
         ">
-                </ng-container>
-            </div>
+                <span class="error">Rate is Required</span>
+            </ng-container>
+        </mat-form-field>
+        <!-- ADD BUTTON -->
+        <button mat-raised-button color="primary" class="add_button" type="submit">Add
+        </button>
+    </div>
 
-        </div>
+    <br>
 
-        <!-- button start -->
-        <div class="btn-update">
-            <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">
-                <span *ngIf="!isShowLoader">
+    <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" matSort matSortActive="company" matSortDirection="asc">
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.name }}
+                </td>
+            </ng-container>
 
-                    {{ !this.data ? 'Save' : 'Update' }}
-                </span>
-                <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
-            </button>
-        </div>
-    </form>
-</div>
+            <ng-container matColumnDef="qty">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Int.Qty</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.qty }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
+                        (click)="onEditNewCustomers(element)">
+                        <mat-icon aria-label="Edit">edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Click to Delete" color="warn"
+                        (click)="confirmDialog(element.id)">
+                        <mat-icon aria-label="Delete">delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
+        </table>
+    </div>
+
+    <br>
+    <mat-divider class="mat-divider"></mat-divider>
+    <br>
+
+    <!-- button start -->
+    <div class="btn-update">
+        <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">
+            <span *ngIf="!isShowLoader">
+
+                {{ !this.data ? 'Save' : 'Update' }}
+            </span>
+            <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
+        </button>
+    </div>
+</form>
+
 <!--  -->
-<br>
-<mat-divider class="mat-divider"></mat-divider>
-<br>
-
-
-<div class="container">
-
-    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-
-    </form>
-</div>
-<br>
-<div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource" matSort matSortActive="company" matSortDirection="asc">
-        <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.name }}
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="qty">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Int.Qty</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.qty }}
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef>Actions</th>
-            <td mat-cell *matCellDef="let element">
-                <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
-                    (click)="onEditNewCustomers(element)">
-                    <mat-icon aria-label="Edit">edit</mat-icon>
-                </button>
-                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="confirmDialog(element.id)">
-                    <mat-icon aria-label="Delete">delete</mat-icon>
-                </button>
-            </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
-    </table>
-</div>
