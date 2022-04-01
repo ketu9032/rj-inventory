@@ -57,8 +57,6 @@ export class ItemsComponent implements OnInit {
         this.getItems();
     }
 
-
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
@@ -71,34 +69,34 @@ export class ItemsComponent implements OnInit {
     }
 
     getItems() {
-      this.loader = true;
-      this.itemsService.getItems(this.tableParams).subscribe(
-        (newCustomers: any[]) => {
-          this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
-          if (newCustomers.length > 0) {
-            this.totalRows = newCustomers[0].total;
-          }
-          setTimeout(() => {
-            this.paginator.pageIndex = this.tableParams.pageNumber - 1;
-            this.paginator.length = +this.totalRows;
-          });
-          this.loader = false;
-        },
-        (error) => {
-          this.loader = false;
-          this.snackBar.open(error.error.message || error.message, 'Ok', {
-            duration: 3000
-          });
-        },
-        () => { }
-      );
+        this.loader = true;
+        this.itemsService.getItems(this.tableParams).subscribe(
+            (newCustomers: any[]) => {
+                this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
+                if (newCustomers.length > 0) {
+                    this.totalRows = newCustomers[0].total;
+                }
+                setTimeout(() => {
+                    this.paginator.pageIndex = this.tableParams.pageNumber - 1;
+                    this.paginator.length = +this.totalRows;
+                });
+                this.loader = false;
+            },
+            (error) => {
+                this.loader = false;
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
     }
 
     onAddNewItem(): void {
         this.dialog
             .open(AddItemComponent, {
                 width: '760px',
-                height:'700px'
+                height: '700px'
             })
             .afterClosed()
             .subscribe((result) => {
@@ -109,18 +107,18 @@ export class ItemsComponent implements OnInit {
     }
 
     onEditNewItem(element) {
-      this.dialog
-        .open(AddItemComponent, {
-            width: '760px',
-            height: '700px',
-          data: element
-        })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result) {
-            this.getItems();
-          }
-        });
+        this.dialog
+            .open(AddItemComponent, {
+                width: '760px',
+                height: '700px',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getItems();
+                }
+            });
     }
 
 
@@ -142,7 +140,7 @@ export class ItemsComponent implements OnInit {
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
-         this.getItems();
+        this.getItems();
     }
     changeStatus(id: number): void {
         this.itemsService

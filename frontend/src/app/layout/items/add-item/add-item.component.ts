@@ -2,8 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { IItemData } from 'src/app/models/item';
+import { IItemSupplierData } from 'src/app/models/item_supplier';
 import { ItemsCategoriesService } from '../services/items-categories.service';
 import { ItemsService } from '../services/items.service';
 
@@ -14,18 +16,23 @@ import { ItemsService } from '../services/items.service';
 })
 export class AddItemComponent implements OnInit {
     displayedColumns: string[] = [
-        'name',
-        'qty',
+        'supplier_name',
+        'supplier_qty',
+        'supplier_rate',
         'action'
     ];
+    formSupplier: FormGroup;
     formGroup: FormGroup;
     selectedRole: string
     tires = []
     isShowLoader = false;
     categories = []
     dataSource: any = [];
+    suppliers = []
+    supplierDataSource: any = [];
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IItemData,
+        @Inject(MAT_DIALOG_DATA) public supplierData: IItemSupplierData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddItemComponent>,
         private formBuilder: FormBuilder,
@@ -37,11 +44,13 @@ export class AddItemComponent implements OnInit {
 
     ngOnInit() {
         this.initializeForm();
+        this.initializeSupplierForm()
         this.getCategoriesDropDown('Item')
         if (this.data && this.data.id) {
             this.fillForm();
         }
     }
+
 
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
@@ -55,6 +64,11 @@ export class AddItemComponent implements OnInit {
             gold: ['', Validators.required],
             india_mart: ['', Validators.required],
             dealer: ['', Validators.required],
+
+        });
+    }
+    initializeSupplierForm(): void {
+        this.formSupplier = this.formBuilder.group({
             supplier_name: ['', Validators.required],
             supplier_qty: ['', Validators.required],
             supplier_rate: ['', Validators.required],
@@ -62,11 +76,11 @@ export class AddItemComponent implements OnInit {
     }
 
     saveItems(): void {
-        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,  supplier_name, supplier_qty, supplier_rate } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, } = this.formGroup.value;
         this.isShowLoader = true;
         this.itemsService
             .addItems({
-                item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, supplier_name, supplier_qty, supplier_rate
+                item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers
             })
             .subscribe(
                 (response) => {
@@ -91,12 +105,12 @@ export class AddItemComponent implements OnInit {
     }
 
     updateItems(): void {
-        const {item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, supplier_name,supplier_qty, supplier_rate } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.itemsService
             .editItems({
-                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,  supplier_name, supplier_qty, supplier_rate
+                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers
             })
             .subscribe(
                 (response) => {
@@ -127,14 +141,21 @@ export class AddItemComponent implements OnInit {
         } else {
             this.saveItems();
         }
+        this.saveItems();
+
+    }
+
+    addSupplier() {
+        this.suppliers.push(this.formSupplier.value)
+        this.supplierDataSource = new MatTableDataSource<any>(this.suppliers);
     }
 
     fillForm() {
         const { item_code,
-            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, supplier_name, supplier_qty, supplier_rate } = this.data;
+            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer } = this.data;
         this.formGroup.patchValue({
             item_code,
-            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, supplier_name, supplier_qty, supplier_rate
+            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer
         });
     }
     getCategoriesDropDown(type: string) {

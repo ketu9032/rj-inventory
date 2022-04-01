@@ -15,9 +15,7 @@ exports.findAll = async (req, res) => {
            item_code ilike '%${search}%'
           or item_name ilike '%${search}%'
           or int_qty ilike '%${search}%'
-
           or silver ilike '%${search}%'
-
           or supplier_name ilike '%${search}%'
           or supplier_qty ilike '%${search}%'
           or supplier_rate ilike '%${search}%'
@@ -82,9 +80,7 @@ exports.add = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      supplier_name,
-      supplier_qty,
-      supplier_rate
+      suppliers
     } = req.body;
 
     if (
@@ -97,33 +93,44 @@ exports.add = async (req, res) => {
       !gold ||
       !india_mart ||
       !dealer ||
-      !supplier_name ||
-      !supplier_qty ||
-      !supplier_rate
+      !suppliers ||
+      suppliers.length === 0
     ) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    await pool.query(
-      `INSERT INTO item
-      ( item_code,
-        item_name,
-        int_qty,
-        comment,
-        silver,
-        retail,
-        gold,
-        india_mart,
-        dealer,
-        supplier_name,
-        supplier_qty,
-        supplier_rate
-         )
-      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}','${supplier_name}','${supplier_qty}', '${supplier_rate}');
-      `
-    );
+    const insertItemQuery = `INSERT INTO item
+    ( item_code,
+      item_name,
+      int_qty,
+      comment,
+      silver,
+      retail,
+      gold,
+      india_mart,
+      dealer
+       )
+    VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}') returning id;
+    `;
+    const { rows } = await pool.query(insertItemQuery);
+
+    const itemId = rows[0].id;
+
+    for (let index = 0; index < suppliers.length; index++) {
+      const element = suppliers[index];
+      const insertSupplierQuery = `INSERT INTO item_supplier
+  ( supplier_name,
+    supplier_qty,
+    supplier_rate,
+    item_id
+
+     )
+  VALUES('${element.supplier_name}',${element.supplier_qty}, ${element.supplier_rate},${itemId}) ;
+  `;
+      await pool.query(insertSupplierQuery);
+    }
 
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {

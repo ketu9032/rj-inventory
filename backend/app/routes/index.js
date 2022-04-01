@@ -7,6 +7,7 @@ const expense = require('./../controllers/expense.controller');
 const suppliers = require('./../controllers/supplier.controller');
 const categories = require('./../controllers/category.controller');
 const item = require('./../controllers/item.controller');
+const item_supplier = require('./../controllers/item-supplier.controller');
 
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
@@ -16,17 +17,17 @@ const { verifyToken } = require('../utils/common');
 router.get('/', (req, res) => res.send('ok'));
 router.post('/api/users/login', users.login);
 
-router.use('/', async(req, res, next) => {
-    const token = req.headers.authorization;
-    const { status, data } = await verifyToken(token);
-    if (status !== RESPONSE_STATUS.SUCCESS) {
-        res
-            .status(STATUS_CODE.UNAUTHORIZED)
-            .send({ message: MESSAGES.AUTH.INVALID_TOKEN });
-        return;
-    }
-    res.locals.tokenData = data;
-    return next();
+router.use('/', async (req, res, next) => {
+  const token = req.headers.authorization;
+  const { status, data } = await verifyToken(token);
+  if (status !== RESPONSE_STATUS.SUCCESS) {
+    res
+      .status(STATUS_CODE.UNAUTHORIZED)
+      .send({ message: MESSAGES.AUTH.INVALID_TOKEN });
+    return;
+  }
+  res.locals.tokenData = data;
+  return next();
 });
 
 router.delete('/api/users', users.delete);
@@ -81,5 +82,10 @@ router.post('/api/item', item.add);
 router.put('/api/item', item.update);
 router.get('/api/getItemDropDown', item.getItemDropDown);
 router.put('/api/item/changeStatus', item.changeStatus);
+
+router.delete('/api/item_supplier', item_supplier.delete);
+router.get('/api/item_supplier', item_supplier.findAll);
+router.post('/api/item_supplier', item_supplier.add);
+router.put('/api/item_supplier', item_supplier.update);
 
 module.exports = router;
