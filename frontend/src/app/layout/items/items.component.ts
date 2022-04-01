@@ -97,8 +97,8 @@ export class ItemsComponent implements OnInit {
     onAddNewItem(): void {
         this.dialog
             .open(AddItemComponent, {
-                width: '770px',
-                height: '550px'
+                width: '760px',
+                height:'700px'
             })
             .afterClosed()
             .subscribe((result) => {
@@ -111,8 +111,8 @@ export class ItemsComponent implements OnInit {
     onEditNewItem(element) {
       this.dialog
         .open(AddItemComponent, {
-            width: '1000px',
-            height: '500px',
+            width: '760px',
+            height: '700px',
           data: element
         })
         .afterClosed()

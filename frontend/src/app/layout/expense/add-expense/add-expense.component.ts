@@ -20,6 +20,7 @@ export class AddExpenseComponent implements OnInit {
     users = []
     categories = []
     isShowLoader = false;
+    amount = true
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IExpenseData,
