@@ -16,15 +16,16 @@ exports.findAll = async (req, res) => {
           or item_name ilike '%${search}%'
           or int_qty ilike '%${search}%'
           or silver ilike '%${search}%'
+          or category ilike '%${search}%'
           or supplier_name ilike '%${search}%'
           or supplier_qty ilike '%${search}%'
           or supplier_rate ilike '%${search}%'
         )`;
     }
-    searchQuery += ` and is_active = ${active}`;
+    searchQuery += ` and i.is_active = ${active}`;
     const query = `  SELECT
-    Count(id) OVER() AS total,
-    id,
+    Count(i.id) OVER() AS total,
+    i.id,
     item_code,
         item_name,
         int_qty,
@@ -36,8 +37,15 @@ exports.findAll = async (req, res) => {
         dealer,
         supplier_name,
         supplier_qty,
-        supplier_rate
-    FROM item
+        supplier_rate,
+        category_id as category_id,
+        c.name as category_name,
+        c.code as category_code
+    FROM
+     item i
+     JOIN
+     categories c
+     ON c.id = i.category_id
 ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
 
@@ -80,7 +88,8 @@ exports.add = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      suppliers
+      suppliers,
+      categoryId
     } = req.body;
 
     if (
@@ -94,6 +103,7 @@ exports.add = async (req, res) => {
       !india_mart ||
       !dealer ||
       !suppliers ||
+      !categoryId ||
       suppliers.length === 0
     ) {
       res
@@ -110,13 +120,14 @@ exports.add = async (req, res) => {
       retail,
       gold,
       india_mart,
-      dealer
+      dealer,
+      category_id
        )
-    VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}') returning id;
+    VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}', '${categoryId}') returning id;
     `;
     const { rows } = await pool.query(insertItemQuery);
 
-    const itemId = rows[0].id;
+    const itemId  = rows[0].id;
 
     for (let index = 0; index < suppliers.length; index++) {
       const element = suppliers[index];
@@ -153,9 +164,8 @@ exports.update = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      supplier_name,
-      supplier_qty,
-      supplier_rate
+      categoryId,
+      itemId
     } = req.body;
     if (
       !item_code ||
@@ -167,9 +177,8 @@ exports.update = async (req, res) => {
       !gold ||
       !india_mart ||
       !dealer ||
-      !supplier_name ||
-      !supplier_qty ||
-      !supplier_rate ||
+      !categoryId ||
+      !itemId ||
       !id
     ) {
       res
@@ -179,7 +188,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE item
-      SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}',  supplier_name='${supplier_name}', supplier_qty='${supplier_qty}',supplier_rate='${supplier_rate}' where id = ${id};`
+      SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}',category_id='${categoryId}',  item_id='${itemId}' where id = ${id};`
     );
 
     res.status(STATUS_CODE.SUCCESS).send();

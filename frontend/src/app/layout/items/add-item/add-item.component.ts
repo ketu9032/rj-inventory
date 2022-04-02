@@ -76,11 +76,13 @@ export class AddItemComponent implements OnInit {
     }
 
     saveItems(): void {
-        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,
+            category:categoryId } = this.formGroup.value;
         this.isShowLoader = true;
         this.itemsService
             .addItems({
-                item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers
+                item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers,
+                categoryId
             })
             .subscribe(
                 (response) => {
@@ -105,12 +107,12 @@ export class AddItemComponent implements OnInit {
     }
 
     updateItems(): void {
-        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category:categoryId } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.itemsService
             .editItems({
-                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers
+                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers,  categoryId
             })
             .subscribe(
                 (response) => {
@@ -141,7 +143,7 @@ export class AddItemComponent implements OnInit {
         } else {
             this.saveItems();
         }
-        this.saveItems();
+
 
     }
 
@@ -152,10 +154,11 @@ export class AddItemComponent implements OnInit {
 
     fillForm() {
         const { item_code,
-            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer } = this.data;
+            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category_id: categoryId } = this.data;
         this.formGroup.patchValue({
             item_code,
-            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer
+            item_name, category: categoryId, comment, int_qty, silver, retail, gold, india_mart, dealer,
+
         });
     }
     getCategoriesDropDown(type: string) {
