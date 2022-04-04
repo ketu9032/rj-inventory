@@ -27,7 +27,7 @@ export class ItemsComponent implements OnInit {
         'sold',
         'available',
         'silver',
-        'total',
+        'total_balance',
         'action'
     ];
     dataSource: any = [];

@@ -6,9 +6,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { IItemData } from 'src/app/models/item';
 import { IItemSupplierData } from 'src/app/models/item_supplier';
+import { IMatTableParams } from 'src/app/models/table';
+import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { ItemsCategoriesService } from '../services/items-categories.service';
 import { ItemsService } from '../services/items.service';
-
 @Component({
     selector: 'app-add-item',
     templateUrl: './add-item.component.html',
@@ -26,10 +27,22 @@ export class AddItemComponent implements OnInit {
     selectedRole: string
     tires = []
     isShowLoader = false;
+    public defaultPageSize = PAGE_SIZE;
     categories = []
     dataSource: any = [];
     suppliers = []
     supplierDataSource: any = [];
+    totalRows: number;
+    tableParams: IMatTableParams = {
+        pageSize: this.defaultPageSize,
+        pageNumber: 1,
+        orderBy: 'id',
+        direction: "desc",
+        search: '',
+        active: true
+    }
+    supplierRate: string = "";
+    supplierQty: string = "";
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IItemData,
         @Inject(MAT_DIALOG_DATA) public supplierData: IItemSupplierData,
@@ -41,7 +54,6 @@ export class AddItemComponent implements OnInit {
         private router: Router,
         private itemsService: ItemsService
     ) { }
-
     ngOnInit() {
         this.initializeForm();
         this.initializeSupplierForm()
@@ -50,8 +62,10 @@ export class AddItemComponent implements OnInit {
             this.fillForm();
         }
     }
-
-
+    clearSupplierInputBox() {
+        this.supplierQty = "";
+        this.supplierRate = "";
+    }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
             item_code: ['', Validators.required],
@@ -64,7 +78,6 @@ export class AddItemComponent implements OnInit {
             gold: ['', Validators.required],
             india_mart: ['', Validators.required],
             dealer: ['', Validators.required],
-
         });
     }
     initializeSupplierForm(): void {
@@ -74,10 +87,25 @@ export class AddItemComponent implements OnInit {
             supplier_rate: ['', Validators.required],
         });
     }
-
+    getItemSupplier() {
+        this.itemsService.getItemSupplier(this.tableParams).subscribe(
+            (newItemSupplier: any[]) => {
+                this.dataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
+                if (newItemSupplier.length > 0) {
+                    this.totalRows = newItemSupplier[0].total;
+                }
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
+    }
     saveItems(): void {
         const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,
-            category:categoryId } = this.formGroup.value;
+            category: categoryId } = this.formGroup.value;
         this.isShowLoader = true;
         this.itemsService
             .addItems({
@@ -94,7 +122,6 @@ export class AddItemComponent implements OnInit {
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
@@ -105,19 +132,16 @@ export class AddItemComponent implements OnInit {
                 () => { }
             );
     }
-
     updateItems(): void {
-        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category:categoryId } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category: categoryId } = this.formGroup.value;
         this.isShowLoader = true;
-
         this.itemsService
             .editItems({
-                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers,  categoryId
+                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers, categoryId
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open('Item updated successfully', 'OK', {
                         duration: 3000
                     });
@@ -125,7 +149,6 @@ export class AddItemComponent implements OnInit {
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
@@ -136,29 +159,23 @@ export class AddItemComponent implements OnInit {
                 () => { }
             );
     }
-
     onSubmit() {
         if (this.data && this.data.id) {
             this.updateItems();
         } else {
             this.saveItems();
         }
-
-
     }
-
     addSupplier() {
         this.suppliers.push(this.formSupplier.value)
         this.supplierDataSource = new MatTableDataSource<any>(this.suppliers);
     }
-
     fillForm() {
         const { item_code,
-            item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category_id: categoryId } = this.data;
+            item_name, comment, int_qty, silver, retail, gold, india_mart, dealer, category_id: categoryId } = this.data;
         this.formGroup.patchValue({
             item_code,
-            item_name, category: categoryId, comment, int_qty, silver, retail, gold, india_mart, dealer,
-
+            item_name, category: categoryId, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers
         });
     }
     getCategoriesDropDown(type: string) {
@@ -179,5 +196,4 @@ export class AddItemComponent implements OnInit {
                 () => { }
             );
     }
-
 }
