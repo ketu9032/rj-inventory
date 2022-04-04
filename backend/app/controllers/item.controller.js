@@ -2,7 +2,6 @@ const { MESSAGES } = require('../constant/messages');
 const { STATUS_CODE } = require('../constant/response-status');
 const { generateToken } = require('../utils/common');
 const { pool } = require('../db');
-
 exports.findAll = async (req, res) => {
   try {
     const { orderBy, direction, pageSize, pageNumber, search, active } =
@@ -16,15 +15,16 @@ exports.findAll = async (req, res) => {
           or item_name ilike '%${search}%'
           or int_qty ilike '%${search}%'
           or silver ilike '%${search}%'
+          or category ilike '%${search}%'
           or supplier_name ilike '%${search}%'
           or supplier_qty ilike '%${search}%'
           or supplier_rate ilike '%${search}%'
         )`;
     }
-    searchQuery += ` and is_active = ${active}`;
+    searchQuery += ` and i.is_active = ${active}`;
     const query = `  SELECT
-    Count(id) OVER() AS total,
-    id,
+    Count(i.id) OVER() AS total,
+    i.id,
     item_code,
         item_name,
         int_qty,
@@ -34,11 +34,15 @@ exports.findAll = async (req, res) => {
         gold,
         india_mart,
         dealer,
-        supplier_name,
-        supplier_qty,
-        supplier_rate
-    FROM item
-${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+
+        category_id as category_id,
+        c.name as category_name,
+        c.code as category_code
+    FROM
+     item i
+
+      JOIN  categories c ON c.id = i.category_id
+     ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -48,7 +52,11 @@ ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSiz
     });
   }
 };
-
+//INNER JOIN  item_supplier ON item_supplier.id = i.item_supplier_id
+       // item_supplier_id as item_supplier_id
+        // item_supplier.name as supplier_name,
+        // item_supplier.qty as supplier_qty,
+        // item_supplier.rate as supplier_rate,
 exports.delete = async (req, res) => {
   try {
     const { id } = req.query;
@@ -67,7 +75,6 @@ exports.delete = async (req, res) => {
     });
   }
 };
-
 exports.add = async (req, res) => {
   try {
     const {
@@ -80,9 +87,9 @@ exports.add = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      suppliers
+      suppliers,
+      categoryId
     } = req.body;
-
     if (
       !item_code ||
       !item_name ||
@@ -93,7 +100,8 @@ exports.add = async (req, res) => {
       !gold ||
       !india_mart ||
       !dealer ||
-      !suppliers ||
+     !suppliers ||
+      !categoryId ||
       suppliers.length === 0
     ) {
       res
@@ -110,14 +118,14 @@ exports.add = async (req, res) => {
       retail,
       gold,
       india_mart,
-      dealer
-       )
-    VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}') returning id;
-    `;
+      dealer,
+      category_id
+      )
+      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}', '${categoryId}') returning id;
+      `;
+      //   item_supplier_id
     const { rows } = await pool.query(insertItemQuery);
-
     const itemId = rows[0].id;
-
     for (let index = 0; index < suppliers.length; index++) {
       const element = suppliers[index];
       const insertSupplierQuery = `INSERT INTO item_supplier
@@ -125,13 +133,11 @@ exports.add = async (req, res) => {
     supplier_qty,
     supplier_rate,
     item_id
-
      )
   VALUES('${element.supplier_name}',${element.supplier_qty}, ${element.supplier_rate},${itemId}) ;
   `;
       await pool.query(insertSupplierQuery);
     }
-
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -139,7 +145,6 @@ exports.add = async (req, res) => {
     });
   }
 };
-
 exports.update = async (req, res) => {
   try {
     const {
@@ -153,9 +158,9 @@ exports.update = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      supplier_name,
-      supplier_qty,
-      supplier_rate
+      supplierId,
+      categoryId,
+      itemId
     } = req.body;
     if (
       !item_code ||
@@ -167,9 +172,9 @@ exports.update = async (req, res) => {
       !gold ||
       !india_mart ||
       !dealer ||
-      !supplier_name ||
-      !supplier_qty ||
-      !supplier_rate ||
+      !supplierId ||
+      !categoryId ||
+      !itemId ||
       !id
     ) {
       res
@@ -177,10 +182,25 @@ exports.update = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    await pool.query(
-      `UPDATE item
-      SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}',  supplier_name='${supplier_name}', supplier_qty='${supplier_qty}',supplier_rate='${supplier_rate}' where id = ${id};`
-    );
+
+    const updateItemQuery =  `UPDATE item
+    SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}',  item_id='${itemId}' where id = ${id};`
+   const {updateRows} = await pool.query(updateItemQuery);
+
+    const UpdateItemId = updateRows[0].id;
+    for (let index = 0; index < UpdateItemId.length; index++) {
+      const element = UpdateItemId[index];
+      const updateSupplierQuery = `INSERT INTO item_supplier
+      ( supplier_name,
+        supplier_qty,
+        supplier_rate,
+        item_id
+         )
+      VALUES('${element.supplier_name}',${element.supplier_qty}, ${element.supplier_rate},${itemId}) ;
+      `;
+      await pool.query(updateSupplierQuery);
+    }
+
 
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -189,13 +209,11 @@ exports.update = async (req, res) => {
     });
   }
 };
-
 exports.getItemDropDown = async (req, res) => {
   try {
     const response = await pool.query(
       `select id,  item_code FROM item where is_deleted = false and is_active = true`
     );
-
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -203,7 +221,6 @@ exports.getItemDropDown = async (req, res) => {
     });
   }
 };
-
 exports.changeStatus = async (req, res) => {
   try {
     const { id, status } = req.body;

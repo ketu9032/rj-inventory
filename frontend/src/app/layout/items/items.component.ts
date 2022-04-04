@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ICustomersData } from 'src/app/models/customers';
+import { IItemSupplierData } from 'src/app/models/item_supplier';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { CustomersService } from '../customers/services/customers.service';
@@ -27,7 +28,7 @@ export class ItemsComponent implements OnInit {
         'sold',
         'available',
         'silver',
-        'total',
+        'total_balance',
         'action'
     ];
     dataSource: any = [];
@@ -91,6 +92,22 @@ export class ItemsComponent implements OnInit {
             () => { }
         );
     }
+    getItemSupplier() {
+        this.itemsService.getItemSupplier(this.tableParams).subscribe(
+            (newItemSupplier: any[]) => {
+                this.dataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
+                if (newItemSupplier.length > 0) {
+                    this.totalRows = newItemSupplier[0].total;
+                }
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
+    }
 
     onAddNewItem(): void {
         this.dialog
@@ -117,6 +134,7 @@ export class ItemsComponent implements OnInit {
             .subscribe((result) => {
                 if (result) {
                     this.getItems();
+                    this.getItemSupplier();
                 }
             });
     }
