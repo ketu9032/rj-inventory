@@ -196,6 +196,8 @@
                 ">
                     <span class="error">Qty is Required</span>
                 </ng-container>
+                <!-- <ng-container *ngIf=" formSupplier.controls.supplier_qty.touched &&
+                formSupplier.controls.supplier_qty.value === true" onclick="clearSupplierInputBox()"></ng-container> -->
             </div>
         </div>
         <!-- rate start -->
@@ -215,6 +217,7 @@
         </div>
         <!-- ADD BUTTON -->
         <button mat-raised-button color="primary" class="add_button"  type="submit" [disabled]="!formSupplier.valid" > Add
+
         </button>
     </div>
 </form>

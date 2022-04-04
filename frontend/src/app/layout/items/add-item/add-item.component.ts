@@ -60,6 +60,10 @@ export class AddItemComponent implements OnInit {
         this.getCategoriesDropDown('Item')
         if (this.data && this.data.id) {
             this.fillForm();
+
+        }
+        if (this.supplierData && this.supplierData.id) {
+            this.supplierFillForm();
         }
     }
     clearSupplierInputBox() {
@@ -87,22 +91,8 @@ export class AddItemComponent implements OnInit {
             supplier_rate: ['', Validators.required],
         });
     }
-    getItemSupplier() {
-        this.itemsService.getItemSupplier(this.tableParams).subscribe(
-            (newItemSupplier: any[]) => {
-                this.dataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
-                if (newItemSupplier.length > 0) {
-                    this.totalRows = newItemSupplier[0].total;
-                }
-            },
-            (error) => {
-                this.snackBar.open(error.error.message || error.message, 'Ok', {
-                    duration: 3000
-                });
-            },
-            () => { }
-        );
-    }
+
+
     saveItems(): void {
         const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,
             category: categoryId } = this.formGroup.value;
@@ -169,13 +159,21 @@ export class AddItemComponent implements OnInit {
     addSupplier() {
         this.suppliers.push(this.formSupplier.value)
         this.supplierDataSource = new MatTableDataSource<any>(this.suppliers);
+
     }
     fillForm() {
         const { item_code,
-            item_name, comment, int_qty, silver, retail, gold, india_mart, dealer, category_id: categoryId } = this.data;
+            item_name, comment, int_qty, silver, retail, gold, india_mart, dealer, category_id: categoryId,  } = this.data;
         this.formGroup.patchValue({
             item_code,
-            item_name, category: categoryId, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers
+            item_name, category: categoryId, comment, int_qty, silver, retail, gold, india_mart, dealer
+        });
+    }
+    supplierFillForm() {
+        const { supplier_id: supplierId, item_id: itemId,  supplier_name, supplier_qty, supplier_rate } = this.supplierData;
+
+        this.formSupplier.patchValue({
+         supplierId, itemId, supplier_name, supplier_qty, supplier_rate
         });
     }
     getCategoriesDropDown(type: string) {
