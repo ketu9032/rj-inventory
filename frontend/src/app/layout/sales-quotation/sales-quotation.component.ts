@@ -8,7 +8,6 @@ import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config'
 import { TiersService } from '../customers/services/tiers.service';
 import { ItemsService } from '../items/services/items.service';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
-
 @Component({
     selector: 'app-sales-quotation',
     templateUrl: './sales-quotation.component.html',
@@ -36,6 +35,7 @@ export class SalesQuotationComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     totalRows: number;
+    tireValue;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -45,32 +45,26 @@ export class SalesQuotationComponent implements OnInit {
         active: true
     }
     tires = [];
-
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
         private tiersService: TiersService,
         public snackBar: MatSnackBar
     ) { }
-
     ngOnInit(): void {
         this.getTierDropDown()
         this.getItems();
     }
-
     getItems() { }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
         // this.getItems();
     }
-
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-
     // getItems() {
     //   this.loader = true;
     //   this.itemsService.getItems(this.tableParams).subscribe(
@@ -94,11 +88,11 @@ export class SalesQuotationComponent implements OnInit {
     //     () => { }
     //   );
     // }
-
     onAddNewCreateQuotation(): void {
       this.dialog
         .open(CreateQuotationComponent, {
-          width: '400px'
+            width: '1000px',
+                height: '700px'
         })
         .afterClosed()
         .subscribe((result) => {
@@ -107,7 +101,6 @@ export class SalesQuotationComponent implements OnInit {
           }
         });
     }
-
     // // onEditNewCustomers(element) {
     // //   this.dialog
     // //     .open(AddCustomersComponent, {
@@ -121,7 +114,6 @@ export class SalesQuotationComponent implements OnInit {
     // //       }
     // //     });
     // // }
-
     // // confirmDialog(id: string): void {
     // //   this.dialog
     // //     .open(DeleteCustomersComponent, {
@@ -135,7 +127,6 @@ export class SalesQuotationComponent implements OnInit {
     // //       }
     // //     });
     // // }
-
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
@@ -164,5 +155,4 @@ export class SalesQuotationComponent implements OnInit {
                 () => { }
             );
     }
-
 }

@@ -39,10 +39,18 @@ export class CreateQuotationComponent implements OnInit {
 
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            date: ['', Validators.required],
-            description: ['', Validators.required],
-            amount: ['', Validators.required],
-            user: ['', Validators.required],
+            tier: [''],
+            date: [''],
+            invoice_number: [''],
+            ref_number: [''],
+            item_name: [''],
+            hashtag: [''],
+            qty: [''],
+            available: [''],
+            selling_price: [''],
+            total: [''],
+
+
         });
     }
 
