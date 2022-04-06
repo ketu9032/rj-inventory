@@ -18,6 +18,13 @@ export class CreateQuotationComponent implements OnInit {
     users = []
     categories = []
     isShowLoader = false;
+    displayedColumns: string[] = [
+        'item_name',
+        'qty',
+        'edit_delete',
+        'price',
+        'total'
+    ];
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IExpenseData,
@@ -113,9 +120,9 @@ export class CreateQuotationComponent implements OnInit {
 
     onSubmit() {
         if (this.data && this.data.id) {
-         //   this.updateExpense();
+            //   this.updateExpense();
         } else {
-           // this.saveExpense();
+            // this.saveExpense();
         }
     }
 

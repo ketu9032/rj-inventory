@@ -170,10 +170,10 @@ export class AddItemComponent implements OnInit {
         });
     }
     supplierFillForm() {
-        const { supplier_id: supplierId, item_id: itemId,  supplier_name, supplier_qty, supplier_rate } = this.supplierData;
+        const {  item_id: itemId,  supplier_name, supplier_qty, supplier_rate } = this.supplierData;
 
         this.formSupplier.patchValue({
-         supplierId, itemId, supplier_name, supplier_qty, supplier_rate
+          itemId, supplier_name, supplier_qty, supplier_rate
         });
     }
     getCategoriesDropDown(type: string) {
