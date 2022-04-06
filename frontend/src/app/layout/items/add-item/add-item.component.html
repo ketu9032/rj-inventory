@@ -164,6 +164,9 @@
         </div>
     </div>
 </form>
+<mat-divider class="mat-divider"></mat-divider>
+<br>
+
 <!-- supplier form -->
 <h1 mat-dialog-title>Supplier Details</h1>
 <form [formGroup]="formSupplier" (ngSubmit)="addSupplier()">
@@ -187,7 +190,7 @@
         <div class="block">
             <mat-form-field>
                 <mat-label>Qty</mat-label>
-                <input matInput formControlName="supplier_qty"[(ngModel)]="supplierQty" type="number" />
+                <input matInput formControlName="supplier_qty" type="number" />
             </mat-form-field>
             <div>
                 <ng-container *ngIf="
@@ -204,7 +207,7 @@
         <div class="block">
             <mat-form-field class="input_width">
                 <mat-label>Rate</mat-label>
-                <input matInput formControlName="supplier_rate" [(ngModel)]="supplierRate" type="number" />
+                <input matInput formControlName="supplier_rate" type="number" />
             </mat-form-field>
             <div>
                 <ng-container *ngIf="
@@ -226,20 +229,20 @@
     <table mat-table [dataSource]="supplierDataSource" matSort matSortActive="company" matSortDirection="asc">
         <ng-container matColumnDef="supplier_name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-            <td mat-cell *matCellDef="let supplierData">
-                {{ supplierData.supplier_name }}
+            <td mat-cell *matCellDef="let suppliers">
+                {{ suppliers.supplier_name }}
             </td>
         </ng-container>
         <ng-container matColumnDef="supplier_qty">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Qty</th>
-            <td mat-cell *matCellDef="let supplierData">
-                {{ supplierData.supplier_qty }}
+            <td mat-cell *matCellDef="let suppliers">
+                {{ suppliers.supplier_qty }}
             </td>
         </ng-container>
         <ng-container matColumnDef="supplier_rate">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Rate</th>
-            <td mat-cell *matCellDef="let supplierData">
-                {{ supplierData.supplier_rate }}
+            <td mat-cell *matCellDef="let suppliers">
+                {{ suppliers.supplier_rate }}
             </td>
         </ng-container>
         <ng-container matColumnDef="action">

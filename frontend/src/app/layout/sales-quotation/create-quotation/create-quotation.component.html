@@ -1,74 +1,175 @@
-<!--  -->
 <div class="container">
-    <h1 mat-dialog-title> {{ !this.data ? 'Add Expense' : 'Update Expense' }} </h1>
+    <h1 mat-dialog-title> {{ !this.data ? 'Add Create Quotation' : 'Update Create Quotation' }} </h1>
+    <mat-divider></mat-divider>
+    <br>
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-
-        <!-- Date start -->
-        <mat-form-field color="accent">
-            <mat-label>Date</mat-label>
-            <input matInput formControlName="date" [matDatepicker]="date">
-            <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
-            <mat-datepicker #date></mat-datepicker>
-        </mat-form-field>
-
-
-        <!-- Description start -->
-        <mat-form-field>
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description"></textarea>
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-        formGroup.controls.description.touched &&
-        !formGroup.controls.description.value
-      ">
-                <span class="error">Description is Required</span>
-            </ng-container>
+        <div class="box">
+            <!-- tier start -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>Tier</mat-label>
+                    <input matInput formControlName="tier" disabled />
+                </mat-form-field>
+            </div>
+            <!-- Date start -->
+            <div class="width">
+                <mat-form-field color="accent">
+                    <mat-label>Date</mat-label>
+                    <input matInput formControlName="date" [matDatepicker]="date">
+                    <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+                    <mat-datepicker #date></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <!-- invoice_number start -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>Invoice No.</mat-label>
+                    <input matInput formControlName="invoice_number" type="number" />
+                </mat-form-field>
+            </div>
+            <!-- ref name start -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>Ref no</mat-label>
+                    <input matInput formControlName="ref_number" type="number" />
+                </mat-form-field>
+            </div>
+            <!-- buttons start -->
+            <div>
+                <button mat-raised-button color="primary" class="margin" type="submit">
+                    Download
+                </button>
+            </div>
+            <div>
+                <button mat-raised-button color="primary" type="submit">
+                    Upload
+                </button>
+            </div>
         </div>
+        <mat-divider></mat-divider>
+        <br>
+        <!-- Item Name start -->
+        <div class="box">
+            <div class="width">
 
-        <!-- Category start -->
-        <mat-form-field>
+                <mat-form-field>
+                    <mat-label>Item Name</mat-label>
+                    <input matInput formControlName="item_name" />
+                </mat-form-field>
+
+            </div>
+            <!-- Category start -->
+            <!-- <mat-form-field>
             <mat-label>Category</mat-label>
             <mat-select formControlName="user" name="user">
                 <mat-option *ngFor="let category of categories" [value]="category.id">
                     {{category.code}}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
+            <!-- hashtag start -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>#</mat-label>
+                    <input matInput formControlName="hashtag" />
+                </mat-form-field>
+            </div>
+            <!-- Qty start -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>Qty</mat-label>
+                    <input matInput formControlName="qty" type="number" />
+                </mat-form-field>
+            </div>
+            <!-- Available start -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>Available</mat-label>
+                    <input matInput formControlName="available" />
+                </mat-form-field>
+            </div>
 
-        <!-- Amount start -->
-        <mat-form-field>
-            <mat-label>Amount</mat-label>
-            <input matInput formControlName="amount" type="number" />
-        </mat-form-field>
-        <div>
-            <ng-container *ngIf="
-          formGroup.controls.amount.touched &&
-          !formGroup.controls.amount.value
-        ">
-                <span class="error">Amount Balance is Required</span>
 
-            </ng-container>
+            <!-- Selling price start -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>Selling price</mat-label>
+                    <input matInput formControlName="selling_price" type="number" />
+                </mat-form-field>
+
+            </div>
+            <!-- total price start -->
+            <div class="width">
+
+                <mat-form-field>
+                    <mat-label>Total</mat-label>
+                    <input matInput formControlName="total" />
+                </mat-form-field>
+            </div>
+            <!-- Add button start -->
+            <div>
+
+                <button mat-raised-button color="primary" class="margin" type="submit">
+                    Add
+                </button>
+            </div>
         </div>
+        <!-- button start -->
 
-
-
-        <!-- user start -->
-        <mat-form-field>
-            <mat-label>User To</mat-label>
-            <mat-select formControlName="user" name="user">
-                <mat-option *ngFor="let user of users" [value]="user.id">
-                    {{user.user_name}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <div class="btn-update">
-            <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
-                <span>
-                    {{ !this.data ? 'Save' : 'Update' }}
-                </span>
-            </button>
-        </div>
     </form>
+</div>
+<mat-divider></mat-divider>
+<br>
+
+<!-- table start -->
+
+<div class="mat-elevation-z8">
+    <table mat-table matSort matSortActive="item_name" matSortDirection="asc">
+
+        <ng-container matColumnDef="item_name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Name</th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.item_name}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="qty">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Qty</th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.qty }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="edit_delete">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Edit/Delete</th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.edit_delete }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
+            <td mat-cell *matCellDef="let element">
+                {{ element.price}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+            <td mat-cell *matCellDef="let element">{{ element.total}}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
+    </table>
+
+</div>
+<br>
+
+<div class="btn-update">
+    <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
+        <span>
+            {{ !this.data ? 'Save & Back' : 'Update' }}
+        </span>
+    </button>
 </div>

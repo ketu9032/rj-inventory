@@ -23,40 +23,40 @@ exports.findAll = async (req, res) => {
     }
     searchQuery += ` and i.is_active = ${active}`;
     const query = `  SELECT
-    Count(i.id) OVER() AS total,
-    i.id,
-    item_code,
-        item_name,
-        int_qty,
-        comment,
-        silver,
-        retail,
-        gold,
-        india_mart,
-        dealer,
-
-        category_id as category_id,
-        c.name as category_name,
-        c.code as category_code
+      Count(i.id) OVER() AS total,
+      i.id,
+      item_code,
+      item_name,
+      int_qty,
+      comment,
+      silver,
+      retail,
+      gold,
+      india_mart,
+      dealer,
+      item_supplier.id as supplier_id,
+      item_supplier.supplier_name as supplier_name,
+      item_supplier.supplier_qty as supplier_qty,
+      item_supplier.supplier_rate as supplier_rate,
+      category_id as category_id,
+      c.name as category_name,
+      c.code as category_code
     FROM
      item i
-
-      JOIN  categories c ON c.id = i.category_id
+      JOIN categories as c  ON c.id = i.category_id
+      JOIN item_supplier as item_supplier  ON item_supplier.item_id = i.id
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
+
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
 };
-//INNER JOIN  item_supplier ON item_supplier.id = i.item_supplier_id
-       // item_supplier_id as item_supplier_id
-        // item_supplier.name as supplier_name,
-        // item_supplier.qty as supplier_qty,
-        // item_supplier.rate as supplier_rate,
+
 exports.delete = async (req, res) => {
   try {
     const { id } = req.query;
@@ -100,7 +100,7 @@ exports.add = async (req, res) => {
       !gold ||
       !india_mart ||
       !dealer ||
-     !suppliers ||
+      !suppliers ||
       !categoryId ||
       suppliers.length === 0
     ) {

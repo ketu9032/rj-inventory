@@ -18,6 +18,13 @@ export class CreateQuotationComponent implements OnInit {
     users = []
     categories = []
     isShowLoader = false;
+    displayedColumns: string[] = [
+        'item_name',
+        'qty',
+        'edit_delete',
+        'price',
+        'total'
+    ];
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IExpenseData,
@@ -39,10 +46,18 @@ export class CreateQuotationComponent implements OnInit {
 
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            date: ['', Validators.required],
-            description: ['', Validators.required],
-            amount: ['', Validators.required],
-            user: ['', Validators.required],
+            tier: [''],
+            date: [''],
+            invoice_number: [''],
+            ref_number: [''],
+            item_name: [''],
+            hashtag: [''],
+            qty: [''],
+            available: [''],
+            selling_price: [''],
+            total: [''],
+
+
         });
     }
 
@@ -105,9 +120,9 @@ export class CreateQuotationComponent implements OnInit {
 
     onSubmit() {
         if (this.data && this.data.id) {
-         //   this.updateExpense();
+            //   this.updateExpense();
         } else {
-           // this.saveExpense();
+            // this.saveExpense();
         }
     }
 

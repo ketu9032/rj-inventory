@@ -56,6 +56,7 @@ export class ItemsComponent implements OnInit {
 
     ngOnInit(): void {
         this.getItems();
+
     }
 
     sortData(sort: Sort) {
@@ -119,6 +120,8 @@ export class ItemsComponent implements OnInit {
             .subscribe((result) => {
                 if (result) {
                     this.getItems();
+
+    this.getItemSupplier()
                 }
             });
     }
@@ -134,7 +137,7 @@ export class ItemsComponent implements OnInit {
             .subscribe((result) => {
                 if (result) {
                     this.getItems();
-                    this.getItemSupplier();
+
                 }
             });
     }
