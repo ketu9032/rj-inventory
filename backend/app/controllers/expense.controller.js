@@ -19,10 +19,20 @@ exports.findAll = async (req, res) => {
     }
     searchQuery += ` and t.is_active = ${active}`;
     let query = `
-    select count(t.id) over() as total, t.id, description, t.is_deleted, amount, t.user_id, u.user_name, t.date
+    select count(t.id) over() as total,
+           t.id,
+           description,
+           t.is_deleted,
+           amount,
+           t.user_id,
+           u.user_name,
+           t.date,
+           t.category_id,
+           c.code
       FROM expenses t
-      join users u
-      on u.id = t.user_id  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+      INNER join categories c on c.id = t.category_id
+      INNER join users u  on u.id = t.user_id  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+      console.log(query);
 
     const response = await pool.query(query);
 
@@ -56,17 +66,17 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const { userId, description, amount, date } = req.body;
+    const { userId, description, amount, date, categoryId } = req.body;
 
-    if (!userId || !description || !amount || !date) {
+    if (!userId || !description || !amount || !date || !categoryId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
     await pool.query(
-      `INSERT INTO expenses (user_id, description, amount, date)
-      VALUES('${userId}', '${description}', '${amount}', '${date}');
+      `INSERT INTO expenses (user_id, description, amount, date, category_id)
+      VALUES('${userId}', '${description}', '${amount}', '${date}', '${categoryId}');
       `
     );
 
@@ -80,16 +90,17 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const { userId, description, amount, date, id } = req.body;
+    const { userId, description, amount, date, id, categoryId } = req.body;
 
-    if (!userId || !description || !amount || !date || !id) {
+    if (!userId || !description || !amount || !date || !id
+    || !categoryId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
     await pool.query(
-      `UPDATE expenses SET user_id='${userId}', description='${description}' , amount='${amount}', date='${date}' where id = ${id};
+      `UPDATE expenses SET user_id='${userId}', description='${description}' , amount='${amount}', date='${date}' category_id='${categoryId}' where id = ${id};
        `
     );
 

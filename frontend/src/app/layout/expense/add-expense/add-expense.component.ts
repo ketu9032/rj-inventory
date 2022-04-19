@@ -53,11 +53,11 @@ export class AddExpenseComponent implements OnInit {
     }
 
     saveExpense(): void {
-        const { user: userId, description, amount, date } = this.formGroup.value;
+        const { user: userId, description, amount, date, category: categoryId } = this.formGroup.value;
         this.isShowLoader = true;
         this.expenseService
             .addExpense({
-                userId, description, amount, date
+                userId, description, amount, date, categoryId
             })
             .subscribe(
                 (response) => {
@@ -81,12 +81,12 @@ export class AddExpenseComponent implements OnInit {
     }
 
     updateExpense(): void {
-        const { user: userId, description, amount, date } = this.formGroup.value;
+        const { user: userId, description, amount, date, category: categoryId} = this.formGroup.value;
         this.isShowLoader = true;
         this.expenseService
             .editExpense({
                 id: this.data.id,
-                userId, description, amount, date
+                userId, description, amount, date, categoryId
             })
             .subscribe(
                 (response) => {
@@ -118,12 +118,13 @@ export class AddExpenseComponent implements OnInit {
     }
 
     fillForm() {
-        const { user_id: userId, description: description, amount: amount, date: date } = this.data;
+        const { user_id: userId, description: description, amount: amount, date: date, category_id: categoryId } = this.data;
         this.formGroup.patchValue({
             description,
             amount,
             user: userId,
-            date: date
+            date: date,
+            category: categoryId
         });
     }
 
@@ -163,6 +164,5 @@ export class AddExpenseComponent implements OnInit {
                 },
                 () => { }
             );
-
     }
 }

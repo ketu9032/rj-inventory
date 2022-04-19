@@ -17,6 +17,7 @@ export class CategoriesService {
         return this.restService.get<any>(`${this.getCategoryDropDownURL}?type=${type}`);
     }
 
+
     public getCategory(tablePrams: IMatTableParams) {
         const queryString = this.commonService.toQueryString(tablePrams);
         return this.restService.get<any>(`${this.url}${queryString}`);
