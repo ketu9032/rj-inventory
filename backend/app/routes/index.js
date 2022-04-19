@@ -62,6 +62,7 @@ router.get('/api/suppliers', suppliers.findAll);
 router.post('/api/suppliers', suppliers.add);
 router.put('/api/suppliers', suppliers.update);
 router.put('/api/suppliers/changeStatus', suppliers.changeStatus);
+router.put('/api/supplierDropDown', suppliers.getSupplierDropDown);
 
 router.delete('/api/categories', categories.delete);
 router.get('/api/categories', categories.findAll);

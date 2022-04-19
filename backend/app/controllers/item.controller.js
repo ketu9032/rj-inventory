@@ -46,6 +46,7 @@ exports.findAll = async (req, res) => {
       JOIN categories as c  ON c.id = i.category_id
       JOIN item_supplier as item_supplier  ON item_supplier.item_id = i.id
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+     console.log(query)
     const response = await pool.query(query);
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -88,6 +89,7 @@ exports.add = async (req, res) => {
       india_mart,
       dealer,
       suppliers,
+      supplierId,
       categoryId
     } = req.body;
     if (
@@ -101,6 +103,7 @@ exports.add = async (req, res) => {
       !india_mart ||
       !dealer ||
       !suppliers ||
+      !supplierId ||
       !categoryId ||
       suppliers.length === 0
     ) {
@@ -119,11 +122,13 @@ exports.add = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      category_id
+      category_id,
+      supplier_id
       )
-      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}', '${categoryId}') returning id;
+      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}',
+      '${dealer}', '${categoryId}', '${supplierId}') returning id;
       `;
-      //   item_supplier_id
+
     const { rows } = await pool.query(insertItemQuery);
     const itemId = rows[0].id;
     for (let index = 0; index < suppliers.length; index++) {
@@ -184,7 +189,7 @@ exports.update = async (req, res) => {
     }
 
     const updateItemQuery =  `UPDATE item
-    SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}',  item_id='${itemId}' where id = ${id};`
+    SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}', supplier_id='${supplierId}',  item_id='${itemId}' where id = ${id};`
    const {updateRows} = await pool.query(updateItemQuery);
 
     const UpdateItemId = updateRows[0].id;
