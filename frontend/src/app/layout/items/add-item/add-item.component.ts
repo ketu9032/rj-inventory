@@ -29,6 +29,7 @@ export class AddItemComponent implements OnInit {
     isShowLoader = false;
     public defaultPageSize = PAGE_SIZE;
     categories = []
+    supplier = []
     dataSource: any = [];
     suppliers = []
     supplierDataSource: any = [];
@@ -95,12 +96,12 @@ export class AddItemComponent implements OnInit {
 
     saveItems(): void {
         const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,
-            category: categoryId } = this.formGroup.value;
+            category: categoryId, supplierId } = this.formGroup.value;
         this.isShowLoader = true;
         this.itemsService
             .addItems({
                 item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers,
-                categoryId
+                categoryId, supplierId
             })
             .subscribe(
                 (response) => {
@@ -123,11 +124,11 @@ export class AddItemComponent implements OnInit {
             );
     }
     updateItems(): void {
-        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category: categoryId } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category: categoryId, supplierId } = this.formGroup.value;
         this.isShowLoader = true;
         this.itemsService
             .editItems({
-                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers, categoryId
+                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers, categoryId, supplierId
             })
             .subscribe(
                 (response) => {
@@ -194,4 +195,24 @@ export class AddItemComponent implements OnInit {
                 () => { }
             );
     }
-}
+    getSupplierDropDown() {
+        this.itemsService
+        .getSupplierDropDown()
+        .subscribe(
+            (response) => {
+                this.supplier = response;
+            },
+            (error) => {
+                this.snackBar.open(
+                    (error.error && error.error.message) || error.message,
+                    'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+                );
+            }
+        }
+
+

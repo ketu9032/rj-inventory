@@ -10,6 +10,8 @@ export class ItemsService {
     private itemURL = 'api/item';
     private changeStatusURL = 'api/item/changeStatus';
     private itemSupplierURL = 'api/item_supplier';
+    private getSupplierDropDownURL = 'api/getCategoryDropDown';
+
 
 
     constructor(private restService: RestService, private commonService: CommonService) { }
@@ -45,6 +47,9 @@ export class ItemsService {
     public removeItemSupplier(id: string) {
         return this.restService.delete(`${this.itemSupplierURL}?id=${id}`);
     }
+    public getSupplierDropDown() {
+        return this.restService.get<any>(`${this.getSupplierDropDownURL}`);
+      }
 }
 
 

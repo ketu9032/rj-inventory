@@ -117,3 +117,17 @@ exports.changeStatus = async (req, res) => {
     });
   }
 };
+
+exports.getSupplierDropDown = async (req, res) => {
+  try {
+    const response = await pool.query(
+      `select id, company FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
+    );
+
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
