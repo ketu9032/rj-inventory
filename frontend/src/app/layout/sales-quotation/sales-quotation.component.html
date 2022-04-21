@@ -9,9 +9,9 @@
             <!-- category start -->
             <mat-form-field class="margin">
                 <mat-label>Select Tier</mat-label>
-                <mat-select formControlName="tier" name="tier">
-                    <!-- <mat-option value="tireNameNone" [(ngModel)]="tireNameNone">All Tires{{tireNameNone}}</mat-option> -->
-                    <mat-option *ngFor="let tire of tires" [value]="tire.id" [(ngModel)]="tireName"
+                <mat-select name="tier" [(ngModel)]="tireName" >
+                    <mat-option value=""  (click)="toggleCreateButton()">All Tires</mat-option>
+                    <mat-option *ngFor="let tire of tires" [value]="tire.id"
                         (click)="toggleCreateButton()">
                         {{tire.name}}
                     </mat-option>

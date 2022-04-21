@@ -69,10 +69,10 @@ export class SalesQuotationComponent implements OnInit {
     }
 
     toggleCreateButton(){
-        if(!this.tireName ){
-            this.isShow = false
-        }else if (this.tireName) {
+        if(this.tireName === '' ){
             this.isShow = true
+        }else {
+            this.isShow = false
         }
 
     }

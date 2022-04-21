@@ -89,12 +89,12 @@ export class AddItemComponent implements OnInit {
     }
     saveItems(): void {
         const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,
-            category: categoryId, supplierId } = this.formGroup.value;
+            category: categoryId } = this.formGroup.value;
         this.isShowLoader = true;
         this.itemsService
             .addItems({
                 item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers,
-                categoryId, supplierId
+                categoryId
             })
             .subscribe(
                 (response) => {
@@ -121,7 +121,7 @@ export class AddItemComponent implements OnInit {
         this.isShowLoader = true;
         this.itemsService
             .editItems({
-                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers, categoryId, supplierId
+                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers, categoryId
             })
             .subscribe(
                 (response) => {

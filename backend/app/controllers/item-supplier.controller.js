@@ -22,8 +22,8 @@ exports.findAll = async (req, res) => {
     Count(id) OVER() AS total,
         id,
         supplier_qty,
-        supplier_rate
-        supplier_id as supplier_id
+        supplier_rate,
+        supplier_id as supplier_id,
     FROM item_supplier
       JOIN suppliers as s ON s.id = item_supplier.id
 ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
