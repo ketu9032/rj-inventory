@@ -35,7 +35,9 @@ export class SalesQuotationComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     totalRows: number;
-    tireValue;
+    tireName;
+    tireNameNone
+    isShow = true;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -64,6 +66,15 @@ export class SalesQuotationComponent implements OnInit {
     }
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
+    }
+
+    toggleCreateButton(){
+        if(!this.tireName ){
+            this.isShow = false
+        }else if (this.tireName) {
+            this.isShow = true
+        }
+
     }
     // getItems() {
     //   this.loader = true;

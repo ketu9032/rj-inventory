@@ -171,20 +171,8 @@
 <h1 mat-dialog-title>Supplier Details</h1>
 <form [formGroup]="formSupplier" (ngSubmit)="addSupplier()">
     <div class="supplier_details_table">
-        <div class="block">
-            <mat-form-field>
-                <mat-label>Category</mat-label>
-                <mat-select formControlName="supplier" name="supplier">
-                    <mat-option *ngFor="let supplier of supplier" [value]="supplier.id">
-                        {{supplier.company}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
 
-        </div>
         <!-- name start -->
-
-        <!--
         <div class="block">
             <mat-form-field class="input_width">
                 <mat-label>Name</mat-label>
@@ -198,7 +186,8 @@
                     <span class="error">Name is Required</span>
                 </ng-container>
             </div>
-        </div> -->
+        </div>
+
         <!-- Qty start -->
         <div class="block">
             <mat-form-field>

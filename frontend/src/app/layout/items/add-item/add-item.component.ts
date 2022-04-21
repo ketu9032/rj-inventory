@@ -61,15 +61,10 @@ export class AddItemComponent implements OnInit {
         this.getCategoriesDropDown('Item')
         if (this.data && this.data.id) {
             this.fillForm();
-
         }
         if (this.supplierData && this.supplierData.id) {
             this.supplierFillForm();
         }
-    }
-    clearSupplierInputBox() {
-        this.supplierQty = "";
-        this.supplierRate = "";
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
@@ -92,8 +87,6 @@ export class AddItemComponent implements OnInit {
             supplier_rate: ['', Validators.required],
         });
     }
-
-
     saveItems(): void {
         const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,
             category: categoryId, supplierId } = this.formGroup.value;
@@ -160,21 +153,19 @@ export class AddItemComponent implements OnInit {
     addSupplier() {
         this.suppliers.push(this.formSupplier.value)
         this.supplierDataSource = new MatTableDataSource<any>(this.suppliers);
-
     }
     fillForm() {
         const { item_code,
-            item_name, comment, int_qty, silver, retail, gold, india_mart, dealer, category_id: categoryId,  } = this.data;
+            item_name, comment, int_qty, silver, retail, gold, india_mart, dealer, category_id: categoryId, } = this.data;
         this.formGroup.patchValue({
             item_code,
             item_name, category: categoryId, comment, int_qty, silver, retail, gold, india_mart, dealer
         });
     }
     supplierFillForm() {
-        const {  item_id: itemId,  supplier_name, supplier_qty, supplier_rate } = this.supplierData;
-
+        const { item_id: itemId, supplier_name, supplier_qty, supplier_rate } = this.supplierData;
         this.formSupplier.patchValue({
-          itemId, supplier_name, supplier_qty, supplier_rate
+            itemId, supplier_name, supplier_qty, supplier_rate
         });
     }
     getCategoriesDropDown(type: string) {
@@ -197,22 +188,20 @@ export class AddItemComponent implements OnInit {
     }
     getSupplierDropDown() {
         this.itemsService
-        .getSupplierDropDown()
-        .subscribe(
-            (response) => {
-                this.supplier = response;
-            },
-            (error) => {
-                this.snackBar.open(
-                    (error.error && error.error.message) || error.message,
-                    'Ok', {
+            .getSupplierDropDown()
+            .subscribe(
+                (response) => {
+                    this.supplier = response;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
                         duration: 3000
                     }
                     );
                 },
                 () => { }
-                );
-            }
-        }
-
-
+            );
+    }
+}
