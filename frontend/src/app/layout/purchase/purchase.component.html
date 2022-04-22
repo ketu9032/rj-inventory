@@ -9,7 +9,10 @@
             <button color="primary" class="margin" mat-raised-button (click)="getItems()">
                 Search
             </button>
-
+            <button color="primary" class="margin" mat-raised-button>
+                <mat-icon>cloud_download</mat-icon>
+                Download
+            </button>
         </div>
         <div>
             <mat-slide-toggle color="primary" (change)="toggleType()" [checked]="tableParams.active">Active
@@ -19,76 +22,62 @@
     <br />
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="company" matSortDirection="asc">
-
             <ng-container matColumnDef="no">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>No</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.no}}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="t">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>T</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.t}}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="date">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.date }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="supplier">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Supplier </th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.supplier }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
                 <td mat-cell *matCellDef="let element">{{ element.amount | currency: 'INR' }}</td>
             </ng-container>
-
             <ng-container matColumnDef="pd">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>PD</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.pd | currency: 'INR' }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="total">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.total | currency: 'INR'}}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="payment">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment</th>
                 <td mat-cell *matCellDef="let element">{{ element.payment | currency: 'INR'}}</td>
             </ng-container>
-
-
             <ng-container matColumnDef="td">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>TD</th>
                 <td mat-cell *matCellDef="let element">{{ element.td | currency: 'INR'}}</td>
             </ng-container>
-
             <ng-container matColumnDef="op">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>OP</th>
                 <td mat-cell *matCellDef="let element">{{ element.op | currency: 'INR' }}</td>
             </ng-container>
-
             <ng-container matColumnDef="user">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
                 <td mat-cell *matCellDef="let element">{{ element.user | currency: 'INR' }}</td>
             </ng-container>
-
-
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let element">
@@ -100,21 +89,17 @@
                     </button>
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="print">
                 <th mat-header-cell *matHeaderCellDef>Print</th>
                 <td mat-cell *matCellDef="let element">
                     <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button" (click)="onEditNewCustomers(element)">
                         <mat-icon  aria-label="PRINT" color="primary">print</mat-icon>
                     </button>
-
                 </td>
             </ng-container>
-
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
         </table>
-
         <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
         </mat-paginator>
     </div>

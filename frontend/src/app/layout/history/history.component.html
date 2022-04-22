@@ -7,9 +7,12 @@
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getItems()">
             </mat-form-field>
             <button color="primary" class="margin" mat-raised-button (click)="getItems()">
-            Search
-        </button>
-
+                Search
+            </button>
+            <button color="primary" class="margin" mat-raised-button>
+                <mat-icon>cloud_download</mat-icon>
+                Download
+            </button>
         </div>
         <div>
             <mat-slide-toggle color="primary" (change)="toggleType()" [checked]="tableParams.active">Active
@@ -18,7 +21,8 @@
     </div>
     <br />
     <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="company" matSortDirection="asc">
+        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="company"
+            matSortDirection="asc">
 
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
@@ -52,7 +56,8 @@
             <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
         </table>
 
-        <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
+        <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons
+            (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
         </mat-paginator>
     </div>
 </div>
