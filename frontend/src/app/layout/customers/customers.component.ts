@@ -94,8 +94,8 @@ export class CustomersComponent implements OnInit {
     onAddNewCustomers(): void {
         this.dialog
             .open(AddCustomersComponent, {
-                width: '500px',
-                height: '500px'
+                width: '550px',
+                height: '550px'
             })
             .afterClosed()
             .subscribe((result) => {
@@ -107,8 +107,8 @@ export class CustomersComponent implements OnInit {
     onEditNewCustomers(element) {
         this.dialog
             .open(AddCustomersComponent, {
-                width: '500px',
-                height: '500px',
+                width: '650px',
+                height: '650px',
                 data: element
             })
             .afterClosed()

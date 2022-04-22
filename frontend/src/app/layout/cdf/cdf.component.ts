@@ -95,8 +95,8 @@ export class CDFComponent implements OnInit {
     onAddNewCdf(): void {
         this.dialog
             .open(AddCdfComponent, {
-                width: '500px',
-                height: '500px'
+                width: '600px',
+                height: '600px'
             })
             .afterClosed()
             .subscribe((result) => {
