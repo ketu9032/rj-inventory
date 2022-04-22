@@ -3,9 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { ICustomersData } from 'src/app/models/customers';
-import { CDFService } from '../services/cdf.service';
-
+import { ICdfData } from 'src/app/models/cdf';
+import { CdfService } from '../services/cdf.service';
 @Component({
     selector: 'app-add-cdf',
     templateUrl: './add-cdf.component.html',
@@ -15,73 +14,56 @@ export class AddCdfComponent implements OnInit {
     formGroup: FormGroup;
     selectedRole: string
     isShowLoader = false;
-
     references = [{ value: 'Person/Company', id: 1 }, { value: 'Google', id: 2 }, { value: 'IndiaMart', id: 3 }, { value: 'Other', id: 4 }];
     ListOfSites = [{ value: 'Flipkart', id: 1 }, { value: 'Snapdeal', id: 2 }, { value: 'Amazon', id: 3 }, { value: 'Paytm', id: 4 }, { value: 'Limeraod', id: 5 }, { value: 'Shopclues', id: 6 }, { value: 'Facebook/Instagram', id: 7 }, { value: 'Offline', id: 8 }];
-
-
-
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: ICustomersData,
+        @Inject(MAT_DIALOG_DATA) public data: ICdfData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddCdfComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
         private router: Router,
-        private cdfService: CDFService
+        private cdfService: CdfService
     ) { }
-
     ngOnInit() {
         this.initializeForm();
         if (this.data && this.data.id) {
-            this.fillForm();
+             this.fillForm();
         }
-
-
     }
-
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
             email: ['', Validators.required],
-            firstName: ['', Validators.required],
+            name: ['', Validators.required],
             company: ['', Validators.required],
             date: ['', Validators.required],
             reference: ['', Validators.required],
             referencePerson: ['', Validators.required],
-            listOfBrands: ['', Validators.required],
-            listOfDisplayNames: ['', Validators.required],
-            ListOfSites: ['', Validators.required],
+            brands: ['', Validators.required],
+            displayNames: ['', Validators.required],
+            platforms: ['', Validators.required],
             other: ['', Validators.required],
-            mobileNumber: ['', Validators.required],
+            mobile: ['', Validators.required],
             address: ['', Validators.required],
         });
     }
-
-    saveUser(): void {
-        const { email, firstName, company, date, reference, referencePerson, listOfBrands, listOfDisplayNames, ListOfSites,
-            other, mobileNumber, address } = this.formGroup.value;
+    saveCdf(): void {
+        const { email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
-
-
         this.cdfService
             .addCdf({
-                email, firstName, company, date, reference, referencePerson, listOfBrands, listOfDisplayNames, ListOfSites,
-                other, mobileNumber, address
-
-
+                email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-
-                    this.snackBar.open('User saved successfully', 'OK', {
+                    this.snackBar.open('Cdf saved successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
@@ -92,30 +74,24 @@ export class AddCdfComponent implements OnInit {
                 () => { }
             );
     }
-
-    updateCustomers(): void {
-        const { email, firstName, company, date, reference, referencePerson, listOfBrands, listOfDisplayNames, ListOfSites,
-            other, mobileNumber, address } = this.formGroup.value;
+    updateCdf(): void {
+        const { email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
-
         this.cdfService
             .editCdf({
                 id: this.data.id,
-                email, firstName, company, date, reference, referencePerson, listOfBrands, listOfDisplayNames, ListOfSites,
-                other, mobileNumber, address
+                email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-
-                    this.snackBar.open('User updated successfully', 'OK', {
+                    this.snackBar.open('Cdf updated successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
@@ -126,29 +102,19 @@ export class AddCdfComponent implements OnInit {
                 () => { }
             );
     }
-
     onSubmit() {
         if (this.data && this.data.id) {
-            this.updateCustomers();
+            this.updateCdf();
         } else {
-            this.saveUser();
+            this.saveCdf();
         }
     }
-
     fillForm() {
-        const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
+        const {  email: email, name: name, company: company, date:date, reference:reference,
+            reference_person : referencePerson, brands:brands, display_names: displayNames, platforms: platforms,  other: other, mobile: mobile,  address: address, } = this.data;
         this.formGroup.patchValue({
-            company,
-            firstName,
-            address,
-            email,
-            mobileNumber,
-            dueLimit,
-            balance,
-            other,
-            tier: tierId
+            email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
+
         });
     }
-
-
 }

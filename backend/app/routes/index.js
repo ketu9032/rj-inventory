@@ -8,6 +8,7 @@ const suppliers = require('./../controllers/supplier.controller');
 const categories = require('./../controllers/category.controller');
 const item = require('./../controllers/item.controller');
 const item_supplier = require('./../controllers/item-supplier.controller');
+const cdf = require('./../controllers/cdf.controller');
 
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
@@ -88,5 +89,12 @@ router.delete('/api/item_supplier', item_supplier.delete);
 router.get('/api/item_supplier', item_supplier.findAll);
 router.post('/api/item_supplier', item_supplier.add);
 router.put('/api/item_supplier', item_supplier.update);
+
+router.delete('/api/cdf', cdf.delete);
+router.get('/api/cdf', cdf.findAll);
+router.post('/api/cdf', cdf.add);
+router.put('/api/cdf', cdf.update);
+//router.get('/api/getCustomerDropDown', cdf.getCdfDropDown);
+router.put('/api/cdf/changeStatus', cdf.changeStatus);
 
 module.exports = router;

@@ -31,14 +31,14 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>First Name & Last Name</mat-label>
-                        <input matInput formControlName="firstName" />
+                        <input matInput formControlName="name" />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
-          formGroup.controls.firstName.touched &&
-          !formGroup.controls.firstName.value
+          formGroup.controls.name.touched &&
+          !formGroup.controls.name.value
         ">
-                            <span class="error">First name is Required</span>
+                            <span class="error">Name is Required</span>
                         </ng-container>
                     </div>
                 </div>
@@ -110,12 +110,12 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>List of Brands</mat-label>
-                        <input matInput formControlName="listOfBrands" />
+                        <input matInput formControlName="brands" />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
-      formGroup.controls.listOfBrands.touched &&
-      !formGroup.controls.listOfBrands.value
+      formGroup.controls.brands.touched &&
+      !formGroup.controls.brands.value
     ">
                             <span class="error">List of Brands is Required</span>
                         </ng-container>
@@ -125,12 +125,12 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>List of Display Names</mat-label>
-                        <input matInput formControlName="listOfDisplayNames" />
+                        <input matInput formControlName="displayNames" />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
-      formGroup.controls.listOfDisplayNames.touched &&
-      !formGroup.controls.listOfDisplayNames.value
+      formGroup.controls.displayNames.touched &&
+      !formGroup.controls.displayNames.value
     ">
                             <span class="error">List of Display Names is Required</span>
                         </ng-container>
@@ -142,33 +142,21 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>List of Sites</mat-label>
-                        <mat-select formControlName="ListOfSites" name="ListOfSites" multiple>
-                            <mat-option *ngFor="let ListOfSite of ListOfSites" [value]="ListOfSite.id">
-                                {{ListOfSite.value}}
+                        <mat-select formControlName="platforms" name="platforms" multiple>
+                            <mat-option *ngFor="let platforms of ListOfSites" [value]="platforms.id">
+                                {{platforms.value}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
-          formGroup.controls.reference.touched &&
-          !formGroup.controls.reference.value
+          formGroup.controls.platforms.touched &&
+          !formGroup.controls.platforms.value
         ">
                             <span class="error">List of Sites is Required</span>
                         </ng-container>
                     </div>
                 </div>
-                <!--  -->
-                <!-- <mat-card>
-            <mat-card-content>
-                <h2 class="example-h2">Select Employee</h2>
-                <section class="example-section">
-                    <mat-checkbox  [(ngModel)]="checked">Select All</mat-checkbox>
-                </section>
-                <section class="example-section" *ngFor="let r of ListOfSites">
-                    <mat-checkbox class="example-margin" [(ngModel)]="checked">{{r.name}}</mat-checkbox>
-                </section>
-            </mat-card-content>
-        </mat-card>  -->
                 <!-- Other start -->
                 <div class="block">
                     <mat-form-field>
@@ -190,12 +178,12 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Mobile Number</mat-label>
-                        <input matInput formControlName="mobileNumber" type="tel" type="number" />
+                        <input matInput formControlName="mobile" type="tel" type="number" />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
-          formGroup.controls.mobileNumber.touched &&
-          !formGroup.controls.mobileNumber.value
+          formGroup.controls.mobile.touched &&
+          !formGroup.controls.mobile.value
         ">
                             <span class="error">Mobile Number is Required</span>
                         </ng-container>
