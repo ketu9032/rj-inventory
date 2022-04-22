@@ -61,6 +61,7 @@ export class AddItemComponent implements OnInit {
         this.getCategoriesDropDown('Item')
         if (this.data && this.data.id) {
             this.fillForm();
+
         }
         if (this.supplierData && this.supplierData.id) {
             this.supplierFillForm();
@@ -117,7 +118,7 @@ export class AddItemComponent implements OnInit {
             );
     }
     updateItems(): void {
-        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category: categoryId, supplierId } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category: categoryId } = this.formGroup.value;
         this.isShowLoader = true;
         this.itemsService
             .editItems({
@@ -186,22 +187,5 @@ export class AddItemComponent implements OnInit {
                 () => { }
             );
     }
-    getSupplierDropDown() {
-        this.itemsService
-            .getSupplierDropDown()
-            .subscribe(
-                (response) => {
-                    this.supplier = response;
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
-    }
+
 }

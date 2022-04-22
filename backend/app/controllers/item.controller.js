@@ -34,6 +34,7 @@ exports.findAll = async (req, res) => {
       gold,
       india_mart,
       dealer,
+
       category_id as category_id,
       c.name as category_name,
       c.code as category_code
@@ -153,7 +154,6 @@ exports.update = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      suppliersId,
       categoryId,
       itemId
     } = req.body;
@@ -167,7 +167,6 @@ exports.update = async (req, res) => {
       !gold ||
       !india_mart ||
       !dealer ||
-      !suppliersId ||
       !categoryId ||
       !itemId ||
       !id
@@ -179,7 +178,7 @@ exports.update = async (req, res) => {
     }
 
     const updateItemQuery =  `UPDATE item
-    SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}', suppliers_id='${suppliersId}',  item_id='${itemId}' where id = ${id};`
+    SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}',  item_id='${itemId}' where id = ${id};`
    const {updateRows} = await pool.query(updateItemQuery);
 
     const UpdateItemId = updateRows[0].id;
