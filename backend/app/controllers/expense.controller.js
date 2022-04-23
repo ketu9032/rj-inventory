@@ -32,7 +32,6 @@ exports.findAll = async (req, res) => {
       FROM expenses t
       INNER join categories c on c.id = t.category_id
       INNER join users u  on u.id = t.user_id  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
-      console.log(query);
 
     const response = await pool.query(query);
 

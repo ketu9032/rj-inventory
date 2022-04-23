@@ -7,14 +7,14 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ICdfData } from 'src/app/models/cdf';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { AddCdfComponent } from './add-cdf/add-cdf.component';
-import { CdfService } from './services/cdf.service';
+import { AddCdfComponent } from '../add-cdf/add-cdf.component';
+import { CdfService } from '../services/cdf.service';
 @Component({
-    selector: 'app-cdf',
-    templateUrl: './cdf.component.html',
-    styleUrls: ['./cdf.component.scss']
+    selector: 'app-unverified-cdf',
+    templateUrl: './unverified-cdf.component.html',
+    styleUrls: ['./unverified-cdf.component.scss']
 })
-export class CDFComponent implements OnInit {
+export class unverifiedCdfComponent implements OnInit {
     displayedColumns: string[] = [
         'email',
         'name',
@@ -95,20 +95,20 @@ export class CDFComponent implements OnInit {
                 }
             });
     }
-    onEditNewCdf(element) {
-        this.dialog
-            .open(AddCdfComponent, {
-                width: '600px',
-                height: '600px',
-                data: element
-            })
-            .afterClosed()
-            .subscribe((result) => {
-                if (result) {
-                    this.getCdf();
-                }
-            });
-    }
+    // onEditNewCdf(element) {
+    //     this.dialog
+    //         .open(AddCdfComponent, {
+    //             width: '600px',
+    //             height: '600px',
+    //             data: element
+    //         })
+    //         .afterClosed()
+    //         .subscribe((result) => {
+    //             if (result) {
+    //                 this.getCdf();
+    //             }
+    //         });
+    // }
     changeStatus(id: number): void {
         this.cdfService
             .changeStatus({ id: id, status: !this.tableParams.active })
