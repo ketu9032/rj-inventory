@@ -114,7 +114,7 @@ exports.add = async(req, res) => {
         }
         await pool.query(
             `INSERT INTO cdf
-      ( email
+      ( email,
         name,
         company,
         date,

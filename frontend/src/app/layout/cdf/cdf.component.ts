@@ -21,15 +21,15 @@ export class CDFComponent implements OnInit {
     displayedColumns: string[] = [
         'hashtag',
         'email',
-        'company',
         'name',
+         'company',
         'reference',
         'brands',
         'display_names',
         'platforms',
         'address',
         'mobile',
-        'status',
+
         'action'
     ];
     dataSource: any = [];

@@ -75,7 +75,7 @@
                     <mat-form-field>
                         <mat-label>Reference</mat-label>
                         <mat-select formControlName="reference" name="reference">
-                            <mat-option *ngFor="let reference of references" [value]="reference.id">
+                            <mat-option *ngFor="let reference of references" [value]="reference.value">
                                 {{reference.value}}
                             </mat-option>
                         </mat-select>
@@ -143,7 +143,7 @@
                     <mat-form-field>
                         <mat-label>List of Sites</mat-label>
                         <mat-select formControlName="platforms" name="platforms" multiple>
-                            <mat-option *ngFor="let platforms of ListOfSites" [value]="platforms.id">
+                            <mat-option *ngFor="let platforms of ListOfSites" [value]="platforms.value">
                                 {{platforms.value}}
                             </mat-option>
                         </mat-select>
