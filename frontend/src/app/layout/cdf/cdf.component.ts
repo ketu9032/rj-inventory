@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import { MatDialog,  } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -15,6 +17,7 @@ import { CdfService } from './services/cdf.service';
     styleUrls: ['./cdf.component.scss']
 })
 export class CDFComponent implements OnInit {
+
     displayedColumns: string[] = [
         'email',
         'name',
@@ -27,6 +30,7 @@ export class CDFComponent implements OnInit {
         'mobile',
         'action'
     ];
+
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     public defaultPageSize = PAGE_SIZE;
@@ -34,6 +38,7 @@ export class CDFComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     totalRows: number;
+    isShowLoader = false;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -49,6 +54,10 @@ export class CDFComponent implements OnInit {
     ) { }
     ngOnInit(): void {
         this.getCdf();
+        // this.initializeForm();
+        // if (this.data && this.data.id) {
+        //      this.fillForm();
+        // }
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
@@ -147,4 +156,8 @@ export class CDFComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         this.getCdf();
     }
+
 }
+
+
+
