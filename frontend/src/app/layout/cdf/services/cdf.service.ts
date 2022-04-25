@@ -8,6 +8,8 @@ import { ICdfActiveParams, ICdfParams } from 'src/app/models/cdf';
 export class CdfService {
   private url = 'api/cdf';
   private cdfChangeStatusURl = 'api/cdf/changeStatus';
+  private cdfChangeCdfStatusURl = 'api/cdf/changeStatus';
+
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -25,6 +27,9 @@ export class CdfService {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
   public changeStatus(cdf: ICdfActiveParams) {
+    return this.restService.put(`${this.cdfChangeStatusURl}`, cdf);
+  }
+  public changeCdfStatus(cdf: ICdfActiveParams) {
     return this.restService.put(`${this.cdfChangeStatusURl}`, cdf);
   }
 }

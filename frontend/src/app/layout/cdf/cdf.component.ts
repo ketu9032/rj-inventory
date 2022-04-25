@@ -11,6 +11,7 @@ import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { AddCdfComponent } from './add-cdf/add-cdf.component';
 import { CdfService } from './services/cdf.service';
+import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
 @Component({
     selector: 'app-cdf',
     templateUrl: './cdf.component.html',
@@ -30,6 +31,8 @@ export class CDFComponent implements OnInit {
         'mobile',
         'action'
     ];
+    cdfes = [{ value: 'Unverified', id: 1 }, { value: 'Active', id: 2 }, { value: 'Inactive', id: 3 }]
+    customerStatus;
 
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -54,11 +57,7 @@ export class CDFComponent implements OnInit {
     ) { }
     ngOnInit(): void {
         this.getCdf();
-        // this.initializeForm();
-        // if (this.data && this.data.id) {
-        //      this.fillForm();
-        // }
-    }
+       }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
@@ -146,6 +145,19 @@ export class CDFComponent implements OnInit {
                 () => { }
             );
     }
+     confirmDialog(id: string): void {
+      this.dialog
+        .open(DeleteCdfComponent, {
+          maxWidth: '400px',
+          data: id
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result && result.data === true) {
+            this.getCdf();
+          }
+        });
+    }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
@@ -156,6 +168,36 @@ export class CDFComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         this.getCdf();
     }
+
+    // changeCdfStatus(id: number): void {
+    //     this.cdfService
+    //         // .changeCdfStatus({ id: id, status: !this.tableParams.active })
+    //         .changeCdfStatus({ id: id, status: this.customerStatus })
+    //         .subscribe(
+    //             (response) => {
+    //                 if (!this.tableParams.active) {
+    //                     this.snackBar.open('Cdf active successfully', 'OK', {
+    //                         duration: 3000
+    //                     })
+    //                 } else {
+    //                     this.snackBar.open('Cdf de-active successfully', 'OK', {
+    //                         duration: 3000
+    //                     })
+    //                 }
+    //                 this.getCdf();
+    //             },
+    //             (error) => {
+    //                 this.snackBar.open(
+    //                     (error.error && error.error.message) || error.message,
+    //                     'Ok',
+    //                     {
+    //                         duration: 3000
+    //                     }
+    //                 );
+    //             },
+    //             () => { }
+    //         );
+    // }
 
 }
 

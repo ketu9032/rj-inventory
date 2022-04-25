@@ -9,9 +9,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { AddCdfComponent } from './add-cdf/add-cdf.component';
+import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
 
 @NgModule({
-  declarations: [CDFComponent, AddCdfComponent],
+  declarations: [CDFComponent, AddCdfComponent, DeleteCdfComponent],
   imports: [
     CommonModule,
     CDFRoutingModule,

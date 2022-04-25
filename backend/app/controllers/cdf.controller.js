@@ -204,3 +204,22 @@ exports.changeStatus = async(req, res) => {
         });
     }
 };
+
+exports.changeCdfStatus = async(req, res) => {
+    try {
+        const { id, status } = req.body;
+        if (!id) {
+            res
+                .status(STATUS_CODE.BAD)
+                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+            return;
+        }
+        await pool.query(`UPDATE cdf
+      SET cdf_status = ${status} where "id" = '${id}'`);
+        res.status(STATUS_CODE.SUCCESS).send();
+    } catch (error) {
+        res.status(STATUS_CODE.ERROR).send({
+            message: error.message || MESSAGES.COMMON.ERROR
+        });
+    }
+};

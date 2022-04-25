@@ -96,5 +96,6 @@ router.post('/api/cdf', cdf.add);
 router.put('/api/cdf', cdf.update);
 //router.get('/api/getCustomerDropDown', cdf.getCdfDropDown);
 router.put('/api/cdf/changeStatus', cdf.changeStatus);
+router.put('/api/cdf/changeCdfStatus', cdf.changeCdfStatus);
 
 module.exports = router;
