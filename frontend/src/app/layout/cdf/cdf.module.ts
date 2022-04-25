@@ -10,11 +10,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { AddCdfComponent } from './add-cdf/add-cdf.component';
 import { unverifiedCdfComponent } from './unverified-cdf/unverified-cdf.component';
-import { inactiveCdfComponent } from './inactive-cdf/inactive-cdf.component';
-import { activeCdfComponent } from './active-cdf/active-cdf.component';
 
 @NgModule({
-  declarations: [CDFComponent, AddCdfComponent, unverifiedCdfComponent, activeCdfComponent, inactiveCdfComponent ],
+  declarations: [CDFComponent, AddCdfComponent, unverifiedCdfComponent ],
   imports: [
     CommonModule,
     CDFRoutingModule,
