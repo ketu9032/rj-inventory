@@ -2,13 +2,22 @@ const { MESSAGES } = require('../constant/messages');
 const { STATUS_CODE } = require('../constant/response-status');
 const { generateToken } = require('../utils/common');
 const { pool } = require('../db');
-exports.findAll = async(req, res) => {
-    try {
-        const { orderBy, direction, pageSize, pageNumber, search, active } = req.query;
-        let searchQuery = 'where true';
-        const offset = pageSize * pageNumber - pageSize;
-        if (search) {
-            searchQuery += ` and
+exports.findAll = async (req, res) => {
+  try {
+    const {
+      orderBy,
+      direction,
+      pageSize,
+      pageNumber,
+      search,
+      active,
+      cdfStatus
+    } = req.query;
+    let searchQuery = 'where true';
+    //and is_deleted = false
+    const offset = pageSize * pageNumber - pageSize;
+    if (search) {
+      searchQuery += ` and
         (email ilike '%${search}%'
           or name ilike '%${search}%'
           or company ilike '%${search}%'
@@ -22,10 +31,13 @@ exports.findAll = async(req, res) => {
           or mobile::text ilike '%${search}%'
           or address ilike '%${search}%'
         )`;
-        }
-        searchQuery += ` and c.is_active = ${active}`;
-        const response = await pool.query(
-            `
+    }
+    searchQuery += ` and c.is_active = ${active}  `;
+    if (cdfStatus) {
+      searchQuery += ` and lower(c.cdf_status) = '${cdfStatus.toLowerCase()}'`;
+    }
+    const response = await pool.query(
+      `
             SELECT
                 Count(c.id) OVER() AS total,
                 c.id,
@@ -44,68 +56,69 @@ exports.findAll = async(req, res) => {
             FROM
                 cdf c
             ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
-        );
-        res.status(STATUS_CODE.SUCCESS).send(response.rows);
-    } catch (error) {
-        res.status(STATUS_CODE.ERROR).send({
-            message: error.message || MESSAGES.COMMON.ERROR
-        });
-    }
+    );
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
 };
-exports.delete = async(req, res) => {
-    try {
-        const { id } = req.query;
-        if (!id) {
-            res
-                .status(STATUS_CODE.BAD)
-                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-            return;
-        }
-        await pool.query(`UPDATE cdf
+exports.delete = async (req, res) => {
+  try {
+    const { id } = req.query;
+    if (!id) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
+    await pool.query(`UPDATE cdf
         SET is_deleted = true where "id" = '${id}'`);
-        res.status(STATUS_CODE.SUCCESS).send();
-    } catch (error) {
-        res.status(STATUS_CODE.ERROR).send({
-            message: error.message || MESSAGES.COMMON.ERROR
-        });
-    }
+    res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
 };
-exports.add = async(req, res) => {
-    try {
-        const {
-          email,
-          name,
-          company,
-          date,
-          reference ,
-          referencePerson ,
-          brands ,
-          displayNames ,
-          platforms ,
-          other ,
-          mobile ,
-          address
-        } = req.body;
-        if (    !email ||
-          !name||
-          !company||
-          !date||
-          !reference ||
-          !referencePerson ||
-          !brands ||
-          !displayNames ||
-          !platforms ||
-          !other ||
-          !mobile ||
-          !address
-        ) {
-            res
-                .status(STATUS_CODE.BAD)
-                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-            return;
-        }
-        await pool.query(
-            `INSERT INTO cdf
+exports.add = async (req, res) => {
+  try {
+    const {
+      email,
+      name,
+      company,
+      date,
+      reference,
+      referencePerson,
+      brands,
+      displayNames,
+      platforms,
+      other,
+      mobile,
+      address
+    } = req.body;
+    if (
+      !email ||
+      !name ||
+      !company ||
+      !date ||
+      !reference ||
+      !referencePerson ||
+      !brands ||
+      !displayNames ||
+      !platforms ||
+      !other ||
+      !mobile ||
+      !address
+    ) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
+    await pool.query(
+      `INSERT INTO cdf
       ( email,
         name,
         company,
@@ -120,61 +133,62 @@ exports.add = async(req, res) => {
         address)
       VALUES('${email}', '${name}', '${company}', '${date}', '${reference}', '${referencePerson}', '${brands}', '${displayNames}', '${platforms}', '${other}', '${mobile}', '${address}');
       `
-        );
-        res.status(STATUS_CODE.SUCCESS).send();
-    } catch (error) {
-        res.status(STATUS_CODE.ERROR).send({
-            message: error.message || MESSAGES.COMMON.ERROR
-        });
-    }
+    );
+    res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
 };
-exports.update = async(req, res) => {
-    try {
-        const {
-            id,
-            email,
-          name,
-          company,
-          date,
-          reference ,
-          referencePerson ,
-          brands ,
-          displayNames ,
-          platforms ,
-          other ,
-          mobile ,
-          address
-        } = req.body;
-        if (  !email ||
-          !name||
-          !company||
-          !date||
-          !reference ||
-          !referencePerson ||
-          !brands ||
-          !displayNames ||
-          !platforms ||
-          !other ||
-          !mobile ||
-          !address ||
-            !id
-        ) {
-            res
-                .status(STATUS_CODE.BAD)
-                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-            return;
-        }
-        await pool.query(
-            `UPDATE cdf
+exports.update = async (req, res) => {
+  try {
+    const {
+      id,
+      email,
+      name,
+      company,
+      date,
+      reference,
+      referencePerson,
+      brands,
+      displayNames,
+      platforms,
+      other,
+      mobile,
+      address
+    } = req.body;
+    if (
+      !email ||
+      !name ||
+      !company ||
+      !date ||
+      !reference ||
+      !referencePerson ||
+      !brands ||
+      !displayNames ||
+      !platforms ||
+      !other ||
+      !mobile ||
+      !address ||
+      !id
+    ) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
+    await pool.query(
+      `UPDATE cdf
       SET email='${email}', name='${name}', company='${company}', date='${date}', reference='${reference}', reference_person='${referencePerson}', brands='${brands}', display_names='${displayNames}', platforms='${platforms}', other='${other}', mobile='${mobile}', address='${address}' where id = ${id};
        `
-        );
-        res.status(STATUS_CODE.SUCCESS).send();
-    } catch (error) {
-        res.status(STATUS_CODE.ERROR).send({
-            message: error.message || MESSAGES.COMMON.ERROR
-        });
-    }
+    );
+    res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
 };
 // exports.getCdfDropDown = async(req, res) => {
 //     try {
@@ -186,40 +200,39 @@ exports.update = async(req, res) => {
 //         });
 //     }
 // };
-exports.changeStatus = async(req, res) => {
-    try {
-        const { id, status } = req.body;
-        if (!id) {
-            res
-                .status(STATUS_CODE.BAD)
-                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-            return;
-        }
-        await pool.query(`UPDATE cdf
+exports.changeStatus = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+    if (!id) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
+    await pool.query(`UPDATE cdf
       SET is_active = ${status} where "id" = '${id}'`);
-        res.status(STATUS_CODE.SUCCESS).send();
-    } catch (error) {
-        res.status(STATUS_CODE.ERROR).send({
-            message: error.message || MESSAGES.COMMON.ERROR
-        });
-    }
+    res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
 };
-
-exports.changeCdfStatus = async(req, res) => {
-    try {
-        const { id, status } = req.body;
-        if (!id) {
-            res
-                .status(STATUS_CODE.BAD)
-                .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-            return;
-        }
-        await pool.query(`UPDATE cdf
-      SET cdf_status = ${status} where "id" = '${id}'`);
-        res.status(STATUS_CODE.SUCCESS).send();
-    } catch (error) {
-        res.status(STATUS_CODE.ERROR).send({
-            message: error.message || MESSAGES.COMMON.ERROR
-        });
+exports.changeCdfStatus = async (req, res) => {
+  try {
+    const { id, cdf_status } = req.body;
+    if (!id) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
     }
+    await pool.query(`update cdf
+        set cdf_status  = 'active' WHERE "id" = '${id}'`);
+    res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
 };

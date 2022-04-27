@@ -12,8 +12,8 @@
             </button>
             <mat-form-field class="margin">
                 <mat-label>Select CDF</mat-label>
-                <mat-select name="cdf" [(ngModel)]="customerStatus">
-                    <mat-option *ngFor="let cdf of cdfes"  [value]="cdf.value">
+                <mat-select name="cdf" (selectionChange)="onCdfStatusChange($event)" [value]="'Unverified'">
+                    <mat-option *ngFor="let cdf of cdfes" [value]="cdf.value">
                         {{cdf.value}}
                     </mat-option>
                 </mat-select>
@@ -113,6 +113,9 @@
                         color="{{tableParams.active? 'warn': 'primary'}}" (click)="confirmDialog(element.id)">
                         <mat-icon aria-label="Delete">delete</mat-icon>
                     </button>
+                    <button mat-icon-button color="primary" (click)="changeCdfStatus(element.id)">
+                        <mat-icon>thumb_up</mat-icon>
+                    </button>
 
                 </td>
             </ng-container>
@@ -122,7 +125,7 @@
         <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons
             (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
         </mat-paginator>
-    </div> -->
+    </div>
 
     <br />
 

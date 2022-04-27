@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-import { MatDialog,  } from '@angular/material/dialog';
+import { MatDialog, } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,13 +11,14 @@ import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config'
 import { AddCdfComponent } from './add-cdf/add-cdf.component';
 import { CdfService } from './services/cdf.service';
 import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
+import { identifierModuleUrl } from '@angular/compiler';
+import { MatSelectChange } from '@angular/material/select';
 @Component({
     selector: 'app-cdf',
     templateUrl: './cdf.component.html',
     styleUrls: ['./cdf.component.scss']
 })
 export class CDFComponent implements OnInit {
-
     displayedColumns: string[] = [
         'email',
         'name',
@@ -31,9 +31,7 @@ export class CDFComponent implements OnInit {
         'mobile',
         'action'
     ];
-    cdfes = [{ value: 'Unverified', id: 1 }, { value: 'Active', id: 2 }, { value: 'Inactive', id: 3 }]
-    customerStatus;
-
+    cdfes = [{ value: 'Unverified' }, { value: 'Active' }, { value: 'Inactive' }]
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     public defaultPageSize = PAGE_SIZE;
@@ -48,7 +46,8 @@ export class CDFComponent implements OnInit {
         orderBy: 'id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        cdfStatus: 'Unverified'
     }
     constructor(
         public dialog: MatDialog,
@@ -57,7 +56,7 @@ export class CDFComponent implements OnInit {
     ) { }
     ngOnInit(): void {
         this.getCdf();
-       }
+    }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
@@ -145,18 +144,18 @@ export class CDFComponent implements OnInit {
                 () => { }
             );
     }
-     confirmDialog(id: string): void {
-      this.dialog
-        .open(DeleteCdfComponent, {
-          maxWidth: '400px',
-          data: id
-        })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result && result.data === true) {
-            this.getCdf();
-          }
-        });
+    confirmDialog(id: string): void {
+        this.dialog
+            .open(DeleteCdfComponent, {
+                maxWidth: '400px',
+                data: id
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result && result.data === true) {
+                    this.getCdf();
+                }
+            });
     }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
@@ -168,38 +167,33 @@ export class CDFComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         this.getCdf();
     }
+    changeCdfStatus(id: number): void {
+        this.cdfService
+            .changeCdfStatus({ id: id, cdfStatus: this.tableParams.cdfStatus })
+            .subscribe(
+                (response) => {
+                    if (this.tableParams.cdfStatus) {
+                        this.snackBar.open('Active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    }
+                    this.getCdf();
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok',
+                        {
+                            duration: 3000
+                        }
+                    );
+                },
+                () => { }
+            );
+    }
 
-    // changeCdfStatus(id: number): void {
-    //     this.cdfService
-    //         // .changeCdfStatus({ id: id, status: !this.tableParams.active })
-    //         .changeCdfStatus({ id: id, status: this.customerStatus })
-    //         .subscribe(
-    //             (response) => {
-    //                 if (!this.tableParams.active) {
-    //                     this.snackBar.open('Cdf active successfully', 'OK', {
-    //                         duration: 3000
-    //                     })
-    //                 } else {
-    //                     this.snackBar.open('Cdf de-active successfully', 'OK', {
-    //                         duration: 3000
-    //                     })
-    //                 }
-    //                 this.getCdf();
-    //             },
-    //             (error) => {
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok',
-    //                     {
-    //                         duration: 3000
-    //                     }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-    // }
-
+    onCdfStatusChange($event: MatSelectChange) {
+        this.tableParams.cdfStatus = $event.value;
+        this.getCdf();
+    }
 }
-
-
-
