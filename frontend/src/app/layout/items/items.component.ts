@@ -113,15 +113,14 @@ export class ItemsComponent implements OnInit {
     onAddNewItem(): void {
         this.dialog
             .open(AddItemComponent, {
-                width: '760px',
-                height: '700px'
+                width: '1000px',
+                height: '650px'
             })
             .afterClosed()
             .subscribe((result) => {
                 if (result) {
                     this.getItems();
-
-    this.getItemSupplier()
+                    this.getItemSupplier()
                 }
             });
     }
@@ -129,8 +128,8 @@ export class ItemsComponent implements OnInit {
     onEditNewItem(element) {
         this.dialog
             .open(AddItemComponent, {
-                width: '760px',
-                height: '700px',
+                width: '1000px',
+                height: '650px',
                 data: element
             })
             .afterClosed()

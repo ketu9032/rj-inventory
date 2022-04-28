@@ -11,7 +11,6 @@ import { AddCustomersComponent } from './add-customers/add-customers.component';
 import { DeleteCustomersComponent } from './delete-customers/delete-customers.component';
 import { CustomersService } from './services/customers.service';
 import { TierComponent } from './tier/tier.component';
-
 @Component({
     selector: 'app-customers',
     templateUrl: './customers.component.html',
@@ -45,28 +44,23 @@ export class CustomersComponent implements OnInit {
         search: '',
         active: true
     }
-
     constructor(
         public dialog: MatDialog,
         private customersService: CustomersService,
         public snackBar: MatSnackBar
     ) { }
-
     ngOnInit(): void {
         this.getCustomers();
     }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
         this.getCustomers();
     }
-
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-
     getCustomers() {
         this.loader = true;
         this.customersService.getCustomers(this.tableParams).subscribe(
@@ -90,12 +84,11 @@ export class CustomersComponent implements OnInit {
             () => { }
         );
     }
-
     onAddNewCustomers(): void {
         this.dialog
             .open(AddCustomersComponent, {
-                width: '550px',
-                height: '550px'
+                width: '520px',
+                height: '480px'
             })
             .afterClosed()
             .subscribe((result) => {
@@ -107,8 +100,8 @@ export class CustomersComponent implements OnInit {
     onEditNewCustomers(element) {
         this.dialog
             .open(AddCustomersComponent, {
-                width: '650px',
-                height: '650px',
+                width: '520px',
+                height: '480px',
                 data: element
             })
             .afterClosed()
@@ -118,13 +111,11 @@ export class CustomersComponent implements OnInit {
                 }
             });
     }
-
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
         this.getCustomers();
     }
-
     openTires() {
         this.dialog
             .open(TierComponent, {
@@ -134,13 +125,11 @@ export class CustomersComponent implements OnInit {
             .afterClosed()
             .subscribe((result) => { });
     }
-
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
         this.getCustomers();
     }
-
     changeStatus(id: number): void {
         this.customersService
             .changeStatus({ id: id, status: !this.tableParams.active })

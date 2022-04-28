@@ -1,23 +1,25 @@
-
 .container {
     .mat-form-field {
-        width: 100%;
+        width: 220px;
         display: flex;
         flex-direction: column;
     }
+
     .mat-dialog-title {
         margin: 0 0 20px;
         display: block;
     }
+
     .input {
         width: 100%;
     }
-    .box{
+
+    .box {
         display: flex;
     }
-    .block{
-        margin-right: 35px;
-        margin-left: 35px;
+
+    .block {
+        margin: 0 10px 0 10px;
 
     }
 }

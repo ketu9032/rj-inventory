@@ -5,6 +5,24 @@
         flex-direction: column;
     }
 
+    .box {
+        display: flex;
+    }
+
+    .row-1 {
+        .width {
+            width: 172.5px;
+            margin-right: 20px;
+        }
+    }
+
+    .row-2 {
+        .width {
+            width: 128px;
+            margin-right: 20px;
+        }
+    }
+
     .mat-dialog-title {
         margin: 0 0 20px;
         display: block;
@@ -16,16 +34,6 @@
 
     .margin {
         margin-right: 10px;
-    }
-
-    .box {
-        display: flex;
-
-        .width {
-            width: 125px;
-            margin-right: 20px;
-
-        }
     }
 }
 
