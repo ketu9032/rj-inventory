@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Fruit, ICdfData } from 'src/app/models/cdf';
 import { CdfService } from '../services/cdf.service';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 @Component({
     selector: 'app-add-cdf',
@@ -22,20 +22,17 @@ export class AddCdfComponent implements OnInit {
     isShowLoader = false;
     references = [{ value: 'Person/Company', id: 1 }, { value: 'Google', id: 2 }, { value: 'IndiaMart', id: 3 }, { value: 'Other', id: 4 }];
     ListOfSites = [{ value: 'Flipkart', id: 1 }, { value: 'Snapdeal', id: 2 }, { value: 'Amazon', id: 3 }, { value: 'Paytm', id: 4 }, { value: 'Limeraod', id: 5 }, { value: 'Shopclues', id: 6 }, { value: 'Facebook/Instagram', id: 7 }, { value: 'Offline', id: 8 }];
-    //Fruit: string[];
-    //
+
     visible = true;
     selectable = true;
-    removable = true;
     addOnBlur = true;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     fruits: Fruit[] = [
-        {name: 'Titan'},
-        {name: 'Volga'},
-        {name: 'Rolex'},
+        { name: 'Titan' },
+        { name: 'Volga' },
+        { name: 'Rolex' },
     ];
     //
-
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ICdfData,
@@ -49,34 +46,34 @@ export class AddCdfComponent implements OnInit {
     ngOnInit() {
         this.initializeForm();
         if (this.data && this.data.id) {
-             this.fillForm();
+            this.fillForm();
         }
     }
 
-    add(event: MatChipInputEvent): void{
+    add(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
-        if((value || '').trim()){
+        if ((value || '').trim()) {
 
-        this.fruits.push({name: value.trim()});
+            this.fruits.push({ name: value.trim() });
         }
-        if(input){
+        if (input) {
             input.value = '';
         }
         console.log(this.fruits);
     }
-        remove(fruit: Fruit): void{
-            const index = this.fruits.indexOf(fruit);
-            if(index >= 0) {
-                this.fruits.splice(index, 1);
-            }
+    remove(fruit: Fruit): void {
+        const index = this.fruits.indexOf(fruit);
+        if (index >= 0) {
+            this.fruits.splice(index, 1);
+        }
 
 
 
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            email: ['', [Validators.required,Validators.email] ],
+            email: ['', [Validators.required, Validators.email]],
             name: ['', Validators.required],
             company: ['', Validators.required],
             date: ['', Validators.required],
@@ -89,7 +86,10 @@ export class AddCdfComponent implements OnInit {
             mobile: ['', Validators.required],
             address: ['', Validators.required],
         });
+
+
     }
+
     saveCdf(): void {
         const { email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
@@ -153,8 +153,8 @@ export class AddCdfComponent implements OnInit {
         }
     }
     fillForm() {
-        const {  email: email, name: name, company: company, date:date, reference:reference,
-            reference_person : referencePerson, brands:brands, display_names: displayNames, platforms: platforms,  other: other, mobile: mobile,  address: address, } = this.data;
+        const { email: email, name: name, company: company, date: date, reference: reference,
+            reference_person: referencePerson, brands: brands, display_names: displayNames, platforms: platforms, other: other, mobile: mobile, address: address, } = this.data;
         this.formGroup.patchValue({
             email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
 

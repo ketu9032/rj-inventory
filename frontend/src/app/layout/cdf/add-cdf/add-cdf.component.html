@@ -9,7 +9,7 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Email</mat-label>
-                        <input matInput formControlName="email" required />
+                        <input matInput formControlName="email" required>
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
@@ -67,6 +67,14 @@
                         <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
                         <mat-datepicker #date></mat-datepicker>
                     </mat-form-field>
+                    <div>
+                        <ng-container *ngIf="
+          formGroup.controls.date.touched &&
+          !formGroup.controls.date.value
+        ">
+                            <span class="error">date is Required</span>
+                        </ng-container>
+                    </div>
                 </div>
             </div>
             <div class="box">
@@ -108,44 +116,27 @@
             <div class="box">
                 <!-- List of Brands start -->
                 <div class="block">
-                    <!-- <mat-form-field>
-                        <mat-label>List of Brands</mat-label>
-                        <input matInput formControlName="brands" />
+                    <mat-form-field class="example-chip-list">
+                        <mat-label>Brands</mat-label>
+                        <mat-chip-list #chipList aria-label="brand selection">
+                            <mat-chip *ngFor="let fruit of fruits" [selectable]="selectable" (removed)="remove(fruit)">
+                                {{fruit.name}}
+                                <mat-icon matChipRemove>cancel</mat-icon>
+                            </mat-chip>
+                            <input placeholder="New brand..." formControlName="brands" [matChipInputFor]="chipList"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                                (matChipInputTokenEnd)="add($event)">
+                        </mat-chip-list>
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
       formGroup.controls.brands.touched &&
       !formGroup.controls.brands.value
     ">
-                            <span class="error">List of Brands is Required</span>
-                        </ng-container>
-                    </div>  -->
-                    <!-- -->
-                    <mat-form-field class="example-chip-list" >
-                        <mat-label>Favorite Fruits</mat-label>
-                        <mat-chip-list #chipList aria-label="Fruit selection">
-                          <mat-chip *ngFor="let fruit of fruits" [selectable]="selectable" [removable]="removable" (removed)="remove(fruit)">
-                            {{fruit.name}}
-
-                              <mat-icon *ngIf="removable">cancel</mat-icon>
-                          </mat-chip>
-                          <input placeholder="New brand..."
-                          formControlName="brands"
-                                 [matChipInputFor]="chipList"
-                                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                                 [matChipInputAddOnBlur]="addOnBlur"
-                                 (matChipInputTokenEnd)="add($event)">
-                        </mat-chip-list>
-                      </mat-form-field>
-                      <div>
-                        <ng-container *ngIf="
-      formGroup.controls.brands.touched &&
-      !formGroup.controls.brands.value
-    ">
-                            <span class="error">List of Brands is Required</span>
+                            <span class="error">Brands is Required</span>
                         </ng-container>
                     </div>
-                      <!--  -->
+                    <!--  -->
                 </div>
                 <!-- List of Display Names start -->
                 <div class="block">
