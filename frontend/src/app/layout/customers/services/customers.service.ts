@@ -7,6 +7,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 @Injectable({ providedIn: 'root'})
 export class CustomersService {
   private url = 'api/customers';
+  private activeCustomers = 'api/cdf/findAllCdfActive';
   private customersChangeStatusURl = 'api/customers/changeStatus';
 
 
@@ -27,6 +28,11 @@ export class CustomersService {
   }
   public changeStatus(customers: ICustomersActiveParams) {
     return this.restService.put(`${this.customersChangeStatusURl}`, customers);
+  }
+
+  public getCdfActiveCustomers(tablePrams: IMatTableParams) {
+    const queryString = this.commonService.toQueryString(tablePrams);
+    return this.restService.get<any>(`${this.activeCustomers}${queryString}`);
   }
 
 }

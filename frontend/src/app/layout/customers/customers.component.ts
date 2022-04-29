@@ -4,9 +4,11 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ICdfData } from 'src/app/models/cdf';
 import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
+import { CdfService } from '../cdf/services/cdf.service';
 import { AddCustomersComponent } from './add-customers/add-customers.component';
 import { DeleteCustomersComponent } from './delete-customers/delete-customers.component';
 import { CustomersService } from './services/customers.service';
@@ -18,15 +20,15 @@ import { TierComponent } from './tier/tier.component';
 })
 export class CustomersComponent implements OnInit {
     displayedColumns: string[] = [
-        'company',
-        'name',
-        'address',
         'email',
+        'name',
+        'company',
+        'reference',
+        'brands',
+        'display_names',
+        'platforms',
+        'address',
         'mobile',
-        'due_limit',
-        'balance',
-        'other',
-        'tier_name',
         'action'
     ];
     dataSource: any = [];
@@ -47,27 +49,29 @@ export class CustomersComponent implements OnInit {
     constructor(
         public dialog: MatDialog,
         private customersService: CustomersService,
-        public snackBar: MatSnackBar
-    ) { }
+        public snackBar: MatSnackBar,
+        private cdfService: CdfService,
+        ) { }
     ngOnInit(): void {
-        this.getCustomers();
+        this.getCdf();
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
-        this.getCustomers();
+        this.getCdf();
     }
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-    getCustomers() {
+    getCdf() {
         this.loader = true;
-        this.customersService.getCustomers(this.tableParams).subscribe(
-            (newCustomers: any[]) => {
-                this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
-                if (newCustomers.length > 0) {
-                    this.totalRows = newCustomers[0].total;
+        this.tableParams.cdfStatus = 'Active'
+        this.cdfService.getCdf(this.tableParams).subscribe(
+            (newCdf: any[]) => {
+                this.dataSource = new MatTableDataSource<ICdfData>(newCdf);
+                if (newCdf.length > 0) {
+                    this.totalRows = newCdf[0].total;
                 }
                 setTimeout(() => {
                     this.paginator.pageIndex = this.tableParams.pageNumber - 1;
@@ -93,7 +97,7 @@ export class CustomersComponent implements OnInit {
             .afterClosed()
             .subscribe((result) => {
                 if (result) {
-                    this.getCustomers();
+                    this.getCdf();
                 }
             });
     }
@@ -114,7 +118,7 @@ export class CustomersComponent implements OnInit {
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-        this.getCustomers();
+        this.getCdf();
     }
     openTires() {
         this.dialog
@@ -128,7 +132,7 @@ export class CustomersComponent implements OnInit {
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
-        this.getCustomers();
+        this.getCdf();
     }
     changeStatus(id: number): void {
         this.customersService
@@ -144,7 +148,7 @@ export class CustomersComponent implements OnInit {
                             duration: 3000
                         })
                     }
-                    this.getCustomers();
+                    this.getCdf();
                 },
                 (error) => {
                     this.snackBar.open(

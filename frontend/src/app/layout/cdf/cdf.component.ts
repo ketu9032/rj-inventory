@@ -137,6 +137,7 @@ export class CDFComponent implements OnInit {
             }
             );
         }
+
     changeStatus(id: number): void {
         this.cdfService
             .changeStatus({ id: id, status: !this.tableParams.active })

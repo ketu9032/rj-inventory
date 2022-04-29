@@ -4,12 +4,12 @@
         <div>
             <mat-form-field>
                 <mat-label>Search...</mat-label>
-                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getCustomers()">
+                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getCdf()">
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="getCustomers()">
+            <button color="primary" class="margin" mat-raised-button (click)="getCdf()">
                 Search
             </button>
-            <button color="primary" mat-raised-button (click)="onAddNewCustomers()">
+            <button color="primary" *ngIf="false" mat-raised-button (click)="onAddNewCustomers()">
                 Add Customers
             </button>
             <button color="primary" class="margin" mat-raised-button (click)="openTires()">
@@ -36,66 +36,80 @@
             <ng-container matColumnDef="company">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Company</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.company }}
+                    <b> {{ element.company | uppercase }} </b> <br> {{ element.date | date:'d/M/y' }}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                <td mat-cell *matCellDef="let element">
                 </td>
             </ng-container>
             <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.name }}
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="address">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
-                <td mat-cell *matCellDef="let element">
-                    {{ element.address }}
+                    <b> {{ element.name | uppercase }} </b> <br> {{ element.email }}
                 </td>
             </ng-container>
             <ng-container matColumnDef="email">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.email }}
                 </td>
+            </ng-container>
+            <ng-container matColumnDef="reference">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Reference </th>
+                <td mat-cell *matCellDef="let element">
+                    <b> {{ element.reference | uppercase }}</b> <br> {{ element.reference_person }}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="reference_person">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                <td mat-cell *matCellDef="let element">
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="brands">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Brands </th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.brands }}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="display_names">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Display Names</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.display_names }}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="platforms">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Platforms</th>
+                <td class="width" mat-cell *matCellDef="let element">{{ element.platforms | titlecase }} </td>
+            </ng-container>
+            <ng-container matColumnDef="address">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
+                <td mat-cell *matCellDef="let element">{{ element.address }}</td>
             </ng-container>
             <ng-container matColumnDef="mobile">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile Number</th>
-                <td mat-cell *matCellDef="let element">
-                    {{ element.mobile }}
-                </td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</th>
+                <td mat-cell *matCellDef="let element">{{ element.mobile }}</td>
             </ng-container>
-            <ng-container matColumnDef="due_limit">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Due Limit</th>
-                <td mat-cell *matCellDef="let element">
-                    {{ element.due_limit | currency: 'INR' }}
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="balance">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Balance</th>
-                <td mat-cell *matCellDef="let element">
-                    {{ element.balance | currency: 'INR' }}
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="other">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Other</th>
-                <td mat-cell *matCellDef="let element">{{ element.other }}</td>
-            </ng-container>
-            <ng-container matColumnDef="tier_name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tier</th>
-                <td mat-cell *matCellDef="let element">
-                    {{ element.tier_name }}
-                </td>
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                <td mat-cell *matCellDef="let element">{{ element.status }}</td>
             </ng-container>
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let element">
-                    <button *ngIf="tableParams.active" mat-icon-button matTooltip="Click to Edit" color="primary"
-                        type="button" (click)="onEditNewCustomers(element)">
-                        <mat-icon aria-label="Edit">edit</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
+
+                        <button *ngIf="tableParams.active" mat-icon-button matTooltip="Click to Edit" color="primary"
+                            type="button" (click)="onEditNewCdf(element)">
+                            <mat-icon aria-label="Edit">edit</mat-icon>
+                        </button>
+
+                        <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
                         color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
                         <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
                     </button>
+
+
+
                 </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

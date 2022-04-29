@@ -180,7 +180,7 @@ exports.changeStatus = async(req, res) => {
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
             return;
         }
-        await pool.query(`UPDATE customers
+        await pool.query(`UPDATE cdf
       SET is_active = ${status} where "id" = '${id}'`);
         res.status(STATUS_CODE.SUCCESS).send();
     } catch (error) {

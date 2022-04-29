@@ -220,7 +220,7 @@ exports.changeStatus = async (req, res) => {
 };
 exports.changeCdfStatus = async (req, res) => {
   try {
-    const { id, cdf_status } = req.body;
+    const { id} = req.body;
     if (!id) {
       res
         .status(STATUS_CODE.BAD)
