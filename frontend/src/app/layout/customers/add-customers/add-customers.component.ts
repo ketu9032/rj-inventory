@@ -44,7 +44,7 @@ export class AddCustomersComponent implements OnInit {
             company: ['', Validators.required],
             firstName: ['', Validators.required],
             address: ['', Validators.required],
-            email: ['', Validators.required],
+            email: ['', [Validators.required,Validators.email] ],
             mobileNumber: ['', Validators.required],
             dueLimit: ['', Validators.required],
             balance: ['', Validators.required],

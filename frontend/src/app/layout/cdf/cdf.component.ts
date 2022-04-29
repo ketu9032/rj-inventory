@@ -33,7 +33,8 @@ export class CDFComponent implements OnInit {
     ];
     cdfes = [{ value: 'Unverified' }, { value: 'Active' }, { value: 'Inactive' }]
     customerStatus;
-    isShow = true;
+    isShowActionButton = true;
+    check = false;
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     public defaultPageSize = PAGE_SIZE;
@@ -196,10 +197,16 @@ export class CDFComponent implements OnInit {
     onCdfStatusChange($event: MatSelectChange) {
         this.tableParams.cdfStatus = $event.value;
         this.getCdf();
+
     }
-    // isHideActionButton(){
-    //     if(this.customerStatus === 'Active'){
-    //         this.isShow = true
-    //     }
-    // }
+    isHideActionButton(){
+        if( this.customerStatus === 'Active'){
+            this.isShowActionButton = false;
+            this.check = true
+        }else{
+            this.isShowActionButton = true;
+            this.check = false;
+    }
+    }
+
 }

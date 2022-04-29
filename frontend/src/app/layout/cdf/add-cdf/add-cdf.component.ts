@@ -33,7 +33,7 @@ export class AddCdfComponent implements OnInit {
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            email: ['', Validators.required],
+            email: ['', [Validators.required,Validators.email] ],
             name: ['', Validators.required],
             company: ['', Validators.required],
             date: ['', Validators.required],
