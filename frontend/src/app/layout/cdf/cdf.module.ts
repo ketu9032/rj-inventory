@@ -10,9 +10,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { AddCdfComponent } from './add-cdf/add-cdf.component';
 import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
+import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
-  declarations: [CDFComponent, AddCdfComponent, DeleteCdfComponent],
+  declarations: [CDFComponent,AddCdfComponent,  DeleteCdfComponent],
   imports: [
     CommonModule,
     CDFRoutingModule,
@@ -22,6 +23,7 @@ import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    MatChipsModule,
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [

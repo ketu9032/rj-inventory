@@ -16,3 +16,7 @@ export interface ICdfStatusActiveParams {
     id: number,
     cdfStatus: string
 }
+
+export interface Fruit {
+    name: string;
+}

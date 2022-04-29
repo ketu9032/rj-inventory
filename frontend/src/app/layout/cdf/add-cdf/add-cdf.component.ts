@@ -1,21 +1,42 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { ICdfData } from 'src/app/models/cdf';
+import { Fruit, ICdfData } from 'src/app/models/cdf';
 import { CdfService } from '../services/cdf.service';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+
 @Component({
     selector: 'app-add-cdf',
     templateUrl: './add-cdf.component.html',
     styleUrls: ['./add-cdf.component.scss']
 })
+
+
+
 export class AddCdfComponent implements OnInit {
     formGroup: FormGroup;
     selectedRole: string
     isShowLoader = false;
     references = [{ value: 'Person/Company', id: 1 }, { value: 'Google', id: 2 }, { value: 'IndiaMart', id: 3 }, { value: 'Other', id: 4 }];
     ListOfSites = [{ value: 'Flipkart', id: 1 }, { value: 'Snapdeal', id: 2 }, { value: 'Amazon', id: 3 }, { value: 'Paytm', id: 4 }, { value: 'Limeraod', id: 5 }, { value: 'Shopclues', id: 6 }, { value: 'Facebook/Instagram', id: 7 }, { value: 'Offline', id: 8 }];
+    //Fruit: string[];
+    //
+    visible = true;
+    selectable = true;
+    removable = true;
+    addOnBlur = true;
+    readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+    fruits: Fruit[] = [
+        {name: 'Titan'},
+        {name: 'Volga'},
+        {name: 'Rolex'},
+    ];
+    //
+
+
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ICdfData,
         public dialog: MatDialog,
@@ -30,6 +51,28 @@ export class AddCdfComponent implements OnInit {
         if (this.data && this.data.id) {
              this.fillForm();
         }
+    }
+
+    add(event: MatChipInputEvent): void{
+        const input = event.input;
+        const value = event.value;
+        if((value || '').trim()){
+
+        this.fruits.push({name: value.trim()});
+        }
+        if(input){
+            input.value = '';
+        }
+        console.log(this.fruits);
+    }
+        remove(fruit: Fruit): void{
+            const index = this.fruits.indexOf(fruit);
+            if(index >= 0) {
+                this.fruits.splice(index, 1);
+            }
+
+
+
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
