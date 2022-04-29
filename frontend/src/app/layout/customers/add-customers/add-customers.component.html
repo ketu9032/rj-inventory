@@ -19,16 +19,16 @@
                     </ng-container>
                 </div>
             </div>
-            <!-- userName start -->
+            <!-- name start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>First Name</mat-label>
-                    <input matInput formControlName="firstName" />
+                    <input matInput formControlName="name" />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
-          formGroup.controls.firstName.touched &&
-          !formGroup.controls.firstName.value
+          formGroup.controls.name.touched &&
+          !formGroup.controls.name.value
         ">
                         <span class="error">First name is Required</span>
                     </ng-container>
@@ -79,12 +79,12 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Mobile Number</mat-label>
-                    <input matInput formControlName="mobileNumber" type="tel" type="number" />
+                    <input matInput formControlName="mobile" type="tel" type="number" />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
-          formGroup.controls.mobileNumber.touched &&
-          !formGroup.controls.mobileNumber.value
+          formGroup.controls.mobile.touched &&
+          !formGroup.controls.mobile.value
         ">
                         <span class="error">Mobile Number is Required</span>
                     </ng-container>

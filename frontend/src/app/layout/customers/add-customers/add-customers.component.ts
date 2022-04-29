@@ -42,10 +42,10 @@ export class AddCustomersComponent implements OnInit {
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
             company: ['', Validators.required],
-            firstName: ['', Validators.required],
+            name: ['', Validators.required],
             address: ['', Validators.required],
             email: ['', [Validators.required,Validators.email] ],
-            mobileNumber: ['', Validators.required],
+            mobile: ['', Validators.required],
             dueLimit: ['', Validators.required],
             balance: ['', Validators.required],
             other: ['', Validators.required],
@@ -54,16 +54,16 @@ export class AddCustomersComponent implements OnInit {
     }
 
     saveUser(): void {
-        const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
+        const { company, name, address, email, mobile, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.customersService
             .addCustomers({
                 company,
-                firstName,
+                name,
                 address,
                 email,
-                mobileNumber,
+                mobile,
                 dueLimit,
                 balance,
                 other,
@@ -93,17 +93,17 @@ export class AddCustomersComponent implements OnInit {
     }
 
     updateCustomers(): void {
-        const { company, firstName, address, email, mobileNumber, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
+        const { company, name, address, email, mobile, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
         this.isShowLoader = true;
 
         this.customersService
             .editCustomers({
                 id: this.data.id,
                 company,
-                firstName,
+                name,
                 address,
                 email,
-                mobileNumber,
+                mobile,
                 dueLimit,
                 balance,
                 other,
@@ -141,13 +141,13 @@ export class AddCustomersComponent implements OnInit {
     }
 
     fillForm() {
-        const { company: company, first_name: firstName, address: address, email: email, mobile_no: mobileNumber, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
+        const { company: company, name: name, address: address, email: email, mobile: mobile, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
         this.formGroup.patchValue({
             company,
-            firstName,
+            name,
             address,
             email,
-            mobileNumber,
+            mobile,
             dueLimit,
             balance,
             other,

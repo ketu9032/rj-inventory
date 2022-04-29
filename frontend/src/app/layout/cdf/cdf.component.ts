@@ -13,6 +13,7 @@ import { CdfService } from './services/cdf.service';
 import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
 import { identifierModuleUrl } from '@angular/compiler';
 import { MatSelectChange } from '@angular/material/select';
+import { AddCustomersComponent } from '../customers/add-customers/add-customers.component';
 @Component({
     selector: 'app-cdf',
     templateUrl: './cdf.component.html',
@@ -117,8 +118,25 @@ export class CDFComponent implements OnInit {
                 if (result) {
                     this.getCdf();
                 }
-            });
-    }
+            }
+
+            );
+                    }
+    onEditNewCustomers(element) {
+        this.dialog
+            .open(AddCustomersComponent, {
+                width: '520px',
+                height: '480px',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getCdf();
+                }
+            }
+            );
+        }
     changeStatus(id: number): void {
         this.cdfService
             .changeStatus({ id: id, status: !this.tableParams.active })

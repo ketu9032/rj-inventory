@@ -19,10 +19,10 @@ import { TierComponent } from './tier/tier.component';
 export class CustomersComponent implements OnInit {
     displayedColumns: string[] = [
         'company',
-        'first_name',
+        'name',
         'address',
         'email',
-        'mobile_no',
+        'mobile',
         'due_limit',
         'balance',
         'other',
@@ -97,20 +97,20 @@ export class CustomersComponent implements OnInit {
                 }
             });
     }
-    onEditNewCustomers(element) {
-        this.dialog
-            .open(AddCustomersComponent, {
-                width: '520px',
-                height: '480px',
-                data: element
-            })
-            .afterClosed()
-            .subscribe((result) => {
-                if (result) {
-                    this.getCustomers();
-                }
-            });
-    }
+    // onEditNewCustomers(element) {
+    //     this.dialog
+    //         .open(AddCustomersComponent, {
+    //             width: '520px',
+    //             height: '480px',
+    //             data: element
+    //         })
+    //         .afterClosed()
+    //         .subscribe((result) => {
+    //             if (result) {
+    //                 this.getCustomers();
+    //             }
+    //         });
+    // }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;

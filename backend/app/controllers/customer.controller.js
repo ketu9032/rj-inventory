@@ -11,10 +11,10 @@ exports.findAll = async(req, res) => {
         if (search) {
             searchQuery += ` and
         (company ilike '%${search}%'
-          or first_name ilike '%${search}%'
+          or name ilike '%${search}%'
           or address ilike '%${search}%'
           or email ilike '%${search}%'
-          or mobile_no ilike '%${search}%'
+          or mobile ilike '%${search}%'
           or due_limit ilike '%${search}%'
           or balance ilike '%${search}%'
           or other ilike '%${search}%'
@@ -29,10 +29,10 @@ exports.findAll = async(req, res) => {
                 Count(c.id) OVER() AS total,
                 c.id,
                 company,
-                first_name,
+                name,
                 address,
                 email,
-                mobile_no,
+                mobile,
                 due_limit,
                 balance,
                 other,
@@ -78,10 +78,10 @@ exports.add = async(req, res) => {
     try {
         const {
             company,
-            firstName,
+            name,
             address,
             email,
-            mobileNumber,
+            mobile,
             dueLimit,
             balance,
             other,
@@ -89,10 +89,10 @@ exports.add = async(req, res) => {
         } = req.body;
 
         if (!company ||
-            !firstName ||
+            !name ||
             !address ||
             !email ||
-            !mobileNumber ||
+            !mobile ||
             !dueLimit ||
             !tierId
         ) {
@@ -103,8 +103,8 @@ exports.add = async(req, res) => {
         }
         await pool.query(
             `INSERT INTO customers
-      (company, first_name, address, email, mobile_no, due_limit, balance, other, tier_id)
-      VALUES('${company}', '${firstName}', '${address}', '${email}', '${mobileNumber}', '${dueLimit}', '${balance}', '${other}', '${tierId}');
+      (company, name, address, email, mobile, due_limit, balance, other, tier_id)
+      VALUES('${company}', '${name}', '${address}', '${email}', '${mobile}', '${dueLimit}', '${balance}', '${other}', '${tierId}');
       `
         );
 
@@ -121,20 +121,20 @@ exports.update = async(req, res) => {
         const {
             id,
             company,
-            firstName,
+            name,
             address,
             email,
-            mobileNumber,
+            mobile,
             dueLimit,
             balance,
             other,
             tierId
         } = req.body;
         if (!company ||
-            !firstName ||
+            !name ||
             !address ||
             !email ||
-            !mobileNumber ||
+            !mobile ||
             !dueLimit ||
             !tierId ||
             !id
@@ -146,7 +146,7 @@ exports.update = async(req, res) => {
         }
         await pool.query(
             `UPDATE customers
-      SET company='${company}', first_name='${firstName}', address='${address}', email='${email}', mobile_no='${mobileNumber}', due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}' where id = ${id};
+      SET company='${company}', name='${name}', address='${address}', email='${email}', mobile='${mobile}', due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}' where id = ${id};
        `
         );
 
