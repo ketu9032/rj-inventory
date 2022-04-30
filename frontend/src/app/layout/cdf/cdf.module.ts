@@ -11,9 +11,10 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { AddCdfComponent } from './add-cdf/add-cdf.component';
 import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
 import { MatChipsModule } from '@angular/material/chips';
+import { CdfToCustomersComponent } from './cdf-to-customers/cdf-to-customers.component';
 
 @NgModule({
-  declarations: [CDFComponent,AddCdfComponent,  DeleteCdfComponent],
+  declarations: [CDFComponent,AddCdfComponent,  DeleteCdfComponent, CdfToCustomersComponent],
   imports: [
     CommonModule,
     CDFRoutingModule,

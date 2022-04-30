@@ -14,6 +14,7 @@ import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
 import { identifierModuleUrl } from '@angular/compiler';
 import { MatSelectChange } from '@angular/material/select';
 import { AddCustomersComponent } from '../customers/add-customers/add-customers.component';
+import { CdfToCustomersComponent } from './cdf-to-customers/cdf-to-customers.component';
 @Component({
     selector: 'app-cdf',
     templateUrl: './cdf.component.html',
@@ -137,6 +138,22 @@ export class CDFComponent implements OnInit {
             }
             );
         }
+
+        onEditCdfToCustomers(element) {
+            this.dialog
+                .open(CdfToCustomersComponent, {
+                    width: '520px',
+                    height: '480px',
+                    data: element
+                })
+                .afterClosed()
+                .subscribe((result) => {
+                    if (result) {
+                        this.getCdf();
+                    }
+                }
+                );
+            }
 
     changeStatus(id: number): void {
         this.cdfService
