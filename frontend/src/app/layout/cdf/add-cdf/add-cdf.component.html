@@ -9,14 +9,17 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Email</mat-label>
-                        <input matInput formControlName="email" required>
+                        <input matInput formControlName="email" (keyup)="onEmailCheck()" required>
                     </mat-form-field>
                     <div>
+                        <ng-container *ngIf="!isEmailExist">
+                            <span class="error">This email is exist, Please another email address</span>
+                        </ng-container>
                         <ng-container *ngIf="
           formGroup.controls.email.errors &&
           !formGroup.controls.email.errors.required
           ">
-                            <span class="error">Please enter correct email address</span>
+                            <span class="error"><br>Please enter correct email address</span>
                             <br />
                         </ng-container>
                         <ng-container *ngIf="
@@ -48,9 +51,12 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Company Name</mat-label>
-                        <input matInput formControlName="company" />
+                        <input matInput formControlName="company" (keyup)="onCompanyCheck()" />
                     </mat-form-field>
                     <div>
+                        <ng-container *ngIf="!isCompanyExist">
+                            <span class="error">This company is exist, Please another company</span>
+                        </ng-container>
                         <ng-container *ngIf="
           formGroup.controls.company.touched &&
           !formGroup.controls.company.value
@@ -196,9 +202,12 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Mobile Number</mat-label>
-                        <input matInput formControlName="mobile" type="tel" type="number" />
+                        <input matInput formControlName="mobile" type="tel" type="number" (keyup)="onMobileCheck()" />
                     </mat-form-field>
                     <div>
+                        <ng-container *ngIf="!isMobileExist">
+                            <span class="error">This mobile number is exist, Please another mobile number </span>
+                        </ng-container>
                         <ng-container *ngIf="
           formGroup.controls.mobile.touched &&
           !formGroup.controls.mobile.value
@@ -226,7 +235,7 @@
             <!-- button start -->
             <div class="block">
                 <div class="btn-update">
-                    <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader"
+                    <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader "
                         type="submit">
                         <span *ngIf="!isShowLoader">
                             {{ !this.data ? 'Save' : 'Update' }}

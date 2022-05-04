@@ -19,3 +19,12 @@ export interface ICdfStatusActiveParams {
 export interface Fruit {
     name: string;
 }
+export interface ICdfEmail {
+    email: string;
+}
+export interface ICdfMobile {
+    mobile: number;
+}
+export interface ICdfCompany {
+    company: string;
+}

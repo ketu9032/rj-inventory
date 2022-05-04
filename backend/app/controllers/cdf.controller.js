@@ -284,3 +284,51 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
     });
   }
 };
+
+exports.onCheckEmail = async (req, res) => {
+  try {
+    const {email} = req.body;
+    const response =
+      await pool.query(`select id from cdf where email = trim('${email}')`);
+    if (response.rowCount > 0) {
+      return res.status(STATUS_CODE.SUCCESS).send(false);
+    }
+    return res.status(STATUS_CODE.SUCCESS).send(true);
+  } catch (error) {
+    return res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+exports.onCheckCompany = async (req, res) => {
+  try {
+    const {company} = req.body;
+    const response =
+      await pool.query(`select id from cdf where company = trim('${company}')
+       `);
+    if (response.rowCount > 0) {
+      return   res.status(200).send(false);
+    }
+    return  res.status(STATUS_CODE.SUCCESS).send(true);
+  } catch (error) {
+    return   res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+exports.onCheckMobile = async (req, res) => {
+  try {
+    const {mobile} = req.body;
+    const response =
+      await pool.query(`select id from cdf where mobile = trim(${mobile})
+       `);
+    if (response.rowCount > 0) {
+      return   res.status(200).send(false);
+    }
+    return  res.status(STATUS_CODE.SUCCESS).send(true);
+  } catch (error) {
+    return  res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};

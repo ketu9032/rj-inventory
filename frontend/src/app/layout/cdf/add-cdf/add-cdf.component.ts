@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,6 +8,7 @@ import { Fruit, ICdfData } from 'src/app/models/cdf';
 import { CdfService } from '../services/cdf.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { getLocaleDateFormat } from '@angular/common';
+import { resolve } from 'path';
 @Component({
     selector: 'app-add-cdf',
     templateUrl: './add-cdf.component.html',
@@ -23,6 +24,9 @@ export class AddCdfComponent implements OnInit {
     visible = true;
     selectable = true;
     addOnBlur = true;
+    isEmailExist: boolean = true;
+    isCompanyExist: boolean = true;
+    isMobileExist: boolean = true;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     fruits: Fruit[] = [
         { name: 'Titan' },
@@ -145,5 +149,34 @@ export class AddCdfComponent implements OnInit {
         this.formGroup.patchValue({
             email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
         });
+    }
+    onEmailCheck() {
+
+            this.cdfService
+                .onCheckEmail({ email: this.formGroup.controls.email.value })
+                .subscribe(
+                    (response: boolean) => {
+                        this.isEmailExist = response
+                        console.log(response);
+                    })
+
+    }
+    onCompanyCheck() {
+            this.cdfService
+                .onCheckCompany({ company: this.formGroup.controls.company.value })
+                .subscribe(
+                    (response: boolean) => {
+                        this.isCompanyExist = response
+                        console.log(response);
+                    })
+    }
+    onMobileCheck() {
+            this.cdfService
+                .onCheckMobile({ mobile: this.formGroup.controls.mobile.value })
+                .subscribe(
+                    (response: boolean) => {
+                        this.isMobileExist = response
+                        console.log(response);
+                    })
     }
 }
