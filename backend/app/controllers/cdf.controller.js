@@ -30,6 +30,9 @@ exports.findAll = async (req, res) => {
           or other ilike '%${search}%'
           or mobile::text ilike '%${search}%'
           or address ilike '%${search}%'
+          or due_limit ilike '%${search}%'
+          or balance ilike '%${search}%'
+          or tier ilike '%${search}%'
         )`;
     }
     searchQuery += ` and c.is_active = ${active}  `;
@@ -38,23 +41,25 @@ exports.findAll = async (req, res) => {
     }
     const response = await pool.query(
       `
-            SELECT
-                Count(c.id) OVER() AS total,
-                c.id,
-                  email,
-                  name,
-                  company,
-                  date,
-                  reference ,
-                  reference_person ,
-                  brands ,
-                  display_names ,
-                  platforms ,
-                  other ,
-                  mobile ,
-                  address
-            FROM
-                cdf c
+      SELECT
+        Count(c.id) OVER() AS total,
+        c.id,
+            name,
+            email,
+            company,
+            date,
+            reference,
+            reference_person,
+            brands,
+            display_names,
+            platforms,
+            other,
+            mobile,
+            address,
+            due_limit,
+            balance
+      FROM
+          cdf c
             ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -220,7 +225,7 @@ exports.changeStatus = async (req, res) => {
 };
 exports.changeCdfStatus = async (req, res) => {
   try {
-    const { id} = req.body;
+    const { id } = req.body;
     if (!id) {
       res
         .status(STATUS_CODE.BAD)
@@ -229,6 +234,49 @@ exports.changeCdfStatus = async (req, res) => {
     }
     await pool.query(`update cdf
         set cdf_status  = 'active' WHERE "id" = '${id}'`);
+    res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+exports.cdfTOCustomersUpdate = async (req, res) => {
+  try {
+    const {
+      id,
+      company,
+      name,
+      address,
+      email,
+      mobile,
+      dueLimit,
+      balance,
+      other,
+      tierId
+    } = req.body;
+    if (
+      !company ||
+      !name ||
+      !address ||
+      !email ||
+      !mobile ||
+      !dueLimit ||
+      !balance ||
+      !other ||
+      !tierId ||
+      !id
+    ) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
+    await pool.query(
+      `UPDATE cdf
+      SET  company='${company}', name='${name}',  address='${address}',  email='${email}', mobile='${mobile}',  due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}' where id = ${id};
+       `
+    );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({

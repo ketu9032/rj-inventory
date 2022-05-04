@@ -8,7 +8,6 @@ import { IUserData } from 'src/app/models/user';
 import { CustomersService } from '../../customers/services/customers.service';
 import { TiersService } from '../../customers/services/tiers.service';
 import { CdfService } from '../services/cdf.service';
-
 @Component({
     selector: 'cdf-to-add-customers',
     templateUrl: './cdf-to-customers.component.html',
@@ -19,8 +18,6 @@ export class CdfToCustomersComponent implements OnInit {
     selectedRole: string
     tires = []
     isShowLoader = false;
-
-
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ICustomersData,
         public dialog: MatDialog,
@@ -31,9 +28,7 @@ export class CdfToCustomersComponent implements OnInit {
         private tiersService: TiersService,
         private customersService: CustomersService,
         private cdfService: CdfService
-
     ) { }
-
     ngOnInit() {
         this.initializeForm();
         this.getTierDropDown();
@@ -41,13 +36,12 @@ export class CdfToCustomersComponent implements OnInit {
             this.fillForm();
         }
     }
-
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
             company: ['', Validators.required],
             name: ['', Validators.required],
             address: ['', Validators.required],
-            email: ['', [Validators.required,Validators.email] ],
+            email: ['', [Validators.required, Validators.email]],
             mobile: ['', Validators.required],
             dueLimit: ['', Validators.required],
             balance: ['', Validators.required],
@@ -55,11 +49,9 @@ export class CdfToCustomersComponent implements OnInit {
             tier: ['', Validators.required],
         });
     }
-
     // saveUser(): void {
     //     const { company, name, address, email, mobile, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
     //     this.isShowLoader = true;
-
     //     this.cdfService
     //         .addCustomers({
     //             company,
@@ -75,7 +67,6 @@ export class CdfToCustomersComponent implements OnInit {
     //         .subscribe(
     //             (response) => {
     //                 this.isShowLoader = false;
-
     //                 this.snackBar.open('User saved successfully', 'OK', {
     //                     duration: 3000
     //                 });
@@ -83,7 +74,6 @@ export class CdfToCustomersComponent implements OnInit {
     //             },
     //             (error) => {
     //                 this.isShowLoader = false;
-
     //                 this.snackBar.open(
     //                     (error.error && error.error.message) || error.message,
     //                     'Ok', {
@@ -94,13 +84,11 @@ export class CdfToCustomersComponent implements OnInit {
     //             () => { }
     //         );
     // }
-
     cdfToCustomers(): void {
         const { company, name, address, email, mobile, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
         this.isShowLoader = true;
-
         this.cdfService
-            .editCdf({
+            .editCdfToCustomers({
                 id: this.data.id,
                 company,
                 name,
@@ -110,12 +98,17 @@ export class CdfToCustomersComponent implements OnInit {
                 dueLimit,
                 balance,
                 other,
-                tierId
+                tierId,
+                date: '',
+                reference: '',
+                referencePerson: '',
+                brands: '',
+                displayNames: '',
+                platforms: ''
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open('User updated successfully', 'OK', {
                         duration: 3000
                     });
@@ -123,7 +116,6 @@ export class CdfToCustomersComponent implements OnInit {
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
@@ -134,7 +126,6 @@ export class CdfToCustomersComponent implements OnInit {
                 () => { }
             );
     }
-
     onSubmit() {
         if (this.data && this.data.id) {
             this.cdfToCustomers();
@@ -143,7 +134,6 @@ export class CdfToCustomersComponent implements OnInit {
         //     this.saveUser();
         // }
     }
-
     fillForm() {
         const { company: company, name: name, address: address, email: email, mobile: mobile, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;
         this.formGroup.patchValue({
@@ -158,7 +148,6 @@ export class CdfToCustomersComponent implements OnInit {
             tier: tierId
         });
     }
-
     getTierDropDown() {
         this.tiersService
             .getTierDropDown()

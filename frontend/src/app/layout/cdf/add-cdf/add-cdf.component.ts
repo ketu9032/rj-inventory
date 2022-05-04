@@ -7,22 +7,19 @@ import { Router } from '@angular/router';
 import { Fruit, ICdfData } from 'src/app/models/cdf';
 import { CdfService } from '../services/cdf.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-
+import { getLocaleDateFormat } from '@angular/common';
 @Component({
     selector: 'app-add-cdf',
     templateUrl: './add-cdf.component.html',
     styleUrls: ['./add-cdf.component.scss']
 })
-
-
-
 export class AddCdfComponent implements OnInit {
     formGroup: FormGroup;
     selectedRole: string
     isShowLoader = false;
     references = [{ value: 'Person/Company', id: 1 }, { value: 'Google', id: 2 }, { value: 'IndiaMart', id: 3 }, { value: 'Other', id: 4 }];
     ListOfSites = [{ value: 'Flipkart', id: 1 }, { value: 'Snapdeal', id: 2 }, { value: 'Amazon', id: 3 }, { value: 'Paytm', id: 4 }, { value: 'Limeraod', id: 5 }, { value: 'Shopclues', id: 6 }, { value: 'Facebook/Instagram', id: 7 }, { value: 'Offline', id: 8 }];
-
+    currentDate = new Date()
     visible = true;
     selectable = true;
     addOnBlur = true;
@@ -32,8 +29,6 @@ export class AddCdfComponent implements OnInit {
         { name: 'Volga' },
         { name: 'Rolex' },
     ];
-    //
-
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ICdfData,
         public dialog: MatDialog,
@@ -49,12 +44,10 @@ export class AddCdfComponent implements OnInit {
             this.fillForm();
         }
     }
-
     add(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
         if ((value || '').trim()) {
-
             this.fruits.push({ name: value.trim() });
         }
         if (input) {
@@ -67,9 +60,6 @@ export class AddCdfComponent implements OnInit {
         if (index >= 0) {
             this.fruits.splice(index, 1);
         }
-
-
-
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
@@ -86,10 +76,7 @@ export class AddCdfComponent implements OnInit {
             mobile: ['', Validators.required],
             address: ['', Validators.required],
         });
-
-
     }
-
     saveCdf(): void {
         const { email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
@@ -157,7 +144,6 @@ export class AddCdfComponent implements OnInit {
             reference_person: referencePerson, brands: brands, display_names: displayNames, platforms: platforms, other: other, mobile: mobile, address: address, } = this.data;
         this.formGroup.patchValue({
             email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
-
         });
     }
 }

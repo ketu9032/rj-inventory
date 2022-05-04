@@ -11,7 +11,7 @@ import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config'
 import { AddCdfComponent } from './add-cdf/add-cdf.component';
 import { CdfService } from './services/cdf.service';
 import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
-import { identifierModuleUrl } from '@angular/compiler';
+import { collectExternalReferences, identifierModuleUrl } from '@angular/compiler';
 import { MatSelectChange } from '@angular/material/select';
 import { AddCustomersComponent } from '../customers/add-customers/add-customers.component';
 import { CdfToCustomersComponent } from './cdf-to-customers/cdf-to-customers.component';
@@ -37,6 +37,7 @@ export class CDFComponent implements OnInit {
     customerStatus;
     isShowActionButton = true;
     check = false;
+    dataChecking;
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     public defaultPageSize = PAGE_SIZE;
@@ -120,16 +121,16 @@ export class CDFComponent implements OnInit {
                     this.getCdf();
                 }
             }
-
             );
-                    }
+    }
     onEditNewCustomers(element) {
         this.dialog
             .open(AddCustomersComponent, {
                 width: '520px',
                 height: '480px',
-                data: element
-            })
+                data: element,
+            }
+            )
             .afterClosed()
             .subscribe((result) => {
                 if (result) {
@@ -137,24 +138,23 @@ export class CDFComponent implements OnInit {
                 }
             }
             );
-        }
-
-        onEditCdfToCustomers(element) {
-            this.dialog
-                .open(CdfToCustomersComponent, {
-                    width: '520px',
-                    height: '480px',
-                    data: element
-                })
-                .afterClosed()
-                .subscribe((result) => {
-                    if (result) {
-                        this.getCdf();
-                    }
-                }
-                );
+    }
+    onEditCdfToCustomers(element) {
+        this.dialog
+            .open(CdfToCustomersComponent, {
+                width: '520px',
+                height: '480px',
+                data: element
             }
-
+            )
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getCdf();
+                }
+            }
+            );
+    }
     changeStatus(id: number): void {
         this.cdfService
             .changeStatus({ id: id, status: !this.tableParams.active })
@@ -233,16 +233,14 @@ export class CDFComponent implements OnInit {
     onCdfStatusChange($event: MatSelectChange) {
         this.tableParams.cdfStatus = $event.value;
         this.getCdf();
-
     }
-    isHideActionButton(){
-        if( this.customerStatus === 'Active'){
+    isHideActionButton() {
+        if (this.customerStatus === 'Active') {
             this.isShowActionButton = false;
             this.check = true
-        }else{
+        } else {
             this.isShowActionButton = true;
             this.check = false;
+        }
     }
-    }
-
 }

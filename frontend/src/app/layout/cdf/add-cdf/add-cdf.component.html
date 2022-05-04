@@ -63,8 +63,9 @@
                 <div class="block">
                     <mat-form-field color="accent">
                         <mat-label>Business Started Date</mat-label>
-                        <input matInput formControlName="date" aria-current="date" [matDatepicker]="date">
-                        <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+                        <input matInput formControlName="date" aria-current="date" [max]="currentDate"
+                            [matDatepicker]="date">
+                        <mat-datepicker-toggle matSuffix [for]="date "></mat-datepicker-toggle>
                         <mat-datepicker #date></mat-datepicker>
                     </mat-form-field>
                     <div>

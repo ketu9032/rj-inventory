@@ -12,10 +12,9 @@
             </button>
             <mat-form-field class="margin">
                 <mat-label>Select CDF</mat-label>
-                <mat-select name="cdf" (selectionChange)="onCdfStatusChange($event)"
-                 [value]="'Unverified'" [(ngModel)]="customerStatus">
-                    <mat-option *ngFor="let cdf of cdfes" [value]="cdf.value"
-                     (click)="isHideActionButton()">
+                <mat-select name="cdf" (selectionChange)="onCdfStatusChange($event)" [value]="'Unverified'"
+                    [(ngModel)]="customerStatus">
+                    <mat-option *ngFor="let cdf of cdfes" [value]="cdf.value" (click)="isHideActionButton()">
                         {{cdf.value}}
                     </mat-option>
                 </mat-select>
@@ -117,14 +116,18 @@
                             color="{{tableParams.active? 'warn': 'primary'}}" (click)="confirmDialog(element.id)">
                             <mat-icon aria-label="Delete">delete</mat-icon>
                         </button>
-                       <!-- <button mat-icon-button color="primary" (click)="changeCdfStatus(element.id)"> -->
-                       <button mat-icon-button color="primary" (click)="onEditCdfToCustomers(element)">
+                        <button mat-icon-button color="primary" matTooltip="Click to CDF to Customers"
+                            (click)="changeCdfStatus(element.id)">
+                            <mat-icon>move_to_inbox</mat-icon>
+                        </button>
+                        <button mat-icon-button color="primary" matTooltip="Edit to Tier,Balance,Due limit"
+                            (click)="onEditCdfToCustomers(element)">
 
                             <mat-icon>thumb_up</mat-icon>
                         </button>
                     </div>
                     <div *ngIf="check" class="color">
-                        <mat-icon >check</mat-icon>
+                        <mat-icon>check</mat-icon>
                     </div>
                 </td>
             </ng-container>

@@ -2,11 +2,12 @@ import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
-import { ICdfActiveParams, ICdfParams, ICdfStatusActiveParams } from 'src/app/models/cdf';
+import { ICdfActiveParams, ICdfParams, ICdfStatusActiveParams, ICdfToCustomersParams } from 'src/app/models/cdf';
 
 @Injectable({ providedIn: 'root'})
 export class CdfService {
   private url = 'api/cdf';
+  private cdfToCustomersURL = 'api/cdf/cdfTOCustomersUpdate';
   private cdfChangeStatusURl = 'api/cdf/changeStatus';
   private changeCdfStatusURl = 'api/cdf/changeCdfStatus';
 
@@ -31,5 +32,8 @@ export class CdfService {
   }
   public changeCdfStatus(cdfStatus: ICdfStatusActiveParams) {
     return this.restService.put(`${this.changeCdfStatusURl}`, cdfStatus);
+  }
+  public editCdfToCustomers(cdf: ICdfToCustomersParams) {
+    return this.restService.put(`${this.cdfToCustomersURL}`, cdf);
   }
 }

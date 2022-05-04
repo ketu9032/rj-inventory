@@ -20,15 +20,11 @@ import { TierComponent } from './tier/tier.component';
 })
 export class CustomersComponent implements OnInit {
     displayedColumns: string[] = [
-        'email',
-        'name',
         'company',
-        'reference',
-        'brands',
-        'display_names',
-        'platforms',
-        'address',
-        'mobile',
+        'balance',
+        'payment',
+        'due_limit',
+        'status',
         'action'
     ];
     dataSource: any = [];
@@ -51,7 +47,7 @@ export class CustomersComponent implements OnInit {
         private customersService: CustomersService,
         public snackBar: MatSnackBar,
         private cdfService: CdfService,
-        ) { }
+    ) { }
     ngOnInit(): void {
         this.getCdf();
     }
