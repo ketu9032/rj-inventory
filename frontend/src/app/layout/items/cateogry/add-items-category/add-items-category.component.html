@@ -1,9 +1,13 @@
+<div class="main-header">
+    <h1 mat-dialog-title> <b>{{ !this.data ? 'Add Category' : 'Update Category' }} </b></h1>
+    <button mat-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
 <div class="container">
-    <h1 mat-dialog-title> {{ !this.data ? 'Add Category' : 'Update Category' }} </h1>
     <mat-divider></mat-divider>
     <br>
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-
         <!-- Code start -->
         <mat-form-field>
             <mat-label>Code</mat-label>
@@ -17,7 +21,6 @@
                 <span class="error">Code is Required</span>
             </ng-container>
         </div>
-
         <!-- Name start -->
         <mat-form-field>
             <mat-label>Name</mat-label>
@@ -31,8 +34,6 @@
                 <span class="error">Name is Required</span>
             </ng-container>
         </div>
-
-
         <!-- button start -->
         <div class="btn-update">
             <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">
@@ -40,7 +41,6 @@
                     {{ !this.data ? 'Save' : 'Update' }}
                 </span>
                 <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
-
             </button>
         </div>
     </form>

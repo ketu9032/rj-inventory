@@ -97,7 +97,7 @@ export class CategoryComponent implements OnInit {
     onEditCategory(element) {
         this.dialog
             .open(AddCategoryComponent, {
-                width: '600px',
+                width: '400px',
                 data: element
             })
             .afterClosed()

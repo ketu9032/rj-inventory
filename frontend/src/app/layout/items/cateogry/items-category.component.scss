@@ -1,3 +1,19 @@
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    .mat-dialog-title {
+        margin: 5px 0 0 0;
+        display: block;
+    }
+
+    .mat-button {
+        min-width: 40px;
+        padding: 0 10px;
+    }
+}
+
 table {
     width: 100%;
 }
@@ -11,6 +27,7 @@ table {
 .margin {
     margin: 0 8px 0 8px;
 }
+
 .header {
     display: flex;
     align-items: center;
@@ -25,7 +42,8 @@ th {
 td {
     color: rgb(73 70 70 / 87%);
 }
-.active{
+
+.active {
     margin-left: 30px;
 
 }

@@ -1,6 +1,11 @@
+<div class="main-header">
+    <h1 mat-dialog-title><b> {{ !this.data ? 'Add Create Quotation' : 'Update Create Quotation' }} </b></h1>
+    <button mat-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-divider></mat-divider>
 <div class="container">
-    <h1 mat-dialog-title> {{ !this.data ? 'Add Create Quotation' : 'Update Create Quotation' }} </h1>
-    <mat-divider></mat-divider>
     <br>
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <div class="box row-1">

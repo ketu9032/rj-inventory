@@ -13,7 +13,7 @@
                     <mat-option value=""  (click)="toggleCreateButton()">All Tires</mat-option>
                     <mat-option *ngFor="let tire of tires" [value]="tire.id"
                         (click)="toggleCreateButton()">
-                        {{tire.name}}
+                        {{tire.code}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
