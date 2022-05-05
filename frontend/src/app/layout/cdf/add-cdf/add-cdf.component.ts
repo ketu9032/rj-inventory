@@ -18,6 +18,8 @@ export class AddCdfComponent implements OnInit {
     isShowLoader = false;
     references = [{ value: 'Person/Company', id: 1 }, { value: 'Google', id: 2 }, { value: 'IndiaMart', id: 3 }, { value: 'Other', id: 4 }];
     ListOfSites = [{ value: 'Flipkart', id: 1 }, { value: 'Snapdeal', id: 2 }, { value: 'Amazon', id: 3 }, { value: 'Paytm', id: 4 }, { value: 'Limeraod', id: 5 }, { value: 'Shopclues', id: 6 }, { value: 'Facebook/Instagram', id: 7 }, { value: 'Offline', id: 8 }];
+
+
     currentDate = new Date()
     visible = true;
     selectable = true;
@@ -71,7 +73,7 @@ export class AddCdfComponent implements OnInit {
             brands: ['', Validators.required],
             displayNames: ['', Validators.required],
             platforms: ['', Validators.required],
-            other: ['', Validators.required],
+            // other: ['', Validators.required],
             mobile: ['', Validators.required],
             address: ['', Validators.required],
         });

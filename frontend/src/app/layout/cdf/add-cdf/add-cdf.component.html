@@ -185,17 +185,17 @@
                 <!-- Other start -->
                 <div class="block">
                     <mat-form-field>
-                        <mat-label>Other</mat-label>
+                        <mat-label>Comment</mat-label>
                         <input matInput formControlName="other" />
                     </mat-form-field>
-                    <div>
+                    <!-- <div>
                         <ng-container *ngIf="
           formGroup.controls.other.touched &&
           !formGroup.controls.other.value
         ">
                             <span class="error">Other is Required</span>
                         </ng-container>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="box">
@@ -203,7 +203,7 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Mobile Number</mat-label>
-                        <input matInput formControlName="mobile" type="tel" (keyup)="onMobileCheck()" type="number" />
+                        <input matInput formControlName="mobile"  minlength="10"   (keyup)="onMobileCheck()" type="number" />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="!isMobileExist">
