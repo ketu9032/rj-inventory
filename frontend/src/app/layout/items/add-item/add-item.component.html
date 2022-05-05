@@ -1,4 +1,9 @@
-<h1 mat-dialog-title> {{ !this.data ? 'Add Item' : 'Update Item' }} </h1>
+<div class="main-header">
+    <h1 mat-dialog-title><b> {{ !this.data ?  'Add Item' : 'Update Item' }}</b> </h1>
+    <button mat-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
 <mat-divider></mat-divider>
 <br>
 <form [formGroup]="formGroup">

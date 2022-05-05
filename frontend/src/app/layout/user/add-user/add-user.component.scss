@@ -1,3 +1,17 @@
+.main-header{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    .mat-dialog-title {
+        margin: 5px 0 0  0;
+        display: block;
+    }
+    .mat-button {
+        min-width: 40px;
+        padding: 0 10px;
+    }
+}
+
 .container {
   .mat-form-field {
     width: 100%;
@@ -5,10 +19,6 @@
     flex-direction: column;
   }
 
-  .mat-dialog-title {
-    margin: 0 0 20px;
-    display: block;
-  }
   .input {
     width: 100%;
   }
