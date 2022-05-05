@@ -4,7 +4,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Fruit, ICdfData } from 'src/app/models/cdf';
+import { Brand, ICdfData } from 'src/app/models/cdf';
 import { CdfService } from '../services/cdf.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { getLocaleDateFormat } from '@angular/common';
@@ -28,7 +28,7 @@ export class AddCdfComponent implements OnInit {
     isCompanyExist: boolean = true;
     isMobileExist: boolean = true;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-    fruits: Fruit[] = [
+    brands: Brand[] = [
         { name: 'Titan' },
         { name: 'Volga' },
         { name: 'Rolex' },
@@ -52,17 +52,17 @@ export class AddCdfComponent implements OnInit {
         const input = event.input;
         const value = event.value;
         if ((value || '').trim()) {
-            this.fruits.push({ name: value.trim() });
+            this.brands.push({ name: value.trim() });
         }
         if (input) {
             input.value = '';
         }
-        console.log(this.fruits);
+        console.log(this.brands);
     }
-    remove(fruit: Fruit): void {
-        const index = this.fruits.indexOf(fruit);
+    remove(brand: Brand): void {
+        const index = this.brands.indexOf(brand);
         if (index >= 0) {
-            this.fruits.splice(index, 1);
+            this.brands.splice(index, 1);
         }
     }
     initializeForm(): void {
@@ -151,32 +151,30 @@ export class AddCdfComponent implements OnInit {
         });
     }
     onEmailCheck() {
-
-            this.cdfService
-                .onCheckEmail({ email: this.formGroup.controls.email.value })
-                .subscribe(
-                    (response: boolean) => {
-                        this.isEmailExist = response
-                        console.log(response);
-                    })
-
+        this.cdfService
+            .onCheckEmail({ email: this.formGroup.controls.email.value })
+            .subscribe(
+                (response: boolean) => {
+                    this.isEmailExist = response
+                    console.log(response);
+                })
     }
     onCompanyCheck() {
-            this.cdfService
-                .onCheckCompany({ company: this.formGroup.controls.company.value })
-                .subscribe(
-                    (response: boolean) => {
-                        this.isCompanyExist = response
-                        console.log(response);
-                    })
+        this.cdfService
+            .onCheckCompany({ company: this.formGroup.controls.company.value })
+            .subscribe(
+                (response: boolean) => {
+                    this.isCompanyExist = response
+                    console.log(response);
+                })
     }
     onMobileCheck() {
-            this.cdfService
-                .onCheckMobile({ mobile: this.formGroup.controls.mobile.value })
-                .subscribe(
-                    (response: boolean) => {
-                        this.isMobileExist = response
-                        console.log(response);
-                    })
+        this.cdfService
+            .onCheckMobile({ mobile: this.formGroup.controls.mobile.value })
+            .subscribe(
+                (response: boolean) => {
+                    this.isMobileExist = response
+                    console.log(response);
+                })
     }
 }

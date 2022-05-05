@@ -126,8 +126,9 @@
                     <mat-form-field class="example-chip-list">
                         <mat-label>Brands</mat-label>
                         <mat-chip-list #chipList aria-label="brand selection">
-                            <mat-chip *ngFor="let fruit of fruits" [selectable]="selectable" (removed)="remove(fruit)">
-                                {{fruit.name}}
+                            <mat-chip *ngFor="let brand of brands" [selectable]="selectable" [value]="brand.value"
+                                (removed)="remove(brand)">
+                                {{brand.name}}
                                 <mat-icon matChipRemove>cancel</mat-icon>
                             </mat-chip>
                             <input placeholder="New brand..." formControlName="brands" [matChipInputFor]="chipList"
