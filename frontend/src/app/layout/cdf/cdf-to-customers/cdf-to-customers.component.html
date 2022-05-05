@@ -145,7 +145,7 @@
                     <mat-label>Select Tier</mat-label>
                     <mat-select formControlName="tier" name="tier">
                         <mat-option *ngFor="let tire of tires" [value]="tire.id">
-                            {{tire.name}}
+                            {{tire.code}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

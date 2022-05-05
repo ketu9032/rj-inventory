@@ -4,11 +4,9 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Brand, ICdfData } from 'src/app/models/cdf';
+import { ICdfData } from 'src/app/models/cdf';
 import { CdfService } from '../services/cdf.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { getLocaleDateFormat } from '@angular/common';
-import { resolve } from 'path';
 @Component({
     selector: 'app-add-cdf',
     templateUrl: './add-cdf.component.html',
@@ -28,11 +26,7 @@ export class AddCdfComponent implements OnInit {
     isCompanyExist: boolean = true;
     isMobileExist: boolean = true;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-    brands: Brand[] = [
-        { name: 'Titan' },
-        { name: 'Volga' },
-        { name: 'Rolex' },
-    ];
+    brands: string[] = ['Titan', 'Volga', 'Rolex'];
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ICdfData,
         public dialog: MatDialog,
@@ -51,16 +45,17 @@ export class AddCdfComponent implements OnInit {
     add(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
-        if ((value || '').trim()) {
-            this.brands.push({ name: value.trim() });
+        if ((value).trim()) {
+            this.brands.push(value);
         }
+        console.log(this.brands);
         if (input) {
             input.value = '';
         }
         console.log(this.brands);
     }
-    remove(brand: Brand): void {
-        const index = this.brands.indexOf(brand);
+    remove(brands): void {
+        const index = this.brands.indexOf(brands);
         if (index >= 0) {
             this.brands.splice(index, 1);
         }
@@ -82,11 +77,11 @@ export class AddCdfComponent implements OnInit {
         });
     }
     saveCdf(): void {
-        const { email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address } = this.formGroup.value;
+        const { email, name, company, date, reference, referencePerson, displayNames, platforms, other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .addCdf({
-                email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
+                email, name, company, date, reference, referencePerson, brands: this.brands, displayNames, platforms, other, mobile, address
             })
             .subscribe(
                 (response) => {

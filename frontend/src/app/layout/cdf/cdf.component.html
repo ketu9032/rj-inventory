@@ -111,16 +111,13 @@
                             <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}
                             </mat-icon>
                         </button>
-                        <button mat-icon-button
+                        <!-- <button mat-icon-button
                             matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
                             color="{{tableParams.active? 'warn': 'primary'}}" (click)="confirmDialog(element.id)">
                             <mat-icon aria-label="Delete">delete</mat-icon>
-                        </button>
-
-
+                        </button> -->
                         <button mat-icon-button color="primary" matTooltip="Edit to Tier,Balance,Due limit"
                             (click)="onEditCdfToCustomers(element)">
-
                             <mat-icon>thumb_up</mat-icon>
                         </button>
                     </div>

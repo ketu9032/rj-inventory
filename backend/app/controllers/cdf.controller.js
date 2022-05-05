@@ -324,7 +324,7 @@ exports.onCheckMobile = async (req, res) => {
   try {
     const { mobile } = req.body;
     const response =
-      await pool.query(`select id from cdf where mobile = trim(${mobile})
+      await pool.query(`select id from cdf where mobile = ${mobile}
        `);
     if (response.rowCount > 0) {
       return res.status(200).send(false);

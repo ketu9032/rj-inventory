@@ -128,7 +128,7 @@
                         <mat-chip-list #chipList aria-label="brand selection">
                             <mat-chip *ngFor="let brand of brands" [selectable]="selectable" [value]="brand.value"
                                 (removed)="remove(brand)">
-                                {{brand.name}}
+                                {{brand}}
                                 <mat-icon matChipRemove>cancel</mat-icon>
                             </mat-chip>
                             <input placeholder="New brand..." formControlName="brands" [matChipInputFor]="chipList"
@@ -203,8 +203,7 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Mobile Number</mat-label>
-                        <input matInput formControlName="mobile" type="tel" type="number" />
-                        <!-- (keyup)="onMobileCheck()" -->
+                        <input matInput formControlName="mobile" type="tel" (keyup)="onMobileCheck()" type="number" />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="!isMobileExist">

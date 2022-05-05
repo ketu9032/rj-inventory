@@ -4,7 +4,7 @@ export interface ICdfData {
     due_limit: string, cdf_status: string, balance: number, tier_name: string, tier_id: number
 }
 export interface ICdfParams {
-    id?: number, email: string, name: string, company: string, date: string, reference: string, referencePerson: string, brands: string, displayNames: string, platforms: string, other: string, mobile: number, address: string,
+    id?: number, email: string, name: string, company: string, date: string, reference: string, referencePerson: string, brands: string[], displayNames: string, platforms: string, other: string, mobile: number, address: string,
 }
 export interface ICdfToCustomersParams {
     id?: number, email: string, name: string, company: string, date: string, reference: string, referencePerson: string, brands: string, displayNames: string, platforms: string, other: string, mobile: number, cdfStatus: string, address: string, dueLimit: string, balance: number, tierId: number
@@ -15,9 +15,6 @@ export interface ICdfActiveParams {
 export interface ICdfStatusActiveParams {
     id: number,
     cdfStatus: string
-}
-export interface Brand {
-    name: string;
 }
 export interface ICdfEmail {
     email: string;
