@@ -123,27 +123,12 @@ export class CDFComponent implements OnInit {
             }
             );
     }
-    onEditNewCustomers(element) {
-        this.dialog
-            .open(AddCustomersComponent, {
-                width: '520px',
-                height: '480px',
-                data: element,
-            }
-            )
-            .afterClosed()
-            .subscribe((result) => {
-                if (result) {
-                    this.getCdf();
-                }
-            }
-            );
-    }
+
     onEditCdfToCustomers(element) {
         this.dialog
             .open(CdfToCustomersComponent, {
                 width: '520px',
-                height: '480px',
+                height: 'auto',
                 data: element
             }
             )

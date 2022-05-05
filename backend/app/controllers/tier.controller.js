@@ -53,7 +53,7 @@ exports.add = async (req, res) => {
     }
     await pool.query(
       `INSERT INTO tiers (code)
-      VALUES('${code}'');
+      VALUES('${code}');
       `
     );
     res.status(STATUS_CODE.SUCCESS).send();

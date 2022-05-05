@@ -108,10 +108,9 @@ export class AddCategoryComponent implements OnInit {
     }
 
     fillForm() {
-        const { code: code, name: name } = this.data;
+        const { code: code } = this.data;
         this.formGroup.patchValue({
-            code,
-            name,
+            code
         });
     }
 }

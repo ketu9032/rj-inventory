@@ -1,4 +1,4 @@
-<h1 mat-dialog-title> {{ !this.data ? 'Add Customer' : 'Update Customer' }} </h1>
+<h1 mat-dialog-title><b> Add Customer</b> </h1>
 <div class="container">
     <mat-divider></mat-divider>
     <br>
@@ -8,31 +8,17 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Company</mat-label>
-                    <input matInput formControlName="company" />
+                    <input class="background_color" matInput formControlName="company" readonly   matTooltip="NOT Editable"/>
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-          formGroup.controls.company.touched &&
-          !formGroup.controls.company.value
-        ">
-                        <span class="error">Company is Required</span>
-                    </ng-container>
-                </div>
+
             </div>
             <!-- name start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>First Name</mat-label>
-                    <input matInput formControlName="name" />
+                    <input class="background_color" matInput formControlName="name"  readonly matTooltip="NOT Editable" />
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-          formGroup.controls.name.touched &&
-          !formGroup.controls.name.value
-        ">
-                        <span class="error">First name is Required</span>
-                    </ng-container>
-                </div>
+
             </div>
         </div>
         <div class="box">
@@ -40,38 +26,17 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Address</mat-label>
-                    <textarea matInput formControlName="address"></textarea>
+                    <textarea class="background_color" matInput formControlName="address" readonly  matTooltip="NOT Editable"></textarea>
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-          formGroup.controls.address.touched &&
-          !formGroup.controls.address.value
-        ">
-                        <span class="error">Address is Required</span>
-                    </ng-container>
-                </div>
+
             </div>
             <!-- Email start -->
-            <div class="block">
-                <mat-form-field>
+            <div class="block" >
+                <mat-form-field >
                     <mat-label>Email</mat-label>
-                    <input matInput formControlName="email" required />
+                    <input  class="background_color" matInput formControlName="email" required  readonly  matTooltip="NOT Editable"/>
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-      formGroup.controls.email.errors &&
-      !formGroup.controls.email.errors.required
-      ">
-                        <span class="error">Please enter correct email address</span>
-                        <br />
-                    </ng-container>
-                    <ng-container *ngIf="
-       formGroup.controls.email.touched &&
-       !formGroup.controls.email.value
-       ">
-                        <span class="error">Email is Required</span>
-                    </ng-container>
-                </div>
+
             </div>
         </div>
         <div class="box">
@@ -79,16 +44,9 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Mobile Number</mat-label>
-                    <input matInput formControlName="mobile" type="tel" type="number" />
+                    <input class="background_color" matInput formControlName="mobile" type="tel" type="number" readonly  matTooltip="NOT Editable" />
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-          formGroup.controls.mobile.touched &&
-          !formGroup.controls.mobile.value
-        ">
-                        <span class="error">Mobile Number is Required</span>
-                    </ng-container>
-                </div>
+
             </div>
             <!--dueLimit start -->
             <div class="block">
@@ -123,7 +81,7 @@
                 </div>
             </div>
             <!-- Other start -->
-            <div class="block">
+            <!-- <div class="block">
                 <mat-form-field>
                     <mat-label>Other</mat-label>
                     <input matInput formControlName="other" />
@@ -136,11 +94,9 @@
                         <span class="error">Other is Required</span>
                     </ng-container>
                 </div>
-            </div>
-        </div>
-        <div class="box">
-            <!-- tire start -->
-            <div class="block">
+            </div> -->
+              <!-- tire start -->
+              <div class="block">
                 <mat-form-field>
                     <mat-label>Select Tier</mat-label>
                     <mat-select formControlName="tier" name="tier">
@@ -158,6 +114,9 @@
                     </ng-container>
                 </div>
             </div>
+        </div>
+        <div class="box">
+
             <!-- button start -->
             <div class="block">
                 <br>
@@ -165,7 +124,7 @@
                     <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader"
                         type="submit">
                         <span *ngIf="!isShowLoader">
-                            {{ !this.data ? 'Save' : 'Update' }}
+                           ADD
                         </span>
                         <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
                     </button>

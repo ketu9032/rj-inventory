@@ -58,7 +58,6 @@ exports.findAll = async (req, res) => {
           due_limit,
           balance,
           tier_id as tier_id,
-          t.NAME AS tier_name,
           t.code as tier_code
     FROM
         cdf c
