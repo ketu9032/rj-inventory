@@ -1,13 +1,19 @@
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+}
+.mat-dialog-title {
+    margin: 5px 0 0  0;
+    display: block;
+}
+
 .container {
     .mat-form-field {
         width: 220px;
         display: flex;
         flex-direction: column;
-    }
-
-    .mat-dialog-title {
-        margin: 0 0 20px;
-        display: block;
     }
 
     .input {
@@ -17,14 +23,14 @@
     .box {
         display: flex;
     }
-    .background_color{
-    background-color: lightgray;
-    padding: 6px 0px 6px 5px;
-    width: 98%;
-}
+
+    .background_color {
+        background-color: lightgray;
+        padding: 6px 0px 6px 5px;
+        width: 98%;
+    }
 
     .block {
         margin: 0 10px 0 10px;
-
     }
 }

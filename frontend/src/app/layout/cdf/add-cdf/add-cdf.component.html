@@ -1,4 +1,9 @@
-<h1 mat-dialog-title> {{ !this.data ? 'Add CDF' : 'Update CDF' }} </h1>
+<div class="main-header">
+    <h1 mat-dialog-title><b> {{ !this.data ? 'Add CDF' : 'Update CDF' }}</b> </h1>
+    <button mat-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
 <div class="container">
     <mat-divider></mat-divider>
     <br>
@@ -122,18 +127,18 @@
             </div>
             <div class="box">
                 <!-- List of Brands start -->
-                <div class="block">
+                <!-- <div class="block">
                     <mat-form-field class="example-chip-list">
                         <mat-label>Brands</mat-label>
                         <mat-chip-list #chipList aria-label="brand selection">
                             <mat-chip *ngFor="let brand of brands" [selectable]="selectable" [value]="brand.value"
-                                (removed)="remove(brand)">
+                                (removed)="removeBrands(brand)">
                                 {{brand}}
                                 <mat-icon matChipRemove>cancel</mat-icon>
                             </mat-chip>
                             <input placeholder="New brand..." formControlName="brands" [matChipInputFor]="chipList"
                                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                                (matChipInputTokenEnd)="add($event)">
+                                (matChipInputTokenEnd)="addBrands($event)">
                         </mat-chip-list>
                     </mat-form-field>
                     <div>
@@ -144,8 +149,7 @@
                             <span class="error">Brands is Required</span>
                         </ng-container>
                     </div>
-                    <!--  -->
-                </div>
+                </div> -->
                 <!-- List of Display Names start -->
                 <div class="block">
                     <mat-form-field>
@@ -165,6 +169,29 @@
             <div class="box">
                 <!-- List of Sites start -->
                 <div class="block">
+                    <mat-form-field class="example-chip-list">
+                        <mat-label>List of Sites</mat-label>
+                        <mat-chip-list #chipList aria-label="platform selection">
+                            <mat-chip *ngFor="let platform of platforms" [selectable]="selectable"
+                                [value]="platform.value" (removed)="removePlatform(platform)">
+                                {{platform}}
+                                <mat-icon matChipRemove>cancel</mat-icon>
+                            </mat-chip>
+                            <input placeholder="New platform..." formControlName="platforms"
+                                [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="addPlatform($event)">
+                        </mat-chip-list>
+                    </mat-form-field>
+                    <div>
+                        <ng-container *ngIf="
+          formGroup.controls.platforms.touched &&
+          !formGroup.controls.platforms.value
+        ">
+                            <span class="error">List of Sites is Required</span>
+                        </ng-container>
+                    </div>
+                </div>
+                <!-- <div class="block">
                     <mat-form-field>
                         <mat-label>List of Sites</mat-label>
                         <mat-select formControlName="platforms" name="platforms" multiple>
@@ -181,21 +208,13 @@
                             <span class="error">List of Sites is Required</span>
                         </ng-container>
                     </div>
-                </div>
+                </div> -->
                 <!-- Other start -->
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Comment</mat-label>
                         <input matInput formControlName="other" />
                     </mat-form-field>
-                    <!-- <div>
-                        <ng-container *ngIf="
-          formGroup.controls.other.touched &&
-          !formGroup.controls.other.value
-        ">
-                            <span class="error">Other is Required</span>
-                        </ng-container>
-                    </div> -->
                 </div>
             </div>
             <div class="box">
@@ -203,7 +222,8 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Mobile Number</mat-label>
-                        <input matInput formControlName="mobile"  minlength="10"   (keyup)="onMobileCheck()" type="number" />
+                        <input matInput formControlName="mobile" minlength="10" (keyup)="onMobileCheck()"
+                            type="number" />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="!isMobileExist">

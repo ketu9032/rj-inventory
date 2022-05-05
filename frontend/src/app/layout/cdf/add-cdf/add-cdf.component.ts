@@ -19,6 +19,8 @@ export class AddCdfComponent implements OnInit {
     references = [{ value: 'Person/Company', id: 1 }, { value: 'Google', id: 2 }, { value: 'IndiaMart', id: 3 }, { value: 'Other', id: 4 }];
     ListOfSites = [{ value: 'Flipkart', id: 1 }, { value: 'Snapdeal', id: 2 }, { value: 'Amazon', id: 3 }, { value: 'Paytm', id: 4 }, { value: 'Limeraod', id: 5 }, { value: 'Shopclues', id: 6 }, { value: 'Facebook/Instagram', id: 7 }, { value: 'Offline', id: 8 }];
 
+    platforms: string[] =  ['Flipkart', 'Snapdeal', 'Amazon', 'Paytm',  'Limeraod',  'Shopclues', 'Facebook/Instagram', 'Offline'];
+
 
     currentDate = new Date()
     visible = true;
@@ -44,7 +46,7 @@ export class AddCdfComponent implements OnInit {
             this.fillForm();
         }
     }
-    add(event: MatChipInputEvent): void {
+    addBrands(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
         if ((value).trim()) {
@@ -56,10 +58,28 @@ export class AddCdfComponent implements OnInit {
         }
         console.log(this.brands);
     }
-    remove(brands): void {
+    removeBrands(brands): void {
         const index = this.brands.indexOf(brands);
         if (index >= 0) {
             this.brands.splice(index, 1);
+        }
+    }
+    addPlatform(event: MatChipInputEvent): void {
+        const input = event.input;
+        const value = event.value;
+        if ((value).trim()) {
+            this.platforms.push(value);
+        }
+        console.log(this.platforms);
+        if (input) {
+            input.value = '';
+        }
+        console.log(this.platforms);
+    }
+    removePlatform(platforms): void {
+        const index = this.platforms.indexOf(platforms);
+        if (index >= 0) {
+            this.platforms.splice(index, 1);
         }
     }
     initializeForm(): void {
@@ -79,11 +99,11 @@ export class AddCdfComponent implements OnInit {
         });
     }
     saveCdf(): void {
-        const { email, name, company, date, reference, referencePerson, displayNames, platforms, other, mobile, address } = this.formGroup.value;
+        const { email, name, company, date, reference, referencePerson, displayNames, other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .addCdf({
-                email, name, company, date, reference, referencePerson, brands: this.brands, displayNames, platforms, other, mobile, address
+                email, name, company, date, reference, referencePerson, brands: this.brands, displayNames, platforms: this.platforms, other, mobile, address
             })
             .subscribe(
                 (response) => {
