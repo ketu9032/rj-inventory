@@ -44,7 +44,7 @@ exports.findAll = async (req, res) => {
       SELECT
         Count(c.id) OVER() AS total,
         c.id,
-            name,
+            c.name,
             email,
             company,
             date,
@@ -57,9 +57,14 @@ exports.findAll = async (req, res) => {
             mobile,
             address,
             due_limit,
-            balance
+            balance,
+            tier_id as tier_id,
+            t.NAME AS tier_name,
+            t.code as tier_code
       FROM
           cdf c
+          Join tiers t
+          on t.id = c.tier_id
             ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

@@ -24,6 +24,7 @@ export class CustomersComponent implements OnInit {
         'balance',
         'payment',
         'due_limit',
+        'tier_code',
         'status',
         'action'
     ];
