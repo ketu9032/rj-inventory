@@ -119,8 +119,8 @@ export class CustomersComponent implements OnInit {
     openTires() {
         this.dialog
             .open(TierComponent, {
-                width: 'auto',
-                height: '550px'
+                width: '450px',
+                height: '600px'
             })
             .afterClosed()
             .subscribe((result) => { });

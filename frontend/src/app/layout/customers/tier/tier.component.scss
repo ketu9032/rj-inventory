@@ -1,5 +1,13 @@
-table {
-    width: 100%;
+.header {
+    mat-form-field {
+        width: 90px;
+    }
+}
+
+.mat-elevation-z8 {
+    table {
+        width: 100%;
+    }
 }
 
 .loader {
@@ -20,6 +28,7 @@ th {
 td {
     color: rgb(73 70 70 / 87%);
 }
-.active{
+
+.active {
     margin-left: 30px;
 }

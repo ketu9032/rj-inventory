@@ -10,7 +10,6 @@ import { PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { TiersService } from '../services/tiers.service';
 import { AddTierComponent } from './add-tier/add-tier.component';
 import { DeleteTierComponent } from './delete-tier/delete-tier.component';
-
 @Component({
     selector: 'app-tier-customers',
     templateUrl: './tier.component.html',
@@ -19,7 +18,6 @@ import { DeleteTierComponent } from './delete-tier/delete-tier.component';
 export class TierComponent implements OnInit {
     displayedColumns: string[] = [
         'code',
-        'name',
         'action'
     ];
     dataSource: any = [];
@@ -37,28 +35,23 @@ export class TierComponent implements OnInit {
         search: '',
         active: true
     }
-
     constructor(
         public dialog: MatDialog,
         private tiersService: TiersService,
         public snackBar: MatSnackBar
     ) { }
-
     ngOnInit(): void {
         this.getTier();
     }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
         this.getTier();
     }
-
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-
     getTier() {
         this.loader = true;
         this.tiersService.getTiers(this.tableParams).subscribe(
@@ -82,12 +75,10 @@ export class TierComponent implements OnInit {
             () => { }
         );
     }
-
     onAddNewTier(): void {
         this.dialog
             .open(AddTierComponent, {
-                width: '400px'
-
+                width: '350px'
             })
             .afterClosed()
             .subscribe((result) => {
@@ -99,7 +90,7 @@ export class TierComponent implements OnInit {
     onEditNewTier(element) {
         this.dialog
             .open(AddTierComponent, {
-                width: '600px',
+                width: '350px',
                 data: element
             })
             .afterClosed()
@@ -109,25 +100,11 @@ export class TierComponent implements OnInit {
                 }
             });
     }
-    //   confirmDialog(id: string): void {
-    //     this.dialog
-    //       .open(DeleteTierComponent, {
-    //         maxWidth: '400px',
-    //         data: id
-    //       })
-    //       .afterClosed()
-    //       .subscribe((result) => {
-    //         if (result && result.data === true) {
-    //           this.getTier();
-    //         }
-    //       });
-    //   }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
         this.getTier();
     }
-
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
