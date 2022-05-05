@@ -25,7 +25,6 @@ export class CustomersComponent implements OnInit {
         'payment',
         'due_limit',
         'tier_code',
-        'status',
         'action'
     ];
     dataSource: any = [];

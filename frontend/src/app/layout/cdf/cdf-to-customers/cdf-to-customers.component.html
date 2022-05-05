@@ -110,7 +110,7 @@
             <!-- Balance start -->
             <div class="block">
                 <mat-form-field>
-                    <mat-label>Balance</mat-label>
+                    <mat-label>Initial Balance</mat-label>
                     <input matInput formControlName="balance" type="number" />
                 </mat-form-field>
                 <div>
@@ -118,7 +118,7 @@
           formGroup.controls.balance.touched &&
           !formGroup.controls.balance.value
         ">
-                        <span class="error">Balance is Required</span>
+                        <span class="error">Initial Balance is Required</span>
                     </ng-container>
                 </div>
             </div>
