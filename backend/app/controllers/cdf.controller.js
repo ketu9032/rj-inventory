@@ -39,34 +39,33 @@ exports.findAll = async (req, res) => {
     if (cdfStatus) {
       searchQuery += ` and lower(c.cdf_status) = '${cdfStatus.toLowerCase()}'`;
     }
-    const response = await pool.query(
-      `
-      SELECT
-        Count(c.id) OVER() AS total,
-        c.id,
-            c.name,
-            email,
-            company,
-            date,
-            reference,
-            reference_person,
-            brands,
-            display_names,
-            platforms,
-            other,
-            mobile,
-            address,
-            due_limit,
-            balance,
-            tier_id as tier_id,
-            t.NAME AS tier_name,
-            t.code as tier_code
-      FROM
-          cdf c
-          Join tiers t
-          on t.id = c.tier_id
-            ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
-    );
+    const query = `
+    SELECT
+      Count(c.id) OVER() AS total,
+      c.id,
+          c.name,
+          email,
+          company,
+          date,
+          reference,
+          reference_person,
+          brands,
+          display_names,
+          platforms,
+          other,
+          mobile,
+          address,
+          due_limit,
+          balance,
+          tier_id as tier_id,
+          t.NAME AS tier_name,
+          t.code as tier_code
+    FROM
+        cdf c
+       left Join tiers t
+        on t.id = c.tier_id
+          ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+    const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -279,7 +278,7 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
     }
     await pool.query(
       `UPDATE cdf
-      SET  company='${company}', name='${name}',  address='${address}',  email='${email}', mobile='${mobile}',  due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}' where id = ${id};
+      SET  company='${company}', name='${name}',  address='${address}',  email='${email}', mobile='${mobile}', cdf_status='active',  due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}' where id = ${id};
        `
     );
     res.status(STATUS_CODE.SUCCESS).send();
@@ -289,12 +288,12 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
     });
   }
 };
-
 exports.onCheckEmail = async (req, res) => {
   try {
-    const {email} = req.body;
-    const response =
-      await pool.query(`select id from cdf where email = trim('${email}')`);
+    const { email } = req.body;
+    const response = await pool.query(
+      `select id from cdf where email = trim('${email}')`
+    );
     if (response.rowCount > 0) {
       return res.status(STATUS_CODE.SUCCESS).send(false);
     }
@@ -307,32 +306,32 @@ exports.onCheckEmail = async (req, res) => {
 };
 exports.onCheckCompany = async (req, res) => {
   try {
-    const {company} = req.body;
+    const { company } = req.body;
     const response =
       await pool.query(`select id from cdf where company = trim('${company}')
        `);
     if (response.rowCount > 0) {
-      return   res.status(200).send(false);
+      return res.status(200).send(false);
     }
-    return  res.status(STATUS_CODE.SUCCESS).send(true);
+    return res.status(STATUS_CODE.SUCCESS).send(true);
   } catch (error) {
-    return   res.status(STATUS_CODE.ERROR).send({
+    return res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
 };
 exports.onCheckMobile = async (req, res) => {
   try {
-    const {mobile} = req.body;
+    const { mobile } = req.body;
     const response =
       await pool.query(`select id from cdf where mobile = trim(${mobile})
        `);
     if (response.rowCount > 0) {
-      return   res.status(200).send(false);
+      return res.status(200).send(false);
     }
-    return  res.status(STATUS_CODE.SUCCESS).send(true);
+    return res.status(STATUS_CODE.SUCCESS).send(true);
   } catch (error) {
-    return  res.status(STATUS_CODE.ERROR).send({
+    return res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }

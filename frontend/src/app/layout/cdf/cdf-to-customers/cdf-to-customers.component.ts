@@ -49,43 +49,10 @@ export class CdfToCustomersComponent implements OnInit {
             tier: ['', Validators.required],
         });
     }
-    // saveUser(): void {
-    //     const { company, name, address, email, mobile, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
-    //     this.isShowLoader = true;
-    //     this.cdfService
-    //         .addCustomers({
-    //             company,
-    //             name,
-    //             address,
-    //             email,
-    //             mobile,
-    //             dueLimit,
-    //             balance,
-    //             other,
-    //             tierId
-    //         })
-    //         .subscribe(
-    //             (response) => {
-    //                 this.isShowLoader = false;
-    //                 this.snackBar.open('User saved successfully', 'OK', {
-    //                     duration: 3000
-    //                 });
-    //                 this.dialogRef.close(true);
-    //             },
-    //             (error) => {
-    //                 this.isShowLoader = false;
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok', {
-    //                     duration: 3000
-    //                 }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-    // }
+
     cdfToCustomers(): void {
-        const { company, name, address, email, mobile, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
+        const { company, name, address, email, mobile,
+            cdfStatus, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .editCdfToCustomers({
@@ -97,6 +64,7 @@ export class CdfToCustomersComponent implements OnInit {
                 mobile,
                 dueLimit,
                 balance,
+                cdfStatus,
                 other,
                 tierId,
                 date: '',
@@ -130,9 +98,7 @@ export class CdfToCustomersComponent implements OnInit {
         if (this.data && this.data.id) {
             this.cdfToCustomers();
         }
-        //  else {
-        //     this.saveUser();
-        // }
+
     }
     fillForm() {
         const { company: company, name: name, address: address, email: email, mobile: mobile, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;

@@ -116,10 +116,8 @@
                             color="{{tableParams.active? 'warn': 'primary'}}" (click)="confirmDialog(element.id)">
                             <mat-icon aria-label="Delete">delete</mat-icon>
                         </button>
-                        <button mat-icon-button color="primary" matTooltip="Click to CDF to Customers"
-                            (click)="changeCdfStatus(element.id)">
-                            <mat-icon>move_to_inbox</mat-icon>
-                        </button>
+
+
                         <button mat-icon-button color="primary" matTooltip="Edit to Tier,Balance,Due limit"
                             (click)="onEditCdfToCustomers(element)">
 

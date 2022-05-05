@@ -206,30 +206,7 @@ export class CDFComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         this.getCdf();
     }
-    changeCdfStatus(id: number): void {
-        this.cdfService
-            .changeCdfStatus({ id: id, cdfStatus: this.tableParams.cdfStatus })
-            .subscribe(
-                (response) => {
-                    if (this.tableParams.cdfStatus) {
-                        this.snackBar.open('Active successfully', 'OK', {
-                            duration: 3000
-                        })
-                    }
-                    this.getCdf();
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok',
-                        {
-                            duration: 3000
-                        }
-                    );
-                },
-                () => { }
-            );
-    }
+
     onCdfStatusChange($event: MatSelectChange) {
         this.tableParams.cdfStatus = $event.value;
         this.getCdf();

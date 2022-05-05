@@ -203,7 +203,8 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Mobile Number</mat-label>
-                        <input matInput formControlName="mobile" type="tel" type="number" (keyup)="onMobileCheck()" />
+                        <input matInput formControlName="mobile" type="tel" type="number" />
+                        <!-- (keyup)="onMobileCheck()" -->
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="!isMobileExist">
