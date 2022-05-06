@@ -12,20 +12,24 @@ exports.findAll = async (req, res) => {
     if (search) {
       searchQuery += ` and
         (
-          or supplier_name ilike '%${search}%'
-          or supplier_qty ilike '%${search}%'
-          or supplier_rate ilike '%${search}%'
+          or supplier_company ilike '%${search}%'
+
+          or item_supplier_rate ilike '%${search}%'
         )`;
     }
     searchQuery += ` and is_active = ${active}`;
-    const query = `  SELECT
-    Count(id) OVER() AS total,
+    const query = `
+    SELECT
+      Count(id) OVER() AS total,
         id,
-        supplier_qty,
-        supplier_rate,
-        supplier_id as supplier_id,
-    FROM item_supplier
-      JOIN suppliers as s ON s.id = item_supplier.id
+        item_supplier_rate,
+        suppliers_id as suppliers_id,
+        suppliers.company as suppliers_company
+    FROM
+     item_supplier
+      JOIN
+       suppliers as s
+        ON s.id = item_supplier.suppliers_id
 ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
 
@@ -58,9 +62,9 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const { supplier_name, supplier_qty, supplier_rate } = req.body;
+    const { suppliersId,  item_supplier_rate } = req.body;
 
-    if (!supplier_name || !supplier_qty || !supplier_rate) {
+    if (!suppliersId ||  !item_supplier_rate) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -69,11 +73,10 @@ exports.add = async (req, res) => {
     await pool.query(
       `INSERT INTO item_supplier
       (
-        supplier_name,
-        supplier_qty,
-        supplier_rate
+        suppliers_id,
+        item_supplier_rate
          )
-      VALUES('${supplier_name}','${supplier_qty}', '${supplier_rate}');
+      VALUES('${suppliersId}', '${item_supplier_rate}');
       `
     );
 
@@ -87,8 +90,8 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const { id, supplier_name, supplier_qty, supplier_rate } = req.body;
-    if (!supplier_name || !supplier_qty || !supplier_rate || !id) {
+    const { id, suppliersId,  item_supplier_rate } = req.body;
+    if (!suppliersId ||  !item_supplier_rate || !id ) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -96,7 +99,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE item_supplier
-      SET  supplier_name='${supplier_name}', supplier_qty='${supplier_qty}',supplier_rate='${supplier_rate}' where id = ${id};`
+      SET  suppliers_id='${suppliersId}', item_supplier_rate='${item_supplier_rate}' where id = ${id};`
     );
 
     res.status(STATUS_CODE.SUCCESS).send();

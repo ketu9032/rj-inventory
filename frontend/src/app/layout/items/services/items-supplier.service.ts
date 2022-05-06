@@ -6,32 +6,16 @@ import { IItemActiveParams, IItemParams } from 'src/app/models/item';
 import { IItemSupplierParams } from 'src/app/models/item_supplier';
 
 @Injectable({ providedIn: 'root' })
-export class ItemsService {
-    private itemURL = 'api/item';
-    private changeStatusURL = 'api/item/changeStatus';
+export class ItemsSuppliersService {
     private itemSupplierURL = 'api/item_supplier';
-    private getSupplierDropDownURL = 'api/getCategoryDropDown';
+
+    private getSupplierDropDownUL = 'api/supplierDropDown';
 
 
 
     constructor(private restService: RestService, private commonService: CommonService) { }
 
-    public getItems(tablePrams: IMatTableParams) {
-        const queryString = this.commonService.toQueryString(tablePrams);
-        return this.restService.get<any>(`${this.itemURL}${queryString}`);
-    }
-    public addItems(item: IItemParams) {
-        return this.restService.post(`${this.itemURL}`, item);
-    }
-    public editItems(item: IItemParams) {
-        return this.restService.put(`${this.itemURL}`, item);
-    }
-    public removeItems(id: string) {
-        return this.restService.delete(`${this.itemURL}?id=${id}`);
-    }
-    public changeStatus(item: IItemActiveParams) {
-        return this.restService.put(`${this.changeStatusURL}`, item);
-    }
+
 
 
     public getItemSupplier(tablePrams: IMatTableParams) {
@@ -47,8 +31,8 @@ export class ItemsService {
     public removeItemSupplier(id: string) {
         return this.restService.delete(`${this.itemSupplierURL}?id=${id}`);
     }
-    public getSupplierDropDown() {
-        return this.restService.get<any>(`${this.getSupplierDropDownURL}`);
+    public getItemSupplierDropDown() {
+        return this.restService.get<any>(`${this.getSupplierDropDownUL}`);
       }
 }
 

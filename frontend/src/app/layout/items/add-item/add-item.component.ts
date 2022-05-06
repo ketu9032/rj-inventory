@@ -9,6 +9,7 @@ import { IItemSupplierData } from 'src/app/models/item_supplier';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { ItemsCategoriesService } from '../services/items-categories.service';
+import { ItemsSuppliersService } from '../services/items-supplier.service';
 import { ItemsService } from '../services/items.service';
 @Component({
     selector: 'app-add-item',
@@ -17,9 +18,8 @@ import { ItemsService } from '../services/items.service';
 })
 export class AddItemComponent implements OnInit {
     displayedColumns: string[] = [
-        'supplier_name',
-        'supplier_qty',
-        'supplier_rate',
+        'suppliersCompany',
+        'item_supplier_rate',
         'action'
     ];
     formSupplier: FormGroup;
@@ -34,6 +34,7 @@ export class AddItemComponent implements OnInit {
     suppliers = []
     supplierDataSource: any = [];
     totalRows: number;
+    suppliersCompany = [];
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -53,15 +54,16 @@ export class AddItemComponent implements OnInit {
         private itemsCategoriesService: ItemsCategoriesService,
         public snackBar: MatSnackBar,
         private router: Router,
-        private itemsService: ItemsService
+        private itemsService: ItemsService,
+        private itemsSuppliersService: ItemsSuppliersService
     ) { }
     ngOnInit() {
         this.initializeForm();
         this.initializeSupplierForm()
         this.getCategoriesDropDown('Item')
+        this.getSuppliersDropDown()
         if (this.data && this.data.id) {
             this.fillForm();
-
         }
         if (this.supplierData && this.supplierData.id) {
             this.supplierFillForm();
@@ -83,9 +85,8 @@ export class AddItemComponent implements OnInit {
     }
     initializeSupplierForm(): void {
         this.formSupplier = this.formBuilder.group({
-            supplier_name: ['', Validators.required],
-            supplier_qty: ['', Validators.required],
-            supplier_rate: ['', Validators.required],
+            suppliersCompany: ['', Validators.required],
+            item_supplier_rate: ['', Validators.required],
         });
     }
     saveItems(): void {
@@ -164,9 +165,9 @@ export class AddItemComponent implements OnInit {
         });
     }
     supplierFillForm() {
-        const { item_id: itemId, supplier_name, supplier_qty, supplier_rate } = this.supplierData;
+        const { item_id: itemId, supplier_name, item_supplier_rate } = this.supplierData;
         this.formSupplier.patchValue({
-            itemId, supplier_name, supplier_qty, supplier_rate
+            itemId, supplier_name, item_supplier_rate
         });
     }
     getCategoriesDropDown(type: string) {
@@ -187,5 +188,22 @@ export class AddItemComponent implements OnInit {
                 () => { }
             );
     }
-
+    getSuppliersDropDown() {
+        this.itemsSuppliersService
+            .getItemSupplierDropDown()
+            .subscribe(
+                (response) => {
+                    this.suppliersCompany = response;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
 }

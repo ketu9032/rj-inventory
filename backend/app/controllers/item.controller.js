@@ -17,7 +17,6 @@ exports.findAll = async (req, res) => {
           or silver ilike '%${search}%'
           or category ilike '%${search}%'
           or supplier_name ilike '%${search}%'
-          or supplier_qty ilike '%${search}%'
           or supplier_rate ilike '%${search}%'
         )`;
     }
@@ -114,9 +113,10 @@ exports.add = async (req, res) => {
       gold,
       india_mart,
       dealer,
+      suppliers,
       category_id
       )
-      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}', '${dealer}', '${categoryId}') returning id;
+      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}', '${suppliers}', '${categoryId}') returning id;
       `;
 
       console.log(insertItemQuery);
@@ -125,12 +125,11 @@ exports.add = async (req, res) => {
     for (let index = 0; index < suppliers.length; index++) {
       const element = suppliers[index];
       const insertSupplierQuery = `INSERT INTO item_supplier
-  ( supplier_name,
-    supplier_qty,
-    supplier_rate,
+  ( suppliers_id,
+    item_supplier_rate,
     item_id
      )
-  VALUES('${element.supplier_name}',${element.supplier_qty}, ${element.supplier_rate},${itemId}) ;
+  VALUES('${element.suppliers_id}', '${element.item_supplier_rate}', '${element.itemId}') ;
   `;
       await pool.query(insertSupplierQuery);
     }
@@ -185,12 +184,11 @@ exports.update = async (req, res) => {
     for (let index = 0; index < UpdateItemId.length; index++) {
       const element = UpdateItemId[index];
       const updateSupplierQuery = `INSERT INTO item_supplier
-      ( supplier_name,
-        supplier_qty,
-        supplier_rate,
+      ( suppliers_id,
+        item_supplier_rate,
         item_id
          )
-      VALUES('${element.supplier_name}',${element.supplier_qty}, ${element.supplier_rate},${itemId}) ;
+      VALUES('${element.supplier_name}', '${element.item_supplier_rate}','${itemId}') ;
       `;
       await pool.query(updateSupplierQuery);
     }

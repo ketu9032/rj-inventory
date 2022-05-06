@@ -163,55 +163,43 @@
 <mat-divider class="mat-divider"></mat-divider>
 <br>
 <!-- supplier form -->
-<h1 mat-dialog-title>Supplier Details</h1>
+<h1 mat-dialog-title>Item Supplier Details</h1>
 <form [formGroup]="formSupplier" (ngSubmit)="addSupplier()">
     <div class="supplier_details_table">
         <div class="box">
 
 
-            <!-- name start -->
+            <!-- company start -->
 
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Name</mat-label>
-                    <input matInput formControlName="supplier_name" required />
+                    <mat-select formControlName="suppliersCompany" name="supplier" required>
+                        <mat-option *ngFor="let supplier of suppliersCompany" [value]="supplier.company">
+                            {{supplier.company}}
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
-                formSupplier.controls.supplier_name.touched &&
-                !formSupplier.controls.supplier_name.value
+                formSupplier.controls.suppliersCompany.touched &&
+                !formSupplier.controls.suppliersCompany.value
                 ">
                         <span class="error">Name is Required</span>
                     </ng-container>
                 </div>
             </div>
-            <!-- Qty start -->
-            <div class="block">
-                <mat-form-field>
-                    <mat-label>Qty</mat-label>
-                    <input matInput formControlName="supplier_qty" type="number" required/>
-                </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-                formSupplier.controls.supplier_qty.touched &&
-                !formSupplier.controls.supplier_qty.value
-                ">
-                        <span class="error">Qty is Required</span>
-                    </ng-container>
-                    <!-- <ng-container *ngIf=" formSupplier.controls.supplier_qty.touched &&
-                formSupplier.controls.supplier_qty.value === true" onclick="clearSupplierInputBox()"></ng-container> -->
-                </div>
-            </div>
+
             <!-- rate start -->
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Rate</mat-label>
-                    <input matInput formControlName="supplier_rate" type="number" required/>
+                    <input matInput formControlName="item_supplier_rate" type="number" required/>
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
-                formSupplier.controls.supplier_rate.touched &&
-                !formSupplier.controls.supplier_rate.value
+                formSupplier.controls.item_supplier_rate.touched &&
+                !formSupplier.controls.item_supplier_rate.value
                 ">
                         <span class="error">Rate is Required</span>
                     </ng-container>
@@ -227,22 +215,17 @@
 <br>
 <div class="mat-elevation-z8">
     <table mat-table [dataSource]="supplierDataSource" matSort matSortActive="company" matSortDirection="asc">
-        <ng-container matColumnDef="supplier_name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+        <ng-container matColumnDef="suppliersCompany">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Company</th>
             <td mat-cell *matCellDef="let suppliers">
-                {{ suppliers.supplier_name }}
+                {{ suppliers.suppliersCompany }}
             </td>
         </ng-container>
-        <ng-container matColumnDef="supplier_qty">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Qty</th>
-            <td mat-cell *matCellDef="let suppliers">
-                {{ suppliers.supplier_qty }}
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="supplier_rate">
+
+        <ng-container matColumnDef="item_supplier_rate">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Rate</th>
             <td mat-cell *matCellDef="let suppliers">
-                {{ suppliers.supplier_rate }}
+                {{ suppliers.item_supplier_rate }}
             </td>
         </ng-container>
         <ng-container matColumnDef="action">
