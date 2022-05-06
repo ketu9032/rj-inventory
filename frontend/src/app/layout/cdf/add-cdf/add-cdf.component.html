@@ -39,7 +39,7 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>First Name & Last Name</mat-label>
-                        <input matInput formControlName="name"  required/>
+                        <input matInput formControlName="name" required />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
@@ -56,7 +56,7 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Company Name</mat-label>
-                        <input matInput formControlName="company" (keyup)="onCompanyCheck()" required/>
+                        <input matInput formControlName="company" (keyup)="onCompanyCheck()" required />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="!isCompanyExist">
@@ -95,7 +95,7 @@
                     <mat-form-field>
                         <mat-label>Reference</mat-label>
                         <mat-select formControlName="reference" name="reference" required>
-                            <mat-option *ngFor="let reference of references" [value]="reference.value" >
+                            <mat-option *ngFor="let reference of references" [value]="reference.value">
                                 {{reference.value}}
                             </mat-option>
                         </mat-select>
@@ -113,7 +113,7 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Reference Person</mat-label>
-                        <input matInput formControlName="referencePerson" required/>
+                        <input matInput formControlName="referencePerson" required />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="
@@ -127,7 +127,7 @@
             </div>
             <div class="box">
                 <!-- List of Brands start -->
-                 <div class="block">
+                <div class="block">
                     <mat-form-field class="example-chip-list">
                         <mat-label>Brands</mat-label>
                         <mat-chip-list #chipList aria-label="brand selection" required>
@@ -173,13 +173,13 @@
                         <mat-label>List of Sites</mat-label>
                         <mat-chip-list #chipLists aria-label="platform selection" required>
                             <mat-chip *ngFor="let platform of platforms" [selectable]="selectable"
-                                [value]="platform.value" (removed)="removePlatform(platform)" >
+                                [value]="platform.value" (removed)="removePlatform(platform)">
                                 {{platform}}
                                 <mat-icon matChipRemove>cancel</mat-icon>
                             </mat-chip>
                             <input placeholder="New platform..." formControlName="platforms"
                                 [matChipInputFor]="chipLists" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                                [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="addPlatform($event)" >
+                                [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="addPlatform($event)">
                         </mat-chip-list>
                     </mat-form-field>
                     <div>
@@ -191,24 +191,6 @@
                         </ng-container>
                     </div>
                 </div>
-                <!-- <div class="block">
-                    <mat-form-field>
-                        <mat-label>List of Sites</mat-label>
-                        <mat-select formControlName="platforms" name="platforms" multiple>
-                            <mat-option *ngFor="let platforms of ListOfSites" [value]="platforms.value">
-                                {{platforms.value}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <div>
-                        <ng-container *ngIf="
-          formGroup.controls.platforms.touched &&
-          !formGroup.controls.platforms.value
-        ">
-                            <span class="error">List of Sites is Required</span>
-                        </ng-container>
-                    </div>
-                </div> -->
                 <!-- Other start -->
                 <div class="block">
                     <mat-form-field>
@@ -222,8 +204,8 @@
                 <div class="block">
                     <mat-form-field>
                         <mat-label>Mobile Number</mat-label>
-                        <input matInput formControlName="mobile" maxlength="10" (keyup)="onMobileCheck()"
-                            type="tel"  required/>
+                        <input matInput formControlName="mobile" maxlength="10" (keyup)="onMobileCheck()" type="tel"
+                            required />
                     </mat-form-field>
                     <div>
                         <ng-container *ngIf="!isMobileExist">
