@@ -13,7 +13,7 @@
         <!-- company start -->
         <mat-form-field>
             <mat-label>Company</mat-label>
-            <input matInput formControlName="company" />
+            <input matInput formControlName="company" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -27,7 +27,7 @@
         <!--dueLimit start -->
         <mat-form-field>
             <mat-label>Due Limit</mat-label>
-            <input type="number" matInput formControlName="dueLimit" />
+            <input type="number" matInput formControlName="dueLimit" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -41,7 +41,7 @@
         <!-- Balance start -->
         <mat-form-field>
             <mat-label>Balance</mat-label>
-            <input matInput formControlName="balance" type="number" />
+            <input matInput formControlName="balance" type="number" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -54,7 +54,7 @@
         <!-- Other start -->
         <mat-form-field>
             <mat-label>Other</mat-label>
-            <input matInput formControlName="other" />
+            <input matInput formControlName="other"  />
         </mat-form-field>
         <div>
             <ng-container *ngIf="

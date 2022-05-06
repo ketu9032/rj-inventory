@@ -99,7 +99,7 @@ export class CDFComponent implements OnInit {
         this.dialog
             .open(AddCdfComponent, {
                 width: '690px',
-                height: '600px'
+                height: 'auto'
             })
             .afterClosed()
             .subscribe((result) => {
@@ -112,7 +112,7 @@ export class CDFComponent implements OnInit {
         this.dialog
             .open(AddCdfComponent, {
                 width: '690px',
-                height: '600px',
+                height: 'auto',
                 data: element
             })
             .afterClosed()

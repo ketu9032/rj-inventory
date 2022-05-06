@@ -4,19 +4,21 @@
         <mat-icon>close</mat-icon>
     </button>
 </div>
+<mat-divider></mat-divider>
+<br>
 <div class="container">
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <!-- Date start -->
         <mat-form-field color="accent">
             <mat-label>Date</mat-label>
-            <input matInput formControlName="date" [matDatepicker]="date">
+            <input matInput formControlName="date" [matDatepicker]="date" [max]="currentDate" required>
             <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
             <mat-datepicker #date></mat-datepicker>
         </mat-form-field>
         <!-- Description start -->
         <mat-form-field>
             <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description"></textarea>
+            <textarea matInput formControlName="description" required ></textarea>
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -29,7 +31,7 @@
         <!-- Category start -->
         <mat-form-field>
             <mat-label>Category</mat-label>
-            <mat-select formControlName="user" name="user">
+            <mat-select formControlName="user" name="user" required>
                 <mat-option *ngFor="let category of categories" [value]="category.id">
                     {{category.code}}
                 </mat-option>
@@ -38,7 +40,7 @@
         <!-- Amount start -->
         <mat-form-field>
             <mat-label>Amount</mat-label>
-            <input matInput formControlName="amount" type="number" />
+            <input matInput formControlName="amount" type="number" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -52,7 +54,7 @@
         <!-- user start -->
         <mat-form-field>
             <mat-label>User To</mat-label>
-            <mat-select formControlName="user" name="user">
+            <mat-select formControlName="user" name="user" required >
                 <mat-option *ngFor="let user of users" [value]="user.id">
                     {{user.user_name}}
                 </mat-option>

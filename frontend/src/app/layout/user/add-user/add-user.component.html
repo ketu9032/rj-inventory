@@ -1,19 +1,17 @@
 <div class="main-header">
-    <h1 mat-dialog-title><b> {{ !this.data ?  'Add user' : 'Update user' }}</b> </h1>
+    <h1 mat-dialog-title><b> {{ !this.data ? 'Add user' : 'Update user' }}</b> </h1>
     <button mat-button mat-dialog-close>
         <mat-icon>close</mat-icon>
     </button>
 </div>
 <div class="container">
-
     <mat-divider></mat-divider>
     <br>
-
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-
+        <!-- user name start -->
         <mat-form-field>
             <mat-label>User Name</mat-label>
-            <input matInput formControlName="userName" />
+            <input matInput formControlName="userName" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -23,10 +21,10 @@
                 <span class="error">User name is Required</span>
             </ng-container>
         </div>
-
+        <!-- mobile start -->
         <mat-form-field>
             <mat-label>Mobile Number</mat-label>
-            <input matInput formControlName="mobileNumber" type="tel" type="number" />
+            <input matInput formControlName="mobileNumber" type="tel" type="number" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -36,24 +34,40 @@
                 <span class="error">Mobile Number is Required</span>
             </ng-container>
         </div>
-
+        <!-- password start -->
         <mat-form-field>
             <mat-label>Password</mat-label>
-            <input matInput formControlName="password" type="password" minlength="6" />
+            <input matInput formControlName="password" type="password" minlength="6" required />
         </mat-form-field>
-
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.password.touched &&
+          !formGroup.controls.password.value
+        ">
+                <span class="error">Password is Required</span>
+            </ng-container>
+        </div>
+        <!-- role start -->
         <mat-form-field>
             <mat-label>Select Role</mat-label>
-            <mat-select formControlName="role" name="role">
+            <mat-select formControlName="role" name="role" required>
                 <mat-option *ngFor="let role of roles" [value]="role.value">
                     {{role.value}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
-
+        <div>
+            <ng-container *ngIf="
+          formGroup.controls.role.touched &&
+          !formGroup.controls.role.value
+        ">
+                <span class="error">Role is Required</span>
+            </ng-container>
+        </div>
+        <!-- balance start -->
         <mat-form-field>
             <mat-label>Balance</mat-label>
-            <input matInput formControlName="balance" type="text" />
+            <input matInput formControlName="balance" type="text" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -61,27 +75,25 @@
           !formGroup.controls.balance.value
         ">
                 <span class="error">Balance is Required</span>
-
             </ng-container>
         </div>
-
+        <!-- Permission start -->
+        <br>
         <div>
             <mat-label>Permission</mat-label>
             <br>
             <br>
-
             <ng-container *ngFor="let permission of (permissions | keyvalue)">
                 <span class="permission">
                     <mat-checkbox [disabled]="!isLoggedInUserIsOwner" (click)="onPermissionChange(permission.key)"
-                        [checked]="permission.value">{{permission.key}}</mat-checkbox>
+                        [checked]="permission.value">{{permission.key}} </mat-checkbox>
                 </span>
             </ng-container>
         </div>
-
         <br>
+        <!-- button start -->
         <div class="btn-update">
             <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">
-
                 <span *ngIf="!isShowLoader">
                     {{ !this.data ? 'Save' : 'Update' }}
                 </span>

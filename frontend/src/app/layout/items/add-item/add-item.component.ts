@@ -72,7 +72,7 @@ export class AddItemComponent implements OnInit {
             item_code: ['', Validators.required],
             item_name: ['', Validators.required],
             category: ['', Validators.required],
-            comment: ['', Validators.required],
+            comment: [''],
             int_qty: ['', Validators.required],
             silver: ['', Validators.required],
             retail: ['', Validators.required],

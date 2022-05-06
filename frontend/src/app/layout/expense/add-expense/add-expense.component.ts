@@ -21,6 +21,7 @@ export class AddExpenseComponent implements OnInit {
     categories = []
     isShowLoader = false;
     amount = true
+    currentDate = new Date()
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IExpenseData,

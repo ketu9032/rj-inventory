@@ -13,14 +13,14 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Tier</mat-label>
-                    <input matInput formControlName="tier" disabled />
+                    <input matInput formControlName="tier"  required/>
                 </mat-form-field>
             </div>
             <!-- Date start -->
             <div class="width">
                 <mat-form-field color="accent">
                     <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" [matDatepicker]="date">
+                    <input matInput formControlName="date" [matDatepicker]="date" required >
                     <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
                     <mat-datepicker #date></mat-datepicker>
                 </mat-form-field>
@@ -29,14 +29,14 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Invoice No.</mat-label>
-                    <input matInput formControlName="invoice_number" type="number" />
+                    <input matInput formControlName="invoice_number" type="number" required />
                 </mat-form-field>
             </div>
             <!-- ref name start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Ref no</mat-label>
-                    <input matInput formControlName="ref_number" type="number" />
+                    <input matInput formControlName="ref_number" type="number" required />
                 </mat-form-field>
             </div>
             <!-- buttons start -->
@@ -59,7 +59,7 @@
 
                 <mat-form-field>
                     <mat-label>Item Name</mat-label>
-                    <input matInput formControlName="item_name" />
+                    <input matInput formControlName="item_name" required />
                 </mat-form-field>
 
             </div>
@@ -76,21 +76,21 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>#</mat-label>
-                    <input matInput formControlName="hashtag" />
+                    <input matInput formControlName="hashtag" required />
                 </mat-form-field>
             </div>
             <!-- Qty start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Qty</mat-label>
-                    <input matInput formControlName="qty" type="number" />
+                    <input matInput formControlName="qty" type="number" required />
                 </mat-form-field>
             </div>
             <!-- Available start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Available</mat-label>
-                    <input matInput formControlName="available" />
+                    <input matInput formControlName="available" required />
                 </mat-form-field>
             </div>
 
@@ -99,7 +99,7 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Selling price</mat-label>
-                    <input matInput formControlName="selling_price" type="number" />
+                    <input matInput formControlName="selling_price" type="number" required />
                 </mat-form-field>
 
             </div>
@@ -108,7 +108,7 @@
 
                 <mat-form-field>
                     <mat-label>Total</mat-label>
-                    <input matInput formControlName="total" />
+                    <input matInput formControlName="total" required />
                 </mat-form-field>
             </div>
             <!-- Add button start -->

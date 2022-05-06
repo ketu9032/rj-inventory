@@ -19,7 +19,7 @@ export class AddTransferComponent implements OnInit {
     selectedRole: string
     users = []
     isShowLoader = false;
-
+    currentDate = new Date();
 
 
     constructor(

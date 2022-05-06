@@ -13,7 +13,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Company</mat-label>
-                    <input class="background_color" matInput formControlName="company" readonly   matTooltip="NOT Editable"/>
+                    <input class="background_color" matInput formControlName="company" readonly   matTooltip="NOT Editable" required/>
                 </mat-form-field>
 
             </div>
@@ -21,7 +21,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>First Name</mat-label>
-                    <input class="background_color" matInput formControlName="name"  readonly matTooltip="NOT Editable" />
+                    <input class="background_color" matInput formControlName="name"  readonly matTooltip="NOT Editable" required/>
                 </mat-form-field>
 
             </div>
@@ -31,7 +31,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Address</mat-label>
-                    <textarea class="background_color" matInput formControlName="address" readonly  matTooltip="NOT Editable"></textarea>
+                    <textarea class="background_color" matInput formControlName="address" readonly  matTooltip="NOT Editable" required></textarea>
                 </mat-form-field>
 
             </div>
@@ -39,7 +39,7 @@
             <div class="block" >
                 <mat-form-field >
                     <mat-label>Email</mat-label>
-                    <input  class="background_color" matInput formControlName="email" required  readonly  matTooltip="NOT Editable"/>
+                    <input  class="background_color" matInput formControlName="email" required  readonly  matTooltip="NOT Editable" required/>
                 </mat-form-field>
 
             </div>
@@ -49,7 +49,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Mobile Number</mat-label>
-                    <input class="background_color" matInput formControlName="mobile" type="tel" type="number" readonly  matTooltip="NOT Editable" />
+                    <input class="background_color" matInput formControlName="mobile" type="tel" type="number" readonly  matTooltip="NOT Editable" required />
                 </mat-form-field>
 
             </div>
@@ -57,7 +57,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Due Limit</mat-label>
-                    <input type="number" matInput formControlName="dueLimit" />
+                    <input type="number" matInput formControlName="dueLimit" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -74,7 +74,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Initial Balance</mat-label>
-                    <input matInput formControlName="balance" type="number" />
+                    <input matInput formControlName="balance" type="number" required/>
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -104,7 +104,7 @@
               <div class="block">
                 <mat-form-field>
                     <mat-label>Select Tier</mat-label>
-                    <mat-select formControlName="tier" name="tier">
+                    <mat-select formControlName="tier" name="tier" required>
                         <mat-option *ngFor="let tire of tires" [value]="tire.id">
                             {{tire.code}}
                         </mat-option>
