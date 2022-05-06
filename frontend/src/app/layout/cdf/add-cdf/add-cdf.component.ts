@@ -94,7 +94,7 @@ export class AddCdfComponent implements OnInit {
             brands: ['', Validators.required],
             displayNames: ['', Validators.required],
             platforms: ['', Validators.required],
-            // other: ['', Validators.required],
+            other: ['', Validators.required],
             mobile: ['', Validators.required],
             address: ['', Validators.required],
         });

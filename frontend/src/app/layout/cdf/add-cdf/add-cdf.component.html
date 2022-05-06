@@ -197,6 +197,14 @@
                         <mat-label>Comment</mat-label>
                         <input matInput formControlName="other" />
                     </mat-form-field>
+                    <div>
+                        <ng-container *ngIf="
+          formGroup.controls.other.touched &&
+          !formGroup.controls.other.value
+        ">
+                            <span class="error">Comment is Required</span>
+                        </ng-container>
+                    </div>
                 </div>
             </div>
             <div class="box">
