@@ -150,8 +150,8 @@ exports.update = async (req, res) => {
       gold,
       india_mart,
       dealer,
+      suppliers,
       categoryId,
-      itemId
     } = req.body;
     if (
       !item_code ||
@@ -163,8 +163,8 @@ exports.update = async (req, res) => {
       !gold ||
       !india_mart ||
       !dealer ||
+      !suppliers ||
       !categoryId ||
-      !itemId ||
       !id
     ) {
       res
@@ -174,7 +174,8 @@ exports.update = async (req, res) => {
     }
 
     const updateItemQuery = `UPDATE item
-    SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}',  item_id='${itemId}' where id = ${id};`;
+    SET  item_code='${item_code}', item_name='${item_name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}', suppliers
+    ='${ suppliers }', categoryId ='${categoryId}' where id = ${id};`;
     const { updateRows } = await pool.query(updateItemQuery);
 
     const UpdateItemId = updateRows[0].id;
@@ -185,7 +186,7 @@ exports.update = async (req, res) => {
         item_supplier_rate,
         item_id
          )
-      VALUES('${element.supplier_name}', '${element.item_supplier_rate}','${itemId}') ;
+      VALUES('${element.suppliers_id}', '${element.item_supplier_rate}','${itemId}') ;
       `;
       await pool.query(updateSupplierQuery);
     }
