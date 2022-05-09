@@ -18,7 +18,7 @@ import { ItemsService } from '../services/items.service';
 })
 export class AddItemComponent implements OnInit {
     displayedColumns: string[] = [
-        'suppliersCompany',
+        'supplier_name',
         'item_supplier_rate',
         'action'
     ];
@@ -47,7 +47,6 @@ export class AddItemComponent implements OnInit {
     supplierQty: string = "";
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IItemData,
-        @Inject(MAT_DIALOG_DATA) public supplierData: IItemSupplierData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddItemComponent>,
         private formBuilder: FormBuilder,
@@ -64,9 +63,7 @@ export class AddItemComponent implements OnInit {
         this.getSuppliersDropDown()
         if (this.data && this.data.id) {
             this.fillForm();
-        }
-        if (this.supplierData && this.supplierData.id) {
-            this.supplierFillForm();
+            this.getItemSupplier();
         }
     }
     initializeForm(): void {
@@ -85,7 +82,7 @@ export class AddItemComponent implements OnInit {
     }
     initializeSupplierForm(): void {
         this.formSupplier = this.formBuilder.group({
-            suppliersCompany: ['', Validators.required],
+            suppliers_id: ['', Validators.required],
             item_supplier_rate: ['', Validators.required],
         });
     }
@@ -151,10 +148,19 @@ export class AddItemComponent implements OnInit {
         } else {
             this.saveItems();
         }
+        // this.clearSupplierForm();
     }
     addSupplier() {
-        this.suppliers.push(this.formSupplier.value)
-        this.supplierDataSource = new MatTableDataSource<any>(this.suppliers);
+        const {
+            suppliers_id,
+            item_supplier_rate,
+        } = this.formSupplier.value
+        const supplierName = this.suppliersCompany.find(x => +x.id === +suppliers_id).company;
+        const supplier = {
+            suppliers_id, item_supplier_rate, supplier_name: supplierName
+        }
+        this.suppliers.push(supplier)
+        this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.suppliers);
     }
     fillForm() {
         const { item_code,
@@ -164,10 +170,10 @@ export class AddItemComponent implements OnInit {
             item_name, category: categoryId, comment, int_qty, silver, retail, gold, india_mart, dealer
         });
     }
-    supplierFillForm() {
-        const { item_id: itemId, supplier_name, item_supplier_rate } = this.supplierData;
+    supplierFillForm(suppliersId) {
+        const itemSupplierRate = this.suppliers.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
         this.formSupplier.patchValue({
-            itemId, supplier_name, item_supplier_rate
+            itemId: this.data.id, suppliers_id: suppliersId, item_supplier_rate: itemSupplierRate
         });
     }
     getCategoriesDropDown(type: string) {
@@ -205,5 +211,25 @@ export class AddItemComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+    getItemSupplier() {
+        this.supplierDataSource = [];
+        this.suppliers = []
+        this.tableParams.itemId = this.data.id;
+        this.itemsService.getItemSupplier(this.tableParams).subscribe(
+            (newItemSupplier: any[]) => {
+                this.suppliers.push(...newItemSupplier);
+                this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
+                if (newItemSupplier.length > 0) {
+                    this.totalRows = newItemSupplier[0].total;
+                }
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
     }
 }

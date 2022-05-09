@@ -33,7 +33,6 @@ exports.findAll = async (req, res) => {
       gold,
       india_mart,
       dealer,
-
       category_id as category_id,
       c.name as category_name,
       c.code as category_code
@@ -45,7 +44,6 @@ exports.findAll = async (req, res) => {
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
-
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
@@ -113,13 +111,12 @@ exports.add = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      suppliers,
       category_id
       )
-      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}', '${suppliers}', '${categoryId}') returning id;
+      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}', '${categoryId}') returning id;
       `;
 
-      console.log(insertItemQuery);
+    console.log(insertItemQuery);
     const { rows } = await pool.query(insertItemQuery);
     const itemId = rows[0].id;
     for (let index = 0; index < suppliers.length; index++) {
@@ -129,7 +126,7 @@ exports.add = async (req, res) => {
     item_supplier_rate,
     item_id
      )
-  VALUES('${element.suppliers_id}', '${element.item_supplier_rate}', '${element.itemId}') ;
+  VALUES('${element.suppliers_id}', '${element.item_supplier_rate}', '${itemId}') ;
   `;
       await pool.query(insertSupplierQuery);
     }
@@ -176,9 +173,9 @@ exports.update = async (req, res) => {
       return;
     }
 
-    const updateItemQuery =  `UPDATE item
-    SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}',  item_id='${itemId}' where id = ${id};`
-   const {updateRows} = await pool.query(updateItemQuery);
+    const updateItemQuery = `UPDATE item
+    SET company='${company}', code='${code}', name='${name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}',  item_id='${itemId}' where id = ${id};`;
+    const { updateRows } = await pool.query(updateItemQuery);
 
     const UpdateItemId = updateRows[0].id;
     for (let index = 0; index < UpdateItemId.length; index++) {
@@ -192,7 +189,6 @@ exports.update = async (req, res) => {
       `;
       await pool.query(updateSupplierQuery);
     }
-
 
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
