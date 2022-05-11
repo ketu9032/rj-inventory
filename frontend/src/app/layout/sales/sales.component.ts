@@ -6,6 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { ItemsService } from '../items/services/items.service';
+import { AddSalesComponent } from './add-sales/add-sales.component';
+import { SalesService } from './services/sales.service';
 
 @Component({
     selector: 'app-sales',
@@ -35,6 +37,9 @@ export class SalesComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     totalRows: number;
+    customerName;
+    customers = [];
+    isShow: boolean = true;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -47,11 +52,14 @@ export class SalesComponent implements OnInit {
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
+        private salesService: SalesService,
         public snackBar: MatSnackBar
     ) { }
 
     ngOnInit(): void {
         this.getItems();
+        this.getCustomerDropDown();
+
     }
 
     getItems() { }
@@ -91,18 +99,19 @@ export class SalesComponent implements OnInit {
     //   );
     // }
 
-    // // onAddNewCustomers(): void {
-    // //   this.dialog
-    // //     .open(AddCustomersComponent, {
-    // //       width: '400px'
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
+    onAddNewSales(): void {
+      this.dialog
+        .open(AddSalesComponent, {
+            width: '1000px',
+            height: '800px'
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getItems();
+          }
+        });
+    }
 
     // // onEditNewCustomers(element) {
     // //   this.dialog
@@ -143,4 +152,32 @@ export class SalesComponent implements OnInit {
         // this.getItems();
     }
 
-}
+    toggleCreateAddSalesButton(){
+        if(this.customerName
+            === '' ){
+                this.isShow = true
+            }else {
+                this.isShow = false
+
+            }
+        }
+
+        getCustomerDropDown() {
+            this.salesService
+                .getCustomerDropDown()
+                .subscribe(
+                    (response) => {
+                        this.customers = response;
+                    },
+                    (error) => {
+                        this.snackBar.open(
+                            (error.error && error.error.message) || error.message,
+                            'Ok', {
+                            duration: 3000
+                        }
+                        );
+                    },
+                    () => { }
+                );
+        }
+    }

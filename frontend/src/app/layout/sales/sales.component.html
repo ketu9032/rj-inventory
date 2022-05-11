@@ -9,10 +9,24 @@
             <button color="primary" class="margin" mat-raised-button (click)="getItems()">
                 Search
             </button>
+            <mat-form-field class="margin">
+                <mat-label>Select Customer</mat-label>
+                <mat-select name="tier" [(ngModel)]="customerName" >
+                    <mat-option value=""  (click)="toggleCreateAddSalesButton()">All Customer</mat-option>
+                    <mat-option *ngFor="let customer of customers" [value]="customer.id"
+                        (click)="toggleCreateAddSalesButton()">
+                        {{customer.company}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
             <button color="primary" class="margin" mat-raised-button>
                 <mat-icon>cloud_download</mat-icon>
                 Download
             </button>
+            <button color="primary" class="margin" mat-raised-button *ngIf="!isShow" (click)="onAddNewSales()"
+           >
+            Add New Sales
+        </button>
         </div>
         <div>
             <mat-slide-toggle color="primary" (change)="toggleType()" [checked]="tableParams.active">Active
