@@ -20,7 +20,7 @@
             <div class="width">
                 <mat-form-field color="accent">
                     <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" [matDatepicker]="date" required>
+                    <input matInput formControlName="date" [matDatepicker]="date" [value]="currentDate" [max]="currentDate" required>
                     <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
                     <mat-datepicker #date></mat-datepicker>
                 </mat-form-field>

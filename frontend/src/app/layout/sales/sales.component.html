@@ -15,7 +15,7 @@
                     <mat-option value=""  (click)="toggleCreateAddSalesButton()">All Customer</mat-option>
                     <mat-option *ngFor="let customer of customers" [value]="customer.id"
                         (click)="toggleCreateAddSalesButton()">
-                        {{customer.company}}
+                        {{customer.company | uppercase}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

@@ -22,6 +22,7 @@ export class AddSalesComponent implements OnInit {
     isChecked = true;
     totalQty;
     lastBillNo;
+    currentDate = new Date();
     displayedColumns: string[] = [
         'item_name',
         'qty',

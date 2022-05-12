@@ -94,12 +94,14 @@ router.delete('/api/cdf', cdf.delete);
 router.get('/api/cdf', cdf.findAll);
 router.post('/api/cdf', cdf.add);
 router.put('/api/cdf', cdf.update);
-//router.get('/api/getCustomerDropDown', cdf.getCdfDropDown);
+
 router.put('/api/cdf/changeStatus', cdf.changeStatus);
 router.put('/api/cdf/changeCdfStatus', cdf.changeCdfStatus);
 router.put('/api/cdf/cdfTOCustomersUpdate', cdf.cdfTOCustomersUpdate);
 router.put('/api/cdf/onCheckEmail', cdf.onCheckEmail);
 router.put('/api/cdf/onCheckCompany', cdf.onCheckCompany);
 router.put('/api/cdf/onCheckMobile', cdf.onCheckMobile);
+router.get('/api/cdf/getCdfTOCustomerDropDown', cdf.getCdfTOCustomerDropDown);
+
 
 module.exports = router;

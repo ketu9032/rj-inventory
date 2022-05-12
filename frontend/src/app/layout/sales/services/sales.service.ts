@@ -7,7 +7,7 @@ import { RestService } from 'src/app/shared/services';
 @Injectable({ providedIn: 'root'})
 export class SalesService {
   private url = 'api/customers';
-  private getCustomerDropDownURL = 'api/getCustomerDropDown';
+  private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -26,6 +26,6 @@ export class SalesService {
   }
 
   public getCustomerDropDown() {
-    return this.restService.get<any>(`${this.getCustomerDropDownURL}`);
+    return this.restService.get<any>(`${this.getCdfToCustomerDropDownURL}`);
   }
 }

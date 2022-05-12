@@ -335,3 +335,14 @@ exports.onCheckMobile = async (req, res) => {
     });
   }
 };
+exports.getCdfTOCustomerDropDown = async(req, res) => {
+  try {
+      const response = await pool.query(`select id, company FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active'`);
+
+      res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+      res.status(STATUS_CODE.ERROR).send({
+          message: error.message || MESSAGES.COMMON.ERROR
+      });
+  }
+};

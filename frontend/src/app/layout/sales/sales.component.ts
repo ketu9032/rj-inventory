@@ -57,8 +57,8 @@ export class SalesComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.getItems();
         this.getCustomerDropDown();
+        this.getItems();
 
     }
 
@@ -147,7 +147,8 @@ export class SalesComponent implements OnInit {
         //  this.getItems();
     }
     toggleType() {
-        this.tableParams.active = !this.tableParams.active;
+        this.tableParams.active = !this.tableParams
+        .active;
         this.tableParams.pageNumber = 1;
         // this.getItems();
     }
