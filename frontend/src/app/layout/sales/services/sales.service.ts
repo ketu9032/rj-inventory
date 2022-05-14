@@ -8,6 +8,7 @@ import { RestService } from 'src/app/shared/services';
 export class SalesService {
   private url = 'api/customers';
   private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
+  private   getItemDropDownURL  = 'api/item/getItemDropDown';
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -27,5 +28,8 @@ export class SalesService {
 
   public getCustomerDropDown() {
     return this.restService.get<any>(`${this.getCdfToCustomerDropDownURL}`);
+  }
+  public getItemDropDown() {
+    return this.restService.get<any>(`${this.getItemDropDownURL}`);
   }
 }

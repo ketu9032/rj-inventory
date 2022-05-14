@@ -1,11 +1,10 @@
-import { DatePipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { IExpenseData } from 'src/app/models/expense';
-import { UserService } from '../../user/services/user.service';
+import { ISalesData } from 'src/app/models/sales';
+import { SalesService } from '../services/sales.service';
 
 
 @Component({
@@ -16,8 +15,9 @@ import { UserService } from '../../user/services/user.service';
 export class AddSalesComponent implements OnInit {
     formGroup: FormGroup;
     selectedRole: string
-    users = []
-    categories = []
+    users = [];
+    categories = [];
+    items = [];
     isShowLoader = false;
     isChecked = true;
     totalQty;
@@ -30,26 +30,27 @@ export class AddSalesComponent implements OnInit {
         'price',
         'total'
     ];
-
+    date1 = new FormControl(new Date())
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: IExpenseData,
+        @Inject(MAT_DIALOG_DATA) public data: ISalesData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddSalesComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
         private router: Router,
-        private userService: UserService,
+        private salesService: SalesService,
+
     ) { }
 
     ngOnInit() {
+        this.getItemDropDown();
         this.initializeForm();
-        this.getUserDropDown()
 
     }
 
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            tier: [''],
+            company: [''],
             date: [''],
             invoice_number: [''],
             ref_number: [''],
@@ -64,7 +65,7 @@ export class AddSalesComponent implements OnInit {
         });
     }
 
-    // saveExpense(): void {
+    // saveSales(): void {
     //     const { user: userId, description, amount, date } = this.formGroup.value;
     //     this.isShowLoader = true;
     //     this.expenseService
@@ -94,18 +95,19 @@ export class AddSalesComponent implements OnInit {
 
 
     onSubmit() {
-        // this.saveExpense();
+        // this.saveSales()
 
     }
 
 
 
-    getUserDropDown() {
-        this.userService
-            .getUserDropDown()
+
+    getItemDropDown() {
+        this.salesService
+            .getItemDropDown()
             .subscribe(
                 (response) => {
-                    this.users = response
+                    this.items = response
                 },
                 (error) => {
                     this.snackBar.open(
@@ -119,23 +121,4 @@ export class AddSalesComponent implements OnInit {
             );
 
     }
-    // getCategoryDropDown(type: string) {
-    //     this.categoriesService
-    //         .getCategoryDropDown(type)
-    //         .subscribe(
-    //             (response) => {
-    //                 this.categories = response
-    //             },
-    //             (error) => {
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok', {
-    //                     duration: 3000
-    //                 }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-
-    // }
 }

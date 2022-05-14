@@ -151,7 +151,7 @@ exports.update = async (req, res) => {
       india_mart,
       dealer,
       suppliers,
-      categoryId,
+      categoryId
     } = req.body;
     if (
       !item_code ||
@@ -175,7 +175,7 @@ exports.update = async (req, res) => {
 
     const updateItemQuery = `UPDATE item
     SET  item_code='${item_code}', item_name='${item_name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}', suppliers
-    ='${ suppliers }', categoryId ='${categoryId}' where id = ${id};`;
+    ='${suppliers}', categoryId ='${categoryId}' where id = ${id};`;
     const { updateRows } = await pool.query(updateItemQuery);
 
     const UpdateItemId = updateRows[0].id;
@@ -201,7 +201,7 @@ exports.update = async (req, res) => {
 exports.getItemDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id,  item_code FROM item where is_deleted = false and is_active = true`
+      `select id, item_code, int_qty FROM item where is_active = true`
     );
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

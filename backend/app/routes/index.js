@@ -82,7 +82,7 @@ router.delete('/api/item', item.delete);
 router.get('/api/item', item.findAll);
 router.post('/api/item', item.add);
 router.put('/api/item', item.update);
-router.get('/api/getItemDropDown', item.getItemDropDown);
+router.get('/api/item/getItemDropDown', item.getItemDropDown);
 router.put('/api/item/changeStatus', item.changeStatus);
 
 router.delete('/api/item_supplier', item_supplier.delete);
@@ -102,6 +102,5 @@ router.put('/api/cdf/onCheckEmail', cdf.onCheckEmail);
 router.put('/api/cdf/onCheckCompany', cdf.onCheckCompany);
 router.put('/api/cdf/onCheckMobile', cdf.onCheckMobile);
 router.get('/api/cdf/getCdfTOCustomerDropDown', cdf.getCdfTOCustomerDropDown);
-
 
 module.exports = router;

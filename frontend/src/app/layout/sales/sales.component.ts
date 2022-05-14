@@ -8,7 +8,6 @@ import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config'
 import { ItemsService } from '../items/services/items.service';
 import { AddSalesComponent } from './add-sales/add-sales.component';
 import { SalesService } from './services/sales.service';
-
 @Component({
     selector: 'app-sales',
     templateUrl: './sales.component.html',
@@ -48,33 +47,26 @@ export class SalesComponent implements OnInit {
         search: '',
         active: true
     }
-
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
         private salesService: SalesService,
         public snackBar: MatSnackBar
     ) { }
-
     ngOnInit(): void {
         this.getCustomerDropDown();
         this.getItems();
-
     }
-
     getItems() { }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
         // this.getItems();
     }
-
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-
     // getItems() {
     //   this.loader = true;
     //   this.itemsService.getItems(this.tableParams).subscribe(
@@ -98,21 +90,19 @@ export class SalesComponent implements OnInit {
     //     () => { }
     //   );
     // }
-
     onAddNewSales(): void {
-      this.dialog
-        .open(AddSalesComponent, {
-            width: '1000px',
-            height: '800px'
-        })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result) {
-            this.getItems();
-          }
-        });
+        this.dialog
+            .open(AddSalesComponent, {
+                width: '1000px',
+                height: '800px'
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getItems();
+                }
+            });
     }
-
     // // onEditNewCustomers(element) {
     // //   this.dialog
     // //     .open(AddCustomersComponent, {
@@ -126,7 +116,6 @@ export class SalesComponent implements OnInit {
     // //       }
     // //     });
     // // }
-
     // // confirmDialog(id: string): void {
     // //   this.dialog
     // //     .open(DeleteCustomersComponent, {
@@ -140,7 +129,6 @@ export class SalesComponent implements OnInit {
     // //       }
     // //     });
     // // }
-
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
@@ -148,37 +136,34 @@ export class SalesComponent implements OnInit {
     }
     toggleType() {
         this.tableParams.active = !this.tableParams
-        .active;
+            .active;
         this.tableParams.pageNumber = 1;
         // this.getItems();
     }
-
-    toggleCreateAddSalesButton(){
-        if(this.customerName
-            === '' ){
-                this.isShow = true
-            }else {
-                this.isShow = false
-
-            }
-        }
-
-        getCustomerDropDown() {
-            this.salesService
-                .getCustomerDropDown()
-                .subscribe(
-                    (response) => {
-                        this.customers = response;
-                    },
-                    (error) => {
-                        this.snackBar.open(
-                            (error.error && error.error.message) || error.message,
-                            'Ok', {
-                            duration: 3000
-                        }
-                        );
-                    },
-                    () => { }
-                );
+    toggleCreateAddSalesButton() {
+        if (this.customerName
+            === '') {
+            this.isShow = true
+        } else {
+            this.isShow = false
         }
     }
+    getCustomerDropDown() {
+        this.salesService
+            .getCustomerDropDown()
+            .subscribe(
+                (response) => {
+                    this.customers = response;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+}

@@ -9,34 +9,33 @@
     <br>
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <div class="flex row-1">
-            <!-- tier start -->
+            <!-- company start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>company</mat-label>
-                    <input matInput formControlName="company" required />
+                    <input matInput required />
                 </mat-form-field>
             </div>
             <!-- Date start -->
             <div class="width">
-                <mat-form-field color="accent">
-                    <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" [matDatepicker]="date" [value]="currentDate" [max]="currentDate" required>
-                    <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
-                    <mat-datepicker #date></mat-datepicker>
+                <mat-form-field>
+                    <input matInput [matDatepicker]="picker1" [formControl]="date1" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
                 </mat-form-field>
             </div>
             <!-- invoice_number start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Invoice No.</mat-label>
-                    <input matInput formControlName="invoice_number" type="number" required />
+                    <input matInput type="number" required />
                 </mat-form-field>
             </div>
             <!-- ref name start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Ref no</mat-label>
-                    <input matInput formControlName="ref_number" type="number" required />
+                    <input matInput type="number" required />
                 </mat-form-field>
             </div>
             <!-- buttons start -->
@@ -58,13 +57,18 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Item Name</mat-label>
-                    <input matInput formControlName="item_name" required />
+                    <mat-select name="tier" [(ngModel)]="items">
+                        <mat-option *ngFor="let item of items" [value]="item.id">
+                            {{item.item_code | uppercase}}
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <!-- hashtag start -->
             <div class="width">
                 <mat-label>#</mat-label>
-                <mat-slide-toggle [(ngModel)]="isChecked"> plus {{isChecked}}</mat-slide-toggle>
+                <br>
+                <mat-slide-toggle [(ngModel)]="isChecked"> plus </mat-slide-toggle>
             </div>
             <!-- Qty start -->
             <div class="width">
@@ -142,7 +146,6 @@
     </table>
 </div>
 <br>
-
 <mat-divider></mat-divider>
 <br>
 <div class="bill-container">
@@ -198,22 +201,23 @@
         </div>
     </div>
     <mat-divider></mat-divider>
-    <br>
+
     <div class="flex tierLimitAndButton">
-        <div>(SLIVER) Due Limit: ₹100</div>
+        <div><br>(SLIVER) Due Limit: ₹100</div>
         <div class="tierLimitAndButton_content_2">
-            <div class="width">
+            <div class="right">
                 <mat-form-field>
                     <mat-label>Total Due (₹) </mat-label>
                     <input matInput disable />
                 </mat-form-field>
             </div>
+            <br>
             <div class="">
                 <button mat-raised-button color="primary" class="margin" type="submit">
                     Save & Rack
                 </button>
                 <span>
-                    <button mat-raised-button color="primary" type="submit">
+                    <button mat-raised-button color="warn" type="submit">
                         Save & Print
                     </button>
                 </span>
