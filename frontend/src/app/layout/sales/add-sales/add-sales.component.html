@@ -19,7 +19,7 @@
             <!-- Date start -->
             <div class="width">
                 <mat-form-field>
-                    <input matInput [matDatepicker]="picker1" [formControl]="date1" disabled>
+                    <input matInput [matDatepicker]="picker1" [formControl]="date1" readonly matTooltip="Not Editable">
                     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
                 </mat-form-field>
@@ -56,9 +56,10 @@
         <div class="flex row-2">
             <div class="width">
                 <mat-form-field>
-                    <mat-label>Item Name</mat-label>
-                    <mat-select name="tier" [(ngModel)]="items">
-                        <mat-option *ngFor="let item of items" [value]="item.id">
+                    <mat-label>Item code</mat-label>
+                    <mat-select name="item code">
+                        <mat-option formControlName="item_code" *ngFor="let item of items" [value]="item.id"
+                            (click)="fillForm(item)">
                             {{item.item_code | uppercase}}
                         </mat-option>
                     </mat-select>
@@ -74,28 +75,29 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Qty</mat-label>
-                    <input matInput formControlName="qty" type="number" required />
-                </mat-form-field>
+                    <input matInput formControlName="qty" required (keyup)="count()" />
+                </mat-form-field>{{qty}}
             </div>
             <!-- Available start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Available</mat-label>
-                    <input matInput formControlName="available" required />
+                    <input matInput formControlName="available" matTooltip="Not Editable" readonly />
                 </mat-form-field>
             </div>
             <!-- Selling price start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Selling price</mat-label>
-                    <input matInput formControlName="selling_price" type="number" required />
+                    <input matInput formControlName="selling_price" matTooltip="Not Editable" readonly />
                 </mat-form-field>
             </div>
             <!-- total price start -->
             <div class="width">
+
                 <mat-form-field>
                     <mat-label>Total</mat-label>
-                    <input matInput formControlName="total" required />
+                    <input matInput formControlName="total" matTooltip="Not Editable" readonly />
                 </mat-form-field>
             </div>
             <!-- Add button start -->
@@ -201,7 +203,6 @@
         </div>
     </div>
     <mat-divider></mat-divider>
-
     <div class="flex tierLimitAndButton">
         <div><br>(SLIVER) Due Limit: ₹100</div>
         <div class="tierLimitAndButton_content_2">

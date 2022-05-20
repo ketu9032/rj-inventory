@@ -201,7 +201,7 @@ exports.update = async (req, res) => {
 exports.getItemDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, item_code, int_qty FROM item where is_active = true`
+      `select id, item_code, int_qty, silver FROM item where is_active = true`
     );
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
