@@ -31,6 +31,7 @@ export class AddItemComponent implements OnInit {
     categories = []
     supplier = []
     dataSource: any = [];
+
     suppliers = []
     supplierDataSource: any = [];
     totalRows: number;

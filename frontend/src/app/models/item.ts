@@ -11,3 +11,4 @@ export interface IItemParams {
 export interface IItemActiveParams {
     id: number, status: boolean
 }
+

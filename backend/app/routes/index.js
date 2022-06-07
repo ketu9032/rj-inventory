@@ -9,6 +9,7 @@ const categories = require('./../controllers/category.controller');
 const item = require('./../controllers/item.controller');
 const item_supplier = require('./../controllers/item-supplier.controller');
 const cdf = require('./../controllers/cdf.controller');
+const sales = require('./../controllers/sales.controller');
 
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
@@ -102,5 +103,11 @@ router.put('/api/cdf/onCheckEmail', cdf.onCheckEmail);
 router.put('/api/cdf/onCheckCompany', cdf.onCheckCompany);
 router.put('/api/cdf/onCheckMobile', cdf.onCheckMobile);
 router.get('/api/cdf/getCdfTOCustomerDropDown', cdf.getCdfTOCustomerDropDown);
+
+router.delete('/api/sales', sales.delete);
+router.get('/api/sales', sales.findAll);
+router.post('/api/sales', sales.add);
+router.put('/api/sales', sales.update);
+router.put('/api/sales/changeStatus', sales.changeStatus);
 
 module.exports = router;

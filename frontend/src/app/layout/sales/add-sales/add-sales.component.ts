@@ -2,16 +2,20 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ISalesData } from 'src/app/models/sales';
+import { ISalesBillData } from 'src/app/models/sales_bill';
 import { SalesService } from '../services/sales.service';
 @Component({
     selector: 'app-add-sales',
+
     templateUrl: './add-sales.component.html',
     styleUrls: ['./add-sales.component.scss']
 })
 export class AddSalesComponent implements OnInit {
     formGroup: FormGroup;
+    addSalesFormGroup: FormGroup;
     selectedRole: string
     users = [];
     categories = [];
@@ -23,6 +27,9 @@ export class AddSalesComponent implements OnInit {
     isChecked = true;
     totalQty;
     lastBillNo;
+    sales = [];
+    customerCompany = [];
+    salesDataSource: any = [];
     currentDate = new Date();
     displayedColumns: string[] = [
         'item_name',
@@ -47,25 +54,39 @@ export class AddSalesComponent implements OnInit {
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            invoice_number: [''],
+            company: [''],
+            date: [''],
+            invoice_no: [''],
+            ref_no: ['']
+        });
+    }
+    initializeSalesForm(): void {
+        this.addSalesFormGroup = this.formBuilder.group({
             item_code: [''],
-            hashtag: [''],
             qty: [''],
             available: [''],
             selling_price: [''],
-            total: [''],
+            total: ['']
         });
     }
+
     saveSales(): void {
-        const { item_code, qty, available, selling_price, total } = this.formGroup.value;
+        const {
+            date,
+            invoice_no,
+            ref_no,
+            company: companyId } = this.formGroup.value;
         this.isShowLoader = true;
         this.salesService
             .addSales({
-                item_code, qty, available, selling_price, total
+                date,
+                invoice_no,
+                ref_no, sales: this.sales,
+                companyId
             })
             .subscribe(
                 (response) => {
-                    this.snackBar.open('Expense saved successfully', 'OK', {
+                    this.snackBar.open('Sales saved successfully', 'OK', {
                         duration: 3000
                     });
                     this.isShowLoader = false;
@@ -95,6 +116,29 @@ export class AddSalesComponent implements OnInit {
         }
         console.log(this.total);
     }
+
+    addSupplier() {
+        const {
+            id,
+            item_code,
+            qty,
+            available,
+            selling_price,
+            total
+        } = this.addSalesFormGroup.value
+        const customerName = this.customerCompany.find(x => +x.id === +id).customer;
+        const sales = {
+            id,
+            item_code,
+            qty,
+            available,
+            selling_price,
+            total, supplier_name: customerName
+        }
+        this.sales.push(sales)
+        this.salesDataSource = new MatTableDataSource<ISalesBillData>(this.sales);
+    }
+
     fillForm(itemId) {
         this.formGroup.patchValue({
             available: itemId.int_qty,

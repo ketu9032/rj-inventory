@@ -13,29 +13,35 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>company</mat-label>
-                    <input matInput required />
+                    <input matInput required formControlName="company" />
                 </mat-form-field>
             </div>
             <!-- Date start -->
-            <div class="width">
+            <!-- <div class="width">
                 <mat-form-field>
-                    <input matInput [matDatepicker]="picker1" [formControl]="date1" readonly matTooltip="Not Editable">
+                    <input matInput [matDatepicker]="picker1" [formControl]="date1" readonly matTooltip="Not Editable"  >
                     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div> -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>Invoice No.</mat-label>
+                    <input matInput type="date" formControlName="date" required />
                 </mat-form-field>
             </div>
             <!-- invoice_number start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Invoice No.</mat-label>
-                    <input matInput type="number" required />
+                    <input matInput type="number" formControlName="invoice_no" required />
                 </mat-form-field>
             </div>
             <!-- ref name start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Ref no</mat-label>
-                    <input matInput type="number" required />
+                    <input matInput type="number" formControlName="ref_no" required />
                 </mat-form-field>
             </div>
             <!-- buttons start -->
@@ -50,11 +56,13 @@
                 </button>
             </div>
         </div>
-        <mat-divider></mat-divider>
-        <br>
-        <!-- Item Name start -->
+    </form>
+    <mat-divider></mat-divider>
+    <br>
+    <!-- Item Name start -->
+    <form [formGroup]="addSalesFormGroup">
         <div class="flex row-2">
-            <div class="width">
+            <!-- <div class="width">
                 <mat-form-field>
                     <mat-label>Item code</mat-label>
                     <mat-select name="item code">
@@ -63,6 +71,12 @@
                             {{item.item_code | uppercase}}
                         </mat-option>
                     </mat-select>
+                </mat-form-field>
+            </div> -->
+            <div class="width">
+                <mat-form-field>
+                    <mat-label>Item code</mat-label>
+                    <input matInput formControlName="item_code" matTooltip="Not Editable" />
                 </mat-form-field>
             </div>
             <!-- hashtag start -->
@@ -82,14 +96,14 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Available</mat-label>
-                    <input matInput formControlName="available" matTooltip="Not Editable" readonly />
+                    <input matInput formControlName="available" matTooltip="Not Editable" />
                 </mat-form-field>
             </div>
             <!-- Selling price start -->
             <div class="width">
                 <mat-form-field>
                     <mat-label>Selling price</mat-label>
-                    <input matInput formControlName="selling_price" matTooltip="Not Editable" readonly />
+                    <input matInput formControlName="selling_price" matTooltip="Not Editable" />
                 </mat-form-field>
             </div>
             <!-- total price start -->
@@ -97,7 +111,7 @@
 
                 <mat-form-field>
                     <mat-label>Total</mat-label>
-                    <input matInput formControlName="total" matTooltip="Not Editable" readonly />
+                    <input matInput formControlName="total" matTooltip="Not Editable" />
                 </mat-form-field>
             </div>
             <!-- Add button start -->
@@ -107,8 +121,8 @@
                 </button>
             </div>
         </div>
-        <!-- button start -->
     </form>
+
 </div>
 <mat-divider></mat-divider>
 <br>

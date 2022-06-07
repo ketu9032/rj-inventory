@@ -73,10 +73,10 @@ export class ItemsComponent implements OnInit {
     getItems() {
         this.loader = true;
         this.itemsService.getItems(this.tableParams).subscribe(
-            (newCustomers: any[]) => {
-                this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
-                if (newCustomers.length > 0) {
-                    this.totalRows = newCustomers[0].total;
+            (newItems: any[]) => {
+                this.dataSource = new MatTableDataSource<ICustomersData>(newItems);
+                if (newItems.length > 0) {
+                    this.totalRows = newItems[0].total;
                 }
                 setTimeout(() => {
                     this.paginator.pageIndex = this.tableParams.pageNumber - 1;

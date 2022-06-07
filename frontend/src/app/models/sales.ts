@@ -1,10 +1,12 @@
 export interface ISalesData {
-    id: number, item_code: string, qty: number, available:number,  selling_price: number, total: number}
+    id: number,  date: string, invoice_no:number, ref_no:number,   company_id:number}
 
 export interface ISalesParams {
-    id?: number,item_code: string, qty: number, available:number,  selling_price: number, total: number
+    id?: number,  date: string, invoice_no:number, ref_no:number, sales: {}, companyId:number
 
 }
 export interface ISalesActiveParams {
     id: number, status: boolean
 }
+
+

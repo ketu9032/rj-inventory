@@ -12,8 +12,6 @@ export class ItemsService {
     private itemSupplierURL = 'api/item_supplier';
     private getSupplierDropDownURL = 'api/getCategoryDropDown';
 
-
-
     constructor(private restService: RestService, private commonService: CommonService) { }
 
     public getItems(tablePrams: IMatTableParams) {

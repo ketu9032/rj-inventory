@@ -1,6 +1,5 @@
 const { MESSAGES } = require('../constant/messages');
 const { STATUS_CODE } = require('../constant/response-status');
-const { generateToken } = require('../utils/common');
 const { pool } = require('../db');
 exports.findAll = async (req, res) => {
   try {
@@ -67,6 +66,7 @@ exports.delete = async (req, res) => {
     });
   }
 };
+
 exports.add = async (req, res) => {
   try {
     const {
