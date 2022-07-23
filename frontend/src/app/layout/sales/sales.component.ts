@@ -38,6 +38,7 @@ export class SalesComponent implements OnInit {
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
+    selectCustomerLoader: boolean = false;
     totalRows: number;
     customerName;
     customers = [];
@@ -101,7 +102,8 @@ export class SalesComponent implements OnInit {
         this.dialog
             .open(AddSalesComponent, {
                 width: '1000px',
-                height: '800px'
+                height: '800px',
+                data: {customer: this.customerName}
             })
             .afterClosed()
             .subscribe((result) => {
@@ -156,11 +158,13 @@ export class SalesComponent implements OnInit {
         }
     }
     getCustomerDropDown() {
+        this.selectCustomerLoader = true;
         this.salesService
             .getCustomerDropDown()
             .subscribe(
                 (response) => {
                     this.customers = response;
+                    this.selectCustomerLoader = true;
                 },
                 (error) => {
                     this.snackBar.open(

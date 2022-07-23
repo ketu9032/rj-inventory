@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ISalesData } from 'src/app/models/sales';
 import { ISalesBillData } from 'src/app/models/sales_bill';
 import { SalesService } from '../services/sales.service';
+
 @Component({
     selector: 'app-add-sales',
 
@@ -20,22 +21,22 @@ export class AddSalesComponent implements OnInit {
     users = [];
     categories = [];
     items = [];
-    qty;
-    sellingPrice;
-    total;
-    isShowLoader = false;
-    isChecked = true;
-    totalQty;
-    lastBillNo;
+    qty : number;
+    sellingPrice: number;
+    total: number;
+    isShowLoader: boolean = false;
+    isChecked: boolean  = true;
+    totalQty: number;
+    lastBillNo:number ;
     sales = [];
     customerCompany = [];
     salesDataSource: any = [];
     currentDate = new Date();
     displayedColumns: string[] = [
-        'item_name',
+        'item_code',
         'qty',
         'edit_delete',
-        'price',
+        'selling_price',
         'total'
     ];
     date1 = new FormControl(new Date())
@@ -51,10 +52,13 @@ export class AddSalesComponent implements OnInit {
     ngOnInit() {
         this.getItemDropDown();
         this.initializeForm();
+        this.formGroup.patchValue({
+            company: this.data.customer,
+        });
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            company: [''],
+            company: ['',],
             date: [''],
             invoice_no: [''],
             ref_no: ['']
@@ -81,7 +85,8 @@ export class AddSalesComponent implements OnInit {
             .addSales({
                 date,
                 invoice_no,
-                ref_no, sales: this.sales,
+                ref_no,
+                sales: this.sales,
                 companyId
             })
             .subscribe(
@@ -117,25 +122,23 @@ export class AddSalesComponent implements OnInit {
         console.log(this.total);
     }
 
-    addSupplier() {
+    addSales() {
         const {
-            id,
             item_code,
             qty,
             available,
             selling_price,
             total
         } = this.addSalesFormGroup.value
-        const customerName = this.customerCompany.find(x => +x.id === +id).customer;
-        const sales = {
-            id,
+        // const customerName = this.customerCompany.find(x => +x.id === +id).customer;
+        const sale = {
             item_code,
             qty,
             available,
             selling_price,
-            total, supplier_name: customerName
+            total
         }
-        this.sales.push(sales)
+        this.sales.push(sale)
         this.salesDataSource = new MatTableDataSource<ISalesBillData>(this.sales);
     }
 

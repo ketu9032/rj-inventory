@@ -13,11 +13,12 @@
                 <mat-label>Select Customer</mat-label>
                 <mat-select name="tier" [(ngModel)]="customerName" >
                     <mat-option value=""  (click)="toggleCreateAddSalesButton()">All Customer</mat-option>
-                    <mat-option *ngFor="let customer of customers" [value]="customer.id"
+                    <mat-option *ngFor="let customer of customers" [value]="customer.company"
                         (click)="toggleCreateAddSalesButton()">
                         {{customer.company | uppercase}}
                     </mat-option>
                 </mat-select>
+                <mat-spinner  class="selectCustomerLoader" *ngIf="selectCustomerLoader" diameter="25"></mat-spinner>
             </mat-form-field>
             <button color="primary" class="margin" mat-raised-button>
                 <mat-icon>cloud_download</mat-icon>
