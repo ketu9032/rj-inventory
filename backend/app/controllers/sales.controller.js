@@ -60,8 +60,8 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const { date, invoice_no, ref_no, sales, companyId } = req.body;
-    if (!date || !invoice_no || !ref_no || !sales || !companyId) {
+    const { date, invoice_no, ref_no,  companyId, sales } = req.body;
+    if (!date || !invoice_no || !ref_no ||  !companyId || sales.length === 0) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
