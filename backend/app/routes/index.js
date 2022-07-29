@@ -10,6 +10,8 @@ const item = require('./../controllers/item.controller');
 const item_supplier = require('./../controllers/item-supplier.controller');
 const cdf = require('./../controllers/cdf.controller');
 const sales = require('./../controllers/sales.controller');
+const sales_quotation = require('./../controllers/sales_quotation.controller');
+const sales_quotation_detail = require('./../controllers/sales_quotation_detail.controller');
 
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
@@ -109,5 +111,17 @@ router.get('/api/sales', sales.findAll);
 router.post('/api/sales', sales.add);
 router.put('/api/sales', sales.update);
 router.put('/api/sales/changeStatus', sales.changeStatus);
+
+router.delete('/api/sales_quotation', sales_quotation.delete);
+router.get('/api/sales_quotation', sales_quotation.findAll);
+router.post('/api/sales_quotation', sales_quotation.add);
+router.put('/api/sales_quotation', sales_quotation.update);
+
+router.put('/api/sales_quotation/changeStatus', sales_quotation.changeStatus);
+
+router.delete('/api/sales_quotation_detail', sales_quotation_detail.delete);
+router.get('/api/sales_quotation_detail', sales_quotation_detail.findAll);
+router.post('/api/sales_quotation_detail', sales_quotation_detail.add);
+router.put('/api/sales_quotation_detail', sales_quotation_detail.update);
 
 module.exports = router;
