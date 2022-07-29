@@ -217,7 +217,7 @@ export class AddItemComponent implements OnInit {
         this.supplierDataSource = [];
         this.suppliers = []
         this.tableParams.itemId = this.data.id;
-        this.itemsService.getItemSupplier(this.tableParams).subscribe(
+        this.itemsSuppliersService.getItemSupplier(this.tableParams).subscribe(
             (newItemSupplier: any[]) => {
                 this.suppliers.push(...newItemSupplier);
                 this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);

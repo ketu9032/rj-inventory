@@ -32,22 +32,22 @@ export class ItemsService {
     }
 
 
-    public getItemSupplier(tablePrams: IMatTableParams) {
-        const queryString = this.commonService.toQueryString(tablePrams);
-        return this.restService.get<any>(`${this.itemSupplierURL}${queryString}`);
-    }
-    public addItemSupplier(itemSupplier: IItemSupplierParams) {
-        return this.restService.post(`${this.itemSupplierURL}`, itemSupplier);
-    }
-    public editItemSupplier(itemSupplier: IItemSupplierParams) {
-        return this.restService.put(`${this.itemSupplierURL}`, itemSupplier);
-    }
-    public removeItemSupplier(id: string) {
-        return this.restService.delete(`${this.itemSupplierURL}?id=${id}`);
-    }
-    public getSupplierDropDown() {
-        return this.restService.get<any>(`${this.getSupplierDropDownURL}`);
-      }
+    // public getItemSupplier(tablePrams: IMatTableParams) {
+    //     const queryString = this.commonService.toQueryString(tablePrams);
+    //     return this.restService.get<any>(`${this.itemSupplierURL}${queryString}`);
+    // }
+    // public addItemSupplier(itemSupplier: IItemSupplierParams) {
+    //     return this.restService.post(`${this.itemSupplierURL}`, itemSupplier);
+    // }
+    // public editItemSupplier(itemSupplier: IItemSupplierParams) {
+    //     return this.restService.put(`${this.itemSupplierURL}`, itemSupplier);
+    // }
+    // public removeItemSupplier(id: string) {
+    //     return this.restService.delete(`${this.itemSupplierURL}?id=${id}`);
+    // }
+    // public getSupplierDropDown() {
+    //     return this.restService.get<any>(`${this.getSupplierDropDownURL}`);
+    //   }
 }
 
 
