@@ -115,7 +115,7 @@
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Qty.</mat-label>
-                    <input matInput formControlName="qty"  type="number"
+                    <input matInput formControlName="qty"  type="number" (keyup)="count()"
                         required />
                 </mat-form-field>
                 <div>
@@ -176,7 +176,7 @@
                 </div>
             </div>
             <!-- ADD BUTTON -->
-            <button mat-raised-button color="primary" class="add_button" type="submit" [disabled]="!formSupplier.valid">
+            <button mat-raised-button color="primary" class="add_button" type="submit" [disabled]="!formSupplier.valid" (click)="add()">
                 Add
             </button>
         </div>
@@ -198,14 +198,14 @@
             </td>
         </ng-container>
         <ng-container matColumnDef="selling_price">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Rate</th>
             <td mat-cell *matCellDef="let sales">
                 {{ sales.selling_price }}
 
             </td>
         </ng-container>
         <ng-container matColumnDef="total">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Rate</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
             <td mat-cell *matCellDef="let sales">
                 {{ sales.total }}
             </td>
@@ -236,7 +236,8 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Total Qty</mat-label>
-                    <input matInput disable [(ngModel)]="totalQty" />
+                    <input matInput disable value={{this.Qty}}
+                   />
                 </mat-form-field>
             </div>
             <div class="width">
@@ -250,13 +251,13 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Total (₹)</mat-label>
-                    <input matInput disable />
+                    <input matInput disable  value={{this.totalPrice}}/>
                 </mat-form-field>
             </div>
             <div class="width">
                 <mat-form-field>
                     <mat-label>Last Bill Due (₹)</mat-label>
-                    <input matInput disable />
+                    <input matInput disable value={{this.lastBillDue}} />
                 </mat-form-field>
             </div>
         </span>
@@ -271,13 +272,13 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Grand Total (₹) </mat-label>
-                    <input matInput disable />
+                    <input matInput disable value={{this.grandDueTotal}} />
                 </mat-form-field>
             </div>
             <div class="width">
                 <mat-form-field>
                     <mat-label>Payment (₹) </mat-label>
-                    <input matInput disable />
+                    <input matInput disable value={{this.currentPayment}} />
                 </mat-form-field>
             </div>
         </div>
@@ -289,7 +290,7 @@
             <div class="right">
                 <mat-form-field>
                     <mat-label>Total Due (₹) </mat-label>
-                    <input matInput disable />
+                    <input matInput disable value={{this.totalDue}}/>
                 </mat-form-field>
             </div>
             <br>

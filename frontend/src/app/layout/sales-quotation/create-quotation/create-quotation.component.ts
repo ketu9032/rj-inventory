@@ -13,9 +13,6 @@ import { ItemsCategoriesService } from '../../items/services/items-categories.se
 import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
 import { ItemsService } from '../../items/services/items.service';
 import { salesQuotationService } from '../services/sales-quotation.service';
-
-
-
 @Component({
     selector: 'app-create-quotation',
     templateUrl: './create-quotation.component.html',
@@ -25,9 +22,9 @@ export class CreateQuotationComponent implements OnInit {
     displayedColumns: string[] = [
         'item_code',
         'qty',
+        'selling_price',
         'total',
         'action',
-        'selling_price',
     ];
     formSupplier: FormGroup;
     formGroup: FormGroup;
@@ -38,7 +35,6 @@ export class CreateQuotationComponent implements OnInit {
     categories = []
     supplier = []
     dataSource: any = [];
-
     suppliers = []
     supplierDataSource: any = [];
     totalRows: number;
@@ -54,9 +50,17 @@ export class CreateQuotationComponent implements OnInit {
     supplierRate: string = "";
     supplierQty: string = "";
     totalQty: number;
-    lastBillNo:number ;
-    sales = []
-
+    lastBillNo: number;
+    countQty = [];
+    Qty: number;
+    countTotal = [];
+    totalPrice: number;
+    lastBillDue: number = 2000;
+    grandDueTotal: number;
+    currentPayment: number = 5000;
+    totalDue: number;
+    sales = [];
+    total: number;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISalesQuotationData,
         public dialog: MatDialog,
@@ -69,7 +73,6 @@ export class CreateQuotationComponent implements OnInit {
         private itemsSuppliersService: ItemsSuppliersService,
         private salesQuotationService: salesQuotationService
     ) { }
-
     ngOnInit() {
         this.initializeForm();
         this.initializeSupplierForm()
@@ -86,7 +89,6 @@ export class CreateQuotationComponent implements OnInit {
             date: ['', Validators.required],
             invoice_no: ['', Validators.required],
             ref_no: ['']
-
         });
     }
     initializeSupplierForm(): void {
@@ -98,8 +100,16 @@ export class CreateQuotationComponent implements OnInit {
             selling_price: ['', Validators.required],
         });
     }
+    add() {
+        this.countQty.push(this.formSupplier.value.qty)
+        this.Qty = this.countQty.reduce((acc, cur) => acc + cur, 0);
+        this.countTotal.push(this.total)
+        this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
+        this.grandDueTotal = this.totalPrice + this.lastBillDue
+        this.totalDue = this.grandDueTotal - this.currentPayment
+    }
     saveItems(): void {
-        const {  company,
+        const { company,
             date,
             invoice_no,
             ref_no } = this.formGroup.value;
@@ -194,10 +204,10 @@ export class CreateQuotationComponent implements OnInit {
         this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.suppliers);
     }
     fillForm() {
-        const {  company,
+        const { company,
             date,
             invoice_no,
-            ref_no} = this.data;
+            ref_no } = this.data;
         this.formGroup.patchValue({
             company,
             date,
@@ -266,5 +276,14 @@ export class CreateQuotationComponent implements OnInit {
             },
             () => { }
         );
+    }
+    count() {
+        if (this.formSupplier.value.qty !== '') {
+            this.total = (this.formSupplier.value.qty * this.formSupplier.value.selling_price)
+            this.formSupplier.patchValue({
+                total: this.total
+            })
+        }
+        console.log(this.total);
     }
 }

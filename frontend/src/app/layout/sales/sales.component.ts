@@ -164,7 +164,7 @@ export class SalesComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.customers = response;
-                    this.selectCustomerLoader = true;
+                    this.selectCustomerLoader = false;
                 },
                 (error) => {
                     this.snackBar.open(

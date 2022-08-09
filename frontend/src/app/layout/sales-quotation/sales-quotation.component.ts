@@ -34,6 +34,7 @@ export class SalesQuotationComponent implements OnInit {
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
+    selectTireLoader: boolean = false;
     totalRows: number;
     tireName;
     tireNameNone
@@ -149,11 +150,13 @@ export class SalesQuotationComponent implements OnInit {
         // this.getItems();
     }
     getTierDropDown() {
+        this.selectTireLoader = true;
         this.tiersService
             .getTierDropDown()
             .subscribe(
                 (response) => {
                     this.tires = response;
+                    this.selectTireLoader = false;
                 },
                 (error) => {
                     this.snackBar.open(
