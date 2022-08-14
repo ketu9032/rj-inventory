@@ -17,7 +17,7 @@
 
         mat-form-field {
             margin: 0 15px 0 15px;
-            width: 159px;
+            width: 160px;
         }
     }
 
@@ -95,4 +95,9 @@ table {
 }
 .margin {
     margin-right: 10px;
+}
+.loader {
+    bottom: 45px;
+    float: right;
+    right: 30px;
 }

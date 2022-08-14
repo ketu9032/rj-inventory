@@ -13,17 +13,17 @@ export class salesQuotationDetailsService {
         private commonService: CommonService
         ) { }
 
-    public getItemSupplier(tablePrams: IMatTableParams) {
+    public getSalesQuotationDetail(tablePrams: IMatTableParams) {
         const queryString = this.commonService.toQueryString(tablePrams);
         return this.restService.get<any>(`${this.salesQuotationDetailsURL}${queryString}`);
     }
-    public addItemSupplier(salesQuotationDetails: ISalesQuotationDetailsParams) {
+    public addSalesQuotationDetail(salesQuotationDetails: ISalesQuotationDetailsParams) {
         return this.restService.post(`${this.salesQuotationDetailsURL}`, salesQuotationDetails);
     }
-    public editItemSupplier(salesQuotationDetails: ISalesQuotationDetailsParams) {
+    public editSalesQuotationDetail(salesQuotationDetails: ISalesQuotationDetailsParams) {
         return this.restService.put(`${this.salesQuotationDetailsURL}`, salesQuotationDetails);
     }
-    public removeItemSupplier(id: string) {
+    public removeSalesQuotationDetail(id: string) {
         return this.restService.delete(`${this.salesQuotationDetailsURL}?id=${id}`);
     }
 

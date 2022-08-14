@@ -4,7 +4,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { IItemData } from 'src/app/models/item';
 import { IItemSupplierData } from 'src/app/models/item_supplier';
 import { ISalesQuotationData } from 'src/app/models/sales-quotation';
 import { IMatTableParams } from 'src/app/models/table';
@@ -39,6 +38,8 @@ export class CreateQuotationComponent implements OnInit {
     supplierDataSource: any = [];
     totalRows: number;
     suppliersCompany = [];
+    customers = [];
+    items = [];
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -47,6 +48,9 @@ export class CreateQuotationComponent implements OnInit {
         search: '',
         active: true
     }
+    selectCustomerLoader: boolean = false;
+    selectItemLoader: boolean = false;
+
     supplierRate: string = "";
     supplierQty: string = "";
     totalQty: number;
@@ -55,9 +59,10 @@ export class CreateQuotationComponent implements OnInit {
     Qty: number;
     countTotal = [];
     totalPrice: number;
-    lastBillDue: number = 2000;
+    lastBillDue: number;
+    dueLimit: number;
     grandDueTotal: number;
-    currentPayment: number = 5000;
+    currentPayment: number;
     totalDue: number;
     sales = [];
     total: number;
@@ -66,18 +71,16 @@ export class CreateQuotationComponent implements OnInit {
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<CreateQuotationComponent>,
         private formBuilder: FormBuilder,
-        private itemsCategoriesService: ItemsCategoriesService,
         public snackBar: MatSnackBar,
-        private router: Router,
-        private itemsService: ItemsService,
         private itemsSuppliersService: ItemsSuppliersService,
         private salesQuotationService: salesQuotationService
     ) { }
     ngOnInit() {
         this.initializeForm();
-        this.initializeSupplierForm()
-        this.getCategoriesDropDown('Item')
-        this.getSuppliersDropDown()
+        this.initializeSupplierForm();
+        this.getCustomerDropDown();
+        this.getItemDropDown();
+        //  this.getSuppliersDropDown()
         if (this.data && this.data.id) {
             this.fillForm();
             this.getItemSupplier();
@@ -100,32 +103,27 @@ export class CreateQuotationComponent implements OnInit {
             selling_price: ['', Validators.required],
         });
     }
-    add() {
-        this.countQty.push(this.formSupplier.value.qty)
-        this.Qty = this.countQty.reduce((acc, cur) => acc + cur, 0);
-        this.countTotal.push(this.total)
-        this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
-        this.grandDueTotal = this.totalPrice + this.lastBillDue
-        this.totalDue = this.grandDueTotal - this.currentPayment
-    }
-    saveItems(): void {
+
+    saveSalesQuotation(): void {
         const { company,
             date,
             invoice_no,
-            ref_no } = this.formGroup.value;
+            ref_no,
+            company: companyId } = this.formGroup.value;
         this.isShowLoader = true;
         this.salesQuotationService
-            .addSales({
+            .addSalesQuotation({
                 company,
                 date,
                 invoice_no,
                 ref_no,
-                sales: this.sales
+                sales: this.sales,
+                companyId
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-                    this.snackBar.open('Item saved successfully', 'OK', {
+                    this.snackBar.open('Sales quotation saved successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
@@ -142,24 +140,26 @@ export class CreateQuotationComponent implements OnInit {
                 () => { }
             );
     }
-    updateItems(): void {
+    updateSalesQuotation(): void {
         const { company,
             date,
             invoice_no,
-            ref_no } = this.formGroup.value;
+            ref_no,
+            company: companyId } = this.formGroup.value;
         this.isShowLoader = true;
         this.salesQuotationService
-            .editSales({
+            .editSalesQuotation({
                 id: this.data.id, company,
                 date,
                 invoice_no,
                 ref_no,
-                sales: this.sales
+                sales: this.sales,
+                companyId
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-                    this.snackBar.open('Item updated successfully', 'OK', {
+                    this.snackBar.open('Sales quotation updated successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
@@ -178,13 +178,13 @@ export class CreateQuotationComponent implements OnInit {
     }
     onSubmit() {
         if (this.data && this.data.id) {
-            this.updateItems();
+            this.updateSalesQuotation();
         } else {
-            this.saveItems();
+            this.saveSalesQuotation();
         }
         // this.clearSupplierForm();
     }
-    addSales() {
+    addSalesQuotation() {
         const {
             item_code,
             qty,
@@ -221,42 +221,25 @@ export class CreateQuotationComponent implements OnInit {
             itemId: this.data.id, suppliers_id: suppliersId, item_supplier_rate: itemSupplierRate
         });
     }
-    getCategoriesDropDown(type: string) {
-        this.itemsCategoriesService
-            .getCategoriesDropDown(type)
-            .subscribe(
-                (response) => {
-                    this.categories = response;
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
-    }
-    getSuppliersDropDown() {
-        this.itemsSuppliersService
-            .getItemSupplierDropDown()
-            .subscribe(
-                (response) => {
-                    this.suppliersCompany = response;
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
-    }
+
+    // getSuppliersDropDown() {
+    //     this.itemsSuppliersService
+    //         .getItemSupplierDropDown()
+    //         .subscribe(
+    //             (response) => {
+    //                 this.suppliersCompany = response;
+    //             },
+    //             (error) => {
+    //                 this.snackBar.open(
+    //                     (error.error && error.error.message) || error.message,
+    //                     'Ok', {
+    //                     duration: 3000
+    //                 }
+    //                 );
+    //             },
+    //             () => { }
+    //         );
+    // }
     getItemSupplier() {
         this.supplierDataSource = [];
         this.suppliers = []
@@ -286,4 +269,67 @@ export class CreateQuotationComponent implements OnInit {
         }
         console.log(this.total);
     }
+    getCustomerDropDown() {
+        this.selectCustomerLoader = true;
+        this.salesQuotationService
+            .getCustomerDropDown()
+            .subscribe(
+                (response) => {
+                    this.customers = response;
+                    this.selectCustomerLoader = false;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+    getItemDropDown() {
+        this.selectItemLoader = true;
+        this.salesQuotationService
+            .getItemDropDown()
+            .subscribe(
+                (response) => {
+                    this.items = response;
+                    this.selectItemLoader = false;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+    add() {
+        this.countQty.push(this.formSupplier.value.qty)
+        this.Qty = this.countQty.reduce((acc, cur) => acc + cur, 0);
+        this.countTotal.push(this.total)
+        this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
+        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
+    }
+    totalDueCount() {
+        this.totalDue = this.grandDueTotal - this.currentPayment
+
+    }
+    fillSellingPrice(item) {
+        this.formSupplier.patchValue({
+            item_code: item.item_code,
+            available: item.int_qty,
+           selling_price: item.silver
+        });
+    }
+    fillDueAndDueLimit(customer) {
+            this.lastBillDue =  customer.balance,
+            this.dueLimit = customer.due_limit
+    }
+
 }

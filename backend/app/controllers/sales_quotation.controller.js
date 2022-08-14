@@ -10,22 +10,35 @@ exports.findAll = async (req, res) => {
     if (search) {
       searchQuery += ` and
         (
-           company ilike '%${search}%'
-          or date ilike '%${search}%'
-          or invoice_no ilike '%${search}%'
-          or ref_no ilike '%${search}%'
+           s.date::text ilike '%${search}%'
+          or invoice_no::text ilike '%${search}%'
+          or ref_no::text ilike '%${search}%'
+          or qty::text ilike '%${search}%'
+          or amount::text ilike '%${search}%'
+          or total_due::text ilike '%${search}%'
+          or user_name ilike '%${search}%'
+          or tier ilike '%${search}%'
+          or remarks ilike '%${search}%'
         )`;
     }
-    searchQuery += ` and i.is_active = ${active}`;
+    searchQuery += ` and s.is_active = ${active}`;
     const query = `  SELECT
-      Count(id) OVER() AS total,
-      id,
-   company,
-   date,
-   invoice_no,
-   ref_no
-    FROM sales_quotation
-
+      Count(s.id) OVER() AS total,
+      s.id,
+      s.date,
+      invoice_no,
+      ref_no,
+      qty,
+      amount,
+      total_due,
+      tier,
+      user_name,
+      remarks,
+      company_id as company_id,
+      c.balance as company_balance,
+      c.due_limit as company_due_limit
+      FROM sales_quotation s
+      INNER JOIN cdf as c  ON c.id = s.company_id
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
 
@@ -58,32 +71,22 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const {
-      company,
-      date,
-      invoice_no,
-      ref_no,
-      sales
-    } = req.body;
-    if (
-      !company ||
-      !date ||
-      !invoice_no ||
-      !sales ||
-      !ref_no
-        ) {
+    const { date, invoice_no, ref_no, sales,
+    companyId } = req.body;
+    if ( !date || !invoice_no || !sales || !ref_no || !companyId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
     const insertSalesQuotationQuery = `INSERT INTO sales_quotation
-    (   company,
+    (
       date,
       invoice_no,
-      ref_no
+      ref_no,
+      company_id
       )
-      VALUES('${company}','${date}', '${invoice_no}', '${ref_no}') returning id;
+      VALUES('${companyId}','${date}', '${invoice_no}', '${ref_no}') returning id;
       `;
 
     const { rows } = await pool.query(insertSalesQuotationQuery);
@@ -112,20 +115,8 @@ exports.add = async (req, res) => {
 };
 exports.update = async (req, res) => {
   try {
-    const {
-      id,
-      company,
-      date,
-      invoice_no,
-      ref_no
-    } = req.body;
-    if (
-      !company ||
-      !date ||
-      !invoice_no ||
-      !ref_no ||
-      !id
-    ) {
+    const { id, companyId, date, invoice_no, ref_no } = req.body;
+    if (!companyId || !date || !invoice_no || !ref_no || !id) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -133,7 +124,7 @@ exports.update = async (req, res) => {
     }
 
     const insertSalesQuotationQuery = `UPDATE sales_quotation
-    SET  company='${company}', date='${date}', invoice_no='${invoice_no}',  ref_no='${ref_no}' where id = ${id};`;
+    SET  company_id='${companyId}', date='${date}', invoice_no='${invoice_no}',  ref_no='${ref_no}',  companyId='${companyId}' where id = ${id};`;
     const { updateRows } = await pool.query(insertSalesQuotationQuery);
 
     const UpdateSalesId = updateRows[0].id;
