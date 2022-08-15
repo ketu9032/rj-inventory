@@ -2,15 +2,15 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
-            <mat-form-field>
+            <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getItems()">
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="getItems()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="getItems()">
                 Search
             </button>
-            <button color="primary" class="margin" mat-raised-button>
-                <mat-icon>cloud_download</mat-icon>
+            <button color="primary" class="margin btn" mat-raised-button>
+                <mat-icon class="icon">cloud_download</mat-icon>
                 Download
             </button>
         </div>

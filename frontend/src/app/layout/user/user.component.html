@@ -3,15 +3,16 @@
     <div class="header">
         <div>
 
-            <mat-form-field>
+            <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getUser()">
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="getUser()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="getUser()">
                 Search
             </button>
 
-            <button color="primary" mat-raised-button (click)="onAddNewUser()" *ngIf="isLoggedInUserIsOwner">
+            <button color="primary" class="btn" mat-raised-button (click)="onAddNewUser()"
+                *ngIf="isLoggedInUserIsOwner">
                 Add User
             </button>
         </div>

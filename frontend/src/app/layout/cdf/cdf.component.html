@@ -3,14 +3,14 @@
     <div class="header">
         <!-- buttons and search start -->
         <div>
-            <mat-form-field>
+            <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getCdf()">
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="getCdf()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="getCdf()">
                 Search
             </button>
-            <mat-form-field class="margin">
+            <mat-form-field class="margin field-width">
                 <mat-label>Select CDF</mat-label>
                 <mat-select name="cdf" (selectionChange)="onCdfStatusChange($event)" [value]="'Unverified'"
                     [(ngModel)]="customerStatus">
@@ -19,11 +19,11 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="onAddNewCdf()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="onAddNewCdf()">
                 Add CDF
             </button>
-            <button color="primary" class="margin" mat-raised-button>
-                <mat-icon>cloud_download</mat-icon>
+            <button color="primary" class="margin btn" mat-raised-button>
+                <mat-icon class="icon">cloud_download</mat-icon>
                 Download
             </button>
         </div>

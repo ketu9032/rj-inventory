@@ -2,11 +2,11 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
-            <mat-form-field>
+            <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getItems()">
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="getItems()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="getItems()">
                 Search
             </button>
 
@@ -18,7 +18,8 @@
     </div>
     <br />
     <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="company" matSortDirection="asc">
+        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="company"
+            matSortDirection="asc">
 
             <ng-container matColumnDef="code">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
@@ -77,7 +78,8 @@
             <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
         </table>
 
-        <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
+        <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons
+            (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
         </mat-paginator>
     </div>
 </div>
