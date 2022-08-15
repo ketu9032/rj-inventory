@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/auth.service';
 import { IItemSupplierData } from 'src/app/models/item_supplier';
 import { ISalesQuotationData } from 'src/app/models/sales-quotation';
 import { IMatTableParams } from 'src/app/models/table';
@@ -37,7 +38,7 @@ export class CreateQuotationComponent implements OnInit {
     suppliers = []
     supplierDataSource: any = [];
     totalRows: number;
-    suppliersCompany = [];
+    salesItem = [];
     customers = [];
     items = [];
     tableParams: IMatTableParams = {
@@ -59,26 +60,34 @@ export class CreateQuotationComponent implements OnInit {
     Qty: number;
     countTotal = [];
     totalPrice: number;
-    lastBillDue: number;
+    lastBillDue: number = 0;
     dueLimit: number;
     grandDueTotal: number;
     currentPayment: number;
     totalDue: number;
     sales = [];
     total: number;
+    users;
+    user_name: string ;
+    tier: string ;
+    remarks: string = 'test';
+
+    currentDate;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISalesQuotationData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<CreateQuotationComponent>,
         private formBuilder: FormBuilder,
+        private _formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
         private itemsSuppliersService: ItemsSuppliersService,
-        private salesQuotationService: salesQuotationService
-    ) { }
-    ngOnInit() {
+        private salesQuotationService: salesQuotationService,
+        public authService: AuthService
+        ) { }
+        ngOnInit() {
+        this.users = this.authService.getUserData();
         this.initializeForm();
         this.initializeSupplierForm();
-        this.getCustomerDropDown();
         this.getItemDropDown();
         //  this.getSuppliersDropDown()
         if (this.data && this.data.id) {
@@ -88,10 +97,9 @@ export class CreateQuotationComponent implements OnInit {
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            company: ['', Validators.required],
+            tier: ['', Validators.required],
             date: ['', Validators.required],
             invoice_no: ['', Validators.required],
-            ref_no: ['']
         });
     }
     initializeSupplierForm(): void {
@@ -105,20 +113,29 @@ export class CreateQuotationComponent implements OnInit {
     }
 
     saveSalesQuotation(): void {
-        const { company,
+        const {
             date,
             invoice_no,
-            ref_no,
-            company: companyId } = this.formGroup.value;
+        } = this.formGroup.value;
+           this.Qty;
+           this.currentPayment;
+          this.totalDue
+           this.user_name;
+           this.tier;
+           this.remarks;
+
         this.isShowLoader = true;
         this.salesQuotationService
             .addSalesQuotation({
-                company,
                 date,
                 invoice_no,
-                ref_no,
-                sales: this.sales,
-                companyId
+                qty: this.Qty,
+                amount: this.currentPayment,
+                total_due: this.totalDue,
+                user_name: this.users.user_name,
+                tier: this.tier,
+                remarks: this.remarks,
+                sales: this.sales
             })
             .subscribe(
                 (response) => {
@@ -141,20 +158,23 @@ export class CreateQuotationComponent implements OnInit {
             );
     }
     updateSalesQuotation(): void {
-        const { company,
+        const {
             date,
             invoice_no,
-            ref_no,
-            company: companyId } = this.formGroup.value;
+        } = this.formGroup.value;
         this.isShowLoader = true;
         this.salesQuotationService
             .editSalesQuotation({
-                id: this.data.id, company,
+                id: this.data.id,
                 date,
                 invoice_no,
-                ref_no,
-                sales: this.sales,
-                companyId
+                qty: this.Qty,
+                amount: this.currentPayment,
+                total_due: this.totalDue,
+                user_name: this.user_name,
+                tier: this.tier,
+                remarks: this.remarks,
+                sales: this.sales
             })
             .subscribe(
                 (response) => {
@@ -192,35 +212,46 @@ export class CreateQuotationComponent implements OnInit {
             selling_price,
             total
         } = this.formSupplier.value
-        const supplierName = this.suppliersCompany.find(x => +x.id === +item_code);
-        const supplier = {
+        const sale = {
             item_code,
             qty,
             available,
             selling_price,
             total
         }
-        this.suppliers.push(supplier)
-        this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.suppliers);
+        this.sales.push(sale)
+        this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.sales);
     }
     fillForm() {
-        const { company,
+        const {
             date,
             invoice_no,
-            ref_no } = this.data;
+           } = this.data;
         this.formGroup.patchValue({
-            company,
+
             date,
             invoice_no,
-            ref_no
         });
     }
-    supplierFillForm(suppliersId) {
-        const itemSupplierRate = this.suppliers.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
-        this.formSupplier.patchValue({
-            itemId: this.data.id, suppliers_id: suppliersId, item_supplier_rate: itemSupplierRate
-        });
-    }
+    // confirmDialog(id: string): void {
+    //     this.dialog
+    //         .open(DeleteCreateQuotationComponent, {
+    //             maxWidth: '400px',
+    //             data: id
+    //         })
+    //         .afterClosed()
+    //         .subscribe((result) => {
+    //             if (result && result.data === true) {
+    //                 this.getCategory();
+    //             }
+    //         });
+    // }
+    // supplierFillForm(suppliersId) {
+    //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
+    //     this.formSupplier.patchValue({
+    //         salesQuotationId: this.data.id, item_code, item_supplier_rate: itemSupplierRate
+    //     });
+    // }
 
     // getSuppliersDropDown() {
     //     this.itemsSuppliersService
@@ -269,26 +300,7 @@ export class CreateQuotationComponent implements OnInit {
         }
         console.log(this.total);
     }
-    getCustomerDropDown() {
-        this.selectCustomerLoader = true;
-        this.salesQuotationService
-            .getCustomerDropDown()
-            .subscribe(
-                (response) => {
-                    this.customers = response;
-                    this.selectCustomerLoader = false;
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
-    }
+
     getItemDropDown() {
         this.selectItemLoader = true;
         this.salesQuotationService

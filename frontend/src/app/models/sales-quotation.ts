@@ -1,10 +1,11 @@
 
 export interface ISalesQuotationData {
-    id: number,  company: string, date: string, invoice_no: number, ref_no: number, company_id: number
+    id: number,  date: string, invoice_no: number, qty: number, amount: number,    total_due: number, user_name: string, tier: string, remarks: string
+
 }
 
 export interface ISalesQuotationParams {
-    id?: number, company: string, date: string, invoice_no: number, ref_no: number, sales: {}, companyId: number
+    id?: number,  date: string, invoice_no: number,   qty: number, amount: number, total_due: number, user_name: string, tier: string, remarks: string, sales: {}
 }
 
 export interface ISalesQuotationActiveParams {

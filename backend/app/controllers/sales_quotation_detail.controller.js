@@ -4,7 +4,7 @@ const { generateToken } = require('../utils/common');
 const { pool } = require('../db');
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active, sales_quotation_id } =
+    const { orderBy, direction, pageSize, pageNumber, search, active, salesQuotationId } =
       req.query;
     let searchQuery = 'where true';
     const offset = pageSize * pageNumber - pageSize;
@@ -19,21 +19,20 @@ exports.findAll = async (req, res) => {
         )`;
     }
     searchQuery += ` and is_active = ${active}`;
-    if (sales_quotation_id) {
-      searchQuery += ` and sales_quotation_id = ${sales_quotation_id}`;
+    if (salesQuotationId) {
+      searchQuery += ` and sales_quotation_id = ${salesQuotationId}`;
     }
     const query = `
     SELECT
       Count(sales_quotation_details.id) OVER() AS total,
-      sales_quotation_details.id as id,
+        id,
         qty,
         available,
         selling_price,
-        sd.total
-        sales_quotation_id as sales_quotation_id,
-    FROM sales_quotation_details as sd
-      JOIN sales_quotation as s
-        ON s.id = sd.sales_quotation_id
+        total
+        sales_quotation_id
+    FROM sales_quotation_details
+
 ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     console.log(query);
     const response = await pool.query(query);

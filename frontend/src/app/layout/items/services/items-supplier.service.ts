@@ -2,7 +2,6 @@ import { CommonService } from '../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
-import { IItemActiveParams, IItemParams } from 'src/app/models/item';
 import { IItemSupplierParams } from 'src/app/models/item_supplier';
 
 @Injectable({ providedIn: 'root' })
