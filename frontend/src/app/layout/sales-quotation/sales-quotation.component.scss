@@ -1,3 +1,7 @@
+* {
+    font-size: 14px;
+}
+
 table {
     width: 100%;
 }
@@ -9,7 +13,20 @@ table {
 }
 
 .margin {
-    margin: 0 10px 0 10px;
+    margin: 0 7px 0 7px;
+}
+
+.field-width {
+    width: 125px;
+    font-size: 14px;
+}
+
+.btn {
+    font-size: 13px;
+    height: 33px;
+}
+.icon{
+    vertical-align: text-top;
 }
 
 .header {
@@ -18,13 +35,19 @@ table {
     justify-content: space-between;
 }
 
+tr.mat-header-row,
+tr.mat-row {
+    height: 40px;
+}
+
 th {
     color: rgb(0, 0, 0);
-    font-size: 16px;
+    font-size: 15px;
 }
 
 td {
     color: rgb(73 70 70 / 87%);
+    font-size: 14px;
 }
 
 .selectTierLoader {

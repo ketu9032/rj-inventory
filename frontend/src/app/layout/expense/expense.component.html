@@ -2,21 +2,21 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
-            <mat-form-field>
+            <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)=" getExpense()">
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="getExpense()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="getExpense()">
                 Search
             </button>
-            <button color="primary" class="margin" mat-raised-button (click)="onAddNewExpense()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="onAddNewExpense()">
                 Add Expense
             </button>
-            <button color="primary" class="margin" mat-raised-button (click)="openCategory()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="openCategory()">
                 Add Category
             </button>
-            <button color="primary" class="margin" mat-raised-button>
-                <mat-icon>cloud_download</mat-icon>
+            <button color="primary" class="margin btn" mat-raised-button>
+                <mat-icon class="icon">cloud_download</mat-icon>
                 Download
             </button>
         </div>

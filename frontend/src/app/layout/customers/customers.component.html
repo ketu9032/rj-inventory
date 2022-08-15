@@ -2,25 +2,25 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
-            <mat-form-field>
+            <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getCdf()">
             </mat-form-field>
-            <button color="primary" class="margin" mat-raised-button (click)="getCdf()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="getCdf()">
                 Search
             </button>
             <button color="primary" *ngIf="false" mat-raised-button (click)="onAddNewCustomers()">
                 Add Customers
             </button>
-            <button color="primary" class="margin" mat-raised-button (click)="openTires()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="openTires()">
                 Tiers
             </button>
-            <button color="primary" class="margin" mat-raised-button>
-                <mat-icon>cloud_download</mat-icon>
+            <button color="primary" class="margin btn" mat-raised-button>
+                <mat-icon class="icon">cloud_download</mat-icon>
                 Download
             </button>
-            <button color="primary" class="margin" mat-raised-button>
-                <mat-icon>cloud_upload</mat-icon>
+            <button color="primary" class="margin btn" mat-raised-button>
+                <mat-icon class="icon">cloud_upload</mat-icon>
                 Upload
             </button>
         </div>
