@@ -11,34 +11,26 @@
         <div class="box">
             <!--tier start -->
             <div class="block">
-
                 <mat-form-field>
                     <mat-label>Tier</mat-label>
-                    <input matInput formControlName="tier" required  />
+                    <input matInput formControlName="tier" required [(ngModel)]="tier"  />
                 </mat-form-field>
-
-
             </div>
             <!--date start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" required value="{{this.currentDate}}" type="date" />
+                    <input matInput formControlName="date" required [(ngModel)]="currentDate"  />
                 </mat-form-field>
 
             </div>
-
-
             <!-- invoice no start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>Invoice No</mat-label>
-                    <input matInput formControlName="invoice_no" type="number" required />
+                    <input matInput formControlName="invoice_no" [(ngModel)]="invoiceNo"  />
                 </mat-form-field>
-
             </div>
-
-
             <!-- button start -->
             <div class="block">
                 <button mat-raised-button color="primary" class="margin">
@@ -51,7 +43,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 </form>
 <mat-divider class="mat-divider"></mat-divider>
@@ -62,8 +53,6 @@
     <div class="sales_details_table">
         <div class="box">
             <!-- Item Code start -->
-
-
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Item code</mat-label>
@@ -212,7 +201,7 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Last Bill No</mat-label>
-                    <input matInput disable [(ngModel)]="lastBillNo" />
+                    <input matInput disable [(ngModel)]="invoiceNo" readonly/>
                 </mat-form-field>
             </div>
         </span>
@@ -237,7 +226,8 @@
     <br>
     <div class="flex remakesAndPayment">
         <div class="remakes">
-            <textarea class="padding" id="" cols="60" rows="7" placeholder="Enter Remarks..."></textarea>
+            <textarea class="padding" id="" cols="60" rows="7" [(ngModel)]="remarks"
+                placeholder="Enter Remarks..."></textarea>
         </div>
         <div class="payment">
             <div class="width">
@@ -251,8 +241,8 @@
 
                 <mat-form-field>
                     <mat-label>Shipping (₹) </mat-label>
-                    <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="currentPayment"
-                        value={{this.currentPayment}} />
+                    <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="shippingPayment"
+                        value={{this.shippingPayment}} />
                 </mat-form-field>
                 <br>
                 <!-- <ng-container [formGroup]="toppings">
@@ -267,8 +257,8 @@
         </div>
     </div>
     <mat-divider></mat-divider>
-    <div class="flex tierLimitAndButton">
-             <div class="tierLimitAndButton_content_2">
+    <div class=" tierLimitAndButton">
+        <div class="tierLimitAndButton_content_2">
             <div class="right">
                 <mat-form-field>
                     <mat-label>Total Due (₹) </mat-label>
@@ -278,11 +268,10 @@
             </div>
             <br>
             <div class="">
-                <button mat-raised-button color="primary" class="margin"
-                 (click)="onSubmit()">
-                <!-- [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()"> -->
-                <span *ngIf="!isShowLoader">
-                    {{ !this.data ? 'Save & Rack' : 'Update & Rack' }}
+                <button mat-raised-button color="primary" class="margin" (click)="onSubmit()">
+                    <!-- [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()"> -->
+                    <span *ngIf="!isShowLoader">
+                        {{ !this.data ? 'Save & Back' : 'Update & Back' }}
                     </span>
                     <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
                 </button>
@@ -290,4 +279,3 @@
         </div>
     </div>
 </div>
-

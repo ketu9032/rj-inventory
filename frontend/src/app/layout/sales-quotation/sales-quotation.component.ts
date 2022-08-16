@@ -39,8 +39,7 @@ export class SalesQuotationComponent implements OnInit {
     loader: boolean = false;
     selectTireLoader: boolean = false;
     totalRows: number;
-    tireName;
-    tireNameNone
+    tireName : string;
     isShow = true;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
@@ -103,11 +102,16 @@ export class SalesQuotationComponent implements OnInit {
         () => { }
       );
     }
-    onAddNewCreateQuotation(): void {
+    onAddNewCreateQuotation(): void{
       this.dialog
         .open(CreateQuotationComponent, {
             width: '1000px',
             height: '700px'
+            // data:{
+
+            //         tier: this.tireName
+
+            // }
         })
         .afterClosed()
         .subscribe((result) => {

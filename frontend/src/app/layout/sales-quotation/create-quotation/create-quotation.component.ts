@@ -63,16 +63,16 @@ export class CreateQuotationComponent implements OnInit {
     lastBillDue: number = 0;
     dueLimit: number;
     grandDueTotal: number;
-    currentPayment: number;
+    shippingPayment: number;
     totalDue: number;
     sales = [];
     total: number;
     users;
     user_name: string ;
     tier: string ;
-    remarks: string = 'test';
-
-    currentDate;
+    remarks: string;
+    invoiceNo: number = 0;
+    currentDate = new Date() ;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISalesQuotationData,
         public dialog: MatDialog,
@@ -82,9 +82,11 @@ export class CreateQuotationComponent implements OnInit {
         public snackBar: MatSnackBar,
         private itemsSuppliersService: ItemsSuppliersService,
         private salesQuotationService: salesQuotationService,
-        public authService: AuthService
+        public authService: AuthService,
+
         ) { }
         ngOnInit() {
+      //      this.tier =this.data.tier;
         this.users = this.authService.getUserData();
         this.initializeForm();
         this.initializeSupplierForm();
@@ -94,6 +96,7 @@ export class CreateQuotationComponent implements OnInit {
             this.fillForm();
             this.getItemSupplier();
         }
+
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
@@ -113,15 +116,14 @@ export class CreateQuotationComponent implements OnInit {
     }
 
     saveSalesQuotation(): void {
-        const {
+        const {tier,
             date,
             invoice_no,
         } = this.formGroup.value;
            this.Qty;
-           this.currentPayment;
+           this.shippingPayment;
           this.totalDue
            this.user_name;
-           this.tier;
            this.remarks;
 
         this.isShowLoader = true;
@@ -129,11 +131,11 @@ export class CreateQuotationComponent implements OnInit {
             .addSalesQuotation({
                 date,
                 invoice_no,
+                tier,
                 qty: this.Qty,
-                amount: this.currentPayment,
+                amount: this.shippingPayment,
                 total_due: this.totalDue,
                 user_name: this.users.user_name,
-                tier: this.tier,
                 remarks: this.remarks,
                 sales: this.sales
             })
@@ -169,7 +171,7 @@ export class CreateQuotationComponent implements OnInit {
                 date,
                 invoice_no,
                 qty: this.Qty,
-                amount: this.currentPayment,
+                amount: this.shippingPayment,
                 total_due: this.totalDue,
                 user_name: this.user_name,
                 tier: this.tier,
@@ -329,7 +331,7 @@ export class CreateQuotationComponent implements OnInit {
         this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
     }
     totalDueCount() {
-        this.totalDue = this.grandDueTotal - this.currentPayment
+        this.totalDue = this.grandDueTotal - this.shippingPayment
 
     }
     fillSellingPrice(item) {
