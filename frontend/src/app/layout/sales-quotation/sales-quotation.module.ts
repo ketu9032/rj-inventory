@@ -24,7 +24,7 @@ import { CreateQuotationComponent } from './create-quotation/create-quotation.co
     FlexLayoutModule.withConfig({ addFlexToParent: false })
   ],
   entryComponents: [
-    SalesQuotationComponent,
+    SalesQuotationComponent
   ],
 })
 export class SalesQuotationModule { }

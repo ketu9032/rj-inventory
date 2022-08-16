@@ -1,172 +1,240 @@
+
+
 <div class="main-header">
-    <h1 mat-dialog-title><b>Add Sales </b></h1>
+    <h1 mat-dialog-title><b>Add Sales</b> </h1>
     <button mat-button mat-dialog-close>
         <mat-icon>close</mat-icon>
     </button>
 </div>
 <mat-divider></mat-divider>
-<div class="container">
-    <br>
-    <form [formGroup]="formGroup">
-        <div class="flex row-1">
-            <!-- company start -->
-            <div class="width">
+<br>
+<form [formGroup]="formGroup">
+    <div class="item-form">
+        <div class="box">
+            <!--company start -->
+            <div class="block">
                 <mat-form-field>
-                    <mat-label>company</mat-label>
-                    <input matInput required formControlName="company" matTooltip="Not Editable" readonly />
-                </mat-form-field>
-            </div>
-            <!-- Date start -->
-            <div class="width">
-                <mat-form-field>
-                    <input matInput [matDatepicker]="picker1" [max]="currentDate" placeholder="(MM/DD/YYYY)" required
-                        formControlName="date" readonly matTooltip="Not Editable">
-                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                    <mat-datepicker #picker1></mat-datepicker>
-                </mat-form-field>
 
-            </div>
-            <!-- invoice_number start -->
-            <div class="width">
-                <mat-form-field>
-                    <mat-label>Invoice No.</mat-label>
-                    <input matInput type="number" formControlName="invoice_no" required />
+                    <mat-label>Company</mat-label>
+                    <mat-select name="company">
+                        <mat-option formControlName="company" *ngFor="let customer of customers" [value]="customer.id"
+                            (click)="fillDueAndDueLimit(customer)">
+                            {{customer.company | uppercase}}
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
+                <div>
+                    <ng-container *ngIf="
+            formGroup.controls.company.touched &&
+            !formGroup.controls.company.value
+            ">
+                        <span class="error">Company is Required</span>
+                    </ng-container>
+                </div>
+                <mat-spinner class="loader" *ngIf="selectCustomerLoader" diameter="25"></mat-spinner>
             </div>
-            <!-- ref name start -->
-            <div class="width">
+            <!--date start -->
+            <div class="block">
                 <mat-form-field>
-                    <mat-label>Ref no</mat-label>
-                    <input matInput type="number" formControlName="ref_no" required />
+                    <mat-label>Date</mat-label>
+                    <input matInput formControlName="date" required type="date" />
                 </mat-form-field>
+                <div>
+                    <ng-container *ngIf="
+          formGroup.controls.date.touched &&
+          !formGroup.controls.date.value
+         ">
+                        <span class="error">date is Required</span>
+                    </ng-container>
+                </div>
             </div>
-            <!-- buttons start -->
-            <div>
+
+
+            <!-- invoice no start -->
+            <div class="block">
+                <mat-form-field>
+                    <mat-label>Invoice No</mat-label>
+                    <input matInput formControlName="invoice_no" type="number" required />
+                </mat-form-field>
+                <div>
+                    <ng-container *ngIf="
+                    formGroup.controls.invoice_no.touched &&
+                    !formGroup.controls.invoice_no.value
+                    ">
+                        <span class="error">Invoice No is Required</span>
+                    </ng-container>
+                </div>
+            </div>
+
+
+            <!-- button start -->
+            <div class="block">
                 <button mat-raised-button color="primary" class="margin">
                     Download
                 </button>
             </div>
-            <div>
-                <button mat-raised-button color="primary" >
+            <div class="block">
+                <button mat-raised-button color="primary">
                     Upload
                 </button>
             </div>
         </div>
-    </form>
-    <mat-divider></mat-divider>
-    <br>
-    <!-- Item Name start -->
-    <form [formGroup]="addSalesFormGroup" (ngSubmit)="addSales()" >
-        <div class="flex row-2">
-            <!-- <div class="width">
-                <mat-form-field>
+
+    </div>
+</form>
+<mat-divider class="mat-divider"></mat-divider>
+<br>
+<!-- supplier form -->
+<h1 mat-dialog-title>Sales Details</h1>
+<form [formGroup]="formSupplier" (ngSubmit)="addSalesQuotation()">
+    <div class="sales_details_table">
+        <div class="box">
+            <!-- Item Code start -->
+
+
+            <div class="block">
+                <mat-form-field class="input_width">
                     <mat-label>Item code</mat-label>
                     <mat-select name="item code">
                         <mat-option formControlName="item_code" *ngFor="let item of items" [value]="item.id"
-                            (click)="fillForm(item)">
+                            (click)="fillSellingPrice(item)">
                             {{item.item_code | uppercase}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-            </div> -->
-            <div class="width">
-                <mat-form-field>
-                    <mat-label>Item code</mat-label>
-                    <input matInput formControlName="item_code" matTooltip="Not Editable" />
+                <div>
+                    <ng-container *ngIf="
+                    formSupplier.controls.item_code.touched &&
+                    !formSupplier.controls.item_code.value
+                    ">
+                        <span class="error">Item Code is Required</span>
+                    </ng-container>
+                </div>
+                <mat-spinner class="loader" *ngIf="selectItemLoader" diameter="20"></mat-spinner>
+            </div>
+            <!-- qty start -->
+            <div class="block">
+                <mat-form-field class="input_width">
+                    <mat-label>Qty.</mat-label>
+                    <input matInput formControlName="qty" type="number" (keyup)="count()" (click)="count()" required />
                 </mat-form-field>
+                <div>
+                    <ng-container *ngIf="
+                formSupplier.controls.qty.touched &&
+                !formSupplier.controls.qty.value
+                ">
+                        <span class="error">Qty is Required</span>
+                    </ng-container>
+                </div>
             </div>
-            <!-- hashtag start -->
-            <div class="width">
-                <mat-label>#</mat-label>
-                <br>
-                <mat-slide-toggle [(ngModel)]="isChecked"> plus </mat-slide-toggle>
-            </div>
-            <!-- Qty start -->
-            <div class="width">
-                <mat-form-field>
-                    <mat-label>Qty</mat-label>
-                    <input matInput formControlName="qty" type="number" required (keyup)="count()" />
-                </mat-form-field>{{qty}}
-            </div>
-            <!-- Available start -->
-            <div class="width">
-                <mat-form-field>
+            <!-- available start -->
+            <div class="block">
+                <mat-form-field class="input_width">
                     <mat-label>Available</mat-label>
-                    <input matInput formControlName="available"type="number" matTooltip="Not Editable" />
+                    <input matInput formControlName="available" matTooltip="Not Editable" readonly />
                 </mat-form-field>
+                <div>
+                    <ng-container *ngIf="
+                formSupplier.controls.available.touched &&
+                !formSupplier.controls.available.value
+                ">
+                        <span class="error">Available is Required</span>
+                    </ng-container>
+                </div>
             </div>
-            <!-- Selling price start -->
-            <div class="width">
-                <mat-form-field>
-                    <mat-label>Selling price</mat-label>
-                    <input matInput formControlName="selling_price" type="number" matTooltip="Not Editable" />
+            <!-- selling_price start -->
+            <div class="block">
+                <mat-form-field class="input_width">
+                    <mat-label>Selling Price</mat-label>
+                    <input matInput formControlName="selling_price" matTooltip="Not Editable" readonly />
                 </mat-form-field>
+                <div>
+                    <ng-container *ngIf="
+                formSupplier.controls.selling_price.touched &&
+                !formSupplier.controls.selling_price.value
+                ">
+                        <span class="error">Selling Price is Required</span>
+                    </ng-container>
+                </div>
             </div>
-            <!-- total price start -->
-            <div class="width">
-
-                <mat-form-field>
+            <!-- total start -->
+            <div class="block">
+                <mat-form-field class="input_width">
                     <mat-label>Total</mat-label>
-                    <input matInput formControlName="total"  matTooltip="Not Editable" />
+                    <input matInput formControlName="total" matTooltip="Not Editable" readonly />
                 </mat-form-field>
+                <div>
+                    <ng-container *ngIf="
+                formSupplier.controls.total.touched &&
+                !formSupplier.controls.total.value
+                ">
+                        <span class="error">Total Price is Required</span>
+                    </ng-container>
+                </div>
             </div>
-            <!-- Add button start -->
-            <div>
-                <button mat-raised-button color="primary"  class="margin" type="submit" (click)="addSales()">
-                    Add
-                </button>
-            </div>
+            <!-- ADD BUTTON -->
+            <button mat-raised-button color="primary" class="add_button" type="submit" [disabled]="!formSupplier.valid"
+                (click)="add()">
+                Add
+            </button>
         </div>
-    </form>
-
-</div>
-<mat-divider></mat-divider>
+    </div>
+</form>
 <br>
-<!-- table start -->
 <div class="mat-elevation-z8">
-    <table mat-table matSort matSortActive="item_code"[dataSource]="salesDataSource" matSortDirection="asc">
+    <table mat-table [dataSource]="supplierDataSource" matSort matSortActive="item_code" matSortDirection="asc">
         <ng-container matColumnDef="item_code">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Name</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.item_code}}
+            <td mat-cell *matCellDef="let sales">
+                {{ sales.item_code| titlecase }}
             </td>
         </ng-container>
         <ng-container matColumnDef="qty">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Qty</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.qty }}
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="edit_delete">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Edit/Delete</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.edit_delete }}
+            <td mat-cell *matCellDef="let sales">
+                {{ sales.qty }}
             </td>
         </ng-container>
         <ng-container matColumnDef="selling_price">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
-            <td mat-cell *matCellDef="let element">
-                {{ element.selling_price}}
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Rate</th>
+            <td mat-cell *matCellDef="let sales">
+                {{ sales.selling_price | currency: 'INR' }}
+
             </td>
         </ng-container>
         <ng-container matColumnDef="total">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
-            <td mat-cell *matCellDef="let element">{{ element.total}}</td>
+            <td mat-cell *matCellDef="let sales">
+                {{ sales.total | currency: 'INR'}}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let element">
+                <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
+                    (click)="supplierFillForm(element.sales_id)">
+                    <mat-icon aria-label="Edit">edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="confirmDialog(element.id)">
+                    <mat-icon aria-label="Delete">delete</mat-icon>
+                </button>
+            </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
+        <tr mat-row *matRowDef="let supplierData; columns: displayedColumns"></tr>
     </table>
 </div>
 <br>
-<mat-divider></mat-divider>
+<mat-divider class="mat-divider"></mat-divider>
 <br>
+<!-- bill container -->
 <div class="bill-container">
     <div class="flex totalAndBill">
         <span class="totalAndBill_content-1">
             <div class="width">
                 <mat-form-field>
                     <mat-label>Total Qty</mat-label>
-                    <input matInput disable [(ngModel)]="totalQty" />
+                    <input matInput disable matTooltip="Not Editable" readonly value={{this.Qty}} />
                 </mat-form-field>
             </div>
             <div class="width">
@@ -180,13 +248,15 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Total (₹)</mat-label>
-                    <input matInput disable />
+                    <input matInput disable matTooltip="Not Editable" readonly
+                        value="{{this.totalPrice  | currency: 'INR'}}" />
                 </mat-form-field>
             </div>
             <div class="width">
                 <mat-form-field>
                     <mat-label>Last Bill Due (₹)</mat-label>
-                    <input matInput disable />
+                    <input matInput disable matTooltip="Not Editable" readonly
+                        value="{{this.lastBillDue  | currency: 'INR'}}" />
                 </mat-form-field>
             </div>
         </span>
@@ -201,38 +271,58 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Grand Total (₹) </mat-label>
-                    <input matInput disable />
+                    <input matInput disable matTooltip="Not Editable" readonly
+                        value="{{this.grandDueTotal  | currency: 'INR'}}" />
                 </mat-form-field>
             </div>
             <div class="width">
+                <span >
+
+                    <mat-checkbox color="primary"formControlName="pepperoni" > </mat-checkbox>
+                </span>
                 <mat-form-field>
-                    <mat-label>Payment (₹) </mat-label>
-                    <input matInput disable />
+                    <mat-label>payment(₹) </mat-label>
+                    <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="currentPayment"
+                        value={{this.currentPayment}} />
                 </mat-form-field>
+                <br>
+                <ng-container >
+
+                    <mat-form-field >
+                        <mat-label>Other Payment (₹) </mat-label>
+                        <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="currentPayment"
+                        value={{this.currentPayment}} />
+                    </mat-form-field>
+                </ng-container>
             </div>
         </div>
     </div>
     <mat-divider></mat-divider>
     <div class="flex tierLimitAndButton">
-        <div><br>(SLIVER) Due Limit: ₹100</div>
+        <div><br>(SLIVER) Due Limit:
+            <span class="error">
+                {{this.dueLimit | currency: 'INR'}}
+            </span>
+        </div>
         <div class="tierLimitAndButton_content_2">
             <div class="right">
                 <mat-form-field>
                     <mat-label>Total Due (₹) </mat-label>
-                    <input matInput disable />
+                    <input matInput disable matTooltip="Not Editable" readonly
+                        value="{{this.totalDue | currency: 'INR'}}" />
                 </mat-form-field>
             </div>
             <br>
             <div class="">
-                <button mat-raised-button color="primary" class="margin" type="submit">
-                    Save & Rack
+                <button mat-raised-button color="primary" class="margin"
+                    [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()">
+                    <span *ngIf="!isShowLoader">
+                        {{ !this.data ? 'Save & Rack' : 'Update & Rack' }}
+                    </span>
+                    <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
                 </button>
-                <span>
-                    <button mat-raised-button color="warn" type="submit">
-                        Save & Print
-                    </button>
-                </span>
             </div>
         </div>
     </div>
 </div>
+
