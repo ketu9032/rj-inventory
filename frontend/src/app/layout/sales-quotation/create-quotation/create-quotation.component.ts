@@ -64,7 +64,9 @@ export class CreateQuotationComponent implements OnInit {
     dueLimit: number;
     grandDueTotal: number;
     shippingPayment: number;
-    totalDue: number;
+    gst;
+    totalDue;
+
     sales = [];
     total: number;
     users;
@@ -121,7 +123,7 @@ export class CreateQuotationComponent implements OnInit {
             invoice_no,
         } = this.formGroup.value;
            this.Qty;
-           this.shippingPayment;
+           this.grandDueTotal;
           this.totalDue
            this.user_name;
            this.remarks;
@@ -133,8 +135,10 @@ export class CreateQuotationComponent implements OnInit {
                 invoice_no,
                 tier,
                 qty: this.Qty,
-                amount: this.shippingPayment,
+                amount: this.grandDueTotal,
                 total_due: this.totalDue,
+                shipping: this.shippingPayment,
+                gst: this.gst,
                 user_name: this.users.user_name,
                 remarks: this.remarks,
                 sales: this.sales
@@ -173,6 +177,8 @@ export class CreateQuotationComponent implements OnInit {
                 qty: this.Qty,
                 amount: this.shippingPayment,
                 total_due: this.totalDue,
+                shipping: this.shippingPayment,
+                gst: this.gst,
                 user_name: this.user_name,
                 tier: this.tier,
                 remarks: this.remarks,
@@ -331,7 +337,7 @@ export class CreateQuotationComponent implements OnInit {
         this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
     }
     totalDueCount() {
-        this.totalDue = this.grandDueTotal - this.shippingPayment
+        this.totalDue = (+this.grandDueTotal + +this.shippingPayment + +this.gst)
 
     }
     fillSellingPrice(item) {

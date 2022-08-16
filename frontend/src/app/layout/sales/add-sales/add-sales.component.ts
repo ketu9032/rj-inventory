@@ -117,98 +117,98 @@ export class AddSalesComponent implements OnInit {
         });
     }
 
-    saveSalesQuotation(): void {
-        this.company
-        const {
-            date,
-            invoice_no,
-        } = this.formGroup.value;
-           this.Qty;
-           this.currentPayment;
-          this.totalDue
-           this.user_name;
-           this.tier;
-           this.remarks;
+    // saveSalesQuotation(): void {
+    //     this.company
+    //     const {
+    //         date,
+    //         invoice_no,
+    //     } = this.formGroup.value;
+    //        this.Qty;
+    //        this.currentPayment;
+    //       this.totalDue
+    //        this.user_name;
+    //        this.tier;
+    //        this.remarks;
 
-        this.isShowLoader = true;
-        this.salesQuotationService
-            .addSalesQuotation({
-                date,
-                invoice_no,
-                // companyId: this.company,
-                qty: this.Qty,
-                amount: this.currentPayment,
-                total_due: this.totalDue,
-                user_name: this.user_name,
-                tier: this.tier,
-                remarks: this.remarks,
-                sales: this.sales
-            })
-            .subscribe(
-                (response) => {
-                    this.isShowLoader = false;
-                    this.snackBar.open('Sales quotation saved successfully', 'OK', {
-                        duration: 3000
-                    });
-                    this.dialogRef.close(true);
-                },
-                (error) => {
-                    this.isShowLoader = false;
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
-    }
-    updateSalesQuotation(): void {
-        const {
-            date,
-            invoice_no,
-        } = this.formGroup.value;
-        this.isShowLoader = true;
-        this.salesQuotationService
-            .editSalesQuotation({
-                id: this.data.id,
-                date,
-                invoice_no,
-                // companyId: this.company,
-                qty: this.Qty,
-                amount: this.currentPayment,
-                total_due: this.totalDue,
-                user_name: this.user_name,
-                tier: this.tier,
-                remarks: this.remarks,
-                sales: this.sales
-            })
-            .subscribe(
-                (response) => {
-                    this.isShowLoader = false;
-                    this.snackBar.open('Sales quotation updated successfully', 'OK', {
-                        duration: 3000
-                    });
-                    this.dialogRef.close(true);
-                },
-                (error) => {
-                    this.isShowLoader = false;
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
-    }
+    //     this.isShowLoader = true;
+    //     this.salesQuotationService
+    //         .addSalesQuotation({
+    //             date,
+    //             invoice_no,
+    //             // companyId: this.company,
+    //             qty: this.Qty,
+    //             amount: this.currentPayment,
+    //             total_due: this.totalDue,
+    //             user_name: this.user_name,
+    //             tier: this.tier,
+    //             remarks: this.remarks,
+    //             sales: this.sales
+    //         })
+    //         .subscribe(
+    //             (response) => {
+    //                 this.isShowLoader = false;
+    //                 this.snackBar.open('Sales quotation saved successfully', 'OK', {
+    //                     duration: 3000
+    //                 });
+    //                 this.dialogRef.close(true);
+    //             },
+    //             (error) => {
+    //                 this.isShowLoader = false;
+    //                 this.snackBar.open(
+    //                     (error.error && error.error.message) || error.message,
+    //                     'Ok', {
+    //                     duration: 3000
+    //                 }
+    //                 );
+    //             },
+    //             () => { }
+    //         );
+    // }
+    // updateSalesQuotation(): void {
+    //     const {
+    //         date,
+    //         invoice_no,
+    //     } = this.formGroup.value;
+    //     this.isShowLoader = true;
+    //     this.salesQuotationService
+    //         .editSalesQuotation({
+    //             id: this.data.id,
+    //             date,
+    //             invoice_no,
+    //             // companyId: this.company,
+    //             qty: this.Qty,
+    //             amount: this.currentPayment,
+    //             total_due: this.totalDue,
+    //             user_name: this.user_name,
+    //             tier: this.tier,
+    //             remarks: this.remarks,
+    //             sales: this.sales
+    //         })
+    //         .subscribe(
+    //             (response) => {
+    //                 this.isShowLoader = false;
+    //                 this.snackBar.open('Sales quotation updated successfully', 'OK', {
+    //                     duration: 3000
+    //                 });
+    //                 this.dialogRef.close(true);
+    //             },
+    //             (error) => {
+    //                 this.isShowLoader = false;
+    //                 this.snackBar.open(
+    //                     (error.error && error.error.message) || error.message,
+    //                     'Ok', {
+    //                     duration: 3000
+    //                 }
+    //                 );
+    //             },
+    //             () => { }
+    //         );
+    // }
     onSubmit() {
         if (this.data && this.data.id) {
-            this.updateSalesQuotation();
+       //     this.updateSalesQuotation();
         } else {
-            this.saveSalesQuotation();
+       //     this.saveSalesQuotation();
         }
         // this.clearSupplierForm();
     }

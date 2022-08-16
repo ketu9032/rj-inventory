@@ -16,6 +16,8 @@ exports.findAll = async (req, res) => {
           or qty::text ilike '%${search}%'
           or amount::text ilike '%${search}%'
           or total_due::text ilike '%${search}%'
+          or shipping::text ilike '%${search}%'
+          or gst::text ilike '%${search}%'
           or user_name ilike '%${search}%'
           or tier ilike '%${search}%'
           or remarks ilike '%${search}%'
@@ -31,6 +33,8 @@ exports.findAll = async (req, res) => {
       qty,
       amount,
       total_due,
+      shipping,
+      gst,
       tier,
       user_name,
       remarks
@@ -76,29 +80,31 @@ exports.add = async (req, res) => {
       qty,
       amount,
       total_due,
+      shipping,
+      gst,
       user_name,
       tier,
       remarks,
       sales
     } = req.body;
 
-    if (
-      !date ||
-      !invoice_no ||
-      !qty ||
-      !amount ||
-      !total_due ||
-      !user_name ||
-      !tier ||
-      !sales ||
-      !remarks ||
-      sales.length === 0
-    ) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
-    }
+    // if (
+    //   !date ||
+    //   !invoice_no ||
+    //   !qty ||
+    //   !amount ||
+    //   !total_due ||
+    //   !user_name ||
+    //   !tier ||
+    //   !sales ||
+    //   !remarks
+
+    // ) {
+    //   res
+    //     .status(STATUS_CODE.BAD)
+    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+    //   return;
+    // }
    const insertSalesQuotationQuery =
       `INSERT INTO sales_quotation
     (
@@ -107,11 +113,13 @@ exports.add = async (req, res) => {
        qty,
        amount,
        total_due,
+       shipping,
+       gst,
        user_name,
        tier,
        remarks
      )
-    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}', '${user_name}', '${tier}', '${remarks}') returning id;`;
+    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}', '${shipping}','${gst}','${user_name}', '${tier}', '${remarks}') returning id;`;
         const { rows } = await pool.query(insertSalesQuotationQuery);
      const salesQuotationId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
@@ -197,6 +205,8 @@ exports.update = async (req, res) => {
       qty,
       amount,
       total_due,
+      shipping,
+      gst,
       user_name,
       tier,
       remarks
@@ -219,7 +229,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE sales_quotation
-    SET date='${date}', invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}', user_name='${user_name}', tier='${tier}', remarks='${remarks}' where id = ${id};
+    SET date='${date}', invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}',shipping='${shipping}',gst='${gst}', user_name='${user_name}', tier='${tier}', remarks='${remarks}' where id = ${id};
      `
     );
 

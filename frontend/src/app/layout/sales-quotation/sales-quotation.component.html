@@ -73,13 +73,13 @@
             <ng-container matColumnDef="shipping">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Shipping</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.shipping}}
+                    {{ element.shipping  | currency: 'INR'}}
                 </td>
             </ng-container>
             <ng-container matColumnDef="gst">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>GST</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.gst }}
+                    {{ element.gst  | currency: 'INR' }}
                 </td>
             </ng-container>
             <ng-container matColumnDef="total_due">
