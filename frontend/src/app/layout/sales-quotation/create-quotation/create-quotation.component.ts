@@ -61,7 +61,7 @@ export class CreateQuotationComponent implements OnInit {
     Qty: number;
     countTotal = [];
     totalPrice: number;
-    lastBillDue: number = 0;
+    lastBillDue: number = 1;
     dueLimit: number;
     grandDueTotal: number;
     shippingPayment: number;
@@ -94,8 +94,8 @@ export class CreateQuotationComponent implements OnInit {
         this.initializeForm();
         this.initializeSupplierForm();
         this.getItemDropDown();
-        console.log(this.data)
-        if (this.data && this.data.id) {
+
+        if (this.data.id) {
             this.fillForm();
             this.getSalesQuotationDetails();
         }
@@ -128,7 +128,6 @@ export class CreateQuotationComponent implements OnInit {
         this.totalDue
         this.user_name;
         this.remarks;
-
         this.isShowLoader = true;
         this.salesQuotationService
             .addSalesQuotation({
@@ -180,7 +179,7 @@ export class CreateQuotationComponent implements OnInit {
                 total_due: this.totalDue,
                 shipping: this.shippingPayment,
                 gst: this.gst,
-                user_name: this.user_name,
+                user_name: this.users.user_name,
                 tier: this.tier,
                 remarks: this.remarks,
                 sales: this.sales
@@ -207,9 +206,9 @@ export class CreateQuotationComponent implements OnInit {
     }
     onSubmit() {
 
-        if (this.data && this.data.id) {
+        if (this.data.id) {
             this.updateSalesQuotation();
-        } else if (this.data.tier) {
+        } else {
             this.saveSalesQuotation();
         }
     }

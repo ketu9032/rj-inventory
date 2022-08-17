@@ -1,5 +1,5 @@
 <div class="main-header">
-    <h1 mat-dialog-title><b> {{ this.data.tier ? 'Add Sales Quotation' : 'Update Sales Quotation' }}</b> </h1>
+    <h1 mat-dialog-title><b> {{ !this.data.id ? 'Add Sales Quotation' : 'Update Sales Quotation' }}</b> </h1>
     <button mat-button mat-dialog-close>
         <mat-icon>close</mat-icon>
     </button>
@@ -273,7 +273,7 @@
                 <button mat-raised-button color="primary" class="margin" (click)="onSubmit()">
                     <!-- [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()"> -->
                     <span *ngIf="!isShowLoader">
-                        {{ this.data.tier ? 'Save & Back' : 'Update & Back' }}
+                        {{ !this.data.id ? 'Save & Back' : 'Update & Back' }}
                     </span>
                     <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
                 </button>

@@ -125,16 +125,15 @@ exports.add = async (req, res) => {
     for (let index = 0; index < sales.length; index++) {
       const element = sales[index];
       const insertSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
-  (
-    item_code,
-    qty,
-    available,
-    selling_price,
-    total,
-    sales_quotation_id
-     )
-  VALUES('${element.item_code}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesQuotationId}') ;
-  `;
+      (item_code,
+        qty,
+        available,
+        selling_price,
+        total,
+        sales_quotation_id
+        )
+        VALUES('${element.item_code}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesQuotationId}') ;
+        `;
       await pool.query(insertSalesQuotationDetailsQuery);
     }
 
@@ -182,24 +181,26 @@ exports.update = async (req, res) => {
     const updateSalesQuotationQuery =
       `UPDATE sales_quotation
     SET date='${date}', invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}',shipping='${shipping}',gst='${gst}', user_name='${user_name}', tier='${tier}', remarks='${remarks}' where id = ${id};`;
-    const { updateRows } = await pool.query(updateSalesQuotationQuery);
+     await pool.query(updateSalesQuotationQuery);
+//     const { updateRows } = await pool.query(updateSalesQuotationQuery);
 
-    const updateSalesQuotationId = updateRows[0].id;
-   for (let index = 0; index < updateSalesQuotationId.length; index++) {
-     const element = updateSalesQuotationId [index];
-     const updateSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
- (
-   item_code,
-   qty,
-   available,
-   selling_price,
-   total,
-   sales_quotation_id
-    )
- VALUES('${element.item_code}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesQuotationId}') ;
- `;
-     await pool.query(updateSalesQuotationDetailsQuery);
-   }
+//     const {updateSalesQuotationId} = updateRows.length;
+//    for (let index = 0; index < updateSalesQuotationId.length; index++) {
+//      const element = updateSalesQuotationId[index];
+//      const updateSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
+//  (
+
+//    qty,
+//    available,
+//    selling_price,
+//    total,
+//    sales_quotation_id
+//     )
+//     VALUES( '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesQuotationId}') ;
+//     `;
+//     // item_code,'${element.item_code}',
+//      await pool.query(updateSalesQuotationDetailsQuery);
+//    }
 
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
