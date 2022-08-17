@@ -26,6 +26,7 @@ exports.findAll = async (req, res) => {
     SELECT
       Count(sales_quotation_details.id) OVER() AS total,
         id,
+        item_code,
         qty,
         available,
         selling_price,

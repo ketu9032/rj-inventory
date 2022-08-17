@@ -222,7 +222,7 @@ export class CreateQuotationComponent implements OnInit {
         } = this.formSupplier.value
         const itemCode = this.suppliersCompany.find(x => +x.id === +item_code);
         const sale = {
-            item_code: itemCode,
+            item_code,
             qty,
             available,
             selling_price,
