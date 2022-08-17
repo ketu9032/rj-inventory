@@ -10,6 +10,7 @@ import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config'
 import { TiersService } from '../customers/services/tiers.service';
 import { ItemsService } from '../items/services/items.service';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
+import { MoveSalesComponent } from './move-sales/move-sales.component';
 import { salesQuotationService } from './services/sales-quotation.service';
 @Component({
     selector: 'app-sales-quotation',
@@ -133,6 +134,20 @@ export class SalesQuotationComponent implements OnInit {
         });
     }
 
+    onSelectCustomers(element){
+        this.dialog
+        .open(MoveSalesComponent, {
+            width: '400px',
+            height: 'auto',
+            data: element
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getSalesQuotation();
+          }
+        });
+    }
     // confirmDialog(id: string): void {
     //   this.dialog
     //     .open(DeleteCustomersComponent, {

@@ -1,0 +1,29 @@
+<div class="main-header">
+    <h1 mat-dialog-title><b> Move to Sales</b> </h1>
+    <button mat-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-divider></mat-divider>
+<br>
+    <div >
+            <div>
+                <mat-form-field class="margin field-width">
+                    <mat-label>Select Customer</mat-label>
+                    <mat-select name="tier" >
+                        <mat-option value="" >All Customer</mat-option>
+                        <mat-option *ngFor="let customer of customers" [value]="customer.company"
+                       >
+                            {{customer.company | uppercase}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-spinner class="selectCustomerLoader" *ngIf="selectCustomerLoader" diameter="20"></mat-spinner>
+                </mat-form-field>
+            </div>
+        <div>
+            <button mat-raised-button color="primary">
+                Submit
+                <mat-spinner *ngIf="!isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
+            </button>
+        </div>
+    </div>

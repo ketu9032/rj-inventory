@@ -110,10 +110,15 @@
             <ng-container matColumnDef="print">
                 <th mat-header-cell *matHeaderCellDef>Print</th>
                 <td mat-cell *matCellDef="let element">
+                    <button mat-icon-button matTooltip="Add customer"  type="button"
+                    (click)="onSelectCustomers(element)">
+                    <mat-icon aria-label="" class="green">device_hub</mat-icon>
+                </button>
                     <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button"
                         (click)="onEditNewCustomers(element)">
                         <mat-icon aria-label="PRINT" color="primary">print</mat-icon>
                     </button>
+
                 </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

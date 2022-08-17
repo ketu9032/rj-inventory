@@ -9,9 +9,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
+import { MoveSalesComponent } from './move-sales/move-sales.component';
 
 @NgModule({
-  declarations: [SalesQuotationComponent, CreateQuotationComponent],
+  declarations: [SalesQuotationComponent, CreateQuotationComponent, MoveSalesComponent],
   imports: [
     CommonModule,
     SalesQuotationRoutingModule,
