@@ -146,56 +146,8 @@ exports.add = async (req, res) => {
   }
 };
 
-// exports.add = async(req, res) => {
-//   try {
-//       const {
-//         date,
-//               invoice_no,
-//               qty,
-//               amount,
-//               total_due,
-//               user_name,
-//               tier,
-//               remarks,
-//             } = req.body;
 
-//       if ( !date ||
-//               !invoice_no ||
-//               !qty ||
-//               !amount ||
-//               !total_due ||
-//               !user_name ||
-//               !tier ||
-//               !remarks
-//       ) {
-//           res
-//               .status(STATUS_CODE.BAD)
-//               .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-//           return;
-//       }
-//       await pool.query(
-//           `INSERT INTO sales_quotation
-//     (date,
-//       invoice_no,
-//       qty,
-//       amount,
-//       total_due,
-//       user_name,
-//       tier,
-//       remarks
-//       )
-//     VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}', '${user_name}', '${tier}', '${remarks}'
-//     );
-//     `
-//       );
 
-//       res.status(STATUS_CODE.SUCCESS).send();
-//   } catch (error) {
-//       res.status(STATUS_CODE.ERROR).send({
-//           message: error.message || MESSAGES.COMMON.ERROR
-//       });
-//   }
-// };
 exports.update = async (req, res) => {
   try {
     const {
@@ -211,27 +163,43 @@ exports.update = async (req, res) => {
       tier,
       remarks
     } = req.body;
-    if (
-      !date ||
-      !invoice_no ||
-      !qty ||
-      !amount ||
-      !total_due ||
-      !user_name ||
-      !tier ||
-      !remarks ||
-      !id
-    ) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
-    }
-    await pool.query(
+    // if (
+    //   !date ||
+    //   !invoice_no ||
+    //   !qty ||
+    //   !amount ||
+    //   !total_due ||
+    //   !user_name ||
+    //   !tier ||
+    //   !remarks ||
+    //   !id
+    // ) {
+    //   res
+    //     .status(STATUS_CODE.BAD)
+    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+    //   return;
+    // }
+    const updateSalesQuotationQuery =
       `UPDATE sales_quotation
-    SET date='${date}', invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}',shipping='${shipping}',gst='${gst}', user_name='${user_name}', tier='${tier}', remarks='${remarks}' where id = ${id};
-     `
-    );
+    SET date='${date}', invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}',shipping='${shipping}',gst='${gst}', user_name='${user_name}', tier='${tier}', remarks='${remarks}' where id = ${id};`;
+    const { updateRows } = await pool.query(updateSalesQuotationQuery);
+
+    const updateSalesQuotationId = updateRows[0].id;
+   for (let index = 0; index < updateSalesQuotationId.length; index++) {
+     const element = updateSalesQuotationId [index];
+     const updateSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
+ (
+   item_code,
+   qty,
+   available,
+   selling_price,
+   total,
+   sales_quotation_id
+    )
+ VALUES('${element.item_code}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesQuotationId}') ;
+ `;
+     await pool.query(updateSalesQuotationDetailsQuery);
+   }
 
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -241,42 +209,7 @@ exports.update = async (req, res) => {
   }
 };
 
-// exports.update = async (req, res) => {
-//   try {
-//     const { id, companyId, date, invoice_no} = req.body;
-//     if (!companyId || !date || !invoice_no || !id) {
-//       res
-//         .status(STATUS_CODE.BAD)
-//         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-//       return;
-//     }
 
-//     const insertSalesQuotationQuery = `UPDATE sales_quotation
-//     SET   date='${date}', invoice_no='${invoice_no}', company_id='${companyId}' where id = ${id};`;
-//     const { updateRows } = await pool.query(insertSalesQuotationQuery);
-
-//     const UpdateSalesId = updateRows[0].id;
-//     for (let index = 0; index < UpdateSalesId.length; index++) {
-//       const element = UpdateSalesId[index];
-//       const insertSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
-//       (   item_code,
-//         qty,
-//         available,
-//         selling_price,
-//         total
-//          )
-//       VALUES('${element.item_code}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}','${insertSalesQuotationDetailsQuery}') ;
-//       `;
-//       await pool.query(insertSalesQuotationDetailsQuery);
-//     }
-
-//     res.status(STATUS_CODE.SUCCESS).send();
-//   } catch (error) {
-//     res.status(STATUS_CODE.ERROR).send({
-//       message: error.message || MESSAGES.COMMON.ERROR
-//     });
-//   }
-// };
 
 exports.changeStatus = async (req, res) => {
   try {

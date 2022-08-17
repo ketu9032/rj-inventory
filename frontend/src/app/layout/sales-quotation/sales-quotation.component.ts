@@ -106,12 +106,10 @@ export class SalesQuotationComponent implements OnInit {
       this.dialog
         .open(CreateQuotationComponent, {
             width: '1000px',
-            height: '700px'
-            // data:{
-
-            //         tier: this.tireName
-
-            // }
+            height: '700px',
+            data:{
+                    tier: this.tireName
+            }
         })
         .afterClosed()
         .subscribe((result) => {
