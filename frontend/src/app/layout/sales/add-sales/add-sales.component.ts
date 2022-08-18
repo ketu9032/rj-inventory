@@ -31,17 +31,13 @@ export class AddSalesComponent implements OnInit {
     ];
     formSupplier: FormGroup;
     formGroup: FormGroup;
-    selectedRole: string
-    tires = []
     isShowLoader = false;
     public defaultPageSize = PAGE_SIZE;
-    categories = []
     supplier = []
     dataSource: any = [];
     suppliers = []
     supplierDataSource: any = [];
     totalRows: number;
-    salesItem = [];
     customers = [];
     items = [];
     tableParams: IMatTableParams = {
@@ -55,9 +51,6 @@ export class AddSalesComponent implements OnInit {
     selectCustomerLoader: boolean = false;
     selectItemLoader: boolean = false;
 
-    supplierRate: string = "";
-    supplierQty: string = "";
-    totalQty: number;
     lastBillNo: number;
     countQty = [];
     Qty: number;
@@ -67,18 +60,23 @@ export class AddSalesComponent implements OnInit {
     dueLimit: number;
     grandDueTotal: number;
     currentPayment: number;
+    otherPayment: number;
     totalDue: number;
     sales = [];
     total: number;
     user_name: string = "ketan";
+    users;
+    customer;
+    companyName;
+    com: string = "ketan";
     tier: string = 'gold';
     remarks: string = 'test';
     company: number= 75
-    printContent: any;
-    WindowPrt: any;
-    checked = false;
+    shipping: number = 20;
+    gst: number = 20;
+    currentDate = new Date();
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: ISalesQuotationData,
+        @Inject(MAT_DIALOG_DATA) public data: ISalesData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddSalesComponent>,
         private formBuilder: FormBuilder,
@@ -86,10 +84,16 @@ export class AddSalesComponent implements OnInit {
         public snackBar: MatSnackBar,
         private itemsSuppliersService: ItemsSuppliersService,
         private salesQuotationService: salesQuotationService,
+        private salesService: SalesService,
         public authService: AuthService
         ) { }
         ngOnInit() {
-        this.user_name = this.authService.getUserData();
+        this.users = this.authService.getUserData();
+        this.customer =   this.data.customer[0]
+        this.companyName = this.customer.company
+        this.lastBillDue = this.customer.balance
+        this.dueLimit = this.customer.due_limit
+
         this.initializeForm();
         this.initializeSupplierForm();
         this.getCustomerDropDown();
@@ -117,53 +121,53 @@ export class AddSalesComponent implements OnInit {
         });
     }
 
-    // saveSalesQuotation(): void {
-    //     this.company
-    //     const {
-    //         date,
-    //         invoice_no,
-    //     } = this.formGroup.value;
-    //        this.Qty;
-    //        this.currentPayment;
-    //       this.totalDue
-    //        this.user_name;
-    //        this.tier;
-    //        this.remarks;
+    saveSales(): void {
+        this.company
+        const {
+            date,
+            invoice_no,
+        } = this.formGroup.value;
 
-    //     this.isShowLoader = true;
-    //     this.salesQuotationService
-    //         .addSalesQuotation({
-    //             date,
-    //             invoice_no,
-    //             // companyId: this.company,
-    //             qty: this.Qty,
-    //             amount: this.currentPayment,
-    //             total_due: this.totalDue,
-    //             user_name: this.user_name,
-    //             tier: this.tier,
-    //             remarks: this.remarks,
-    //             sales: this.sales
-    //         })
-    //         .subscribe(
-    //             (response) => {
-    //                 this.isShowLoader = false;
-    //                 this.snackBar.open('Sales quotation saved successfully', 'OK', {
-    //                     duration: 3000
-    //                 });
-    //                 this.dialogRef.close(true);
-    //             },
-    //             (error) => {
-    //                 this.isShowLoader = false;
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok', {
-    //                     duration: 3000
-    //                 }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-    // }
+
+        this.isShowLoader = true;
+        this.salesService
+            .addSales({
+                date,
+                invoice_no,
+                qty: this.Qty,
+                amount: this.totalPrice,
+                user_name: this.users.user_name,
+                last_due: this.lastBillDue,
+                total_due: this.totalDue,
+                tier: this.tier,
+                grand_total: this.grandDueTotal,
+                remarks: this.remarks,
+                customer: this.com,
+                payment: this.currentPayment,
+                other_payment: this.otherPayment,
+                sales: this.sales,
+            })
+            .subscribe(
+                (response) => {
+                    this.isShowLoader = false;
+                    this.snackBar.open('Sales quotation saved successfully', 'OK', {
+                        duration: 3000
+                    });
+                    this.dialogRef.close(true);
+                },
+                (error) => {
+                    this.isShowLoader = false;
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+
     // updateSalesQuotation(): void {
     //     const {
     //         date,
@@ -208,7 +212,7 @@ export class AddSalesComponent implements OnInit {
         if (this.data && this.data.id) {
        //     this.updateSalesQuotation();
         } else {
-       //     this.saveSalesQuotation();
+            this.saveSales();
         }
         // this.clearSupplierForm();
     }

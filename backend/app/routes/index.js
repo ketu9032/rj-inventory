@@ -10,6 +10,7 @@ const item = require('./../controllers/item.controller');
 const item_supplier = require('./../controllers/item-supplier.controller');
 const cdf = require('./../controllers/cdf.controller');
 const sales = require('./../controllers/sales.controller');
+const sales_bill = require('./../controllers/sales_bill.controller')
 const sales_quotation = require('./../controllers/sales_quotation.controller');
 const sales_quotation_detail = require('./../controllers/sales_quotation_detail.controller');
 
@@ -109,19 +110,26 @@ router.get('/api/cdf/getCdfTOCustomerDropDown', cdf.getCdfTOCustomerDropDown);
 router.delete('/api/sales', sales.delete);
 router.get('/api/sales', sales.findAll);
 router.post('/api/sales', sales.add);
+router.post('/api/addSales', sales.addSales);
 router.put('/api/sales', sales.update);
 router.put('/api/sales/changeStatus', sales.changeStatus);
+
+router.delete('/api/sales_bill', sales_bill.delete);
+router.get('/api/sales_bill', sales_bill.findAll);
+router.post('/api/sales_bill', sales_bill.add);
+router.put('/api/sales_bill', sales_bill.update);
 
 router.delete('/api/sales_quotation', sales_quotation.delete);
 router.get('/api/sales_quotation', sales_quotation.findAll);
 router.post('/api/sales_quotation', sales_quotation.add);
 router.put('/api/sales_quotation', sales_quotation.update);
-
 router.put('/api/sales_quotation/changeStatus', sales_quotation.changeStatus);
 
 router.delete('/api/sales_quotation_detail', sales_quotation_detail.delete);
 router.get('/api/sales_quotation_detail', sales_quotation_detail.findAll);
 router.post('/api/sales_quotation_detail', sales_quotation_detail.add);
 router.put('/api/sales_quotation_detail', sales_quotation_detail.update);
+
+
 
 module.exports = router;

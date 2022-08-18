@@ -9,27 +9,46 @@ exports.findAll = async (req, res) => {
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
       searchQuery += ` and
-      (company ilike '%${search}%'
-        or date ilike '%${search}%'
-        or invoice_no ilike '%${search}%'
+        (
+           no::text ilike '%${search}%'
+          or s.date::text ilike '%${search}%'
+          or invoice_no::text ilike '%${search}%'
+          or qty::text ilike '%${search}%'
+          or amount::text ilike '%${search}%'
+          or total_due::text ilike '%${search}%'
+          or last_due::text ilike '%${search}%'
+          or grand_total::text ilike '%${search}%'
+          or user_name ilike '%${search}%'
+          or tier ilike '%${search}%'
+          or remarks ilike '%${search}%'
+          or customer ilike '%${search}%'
+          or payment::text ilike '%${search}%'
+          or other_payment::text ilike '%${search}%'
         )`;
     }
     searchQuery += ` and s.is_active = ${active}`;
-    const response = await pool.query(
-      `
-          SELECT
-              Count(s.id) OVER() AS total,
-              s.id,
-              s.date
-              invoice_no,
-              ref_no,
-              company_id as company_id,
-              c.name as customer_name
-          FROM
-              sales s
-              INNER JOIN cdf as c on c.id  = s.company_id
-          ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
-    );
+    const query = `  SELECT
+      Count(s.id) OVER() AS total,
+      s.id,
+      no,
+      s.date,
+      invoice_no,
+      qty,
+      amount,
+      total_due,
+      last_due,
+      tier,
+      grand_total,
+      user_name,
+      remarks,
+      payment,
+      customer,
+      other_payment
+      FROM sales s
+
+     ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+    const response = await pool.query(query);
+
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -60,38 +79,134 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const { date, invoice_no, ref_no,  companyId, sales } = req.body;
-    if (!date || !invoice_no || !ref_no ||  !companyId || sales.length === 0) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
-    }
-    const insertSalesQuery = `INSERT INTO sales (
-         date,
-        invoice_no,
-        ref_no,
-        company_id)
-      VALUES('${date}','${invoice_no}','${ref_no}', '${companyId}' ) returning id;
-      `;
-    console.log(insertSalesQuery);
-    const { rows } = await pool.query(insertSalesQuery);
-    const salesId = rows[0].id;
+    const {
+      date,
+      invoice_no,
+      qty,
+      amount,
+      total_due,
+        user_name,
+        last_due,
+        grand_total,
+      tier,
+      remarks,
+      sales,
+      payment,
+      customer,
+      other_payment
+    } = req.body;
+
+    // if (
+    //   !date ||
+    //   !invoice_no ||
+    //   !qty ||
+    //   !amount ||
+    //   !total_due ||
+    //   !user_name ||
+    //   !tier ||
+    //   !sales ||
+    //   !remarks
+
+    // ) {
+    //   res
+    //     .status(STATUS_CODE.BAD)
+    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+    //   return;
+    // }
+   const insertSalesQuotationQuery =
+      `INSERT INTO sales
+    (
+       date,
+       invoice_no,
+       qty,
+       amount,
+       total_due,
+       last_due,
+       user_name,
+       grand_total,
+       tier,
+       remarks,
+       payment,
+       customer,
+       other_payment
+     )
+    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${last_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer}', '${other_payment}') returning id;`;
+        const { rows } = await pool.query(insertSalesQuotationQuery);
+     const salesId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
       const element = sales[index];
-      const insertSalesBillQuery = `INSERT INTO sales_bill
-  ( item_code,
-    selling_price,
-    qty,
-    available,
-    total,
-    sales_id
-     )
-  VALUES('${element.item_code}', '${element.selling_price}',
-  '${element.qty}','${element.available}','${element.total}', '${salesId}') ;
-  `;
-      await pool.query(insertSalesBillQuery);
+      const insertSalesQuotationDetailsQuery = `INSERT INTO sales_bill
+      (
+        item_code,
+        qty,
+        available,
+        selling_price,
+        total,
+        sales_id
+        )
+        VALUES('${element.item_code}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesId}') ;
+        `;
+      await pool.query(insertSalesQuotationDetailsQuery);
     }
+
+    res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+exports.addSales = async (req, res) => {
+  try {
+    const {
+      date,
+      invoice_no,
+      qty,
+      amount,
+      total_due,
+      user_name,
+      tier,
+      remarks,
+      payment,
+      customer
+    } = req.body;
+
+    // if (
+    //   !date ||
+    //   !invoice_no ||
+    //   !qty ||
+    //   !amount ||
+    //   !total_due ||
+    //   !user_name ||
+    //   !tier ||
+    //   !sales ||
+    //   !remarks
+
+    // ) {
+    //   res
+    //     .status(STATUS_CODE.BAD)
+    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+    //   return;
+    // }
+   const insertSalesQuotationQuery =
+      `INSERT INTO sales
+    (
+       date,
+       invoice_no,
+       qty,
+       amount,
+       total_due,
+       user_name,
+       tier,
+       remarks,
+       payment,
+       customer
+     )
+    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}', '${payment}', '${customer}')`;
+        await pool.query(insertSalesQuotationQuery);
+
+
+
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({

@@ -13,31 +13,19 @@
         <div class="box">
             <!--company start -->
             <div class="block">
-                <mat-form-field>
 
-                    <mat-label>Company</mat-label>
-                    <mat-select name="company">
-                        <mat-option formControlName="company" *ngFor="let customer of customers" [value]="customer.id"
-                            (click)="fillDueAndDueLimit(customer)">
-                            {{customer.company | uppercase}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-            formGroup.controls.company.touched &&
-            !formGroup.controls.company.value
-            ">
-                        <span class="error">Company is Required</span>
-                    </ng-container>
-                </div>
-                <mat-spinner class="loader" *ngIf="selectCustomerLoader" diameter="25"></mat-spinner>
+                    <mat-form-field>
+                        <mat-label>Company</mat-label>
+                        <input matInput formControlName="company" required [(ngModel)]="companyName"  />
+                    </mat-form-field>
+
+
             </div>
             <!--date start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" required type="date" />
+                    <input matInput formControlName="date" required [(ngModel)]="currentDate"  />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -279,7 +267,7 @@
                 <span >
 
                     <mat-checkbox color="primary"formControlName="pepperoni" > </mat-checkbox>
-                </span>
+                </span> &nbsp;
                 <mat-form-field>
                     <mat-label>payment(₹) </mat-label>
                     <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="currentPayment"
@@ -290,8 +278,8 @@
 
                     <mat-form-field >
                         <mat-label>Other Payment (₹) </mat-label>
-                        <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="currentPayment"
-                        value={{this.currentPayment}} />
+                        <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="otherPayment"
+                        value={{this.otherPayment}} />
                     </mat-form-field>
                 </ng-container>
             </div>
@@ -315,9 +303,9 @@
             <br>
             <div class="">
                 <button mat-raised-button color="primary" class="margin"
-                    [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()">
+                   (click)="onSubmit()">
                     <span *ngIf="!isShowLoader">
-                        {{ !this.data ? 'Save & Rack' : 'Update & Rack' }}
+                        Save & Rack
                     </span>
                     <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
                 </button>

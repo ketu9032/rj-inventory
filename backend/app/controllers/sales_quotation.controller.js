@@ -60,8 +60,10 @@ exports.delete = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    await pool.query(`UPDATE sales_quotation
-        SET is_deleted = true where "id" = '${id}'`);
+    const query = ` delete from sales_quotation where id = ${id}`
+
+
+    await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({

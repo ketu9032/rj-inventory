@@ -40,10 +40,11 @@ export class SalesComponent implements OnInit {
     loader: boolean = false;
     selectCustomerLoader: boolean = false;
     totalRows: number;
-    customerName;
+    customerName: string;
     customers = [];
     isShow: boolean = true;
     user: any;
+    allFiledCustomer =  []
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -51,21 +52,18 @@ export class SalesComponent implements OnInit {
         direction: "desc",
         search: '',
         active: true
-
     }
     constructor(
         public dialog: MatDialog,
         private salesService: SalesService,
         public snackBar: MatSnackBar,
     public authService: AuthService
-
     ) { }
     ngOnInit(): void {
         this.getCustomerDropDown();
         this.getSales();
         this.user = this.authService.getUserData();
     }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
@@ -103,7 +101,7 @@ export class SalesComponent implements OnInit {
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                data: {customer: this.customerName}
+                data: {customer:  this.allFiledCustomer}
             })
             .afterClosed()
             .subscribe((result) => {
@@ -111,6 +109,9 @@ export class SalesComponent implements OnInit {
                     this.getSales();
                 }
             });
+    }
+    customerData(customer){
+     this.allFiledCustomer.push(customer)
     }
     // // onEditNewCustomers(element) {
     // //   this.dialog

@@ -10,7 +10,7 @@
             <div>
                 <mat-form-field class="margin field-width">
                     <mat-label>Select Customer</mat-label>
-                    <mat-select name="tier" >
+                    <mat-select name="tier"  [(ngModel)]="customer">
                         <mat-option value="" >All Customer</mat-option>
                         <mat-option *ngFor="let customer of customers" [value]="customer.company"
                        >
@@ -21,7 +21,7 @@
                 </mat-form-field>
             </div>
         <div>
-            <button mat-raised-button color="primary">
+            <button mat-raised-button color="primary" (click)="saveSalesQuotation()">
                 Submit
                 <mat-spinner *ngIf="!isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
             </button>
