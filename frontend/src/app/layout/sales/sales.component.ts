@@ -113,19 +113,20 @@ export class SalesComponent implements OnInit {
     customerData(customer){
      this.allFiledCustomer.push(customer)
     }
-    // // onEditNewCustomers(element) {
-    // //   this.dialog
-    // //     .open(AddCustomersComponent, {
-    // //       width: '400px',
-    // //       data: element
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
+    onEditNewCustomers(element) {
+      this.dialog
+        .open(AddSalesComponent, {
+          width: '1000px',
+          height: '800px',
+          data: element
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getSales();
+          }
+        });
+    }
     // // confirmDialog(id: string): void {
     // //   this.dialog
     // //     .open(DeleteCustomersComponent, {

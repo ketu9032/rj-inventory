@@ -253,7 +253,7 @@
     <br>
     <div class="flex remakesAndPayment">
         <div class="remakes">
-            <textarea class="padding" id="" cols="60" rows="7" placeholder="Enter Remarks..."></textarea>
+            <textarea class="padding" id="" cols="60" rows="7" placeholder="Enter Remarks..."[(ngModel)]="remarks"></textarea>
         </div>
         <div class="payment">
             <div class="width">
@@ -287,7 +287,7 @@
     </div>
     <mat-divider></mat-divider>
     <div class="flex tierLimitAndButton">
-        <div><br>(SLIVER) Due Limit:
+        <div><br>({{tier}}) Due Limit:
             <span class="error">
                 {{this.dueLimit | currency: 'INR'}}
             </span>

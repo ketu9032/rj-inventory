@@ -39,10 +39,8 @@ exports.findAll = async (req, res) => {
       user_name,
       remarks
       FROM sales_quotation s
-
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
-
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -50,7 +48,6 @@ exports.findAll = async (req, res) => {
     });
   }
 };
-
 exports.delete = async (req, res) => {
   try {
     const { id } = req.query;
@@ -60,9 +57,7 @@ exports.delete = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    const query = ` delete from sales_quotation where id = ${id}`
-
-
+    const query = ` delete from sales_quotation where id = ${id}`;
     await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -71,9 +66,6 @@ exports.delete = async (req, res) => {
     });
   }
 };
-
-
-
 exports.add = async (req, res) => {
   try {
     const {
@@ -89,7 +81,6 @@ exports.add = async (req, res) => {
       remarks,
       sales
     } = req.body;
-
     // if (
     //   !date ||
     //   !invoice_no ||
@@ -100,15 +91,13 @@ exports.add = async (req, res) => {
     //   !tier ||
     //   !sales ||
     //   !remarks
-
     // ) {
     //   res
     //     .status(STATUS_CODE.BAD)
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-   const insertSalesQuotationQuery =
-      `INSERT INTO sales_quotation
+    const insertSalesQuotationQuery = `INSERT INTO sales_quotation
     (
        date,
        invoice_no,
@@ -122,8 +111,8 @@ exports.add = async (req, res) => {
        remarks
      )
     VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}', '${shipping}','${gst}','${user_name}', '${tier}', '${remarks}') returning id;`;
-        const { rows } = await pool.query(insertSalesQuotationQuery);
-     const salesQuotationId = rows[0].id;
+    const { rows } = await pool.query(insertSalesQuotationQuery);
+    const salesQuotationId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
       const element = sales[index];
       const insertSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
@@ -138,7 +127,6 @@ exports.add = async (req, res) => {
         `;
       await pool.query(insertSalesQuotationDetailsQuery);
     }
-
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -146,9 +134,6 @@ exports.add = async (req, res) => {
     });
   }
 };
-
-
-
 exports.update = async (req, res) => {
   try {
     const {
@@ -180,30 +165,26 @@ exports.update = async (req, res) => {
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-    const updateSalesQuotationQuery =
-      `UPDATE sales_quotation
+    const updateSalesQuotationQuery = `UPDATE sales_quotation
     SET date='${date}', invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}',shipping='${shipping}',gst='${gst}', user_name='${user_name}', tier='${tier}', remarks='${remarks}' where id = ${id};`;
-     await pool.query(updateSalesQuotationQuery);
-//     const { updateRows } = await pool.query(updateSalesQuotationQuery);
-
-//     const {updateSalesQuotationId} = updateRows.length;
-//    for (let index = 0; index < updateSalesQuotationId.length; index++) {
-//      const element = updateSalesQuotationId[index];
-//      const updateSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
-//  (
-
-//    qty,
-//    available,
-//    selling_price,
-//    total,
-//    sales_quotation_id
-//     )
-//     VALUES( '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesQuotationId}') ;
-//     `;
-//     // item_code,'${element.item_code}',
-//      await pool.query(updateSalesQuotationDetailsQuery);
-//    }
-
+    await pool.query(updateSalesQuotationQuery);
+    //     const { updateRows } = await pool.query(updateSalesQuotationQuery);
+    //     const {updateSalesQuotationId} = updateRows.length;
+    //    for (let index = 0; index < updateSalesQuotationId.length; index++) {
+    //      const element = updateSalesQuotationId[index];
+    //      const updateSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
+    //  (
+    //    qty,
+    //    available,
+    //    selling_price,
+    //    total,
+    //    sales_quotation_id
+    //     )
+    //     VALUES( '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesQuotationId}') ;
+    //     `;
+    //     // item_code,'${element.item_code}',
+    //      await pool.query(updateSalesQuotationDetailsQuery);
+    //    }
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -211,9 +192,6 @@ exports.update = async (req, res) => {
     });
   }
 };
-
-
-
 exports.changeStatus = async (req, res) => {
   try {
     const { id, status } = req.body;

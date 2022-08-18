@@ -88,6 +88,9 @@ export class AddSalesComponent implements OnInit {
         public authService: AuthService
         ) { }
         ngOnInit() {
+            console.log(this.data);
+
+
         this.users = this.authService.getUserData();
         this.customer =   this.data.customer[0]
         this.companyName = this.customer.company
@@ -99,7 +102,7 @@ export class AddSalesComponent implements OnInit {
         this.getCustomerDropDown();
         this.getItemDropDown();
         //  this.getSuppliersDropDown()
-        if (this.data && this.data.id) {
+        if (this.data.id) {
             this.fillForm();
             this.getItemSupplier();
         }
@@ -241,10 +244,22 @@ export class AddSalesComponent implements OnInit {
             invoice_no,
            } = this.data;
         this.formGroup.patchValue({
-            // company,
+        //     company,
             date,
             invoice_no,
-        });
+        })
+        this.totalPrice = this.data.amount,
+        this.Qty = this.data.qty
+            this.user_name = this.data.user_name,
+            this.lastBillDue = this.data.last_due,
+            this.totalDue = this.data.total_due,
+            this.tier = this.data.tier,
+            this.grandDueTotal = this.data.grand_total,
+            this.remarks = this.data.remarks,
+            this.companyName = this.data.customer,
+            this.currentPayment = this.data.payment,
+            this.otherPayment = this.data.other_payment
+
     }
     // supplierFillForm(suppliersId) {
     //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;

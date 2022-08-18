@@ -13,6 +13,7 @@ import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
 import { salesQuotationService } from '../services/sales-quotation.service';
 import { salesQuotationDetailsService } from '../services/sales-quotation-details.service';
+import { DeleteQuotationDetailsComponent } from '../delete-quotation-details/delete-quotation-details.component';
 @Component({
     selector: 'app-create-quotation',
     templateUrl: './create-quotation.component.html',
@@ -52,7 +53,6 @@ export class CreateQuotationComponent implements OnInit {
     }
     selectCustomerLoader: boolean = false;
     selectItemLoader: boolean = false;
-
     supplierRate: string = "";
     supplierQty: string = "";
     totalQty: number;
@@ -61,13 +61,12 @@ export class CreateQuotationComponent implements OnInit {
     Qty: number;
     countTotal = [];
     totalPrice: number;
-    lastBillDue: number = 1;
+    lastBillDue: number = 0;
     dueLimit: number;
     grandDueTotal: number;
     shippingPayment: number;
     gst;
     totalDue;
-
     total: number;
     users;
     user_name: string;
@@ -86,7 +85,6 @@ export class CreateQuotationComponent implements OnInit {
         private salesQuotationService: salesQuotationService,
         private salesQuotationDetailsService: salesQuotationDetailsService,
         public authService: AuthService,
-
     ) { }
     ngOnInit() {
         this.tier = this.data.tier;
@@ -94,12 +92,10 @@ export class CreateQuotationComponent implements OnInit {
         this.initializeForm();
         this.initializeSupplierForm();
         this.getItemDropDown();
-
         if (this.data.id) {
             this.fillForm();
             this.getSalesQuotationDetails();
         }
-
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
@@ -117,7 +113,6 @@ export class CreateQuotationComponent implements OnInit {
             selling_price: ['', Validators.required],
         });
     }
-
     saveSalesQuotation(): void {
         const { tier,
             date,
@@ -205,7 +200,6 @@ export class CreateQuotationComponent implements OnInit {
             );
     }
     onSubmit() {
-
         if (this.data.id) {
             this.updateSalesQuotation();
         } else {
@@ -243,35 +237,31 @@ export class CreateQuotationComponent implements OnInit {
             invoice_no,
         });
         this.Qty = this.data.qty,
-        this.grandDueTotal = this.data.amount,
+            this.grandDueTotal = this.data.amount,
             this.totalDue = this.data.total_due,
             this.shippingPayment = this.data.shipping,
             this.gst = this.data.gst,
             this.users.user_name = this.data.user_name,
             this.remarks = this.data.remarks
     }
-    // confirmDialog(id: string): void {
-    //     this.dialog
-    //         .open(DeleteCreateQuotationComponent, {
-    //             maxWidth: '400px',
-    //             data: id
-    //         })
-    //         .afterClosed()
-    //         .subscribe((result) => {
-    //             if (result && result.data === true) {
-    //                 this.getCategory();
-    //             }
-    //         });
-    // }
+    confirmDialog(id: string): void {
+        this.dialog
+            .open(DeleteQuotationDetailsComponent, {
+                maxWidth: '400px',
+                data: id
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result && result.data === true) {
+                }
+            });
+    }
     // salesDetailsFillForm(suppliersId) {
     //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
     //     this.formSupplier.patchValue({
     //         salesQuotationId: this.data.id, item_code: itemCode, item_supplier_rate: itemSupplierRate
     //     });
     // }
-
-
-
     getSalesQuotationDetails() {
         this.salesDataSource = [];
         this.sales = []
@@ -301,7 +291,6 @@ export class CreateQuotationComponent implements OnInit {
         }
         console.log(this.total);
     }
-
     getItemDropDown() {
         this.selectItemLoader = true;
         this.salesQuotationService
@@ -331,7 +320,6 @@ export class CreateQuotationComponent implements OnInit {
     }
     totalDueCount() {
         this.totalDue = (+this.grandDueTotal + +this.shippingPayment + +this.gst)
-
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
@@ -344,5 +332,20 @@ export class CreateQuotationComponent implements OnInit {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
-
+    removeCustomers(element): void {
+        this.salesQuotationDetailsService.removeSalesQuotationDetail(element.id).subscribe(
+            (response) => {
+                // this.snackBar.open('Sales quotation detail deleted successfully', 'OK',{
+                //   duration: 3000
+                // });
+                this.getSalesQuotationDetails();
+            },
+            (error) => {
+                //     this.snackBar.open(error.error.message || error.message, 'Ok',{
+                //       duration: 3000
+                //     });
+            },
+            () => { }
+        );
+    }
 }

@@ -167,7 +167,7 @@ exports.addSales = async (req, res) => {
       user_name,
       tier,
       remarks,
-      payment,
+      // payment,
       customer
     } = req.body;
 
@@ -199,10 +199,10 @@ exports.addSales = async (req, res) => {
        user_name,
        tier,
        remarks,
-       payment,
+
        customer
      )
-    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}', '${payment}', '${customer}')`;
+    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}',  '${customer}')`;
         await pool.query(insertSalesQuotationQuery);
 
 

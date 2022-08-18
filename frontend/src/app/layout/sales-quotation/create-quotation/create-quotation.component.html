@@ -3,10 +3,10 @@
     <button mat-button mat-dialog-close>
         <mat-icon>close</mat-icon>
     </button>
-</div>
-<mat-divider></mat-divider>
-<br>
-<form [formGroup]="formGroup">
+  </div>
+  <mat-divider></mat-divider>
+  <br>
+  <form [formGroup]="formGroup">
     <div class="item-form">
         <div class="box">
             <!--tier start -->
@@ -44,12 +44,12 @@
             </div>
         </div>
     </div>
-</form>
-<mat-divider class="mat-divider"></mat-divider>
-<br>
-<!-- supplier form -->
-<h1 mat-dialog-title>Sales Quotation Details</h1>
-<form [formGroup]="formSupplier" (ngSubmit)="addSalesQuotation()">
+ </form>
+ <mat-divider class="mat-divider"></mat-divider>
+ <br>
+ <!-- supplier form -->
+ <h1 mat-dialog-title>Sales Quotation Details</h1>
+ <form [formGroup]="formSupplier" (ngSubmit)="addSalesQuotation()">
     <div class="sales_details_table">
         <div class="box">
             <!-- Item Code start -->
@@ -140,9 +140,9 @@
             </button>
         </div>
     </div>
-</form>
-<br>
-<div class="mat-elevation-z8">
+  </form>
+  <br>
+  <div class="mat-elevation-z8">
     <table mat-table [dataSource]="salesDataSource" matSort matSortActive="item_code" matSortDirection="asc">
         <ng-container matColumnDef="item_code">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Name</th>
@@ -176,7 +176,8 @@
                     (click)="supplierFillForm(element.sales_id)">
                     <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
-                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="confirmDialog(element.id)">
+                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)=" removeCustomers(element)">
+                    <!-- confirmDialog(element.id) -->
                     <mat-icon aria-label="Delete">delete</mat-icon>
                 </button>
             </td>
@@ -184,12 +185,12 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let supplierData; columns: displayedColumns"></tr>
     </table>
-</div>
-<br>
-<mat-divider class="mat-divider"></mat-divider>
-<br>
-<!-- bill container -->
-<div class="bill-container">
+  </div>
+  <br>
+  <mat-divider class="mat-divider"></mat-divider>
+   <br>
+  <!-- bill container -->
+  <div class="bill-container">
     <div class="flex totalAndBill">
         <span class="totalAndBill_content-1">
             <div class="width">
@@ -270,12 +271,12 @@
             </div>
             <br>
             <div class="">
-                <button mat-raised-button color="primary" class="margin" (click)="onSubmit()">
+                <button mat-raised-button color="primary" class="margin"  [disabled]="isShowLoader" (click)="onSubmit()">
                     <!-- [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()"> -->
                     <span *ngIf="!isShowLoader">
                         {{ !this.data.id ? 'Save & Back' : 'Update & Back' }}
                     </span>
-                    <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
+                    <mat-spinner *ngIf="isShowLoader" diameter="20"></mat-spinner>
                 </button>
             </div>
         </div>
