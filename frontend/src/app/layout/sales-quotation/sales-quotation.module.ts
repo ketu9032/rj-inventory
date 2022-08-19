@@ -11,9 +11,10 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
 import { MoveSalesComponent } from './move-sales/move-sales.component';
 import { DeleteQuotationDetailsComponent } from './delete-quotation-details/delete-quotation-details.component';
+import { PrintComponent } from './print/print.component';
 
 @NgModule({
-  declarations: [SalesQuotationComponent, CreateQuotationComponent, MoveSalesComponent, DeleteQuotationDetailsComponent ],
+  declarations: [SalesQuotationComponent, CreateQuotationComponent, MoveSalesComponent, DeleteQuotationDetailsComponent, PrintComponent ],
 
   imports: [
     CommonModule,

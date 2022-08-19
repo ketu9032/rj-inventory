@@ -3,24 +3,24 @@
     <button mat-button mat-dialog-close>
         <mat-icon>close</mat-icon>
     </button>
-  </div>
-  <mat-divider></mat-divider>
-  <br>
-  <form [formGroup]="formGroup">
+</div>
+<mat-divider></mat-divider>
+<br>
+<form [formGroup]="formGroup">
     <div class="item-form">
         <div class="box">
             <!--tier start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>Tier</mat-label>
-                    <input matInput formControlName="tier" required [(ngModel)]="tier"  />
+                    <input matInput formControlName="tier" required [(ngModel)]="tier" readonly />
                 </mat-form-field>
             </div>
             <!--date start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" required [(ngModel)]="currentDate"  />
+                    <input matInput formControlName="date" required [(ngModel)]="currentDate" />
                 </mat-form-field>
 
             </div>
@@ -28,7 +28,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Invoice No</mat-label>
-                    <input matInput formControlName="invoice_no" [(ngModel)]="invoiceNo"  />
+                    <input matInput formControlName="invoice_no" [(ngModel)]="invoiceNo" />
                 </mat-form-field>
             </div>
             <!-- button start -->
@@ -44,12 +44,12 @@
             </div>
         </div>
     </div>
- </form>
- <mat-divider class="mat-divider"></mat-divider>
- <br>
- <!-- supplier form -->
- <h1 mat-dialog-title>Sales Quotation Details</h1>
- <form [formGroup]="formSupplier" (ngSubmit)="addSalesQuotation()">
+</form>
+<mat-divider class="mat-divider"></mat-divider>
+<br>
+<!-- supplier form -->
+<h1 mat-dialog-title>Sales Quotation Details</h1>
+<form [formGroup]="formSupplier" (ngSubmit)="addSalesQuotationDetails()">
     <div class="sales_details_table">
         <div class="box">
             <!-- Item Code start -->
@@ -140,15 +140,15 @@
             </button>
         </div>
     </div>
-  </form>
-  <br>
-  <div class="mat-elevation-z8">
+</form>
+<br>
+<div class="mat-elevation-z8">
     <table mat-table [dataSource]="salesDataSource" matSort matSortActive="item_code" matSortDirection="asc">
         <ng-container matColumnDef="item_code">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Name</th>
             <td mat-cell *matCellDef="let sales">
-                {{ sales.item_code | titlecase }}
-            </td>
+
+                {{ sales.item_code | titlecase }} </td>
         </ng-container>
         <ng-container matColumnDef="qty">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Qty</th>
@@ -173,11 +173,11 @@
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let element">
                 <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
-                    (click)="supplierFillForm(element.sales_id)">
+                    (click)="salesDetailsFillForm(element)">
                     <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
-                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)=" removeCustomers(element)">
-                    <!-- confirmDialog(element.id) -->
+                <button mat-icon-button matTooltip="Click to Delete" color="warn"
+                    (click)=" removeSalesQuotationDetails(element)">
                     <mat-icon aria-label="Delete">delete</mat-icon>
                 </button>
             </td>
@@ -185,12 +185,12 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let supplierData; columns: displayedColumns"></tr>
     </table>
-  </div>
-  <br>
-  <mat-divider class="mat-divider"></mat-divider>
-   <br>
-  <!-- bill container -->
-  <div class="bill-container">
+</div>
+<br>
+<mat-divider class="mat-divider"></mat-divider>
+<br>
+<!-- bill container -->
+<div class="bill-container">
     <div class="flex totalAndBill">
         <span class="totalAndBill_content-1">
             <div class="width">
@@ -202,7 +202,7 @@
             <div class="width">
                 <mat-form-field>
                     <mat-label>Last Bill No</mat-label>
-                    <input matInput disable [(ngModel)]="invoiceNo" readonly/>
+                    <input matInput disable [(ngModel)]="invoiceNo" readonly />
                 </mat-form-field>
             </div>
         </span>
@@ -246,15 +246,14 @@
                         value={{this.shippingPayment}} />
                 </mat-form-field>
             </div>
-              <div class="width
+            <div class="width
               ">
 
 
-                    <mat-form-field >
-                        <mat-label>GST (₹) </mat-label>
-                        <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="gst"
-                        value={{this.gst}} />
-                    </mat-form-field>
+                <mat-form-field>
+                    <mat-label>GST (₹) </mat-label>
+                    <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="gst" value={{this.gst}} />
+                </mat-form-field>
 
             </div>
         </div>
@@ -271,7 +270,7 @@
             </div>
             <br>
             <div class="">
-                <button mat-raised-button color="primary" class="margin"  [disabled]="isShowLoader" (click)="onSubmit()">
+                <button mat-raised-button color="primary" class="margin" [disabled]="isShowLoader" (click)="onSubmit()">
                     <!-- [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()"> -->
                     <span *ngIf="!isShowLoader">
                         {{ !this.data.id ? 'Save & Back' : 'Update & Back' }}

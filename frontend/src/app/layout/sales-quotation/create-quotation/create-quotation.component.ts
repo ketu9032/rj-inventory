@@ -64,8 +64,8 @@ export class CreateQuotationComponent implements OnInit {
     lastBillDue: number = 0;
     dueLimit: number;
     grandDueTotal: number;
-    shippingPayment: number;
-    gst;
+    shippingPayment: number = 0;
+    gst: number = 0;
     totalDue;
     total: number;
     users;
@@ -206,7 +206,7 @@ export class CreateQuotationComponent implements OnInit {
             this.saveSalesQuotation();
         }
     }
-    addSalesQuotation() {
+    addSalesQuotationDetails() {
         const {
             item_code,
             qty,
@@ -236,7 +236,8 @@ export class CreateQuotationComponent implements OnInit {
             date,
             invoice_no,
         });
-        this.Qty = this.data.qty,
+        this.totalPrice = this.data.amount,
+            this.Qty = this.data.qty,
             this.grandDueTotal = this.data.amount,
             this.totalDue = this.data.total_due,
             this.shippingPayment = this.data.shipping,
@@ -256,11 +257,51 @@ export class CreateQuotationComponent implements OnInit {
                 }
             });
     }
-    // salesDetailsFillForm(suppliersId) {
-    //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
-    //     this.formSupplier.patchValue({
-    //         salesQuotationId: this.data.id, item_code: itemCode, item_supplier_rate: itemSupplierRate
-    //     });
+    salesDetailsFillForm(element) {
+        // const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
+        // this.formSupplier.patchValue({
+        //     salesQuotationId: this.data.id, item_supplier_rate: itemSupplierRate
+        // });
+        const {
+            item_code,
+            qty,
+            available,
+            selling_price,
+            total
+        } = element;
+        this.formSupplier.patchValue({
+            item_code,
+            qty,
+            available,
+            selling_price,
+            total
+        });
+
+
+    }
+    // getSalesQuotationDetails() {
+    //     this.salesDataSource = [];
+    //     this.sales = []
+    //     this.tableParams.salesQuotationId = this.data.id;
+    //     this.salesQuotationDetailsService.getSalesQuotationDetail(this.tableParams).subscribe(
+    //         // (newSalesDetails: any[]) => {
+    //         //     this.sales.push(...newSalesDetails);
+    //         //     this.salesDataSource = new MatTableDataSource<ISalesQuotationDetailsData>(newSalesDetails);
+    //         //     if (newSalesDetails.length > 0) {
+    //         //         this.totalRows = newSalesDetails[0].total;
+    //         //     }
+    //         // },
+    //         (response) => {
+    //             console.log(response);
+
+    //         },
+    //         (error) => {
+    //             this.snackBar.open(error.error.message || error.message, 'Ok', {
+    //                 duration: 3000
+    //             });
+    //         },
+    //         () => { }
+    //     );
     // }
     getSalesQuotationDetails() {
         this.salesDataSource = [];
@@ -289,7 +330,6 @@ export class CreateQuotationComponent implements OnInit {
                 total: this.total
             })
         }
-        console.log(this.total);
     }
     getItemDropDown() {
         this.selectItemLoader = true;
@@ -317,9 +357,17 @@ export class CreateQuotationComponent implements OnInit {
         this.countTotal.push(this.total)
         this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
         this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
+        this.totalDue = this.grandDueTotal
     }
     totalDueCount() {
-        this.totalDue = (+this.grandDueTotal + +this.shippingPayment + +this.gst)
+        if (this.shippingPayment || this.gst) {
+
+            this.totalDue = (+this.grandDueTotal + +this.shippingPayment + +this.gst)
+        } else {
+            this.totalDue = this.grandDueTotal
+        }
+
+
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
@@ -332,20 +380,19 @@ export class CreateQuotationComponent implements OnInit {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
-    removeCustomers(element): void {
+    removeSalesQuotationDetails(element): void {
+
+
+
+
         this.salesQuotationDetailsService.removeSalesQuotationDetail(element.id).subscribe(
             (response) => {
-                // this.snackBar.open('Sales quotation detail deleted successfully', 'OK',{
-                //   duration: 3000
-                // });
                 this.getSalesQuotationDetails();
+
             },
-            (error) => {
-                //     this.snackBar.open(error.error.message || error.message, 'Ok',{
-                //       duration: 3000
-                //     });
-            },
+
             () => { }
         );
     }
+
 }

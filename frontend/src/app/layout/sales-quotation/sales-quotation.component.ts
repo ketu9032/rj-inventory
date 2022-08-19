@@ -11,6 +11,7 @@ import { TiersService } from '../customers/services/tiers.service';
 import { ItemsService } from '../items/services/items.service';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
 import { MoveSalesComponent } from './move-sales/move-sales.component';
+import { PrintComponent } from './print/print.component';
 import { salesQuotationService } from './services/sales-quotation.service';
 @Component({
     selector: 'app-sales-quotation',
@@ -61,7 +62,6 @@ export class SalesQuotationComponent implements OnInit {
         this.getTierDropDown()
         this.getSalesQuotation();
     }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
@@ -71,14 +71,12 @@ export class SalesQuotationComponent implements OnInit {
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-
     toggleCreateButton(){
         if(this.tireName === '' ){
             this.isShow = true
         }else {
             this.isShow = false
         }
-
     }
     getSalesQuotation() {
       this.loader = true;
@@ -133,7 +131,6 @@ export class SalesQuotationComponent implements OnInit {
           }
         });
     }
-
     onSelectCustomers(element){
         this.dialog
         .open(MoveSalesComponent, {
@@ -191,4 +188,18 @@ export class SalesQuotationComponent implements OnInit {
                 () => { }
             );
     }
+    print(element) {
+        this.dialog
+        .open(PrintComponent, {
+            width: '1000px',
+            height: 'auto',
+            data: element
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getSalesQuotation();
+          }
+        });
+     }
 }

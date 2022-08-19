@@ -14,10 +14,8 @@ import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
 import { salesQuotationService } from '../../sales-quotation/services/sales-quotation.service';
 import { SalesService } from '../services/sales.service';
-
 @Component({
     selector: 'app-add-sales',
-
     templateUrl: './add-sales.component.html',
     styleUrls: ['./add-sales.component.scss']
 })
@@ -50,7 +48,6 @@ export class AddSalesComponent implements OnInit {
     }
     selectCustomerLoader: boolean = false;
     selectItemLoader: boolean = false;
-
     lastBillNo: number;
     countQty = [];
     Qty: number;
@@ -71,7 +68,7 @@ export class AddSalesComponent implements OnInit {
     com: string = "ketan";
     tier: string = 'gold';
     remarks: string = 'test';
-    company: number= 75
+    company: number = 75
     shipping: number = 20;
     gst: number = 20;
     currentDate = new Date();
@@ -86,17 +83,14 @@ export class AddSalesComponent implements OnInit {
         private salesQuotationService: salesQuotationService,
         private salesService: SalesService,
         public authService: AuthService
-        ) { }
-        ngOnInit() {
-            console.log(this.data);
-
-
+    ) { }
+    ngOnInit() {
+        console.log(this.data);
         this.users = this.authService.getUserData();
-        this.customer =   this.data.customer[0]
+        this.customer = this.data.customer[0]
         this.companyName = this.customer.company
         this.lastBillDue = this.customer.balance
         this.dueLimit = this.customer.due_limit
-
         this.initializeForm();
         this.initializeSupplierForm();
         this.getCustomerDropDown();
@@ -123,15 +117,12 @@ export class AddSalesComponent implements OnInit {
             selling_price: ['', Validators.required],
         });
     }
-
     saveSales(): void {
         this.company
         const {
             date,
             invoice_no,
         } = this.formGroup.value;
-
-
         this.isShowLoader = true;
         this.salesService
             .addSales({
@@ -170,7 +161,6 @@ export class AddSalesComponent implements OnInit {
                 () => { }
             );
     }
-
     // updateSalesQuotation(): void {
     //     const {
     //         date,
@@ -213,7 +203,7 @@ export class AddSalesComponent implements OnInit {
     // }
     onSubmit() {
         if (this.data && this.data.id) {
-       //     this.updateSalesQuotation();
+            //     this.updateSalesQuotation();
         } else {
             this.saveSales();
         }
@@ -242,15 +232,15 @@ export class AddSalesComponent implements OnInit {
             // company,
             date,
             invoice_no,
-           } = this.data;
+        } = this.data;
         this.formGroup.patchValue({
-        //     company,
+            //     company,
             date,
             invoice_no,
         })
         this.totalPrice = this.data.amount,
-        this.Qty = this.data.qty
-            this.user_name = this.data.user_name,
+            this.Qty = this.data.qty
+        this.user_name = this.data.user_name,
             this.lastBillDue = this.data.last_due,
             this.totalDue = this.data.total_due,
             this.tier = this.data.tier,
@@ -259,7 +249,6 @@ export class AddSalesComponent implements OnInit {
             this.companyName = this.data.customer,
             this.currentPayment = this.data.payment,
             this.otherPayment = this.data.other_payment
-
     }
     // supplierFillForm(suppliersId) {
     //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
@@ -267,7 +256,6 @@ export class AddSalesComponent implements OnInit {
     //         salesQuotationId: this.data.id, item_code, item_supplier_rate: itemSupplierRate
     //     });
     // }
-
     // getSuppliersDropDown() {
     //     this.itemsSuppliersService
     //         .getItemSupplierDropDown()
@@ -364,18 +352,16 @@ export class AddSalesComponent implements OnInit {
     }
     totalDueCount() {
         this.totalDue = this.grandDueTotal - this.currentPayment
-
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
             item_code: item.item_code,
             available: item.int_qty,
-           selling_price: item.silver
+            selling_price: item.silver
         });
     }
     fillDueAndDueLimit(customer) {
-            this.lastBillDue =  customer.balance,
+        this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
 }
-
