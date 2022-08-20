@@ -55,14 +55,14 @@
             <ng-container matColumnDef="date">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.date }}
+                    {{ element.date | date: 'MMM d, y, h:mm:ss' }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer </th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.customer }}
+                    {{ element.customer | uppercase }}
                 </td>
             </ng-container>
 
@@ -105,7 +105,7 @@
 
             <ng-container matColumnDef="user">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
-                <td mat-cell *matCellDef="let element">{{ element.user_name }}</td>
+                <td mat-cell *matCellDef="let element">{{ element.user_name | uppercase }}</td>
             </ng-container>
 
 
