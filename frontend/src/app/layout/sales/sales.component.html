@@ -14,7 +14,7 @@
                 <mat-select name="tier" [(ngModel)]="customerName">
                     <mat-option value="" (click)="toggleCreateAddSalesButton()">All Customer</mat-option>
                     <mat-option *ngFor="let customer of customers" [value]="customer"
-                        (click)="toggleCreateAddSalesButton(); customerData(customer)" >
+                        (click)="toggleCreateAddSalesButton(); customerData(customer); find(customer.id)">
                         {{customer.company | uppercase}}
                     </mat-option>
                 </mat-select>
@@ -81,13 +81,14 @@
             <ng-container matColumnDef="total">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
                 <td mat-cell *matCellDef="let element">
-                    {{  element.amount_pd_total   | currency: 'INR'}}
+                    {{ element.amount_pd_total | currency: 'INR'}}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="payment">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment</th>
-                <td mat-cell *matCellDef="let element">{{ element.payment | currency: 'INR'}}</td>
+                <td mat-cell *matCellDef="let element">{{ element.payment ? (element.payment | currency: 'INR') :
+                    payment | currency: 'INR'}}</td>
             </ng-container>
 
 
@@ -98,7 +99,8 @@
 
             <ng-container matColumnDef="op">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>OP</th>
-                <td mat-cell *matCellDef="let element">{{ element.other_payment | currency: 'INR' }}</td>
+                <td mat-cell *matCellDef="let element">{{ element.other_payment ? (element.other_payment | currency:
+                    'INR' ) : 0 | currency: 'INR' }}</td>
             </ng-container>
 
             <ng-container matColumnDef="user">
@@ -115,9 +117,9 @@
                         <mat-icon aria-label="Edit">edit</mat-icon>
                     </button>
                     <button mat-icon-button matTooltip="Click to Delete" color="warn"
-                    (click)="confirmDialog(element.id)">
-                    <mat-icon aria-label="Delete">delete</mat-icon>
-                </button>
+                        (click)="confirmDialog(element.id)">
+                        <mat-icon aria-label="Delete">delete</mat-icon>
+                    </button>
                     <button mat-icon-button matTooltip="Click to thumb" color="primary" type="button"
                         (click)="onEditNewCustomers(element)">
                         <mat-icon aria-label="like">thumb_up</mat-icon>
@@ -125,7 +127,7 @@
 
 
 
-             </td>
+                </td>
             </ng-container>
 
 

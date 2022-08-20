@@ -57,7 +57,7 @@ export class AddSalesComponent implements OnInit {
     dueLimit: number;
     grandDueTotal: number;
     currentPayment: number;
-    otherPayment: number;
+    otherPayment: number = 0;
     totalDue: number;
     sales = [];
     total: number;
@@ -85,6 +85,8 @@ export class AddSalesComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit() {
+        console.log(this.data);
+
         this.users = this.authService.getUserData();
         this.customer = this.data.customer[0]
         this.companyName = this.customer.company
@@ -117,6 +119,7 @@ export class AddSalesComponent implements OnInit {
         });
     }
     saveSales(): void {
+        const pendingDueTotal = +this.totalPrice + +this.lastBillDue
         this.company
         const {
             date,
@@ -130,7 +133,7 @@ export class AddSalesComponent implements OnInit {
                 qty: this.Qty,
                 amount: this.totalPrice,
                 user_name: this.users.user_name,
-                last_due: this.lastBillDue,
+                pending_due: this.lastBillDue,
                 total_due: this.totalDue,
                 tier: this.tier,
                 grand_total: this.grandDueTotal,
@@ -139,6 +142,7 @@ export class AddSalesComponent implements OnInit {
                 payment: this.currentPayment,
                 other_payment: this.otherPayment,
                 sales: this.sales,
+                amount_pd_total: pendingDueTotal
             })
             .subscribe(
                 (response) => {
@@ -240,7 +244,7 @@ export class AddSalesComponent implements OnInit {
         this.totalPrice = this.data.amount,
             this.Qty = this.data.qty
         this.user_name = this.data.user_name,
-            this.lastBillDue = this.data.last_due,
+            this.lastBillDue = this.data.pending_due,
             this.totalDue = this.data.total_due,
             this.tier = this.data.tier,
             this.grandDueTotal = this.data.grand_total,
@@ -362,4 +366,6 @@ export class AddSalesComponent implements OnInit {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
+
+
 }

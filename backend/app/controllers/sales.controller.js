@@ -1,6 +1,7 @@
 const { MESSAGES } = require('../constant/messages');
 const { STATUS_CODE } = require('../constant/response-status');
 const { pool } = require('../db');
+
 exports.findAll = async (req, res) => {
   try {
     const { orderBy, direction, pageSize, pageNumber, search, active } =
@@ -16,7 +17,6 @@ exports.findAll = async (req, res) => {
           or qty::text ilike '%${search}%'
           or amount::text ilike '%${search}%'
           or total_due::text ilike '%${search}%'
-          or last_due::text ilike '%${search}%'
           or grand_total::text ilike '%${search}%'
           or user_name ilike '%${search}%'
           or tier ilike '%${search}%'
@@ -38,7 +38,6 @@ exports.findAll = async (req, res) => {
       qty,
       amount,
       total_due,
-      last_due,
       tier,
       grand_total,
       user_name,
@@ -49,10 +48,8 @@ exports.findAll = async (req, res) => {
       other_payment,
       amount_pd_total
       FROM sales s
-
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
-
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -89,17 +86,17 @@ exports.add = async (req, res) => {
       qty,
       amount,
       total_due,
-        user_name,
-        last_due,
-        grand_total,
+      user_name,
+      pending_due,
+      grand_total,
       tier,
       remarks,
       sales,
       payment,
       customer,
-      other_payment
+      other_payment,
+      amount_pd_total
     } = req.body;
-
     // if (
     //   !date ||
     //   !invoice_no ||
@@ -110,33 +107,32 @@ exports.add = async (req, res) => {
     //   !tier ||
     //   !sales ||
     //   !remarks
-
     // ) {
     //   res
     //     .status(STATUS_CODE.BAD)
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-   const insertSalesQuotationQuery =
-      `INSERT INTO sales
+    const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
        invoice_no,
        qty,
        amount,
        total_due,
-       last_due,
+       pending_due,
        user_name,
        grand_total,
        tier,
        remarks,
        payment,
        customer,
-       other_payment
+       other_payment,
+       amount_pd_total
      )
-    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${last_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer}', '${other_payment}') returning id;`;
-        const { rows } = await pool.query(insertSalesQuotationQuery);
-     const salesId = rows[0].id;
+    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer}', '${other_payment}', '${amount_pd_total}') returning id;`;
+    const { rows } = await pool.query(insertSalesQuotationQuery);
+    const salesId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
       const element = sales[index];
       const insertSalesQuotationDetailsQuery = `INSERT INTO sales_bill
@@ -152,7 +148,6 @@ exports.add = async (req, res) => {
         `;
       await pool.query(insertSalesQuotationDetailsQuery);
     }
-
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -160,6 +155,7 @@ exports.add = async (req, res) => {
     });
   }
 };
+
 exports.addSales = async (req, res) => {
   try {
     const {
@@ -175,7 +171,6 @@ exports.addSales = async (req, res) => {
       customer,
       amount_pd_total
     } = req.body;
-
     // if (
     //   !date ||
     //   !invoice_no ||
@@ -186,15 +181,13 @@ exports.addSales = async (req, res) => {
     //   !tier ||
     //   !sales ||
     //   !remarks
-
     // ) {
     //   res
     //     .status(STATUS_CODE.BAD)
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-   const insertSalesQuotationQuery =
-      `INSERT INTO sales
+    const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
        invoice_no,
@@ -209,10 +202,7 @@ exports.addSales = async (req, res) => {
        amount_pd_total
      )
     VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}', '${pending_due}', '${customer}', '${amount_pd_total}')`;
-        await pool.query(insertSalesQuotationQuery);
-
-
-
+    await pool.query(insertSalesQuotationQuery);
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -220,15 +210,10 @@ exports.addSales = async (req, res) => {
     });
   }
 };
+
 exports.update = async (req, res) => {
   try {
-    const {
-      id,
-      date,
-      invoice_no,
-      ref_no,
-      companyId
-    } = req.body;
+    const { id, date, invoice_no, ref_no, companyId } = req.body;
     if (!id || !date || !invoice_no || !ref_no || !companyId) {
       res
         .status(STATUS_CODE.BAD)
@@ -246,6 +231,7 @@ exports.update = async (req, res) => {
     });
   }
 };
+
 exports.changeStatus = async (req, res) => {
   try {
     const { id, status } = req.body;

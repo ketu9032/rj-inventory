@@ -36,7 +36,8 @@ export class MoveSalesComponent implements OnInit {
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            customer_name: ['', Validators.required]}
+            customer_name: ['', Validators.required]
+        }
 
         );
     }
@@ -52,9 +53,9 @@ export class MoveSalesComponent implements OnInit {
                 user_name: this.data.user_name,
                 tier: this.data.tier,
                 remarks: this.data.remarks,
-                customer:this.customer.company,
-               pending_due: this.customer.balance,
-               payment: this.payment
+                customer: this.customer.company,
+                pending_due: this.customer.balance,
+                amount_pd_total: this.payment
             })
             .subscribe(
                 (response) => {
@@ -64,6 +65,7 @@ export class MoveSalesComponent implements OnInit {
                     });
                     this.dialogRef.close(true);
                     this.removeSales();
+
                 },
                 (error) => {
                     this.isShowLoader = false;
@@ -98,29 +100,30 @@ export class MoveSalesComponent implements OnInit {
             );
     }
 
-    find(element){
-  this.customer = this.customers.find(val =>{
-    return (val.id) === element
-  })
+    find(element) {
+        this.customer = this.customers.find(val => {
+            return (val.id) === element
+        })
+        if (this.customer) {
 
-
+            this.payment = +this.data.amount + +this.customer.balance
+        }
 
     }
-    paymentCount() {
-        this.payment =  this.data.amount +  this.customer.balance
-    }
+
     removeSales(): void {
         this.salesQuotationService.removeSalesQuotation(this.data.id).subscribe(
-          (response) => {
+            (response) => {
 
 
-          },
-          (error) => {
-            this.snackBar.open(error.error.message || error.message, 'Ok',{
-              duration: 3000
-            });
-          },
-          () => {}
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
         );
-      }
+    }
+
 }

@@ -10,9 +10,9 @@
     <div>
         <mat-form-field class="margin field-width">
             <mat-label>Select Customer</mat-label>
-            <mat-select name="tier" formControlName="customer_name"  >
+            <mat-select name="tier" formControlName="customer_name">
                 <mat-option value="">All Customer</mat-option>
-                <mat-option *ngFor="let customer of customers" [value]="customer.id"  (click)="find(customer.id)">
+                <mat-option *ngFor="let customer of customers" [value]="customer.id" (click)="find(customer.id)">
                     {{customer.company | uppercase}}
                 </mat-option>
             </mat-select>
@@ -21,7 +21,7 @@
     </div>
     <div>
         <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader "
-            (click)="saveSalesQuotation()">
+            (click)="saveSalesQuotation()" routerLink="/sales">
             Submit
             <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
         </button>

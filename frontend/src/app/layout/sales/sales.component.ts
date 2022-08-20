@@ -45,8 +45,8 @@ export class SalesComponent implements OnInit {
     customers = [];
     isShow: boolean = true;
     user: any;
-    payment;
-    allFiledCustomer =  []
+    payment: number = 0;
+    allFiledCustomer = []
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -55,11 +55,12 @@ export class SalesComponent implements OnInit {
         search: '',
         active: true
     }
+    customer;
     constructor(
         public dialog: MatDialog,
         private salesService: SalesService,
         public snackBar: MatSnackBar,
-    public authService: AuthService
+        public authService: AuthService
     ) { }
     ngOnInit(): void {
         this.getCustomerDropDown();
@@ -70,40 +71,41 @@ export class SalesComponent implements OnInit {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
-         this.getSales();
+        this.getSales();
     }
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
     getSales() {
-      this.loader = true;
-      this.salesService.getSales(this.tableParams).subscribe(
-        (newSales: any[]) => {
-          this.dataSource = new MatTableDataSource<ISalesData>(newSales);
-          if (newSales.length > 0) {
-            this.totalRows = newSales[0].total;
-          }
-          setTimeout(() => {
-            this.paginator.pageIndex = this.tableParams.pageNumber - 1;
-            this.paginator.length = +this.totalRows;
-          });
-          this.loader = false;
-        },
-        (error) => {
-          this.loader = false;
-          this.snackBar.open(error.error.message || error.message, 'Ok', {
-            duration: 3000
-          });
-        },
-        () => { }
-      );
+        this.loader = true;
+        this.salesService.getSales(this.tableParams).subscribe(
+            (newSales: any[]) => {
+                this.dataSource = new MatTableDataSource<ISalesData>(newSales);
+                if (newSales.length > 0) {
+                    this.totalRows = newSales[0].total;
+                }
+                setTimeout(() => {
+                    this.paginator.pageIndex = this.tableParams.pageNumber - 1;
+                    this.paginator.length = +this.totalRows;
+                });
+                this.loader = false;
+            },
+            (error) => {
+                this.loader = false;
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
     }
     onAddNewSales(): void {
         this.dialog
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                data: {customer:  this.allFiledCustomer}
+                data: { customer: this.allFiledCustomer }
+
             })
             .afterClosed()
             .subscribe((result) => {
@@ -112,22 +114,23 @@ export class SalesComponent implements OnInit {
                 }
             });
     }
-    customerData(customer){
-     this.allFiledCustomer.push(customer)
+    customerData(customer) {
+        this.allFiledCustomer.push(customer)
+        this.allFiledCustomer.push(this.customer)
     }
     onEditNewCustomers(element) {
-      this.dialog
-        .open(AddSalesComponent, {
-          width: '1000px',
-          height: '800px',
-          data: element
-        })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result) {
-            this.getSales();
-          }
-        });
+        this.dialog
+            .open(AddSalesComponent, {
+                width: '1000px',
+                height: '800px',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getSales();
+                }
+            });
     }
     // // confirmDialog(id: string): void {
     // //   this.dialog
@@ -183,17 +186,26 @@ export class SalesComponent implements OnInit {
     }
     print(element) {
         this.dialog
-        .open(PrintComponent, {
-            width: '1000px',
-            height: 'auto',
-            data: element
+            .open(PrintComponent, {
+                width: '1000px',
+                height: 'auto',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getSales();
+                }
+            });
+    }
+    find(element) {
+        this.customer = this.customers.find(val => {
+            return (val.id) === element
         })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result) {
-            this.getSales();
-          }
-        });
-     }
+        console.log(this.customer);
 
+    }
+    //   paymentCount() {
+    //       this.payment =  this.data.amount +  this.customer.balance
+    //   }
 }
