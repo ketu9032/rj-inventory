@@ -9,9 +9,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { AddSalesComponent } from './add-sales/add-sales.component';
+import { PrintComponent } from './print/print.component';
 
 @NgModule({
-  declarations: [SalesComponent, AddSalesComponent],
+  declarations: [SalesComponent, AddSalesComponent, PrintComponent],
   imports: [
     CommonModule,
     SalesRoutingModule,

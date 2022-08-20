@@ -292,7 +292,7 @@ export class CreateQuotationComponent implements OnInit {
     //         //     }
     //         // },
     //         (response) => {
-    //             console.log(response);
+    //
 
     //         },
     //         (error) => {

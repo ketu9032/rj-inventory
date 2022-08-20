@@ -85,7 +85,6 @@ export class AddSalesComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit() {
-        console.log(this.data);
         this.users = this.authService.getUserData();
         this.customer = this.data.customer[0]
         this.companyName = this.customer.company
@@ -301,7 +300,6 @@ export class AddSalesComponent implements OnInit {
                 total: this.total
             })
         }
-        console.log(this.total);
     }
     getCustomerDropDown() {
         this.selectCustomerLoader = true;

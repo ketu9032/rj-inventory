@@ -10,9 +10,9 @@
     <div>
         <mat-form-field class="margin field-width">
             <mat-label>Select Customer</mat-label>
-            <mat-select name="tier" formControlName="customer_name" [(ngModel)]="customer">
+            <mat-select name="tier" formControlName="customer_name"  >
                 <mat-option value="">All Customer</mat-option>
-                <mat-option *ngFor="let customer of customers" [value]="customer.company">
+                <mat-option *ngFor="let customer of customers" [value]="customer.id"  (click)="find(customer.id)">
                     {{customer.company | uppercase}}
                 </mat-option>
             </mat-select>

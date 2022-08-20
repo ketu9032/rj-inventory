@@ -10,6 +10,7 @@ import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { ItemsService } from '../items/services/items.service';
 import { AddSalesComponent } from './add-sales/add-sales.component';
+import { PrintComponent } from './print/print.component';
 import { SalesService } from './services/sales.service';
 @Component({
     selector: 'app-sales',
@@ -44,6 +45,7 @@ export class SalesComponent implements OnInit {
     customers = [];
     isShow: boolean = true;
     user: any;
+    payment;
     allFiledCustomer =  []
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
@@ -179,4 +181,19 @@ export class SalesComponent implements OnInit {
                 () => { }
             );
     }
+    print(element) {
+        this.dialog
+        .open(PrintComponent, {
+            width: '1000px',
+            height: 'auto',
+            data: element
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getSales();
+          }
+        });
+     }
+
 }

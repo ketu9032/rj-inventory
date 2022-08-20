@@ -13,10 +13,11 @@ export class MoveSalesComponent implements OnInit {
     formGroup: FormGroup;
     selectCustomerLoader: boolean = false;
     isShowLoader: boolean = false;
-    customers;
+    customers = [];
     payment: number;
     sales;
-    customer: string;
+    customer;
+    balance;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -28,9 +29,9 @@ export class MoveSalesComponent implements OnInit {
 
     ) { }
     ngOnInit() {
-        console.log(this.data);
         this.getCustomerDropDown()
         this.initializeForm();
+
 
     }
     initializeForm(): void {
@@ -51,8 +52,9 @@ export class MoveSalesComponent implements OnInit {
                 user_name: this.data.user_name,
                 tier: this.data.tier,
                 remarks: this.data.remarks,
-                customer:this.customer,
-           //     payment: this.payment,
+                customer:this.customer.company,
+               pending_due: this.customer.balance,
+               payment: this.payment
             })
             .subscribe(
                 (response) => {
@@ -96,6 +98,17 @@ export class MoveSalesComponent implements OnInit {
             );
     }
 
+    find(element){
+  this.customer = this.customers.find(val =>{
+    return (val.id) === element
+  })
+
+
+
+    }
+    paymentCount() {
+        this.payment =  this.data.amount +  this.customer.balance
+    }
     removeSales(): void {
         this.salesQuotationService.removeSalesQuotation(this.data.id).subscribe(
           (response) => {

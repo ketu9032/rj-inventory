@@ -23,6 +23,8 @@ exports.findAll = async (req, res) => {
           or remarks ilike '%${search}%'
           or customer ilike '%${search}%'
           or payment::text ilike '%${search}%'
+          or pending_due::text ilike '%${search}%'
+          or amount_pd_total::text ilike '%${search}%'
           or other_payment::text ilike '%${search}%'
         )`;
     }
@@ -43,7 +45,9 @@ exports.findAll = async (req, res) => {
       remarks,
       payment,
       customer,
-      other_payment
+      pending_due,
+      other_payment,
+      amount_pd_total
       FROM sales s
 
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
@@ -167,8 +171,9 @@ exports.addSales = async (req, res) => {
       user_name,
       tier,
       remarks,
-      // payment,
-      customer
+      pending_due,
+      customer,
+      amount_pd_total
     } = req.body;
 
     // if (
@@ -199,10 +204,11 @@ exports.addSales = async (req, res) => {
        user_name,
        tier,
        remarks,
-
-       customer
+       pending_due,
+       customer,
+       amount_pd_total
      )
-    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}',  '${customer}')`;
+    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}', '${pending_due}', '${customer}', '${amount_pd_total}')`;
         await pool.query(insertSalesQuotationQuery);
 
 
