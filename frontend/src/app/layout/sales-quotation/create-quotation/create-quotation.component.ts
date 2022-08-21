@@ -29,6 +29,7 @@ export class CreateQuotationComponent implements OnInit {
     ];
     formSupplier: FormGroup;
     formGroup: FormGroup;
+    formBill: FormGroup;
     selectedRole: string
     tires = []
     isShowLoader = false;
@@ -71,7 +72,7 @@ export class CreateQuotationComponent implements OnInit {
     users;
     user_name: string;
     tier: string;
-    remarks: string;
+    remarks: string = "";
     invoiceNo: number = 0;
     currentDate = new Date();
     constructor(
@@ -91,6 +92,7 @@ export class CreateQuotationComponent implements OnInit {
         this.users = this.authService.getUserData();
         this.initializeForm();
         this.initializeSupplierForm();
+        this.initializeSalesBillForm()
         this.getItemDropDown();
         if (this.data.id) {
             this.fillForm();
@@ -111,6 +113,11 @@ export class CreateQuotationComponent implements OnInit {
             available: ['', Validators.required],
             total: ['', Validators.required],
             selling_price: ['', Validators.required],
+        });
+    }
+    initializeSalesBillForm(): void {
+        this.formBill= this.formBuilder.group({
+            total_due: ['', Validators.required]
         });
     }
     saveSalesQuotation(): void {

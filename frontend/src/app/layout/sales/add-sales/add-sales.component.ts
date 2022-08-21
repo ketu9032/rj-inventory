@@ -29,6 +29,7 @@ export class AddSalesComponent implements OnInit {
     ];
     formSupplier: FormGroup;
     formGroup: FormGroup;
+    formBill: FormGroup;
     isShowLoader = false;
     public defaultPageSize = PAGE_SIZE;
     supplier = []
@@ -61,16 +62,15 @@ export class AddSalesComponent implements OnInit {
     totalDue: number;
     sales = [];
     total: number;
-    user_name: string = "ketan";
     users;
     customer;
     companyName;
     com: string = "ketan";
-    tier: string = 'gold';
-    remarks: string = 'test';
+    tier: string = '';
+    remarks: string = " ";
     company: number = 75
-    shipping: number = 20;
-    gst: number = 20;
+
+    invoice_no:number = 0;
     currentDate = new Date();
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISalesData,
@@ -94,6 +94,7 @@ export class AddSalesComponent implements OnInit {
         this.dueLimit = this.customer.due_limit
         this.initializeForm();
         this.initializeSupplierForm();
+        this.initializeSalesBillForm()
         this.getCustomerDropDown();
         this.getItemDropDown();
         //  this.getSuppliersDropDown()
@@ -116,6 +117,12 @@ export class AddSalesComponent implements OnInit {
             available: ['', Validators.required],
             total: ['', Validators.required],
             selling_price: ['', Validators.required],
+        });
+    }
+    initializeSalesBillForm(): void {
+        this.formBill= this.formBuilder.group({
+            payment: ['', Validators.required],
+            remarks: ['', Validators.required]
         });
     }
     saveSales(): void {
@@ -232,18 +239,15 @@ export class AddSalesComponent implements OnInit {
     }
     fillForm() {
         const {
-            // company,
             date,
             invoice_no,
         } = this.data;
         this.formGroup.patchValue({
-            //     company,
             date,
             invoice_no,
         })
         this.totalPrice = this.data.amount,
             this.Qty = this.data.qty
-        this.user_name = this.data.user_name,
             this.lastBillDue = this.data.pending_due,
             this.totalDue = this.data.total_due,
             this.tier = this.data.tier,

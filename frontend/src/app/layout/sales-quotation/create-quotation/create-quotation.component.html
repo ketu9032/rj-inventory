@@ -260,25 +260,28 @@
         </div>
     </div>
     <mat-divider></mat-divider>
+    <form [formGroup]="formBill" (ngSubmit)="onSubmit()">
     <div class=" tierLimitAndButton">
         <div class="tierLimitAndButton_content_2">
             <div class="right">
                 <mat-form-field>
                     <mat-label>Total Due (₹) </mat-label>
-                    <input matInput disable matTooltip="Not Editable" readonly
+                    <input matInput disable matTooltip="Not Editable" formControlName="total_due" readonly
                         value="{{this.totalDue | currency: 'INR'}}" />
                 </mat-form-field>
             </div>
             <br>
-            <div class="">
-                <button mat-raised-button color="primary" class="margin" [disabled]="isShowLoader" (click)="onSubmit()">
-                    <!-- [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()"> -->
-                    <span *ngIf="!isShowLoader">
+            <div >
+                <button mat-raised-button color="primary"  type="submit" [disabled]="!formSupplier.valid || isShowLoader" >
+
+                    <ng-container  *ngIf="!isShowLoader">
                         {{ !this.data.id ? 'Save & Back' : 'Update & Back' }}
-                    </span>
-                    <mat-spinner *ngIf="isShowLoader" diameter="20"></mat-spinner>
-                </button>
+                    </ng-container>
+                        <mat-spinner *ngIf="isShowLoader" diameter="20"></mat-spinner>
+
+                    </button>
             </div>
         </div>
     </div>
+</form>
 </div>

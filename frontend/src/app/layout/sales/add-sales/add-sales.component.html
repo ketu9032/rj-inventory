@@ -42,7 +42,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Invoice No</mat-label>
-                    <input matInput formControlName="invoice_no" type="number" required />
+                    <input matInput formControlName="invoice_no" [(ngModel)]="invoice_no" type="number" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -217,6 +217,7 @@
 <br>
 <!-- bill container -->
 <div class="bill-container">
+    <form [formGroup]="formBill" (ngSubmit)="onSubmit()">
     <div class="flex totalAndBill">
         <span class="totalAndBill_content-1">
             <div class="width">
@@ -253,7 +254,7 @@
     <br>
     <div class="flex remakesAndPayment">
         <div class="remakes">
-            <textarea class="padding" id="" cols="60" rows="7" placeholder="Enter Remarks..."[(ngModel)]="remarks"></textarea>
+            <textarea class="padding" id="" cols="60" rows="7" placeholder="Enter Remarks..."[(ngModel)]="remarks" formControlName="remarks"></textarea>
         </div>
         <div class="payment">
             <div class="width">
@@ -270,7 +271,7 @@
                 </span> &nbsp;
                 <mat-form-field>
                     <mat-label>payment(₹) </mat-label>
-                    <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="currentPayment"
+                    <input matInput disable (keyup)="totalDueCount()" formControlName="payment" [(ngModel)]="currentPayment"
                         value={{this.currentPayment}} />
                 </mat-form-field>
                 <br>
@@ -302,15 +303,17 @@
             </div>
             <br>
             <div class="">
-                <button mat-raised-button color="primary" class="margin"
-                   (click)="onSubmit()">
+                <button mat-raised-button color="primary"
+                   [disabled]="!formBill.valid || isShowLoader">
                     <span *ngIf="!isShowLoader">
                         Save & Rack
                     </span>
-                    <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
+                    <mat-spinner *ngIf="isShowLoader"  diameter="20"></mat-spinner>
                 </button>
             </div>
         </div>
     </div>
+</form>
 </div>
+
 

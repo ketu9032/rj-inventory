@@ -6,6 +6,7 @@ import {
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { salesQuotationDetailsService } from '../services/sales-quotation-details.service';
+import { salesQuotationService } from '../services/sales-quotation.service';
 
 @Component({
   selector: 'app-delete-quotation-details',
@@ -18,6 +19,7 @@ export class DeleteQuotationDetailsComponent implements OnInit {
     private dialogRef: MatDialogRef<DeleteQuotationDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string,
     private salesQuotationDetailsService: salesQuotationDetailsService,
+    private salesQuotationService: salesQuotationService,
     public snackBar: MatSnackBar
   ) {}
 
@@ -26,7 +28,7 @@ export class DeleteQuotationDetailsComponent implements OnInit {
   }
 
   removeCustomers(): void {
-    this.salesQuotationDetailsService.removeSalesQuotationDetail(this.data).subscribe(
+    this.salesQuotationService.removeSalesQuotation(this.data).subscribe(
       (response) => {
         this.snackBar.open('Sales quotation detail deleted successfully', 'OK',{
           duration: 3000
