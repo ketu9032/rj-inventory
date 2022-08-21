@@ -8,9 +8,8 @@ import { ISalesQuotationData } from 'src/app/models/sales-quotation';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { TiersService } from '../customers/services/tiers.service';
-import { ItemsService } from '../items/services/items.service';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
-import { DeleteQuotationDetailsComponent } from './delete-quotation-details/delete-quotation-details.component';
+import { DeleteQuotationComponent } from './delete-quotation/delete-quotation.component';
 import { MoveSalesComponent } from './move-sales/move-sales.component';
 import { PrintComponent } from './print/print.component';
 import { salesQuotationService } from './services/sales-quotation.service';
@@ -148,7 +147,7 @@ export class SalesQuotationComponent implements OnInit {
     }
     confirmDialog(id: string): void {
       this.dialog
-        .open(DeleteQuotationDetailsComponent, {
+        .open(DeleteQuotationComponent, {
           maxWidth: '400px',
           data: id
         })

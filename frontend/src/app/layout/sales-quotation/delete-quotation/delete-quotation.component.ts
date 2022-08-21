@@ -9,14 +9,14 @@ import { salesQuotationDetailsService } from '../services/sales-quotation-detail
 import { salesQuotationService } from '../services/sales-quotation.service';
 
 @Component({
-  selector: 'app-delete-quotation-details',
-  templateUrl: './delete-quotation-details.component.html',
-  styleUrls: ['./delete-quotation-details.component.scss']
+  selector: 'app-delete-quotation',
+  templateUrl: './delete-quotation.component.html',
+  styleUrls: ['./delete-quotation.component.scss']
 })
-export class DeleteQuotationDetailsComponent implements OnInit {
+export class DeleteQuotationComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
-    private dialogRef: MatDialogRef<DeleteQuotationDetailsComponent>,
+    private dialogRef: MatDialogRef<DeleteQuotationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string,
     private salesQuotationDetailsService: salesQuotationDetailsService,
     private salesQuotationService: salesQuotationService,

@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IItemSupplierData } from 'src/app/models/item_supplier';
 import { ISalesQuotationData } from 'src/app/models/sales-quotation';
@@ -13,7 +12,6 @@ import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
 import { salesQuotationService } from '../services/sales-quotation.service';
 import { salesQuotationDetailsService } from '../services/sales-quotation-details.service';
-import { DeleteQuotationDetailsComponent } from '../delete-quotation-details/delete-quotation-details.component';
 @Component({
     selector: 'app-create-quotation',
     templateUrl: './create-quotation.component.html',
@@ -116,7 +114,7 @@ export class CreateQuotationComponent implements OnInit {
         });
     }
     initializeSalesBillForm(): void {
-        this.formBill= this.formBuilder.group({
+        this.formBill = this.formBuilder.group({
             total_due: ['', Validators.required]
         });
     }
@@ -231,6 +229,7 @@ export class CreateQuotationComponent implements OnInit {
         }
         this.sales.push(sale)
         this.salesDataSource = new MatTableDataSource<IItemSupplierData>(this.sales);
+        this.clearSalesDetailsForm();
     }
     fillForm() {
         const {
@@ -252,18 +251,6 @@ export class CreateQuotationComponent implements OnInit {
             this.users.user_name = this.data.user_name,
             this.remarks = this.data.remarks
     }
-    confirmDialog(id: string): void {
-        this.dialog
-            .open(DeleteQuotationDetailsComponent, {
-                maxWidth: '400px',
-                data: id
-            })
-            .afterClosed()
-            .subscribe((result) => {
-                if (result && result.data === true) {
-                }
-            });
-    }
     salesDetailsFillForm(element) {
         // const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
         // this.formSupplier.patchValue({
@@ -283,8 +270,16 @@ export class CreateQuotationComponent implements OnInit {
             selling_price,
             total
         });
+    }
 
-
+    clearSalesDetailsForm(): void {
+        this.formSupplier.patchValue({
+            item_code :  '',
+            qty: '',
+            available: '',
+            selling_price: ' ',
+            total: ''
+        });
     }
     // getSalesQuotationDetails() {
     //     this.salesDataSource = [];
@@ -300,7 +295,6 @@ export class CreateQuotationComponent implements OnInit {
     //         // },
     //         (response) => {
     //             console.log(response);
-
     //         },
     //         (error) => {
     //             this.snackBar.open(error.error.message || error.message, 'Ok', {
@@ -368,13 +362,10 @@ export class CreateQuotationComponent implements OnInit {
     }
     totalDueCount() {
         if (this.shippingPayment || this.gst) {
-
             this.totalDue = (+this.grandDueTotal + +this.shippingPayment + +this.gst)
         } else {
             this.totalDue = this.grandDueTotal
         }
-
-
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
@@ -388,18 +379,11 @@ export class CreateQuotationComponent implements OnInit {
             this.dueLimit = customer.due_limit
     }
     removeSalesQuotationDetails(element): void {
-
-
-
-
         this.salesQuotationDetailsService.removeSalesQuotationDetail(element.id).subscribe(
             (response) => {
                 this.getSalesQuotationDetails();
-
             },
-
             () => { }
         );
     }
-
 }

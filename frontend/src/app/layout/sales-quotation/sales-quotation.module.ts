@@ -10,11 +10,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
 import { MoveSalesComponent } from './move-sales/move-sales.component';
-import { DeleteQuotationDetailsComponent } from './delete-quotation-details/delete-quotation-details.component';
+import { DeleteQuotationComponent } from './delete-quotation/delete-quotation.component';
 import { PrintComponent } from './print/print.component';
 
 @NgModule({
-  declarations: [SalesQuotationComponent, CreateQuotationComponent, MoveSalesComponent, DeleteQuotationDetailsComponent, PrintComponent ],
+  declarations: [SalesQuotationComponent, CreateQuotationComponent, MoveSalesComponent, DeleteQuotationComponent, PrintComponent ],
 
   imports: [
     CommonModule,
