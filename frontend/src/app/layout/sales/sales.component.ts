@@ -116,7 +116,7 @@ export class SalesComponent implements OnInit {
     }
     customerData(customer) {
         this.allFiledCustomer.push(customer)
-        this.allFiledCustomer.push(this.customer)
+  //      this.allFiledCustomer.push(this.customer)
     }
     onEditNewCustomers(element) {
         this.dialog
@@ -172,6 +172,8 @@ export class SalesComponent implements OnInit {
                 (response) => {
                     this.customers = response;
                     this.selectCustomerLoader = false;
+                    console.log(this.customers);
+
                 },
                 (error) => {
                     this.snackBar.open(
@@ -198,13 +200,12 @@ export class SalesComponent implements OnInit {
                 }
             });
     }
-    find(element) {
-        this.customer = this.customers.find(val => {
-            return (val.id) === element
-        })
-        console.log(this.customer);
+    // find(element) {
+    //     this.customer = this.customers.find(val => {
+    //         return (val.id) === element
+    //     })
 
-    }
+    // }
     //   paymentCount() {
     //       this.payment =  this.data.amount +  this.customer.balance
     //   }

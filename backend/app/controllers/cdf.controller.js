@@ -61,7 +61,7 @@ exports.findAll = async (req, res) => {
           t.code as tier_code
     FROM
         cdf c
-       left Join tiers t
+         full Join tiers t
         on t.id = c.tier_id
           ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
@@ -256,7 +256,8 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
       dueLimit,
       balance,
       other,
-      tierId
+      tierId,
+      tier_code
     } = req.body;
     if (
       !company ||
@@ -268,6 +269,7 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
       !balance ||
       !other ||
       !tierId ||
+      !tier_code ||
       !id
     ) {
       res
@@ -277,7 +279,7 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
     }
     await pool.query(
       `UPDATE cdf
-      SET  company='${company}', name='${name}',  address='${address}',  email='${email}', mobile='${mobile}', cdf_status='active',  due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}' where id = ${id};
+      SET  company='${company}', name='${name}',  address='${address}',  email='${email}', mobile='${mobile}', cdf_status='active',  due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}', tier_code='${tier_code}' where id = ${id};
        `
     );
     res.status(STATUS_CODE.SUCCESS).send();
@@ -337,7 +339,7 @@ exports.onCheckMobile = async (req, res) => {
 };
 exports.getCdfTOCustomerDropDown = async(req, res) => {
   try {
-      const response = await pool.query(`select id, company,balance, due_limit FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active'`);
+      const response = await pool.query(`select id, company,balance, tier_id, tier_code, due_limit FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active'`);
 
       res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

@@ -2,6 +2,7 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+    font-size: 14px;
 l    .mat-dialog-title {
         margin: 5px 0 0  0;
         display: block;
@@ -53,13 +54,18 @@ l    .mat-dialog-title {
 table {
     width: 100%;
 
+    tr.mat-header-row,
+tr.mat-row {
+    height: 40px;
+}
     th {
         color: rgb(0, 0, 0);
-        font-size: 16px;
+        font-size: 15px;
     }
 
     td {
         color: rgb(73 70 70 / 87%);
+        font-size: 14px;
     }
 }
 .bill-container {

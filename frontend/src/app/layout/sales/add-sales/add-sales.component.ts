@@ -92,6 +92,7 @@ export class AddSalesComponent implements OnInit {
         this.companyName = this.customer.company
         this.lastBillDue = this.customer.balance
         this.dueLimit = this.customer.due_limit
+        this.tier = this.customer.tier_code
         this.initializeForm();
         this.initializeSupplierForm();
         this.initializeSalesBillForm()
