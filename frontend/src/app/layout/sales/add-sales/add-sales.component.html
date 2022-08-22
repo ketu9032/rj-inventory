@@ -13,31 +13,19 @@
         <div class="box">
             <!--company start -->
             <div class="block">
-                <mat-form-field>
 
-                    <mat-label>Company</mat-label>
-                    <mat-select name="company">
-                        <mat-option formControlName="company" *ngFor="let customer of customers" [value]="customer.id"
-                            (click)="fillDueAndDueLimit(customer)">
-                            {{customer.company | uppercase}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-            formGroup.controls.company.touched &&
-            !formGroup.controls.company.value
-            ">
-                        <span class="error">Company is Required</span>
-                    </ng-container>
-                </div>
-                <mat-spinner class="loader" *ngIf="selectCustomerLoader" diameter="25"></mat-spinner>
+                    <mat-form-field>
+                        <mat-label>Company</mat-label>
+                        <input matInput formControlName="company" required [(ngModel)]="companyName"  />
+                    </mat-form-field>
+
+
             </div>
             <!--date start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" required type="date" />
+                    <input matInput formControlName="date" required [(ngModel)]="currentDate"  />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -54,7 +42,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Invoice No</mat-label>
-                    <input matInput formControlName="invoice_no" type="number" required />
+                    <input matInput formControlName="invoice_no" [(ngModel)]="invoice_no" type="number" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -229,6 +217,7 @@
 <br>
 <!-- bill container -->
 <div class="bill-container">
+    <form [formGroup]="formBill" (ngSubmit)="onSubmit()">
     <div class="flex totalAndBill">
         <span class="totalAndBill_content-1">
             <div class="width">
@@ -265,7 +254,7 @@
     <br>
     <div class="flex remakesAndPayment">
         <div class="remakes">
-            <textarea class="padding" id="" cols="60" rows="7" placeholder="Enter Remarks..."></textarea>
+            <textarea class="padding" id="" cols="60" rows="7" placeholder="Enter Remarks..."[(ngModel)]="remarks" formControlName="remarks"></textarea>
         </div>
         <div class="payment">
             <div class="width">
@@ -279,10 +268,10 @@
                 <span >
 
                     <mat-checkbox color="primary"formControlName="pepperoni" > </mat-checkbox>
-                </span>
+                </span> &nbsp;
                 <mat-form-field>
                     <mat-label>payment(₹) </mat-label>
-                    <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="currentPayment"
+                    <input matInput disable (keyup)="totalDueCount()" formControlName="payment" [(ngModel)]="currentPayment"
                         value={{this.currentPayment}} />
                 </mat-form-field>
                 <br>
@@ -290,8 +279,8 @@
 
                     <mat-form-field >
                         <mat-label>Other Payment (₹) </mat-label>
-                        <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="currentPayment"
-                        value={{this.currentPayment}} />
+                        <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="otherPayment"
+                        value={{this.otherPayment}} />
                     </mat-form-field>
                 </ng-container>
             </div>
@@ -299,7 +288,7 @@
     </div>
     <mat-divider></mat-divider>
     <div class="flex tierLimitAndButton">
-        <div><br>(SLIVER) Due Limit:
+        <div><br>({{tier}}) Due Limit:
             <span class="error">
                 {{this.dueLimit | currency: 'INR'}}
             </span>
@@ -314,15 +303,17 @@
             </div>
             <br>
             <div class="">
-                <button mat-raised-button color="primary" class="margin"
-                    [disabled]="formGroup.valid || sales.length === 0 || isShowLoader" (click)="onSubmit()">
+                <button mat-raised-button color="primary"
+                   [disabled]="!formBill.valid || isShowLoader">
                     <span *ngIf="!isShowLoader">
-                        {{ !this.data ? 'Save & Rack' : 'Update & Rack' }}
+                        Save & Rack
                     </span>
-                    <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
+                    <mat-spinner *ngIf="isShowLoader"  diameter="20"></mat-spinner>
                 </button>
             </div>
         </div>
     </div>
+</form>
 </div>
+
 

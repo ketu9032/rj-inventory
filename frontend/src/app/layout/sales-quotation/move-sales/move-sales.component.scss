@@ -1,0 +1,29 @@
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    .mat-dialog-title {
+        margin: 5px 0 0 0;
+        display: block;
+    }
+    .mat-button {
+        min-width: 40px;
+        padding: 0 10px;
+    }
+}
+mat-form-field {
+    width: 100%;
+}
+.error {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+.selectCustomerLoader {
+    position: absolute;
+    top: 6px;
+    float: right;
+    right: 18px;
+}
+.inline-loader{
+    color: white;
+}

@@ -42,17 +42,17 @@ export class SidebarComponent implements OnInit {
             icon: 'list',
             key: 'items'
         },
-        {
-            link: '/salesQuotation',
-            name: 'Sales Quotation',
-            icon: 'bookmark_border',
-            key: 'sales_quotation'
-        },
+
         {
             link: '/sales',
             name: 'Sales',
             icon: 'payment',
             key: 'sales'
+        },  {
+            link: '/salesQuotation',
+            name: 'Sales Quotation',
+            icon: 'bookmark_border',
+            key: 'sales_quotation'
         },
         {
             link: '/suppliers',

@@ -16,8 +16,9 @@ import { CdfService } from '../services/cdf.service';
 export class CdfToCustomersComponent implements OnInit {
     formGroup: FormGroup;
     selectedRole: string
-    tires = []
+    tiers = []
     isShowLoader = false;
+    tierName
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ICustomersData,
         public dialog: MatDialog,
@@ -72,7 +73,8 @@ export class CdfToCustomersComponent implements OnInit {
                 referencePerson: '',
                 brands: '',
                 displayNames: '',
-                platforms: ''
+                platforms: '',
+                tier_code: this.tierName.code
             })
             .subscribe(
                 (response) => {
@@ -119,7 +121,7 @@ export class CdfToCustomersComponent implements OnInit {
             .getTierDropDown()
             .subscribe(
                 (response) => {
-                    this.tires = response;
+                    this.tiers = response;
                 },
                 (error) => {
                     this.snackBar.open(
@@ -131,5 +133,13 @@ export class CdfToCustomersComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+
+    findTierName(id) {
+        this.tierName =  this.tiers.find(value => {
+            return (value.id) === id
+        })
+
+
     }
 }

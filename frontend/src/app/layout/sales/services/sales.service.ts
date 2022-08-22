@@ -2,7 +2,7 @@ import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
-import { ISalesParams } from 'src/app/models/sales';
+import { ISalesParams, ISalesQuotationToSalesParams } from 'src/app/models/sales';
 
 @Injectable({ providedIn: 'root'})
 export class SalesService {
@@ -19,6 +19,7 @@ export class SalesService {
   public addSales(sales: ISalesParams) {
     return this.restService.post(`${this.salesURL}`, sales);
   }
+
   public editSales(sales: ISalesParams) {
     return this.restService.put(`${this.salesURL}`, sales);
   }

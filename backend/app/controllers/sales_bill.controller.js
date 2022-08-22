@@ -12,27 +12,27 @@ exports.findAll = async (req, res) => {
       searchQuery += ` and
         (
           or item_code ilike '%${search}%'
-          or qty ilike '%${search}%'
-          or available ilike '%${search}%'
-          or selling_price ilike '%${search}%'
-          or total ilike '%${search}%'
+          or qty::text ilike '%${search}%'
+          or available::text ilike '%${search}%'
+          or selling_price::text ilike '%${search}%'
+          or total::text ilike '%${search}%'
         )`;
     }
     searchQuery += ` and is_active = ${active}`;
     if (salesQuotationId) {
-      searchQuery += ` and sales_quotation_id = ${salesQuotationId}`;
+      searchQuery += ` and sales_id = ${salesQuotationId}`;
     }
     const query = `
     SELECT
-      Count(sales_quotation_details.id) OVER() AS total,
+      Count(sales_bill.id) OVER() AS total,
         id,
         item_code,
         qty,
         available,
         selling_price,
         total,
-        sales_quotation_id
-    FROM sales_quotation_details
+        sales_id
+    FROM sales_bill
 
 ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     console.log(query);
@@ -53,9 +53,8 @@ exports.delete = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-   const query = `delete from sales_quotation_details where id = ${id}`;
-
-       await pool.query(query);
+    await pool.query(`UPDATE sales_quotation_details
+        SET is_deleted = true where "id" = '${id}'`);
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -73,7 +72,7 @@ exports.add = async (req, res) => {
       return;
     }
     await pool.query(
-      `INSERT INTO sales_quotation_details
+      `INSERT INTO sales_bill
       (
         item_code,
         qty,
@@ -101,7 +100,7 @@ exports.update = async (req, res) => {
       return;
     }
     await pool.query(
-      `UPDATE sales_quotation_details
+      `UPDATE sales_bill
       SET  item_code='${item_code}', qty='${qty}' , available='${available}',selling_price='${selling_price}', total='${total}'where id = ${id};`
     );
     res.status(STATUS_CODE.SUCCESS).send();

@@ -14,10 +14,8 @@ import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
 import { salesQuotationService } from '../../sales-quotation/services/sales-quotation.service';
 import { SalesService } from '../services/sales.service';
-
 @Component({
     selector: 'app-add-sales',
-
     templateUrl: './add-sales.component.html',
     styleUrls: ['./add-sales.component.scss']
 })
@@ -31,17 +29,14 @@ export class AddSalesComponent implements OnInit {
     ];
     formSupplier: FormGroup;
     formGroup: FormGroup;
-    selectedRole: string
-    tires = []
+    formBill: FormGroup;
     isShowLoader = false;
     public defaultPageSize = PAGE_SIZE;
-    categories = []
     supplier = []
     dataSource: any = [];
     suppliers = []
     supplierDataSource: any = [];
     totalRows: number;
-    salesItem = [];
     customers = [];
     items = [];
     tableParams: IMatTableParams = {
@@ -54,10 +49,6 @@ export class AddSalesComponent implements OnInit {
     }
     selectCustomerLoader: boolean = false;
     selectItemLoader: boolean = false;
-
-    supplierRate: string = "";
-    supplierQty: string = "";
-    totalQty: number;
     lastBillNo: number;
     countQty = [];
     Qty: number;
@@ -67,18 +58,22 @@ export class AddSalesComponent implements OnInit {
     dueLimit: number;
     grandDueTotal: number;
     currentPayment: number;
+    otherPayment: number = 0;
     totalDue: number;
     sales = [];
     total: number;
-    user_name: string = "ketan";
-    tier: string = 'gold';
-    remarks: string = 'test';
-    company: number= 75
-    printContent: any;
-    WindowPrt: any;
-    checked = false;
+    users;
+    customer;
+    companyName;
+    com: string = "ketan";
+    tier: string = '';
+    remarks: string = " ";
+    company: number = 75
+
+    invoice_no:number = 0;
+    currentDate = new Date();
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: ISalesQuotationData,
+        @Inject(MAT_DIALOG_DATA) public data: ISalesData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddSalesComponent>,
         private formBuilder: FormBuilder,
@@ -86,16 +81,25 @@ export class AddSalesComponent implements OnInit {
         public snackBar: MatSnackBar,
         private itemsSuppliersService: ItemsSuppliersService,
         private salesQuotationService: salesQuotationService,
+        private salesService: SalesService,
         public authService: AuthService
-        ) { }
-        ngOnInit() {
-        this.user_name = this.authService.getUserData();
+    ) { }
+    ngOnInit() {
+        console.log(this.data);
+
+        this.users = this.authService.getUserData();
+        this.customer = this.data.customer[0]
+        this.companyName = this.customer.company
+        this.lastBillDue = this.customer.balance
+        this.dueLimit = this.customer.due_limit
+        this.tier = this.customer.tier_code
         this.initializeForm();
         this.initializeSupplierForm();
+        this.initializeSalesBillForm()
         this.getCustomerDropDown();
         this.getItemDropDown();
         //  this.getSuppliersDropDown()
-        if (this.data && this.data.id) {
+        if (this.data.id) {
             this.fillForm();
             this.getItemSupplier();
         }
@@ -116,33 +120,37 @@ export class AddSalesComponent implements OnInit {
             selling_price: ['', Validators.required],
         });
     }
-
-    saveSalesQuotation(): void {
+    initializeSalesBillForm(): void {
+        this.formBill= this.formBuilder.group({
+            payment: ['', Validators.required],
+            remarks: ['', Validators.required]
+        });
+    }
+    saveSales(): void {
+        const pendingDueTotal = +this.totalPrice + +this.lastBillDue
         this.company
         const {
             date,
             invoice_no,
         } = this.formGroup.value;
-           this.Qty;
-           this.currentPayment;
-          this.totalDue
-           this.user_name;
-           this.tier;
-           this.remarks;
-
         this.isShowLoader = true;
-        this.salesQuotationService
-            .addSalesQuotation({
+        this.salesService
+            .addSales({
                 date,
                 invoice_no,
-                // companyId: this.company,
                 qty: this.Qty,
-                amount: this.currentPayment,
+                amount: this.totalPrice,
+                user_name: this.users.user_name,
+                pending_due: this.lastBillDue,
                 total_due: this.totalDue,
-                user_name: this.user_name,
                 tier: this.tier,
+                grand_total: this.grandDueTotal,
                 remarks: this.remarks,
-                sales: this.sales
+                customer: this.com,
+                payment: this.currentPayment,
+                other_payment: this.otherPayment,
+                sales: this.sales,
+                amount_pd_total: pendingDueTotal
             })
             .subscribe(
                 (response) => {
@@ -164,51 +172,51 @@ export class AddSalesComponent implements OnInit {
                 () => { }
             );
     }
-    updateSalesQuotation(): void {
-        const {
-            date,
-            invoice_no,
-        } = this.formGroup.value;
-        this.isShowLoader = true;
-        this.salesQuotationService
-            .editSalesQuotation({
-                id: this.data.id,
-                date,
-                invoice_no,
-                // companyId: this.company,
-                qty: this.Qty,
-                amount: this.currentPayment,
-                total_due: this.totalDue,
-                user_name: this.user_name,
-                tier: this.tier,
-                remarks: this.remarks,
-                sales: this.sales
-            })
-            .subscribe(
-                (response) => {
-                    this.isShowLoader = false;
-                    this.snackBar.open('Sales quotation updated successfully', 'OK', {
-                        duration: 3000
-                    });
-                    this.dialogRef.close(true);
-                },
-                (error) => {
-                    this.isShowLoader = false;
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
-    }
+    // updateSalesQuotation(): void {
+    //     const {
+    //         date,
+    //         invoice_no,
+    //     } = this.formGroup.value;
+    //     this.isShowLoader = true;
+    //     this.salesQuotationService
+    //         .editSalesQuotation({
+    //             id: this.data.id,
+    //             date,
+    //             invoice_no,
+    //             // companyId: this.company,
+    //             qty: this.Qty,
+    //             amount: this.currentPayment,
+    //             total_due: this.totalDue,
+    //             user_name: this.user_name,
+    //             tier: this.tier,
+    //             remarks: this.remarks,
+    //             sales: this.sales
+    //         })
+    //         .subscribe(
+    //             (response) => {
+    //                 this.isShowLoader = false;
+    //                 this.snackBar.open('Sales quotation updated successfully', 'OK', {
+    //                     duration: 3000
+    //                 });
+    //                 this.dialogRef.close(true);
+    //             },
+    //             (error) => {
+    //                 this.isShowLoader = false;
+    //                 this.snackBar.open(
+    //                     (error.error && error.error.message) || error.message,
+    //                     'Ok', {
+    //                     duration: 3000
+    //                 }
+    //                 );
+    //             },
+    //             () => { }
+    //         );
+    // }
     onSubmit() {
         if (this.data && this.data.id) {
-            this.updateSalesQuotation();
+            //     this.updateSalesQuotation();
         } else {
-            this.saveSalesQuotation();
+            this.saveSales();
         }
         // this.clearSupplierForm();
     }
@@ -232,15 +240,23 @@ export class AddSalesComponent implements OnInit {
     }
     fillForm() {
         const {
-            // company,
             date,
             invoice_no,
-           } = this.data;
+        } = this.data;
         this.formGroup.patchValue({
-            // company,
             date,
             invoice_no,
-        });
+        })
+        this.totalPrice = this.data.amount,
+            this.Qty = this.data.qty
+            this.lastBillDue = this.data.pending_due,
+            this.totalDue = this.data.total_due,
+            this.tier = this.data.tier,
+            this.grandDueTotal = this.data.grand_total,
+            this.remarks = this.data.remarks,
+            this.companyName = this.data.customer,
+            this.currentPayment = this.data.payment,
+            this.otherPayment = this.data.other_payment
     }
     // supplierFillForm(suppliersId) {
     //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
@@ -248,7 +264,6 @@ export class AddSalesComponent implements OnInit {
     //         salesQuotationId: this.data.id, item_code, item_supplier_rate: itemSupplierRate
     //     });
     // }
-
     // getSuppliersDropDown() {
     //     this.itemsSuppliersService
     //         .getItemSupplierDropDown()
@@ -294,7 +309,6 @@ export class AddSalesComponent implements OnInit {
                 total: this.total
             })
         }
-        console.log(this.total);
     }
     getCustomerDropDown() {
         this.selectCustomerLoader = true;
@@ -345,18 +359,18 @@ export class AddSalesComponent implements OnInit {
     }
     totalDueCount() {
         this.totalDue = this.grandDueTotal - this.currentPayment
-
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
             item_code: item.item_code,
             available: item.int_qty,
-           selling_price: item.silver
+            selling_price: item.silver
         });
     }
     fillDueAndDueLimit(customer) {
-            this.lastBillDue =  customer.balance,
+        this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
-}
 
+
+}

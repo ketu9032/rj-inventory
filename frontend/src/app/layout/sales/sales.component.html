@@ -13,12 +13,12 @@
                 <mat-label>Select Customer</mat-label>
                 <mat-select name="tier" [(ngModel)]="customerName">
                     <mat-option value="" (click)="toggleCreateAddSalesButton()">All Customer</mat-option>
-                    <mat-option *ngFor="let customer of customers" [value]="customer.company"
-                        (click)="toggleCreateAddSalesButton()">
+                    <mat-option *ngFor="let customer of customers" [value]="customer"
+                        (click)="toggleCreateAddSalesButton(); customerData(customer); find(customer.id)">
                         {{customer.company | uppercase}}
                     </mat-option>
                 </mat-select>
-                <mat-spinner class="selectCustomerLoader" *ngIf="selectCustomerLoader" diameter="25"></mat-spinner>
+                <mat-spinner class="selectCustomerLoader" *ngIf="selectCustomerLoader" diameter="20"></mat-spinner>
             </mat-form-field>
             <button color="primary" class="margin btn" mat-raised-button>
                 <mat-icon class="icon">cloud_download</mat-icon>
@@ -55,55 +55,57 @@
             <ng-container matColumnDef="date">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.date }}
+                    {{ element.date | date: 'MMM d, y, h:mm:ss' }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer </th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.customer_name }}
+                    {{ element.customer | uppercase }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
-                <td mat-cell *matCellDef="let element">{{ element.selling_price | currency: 'INR' }}</td>
+                <td mat-cell *matCellDef="let element">{{ element.amount | currency: 'INR' }}</td>
             </ng-container>
 
             <ng-container matColumnDef="pd">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>PD</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.pd | currency: 'INR' }}
+                    {{ element.pending_due | currency: 'INR' }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="total">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.total | currency: 'INR'}}
+                    {{ element.amount_pd_total | currency: 'INR'}}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="payment">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment</th>
-                <td mat-cell *matCellDef="let element">{{ element.payment | currency: 'INR'}}</td>
+                <td mat-cell *matCellDef="let element">{{ element.payment ? (element.payment | currency: 'INR') :
+                    payment | currency: 'INR'}}</td>
             </ng-container>
 
 
             <ng-container matColumnDef="td">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>TD</th>
-                <td mat-cell *matCellDef="let element">{{ element.td | currency: 'INR'}}</td>
+                <td mat-cell *matCellDef="let element">{{ element.total_due | currency: 'INR'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="op">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>OP</th>
-                <td mat-cell *matCellDef="let element">{{ element.op | currency: 'INR' }}</td>
+                <td mat-cell *matCellDef="let element">{{ element.other_payment ? (element.other_payment | currency:
+                    'INR' ) : 0 | currency: 'INR' }}</td>
             </ng-container>
 
             <ng-container matColumnDef="user">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
-                <td mat-cell *matCellDef="let element">{{ element.user | currency: 'INR' }} {{ user.user_name }}</td>
+                <td mat-cell *matCellDef="let element">{{ element.user_name | uppercase }}</td>
             </ng-container>
 
 
@@ -118,6 +120,13 @@
                         (click)="confirmDialog(element.id)">
                         <mat-icon aria-label="Delete">delete</mat-icon>
                     </button>
+                    <button mat-icon-button matTooltip="Click to thumb" color="primary" type="button"
+                        (click)="onEditNewCustomers(element)">
+                        <mat-icon aria-label="like">thumb_up</mat-icon>
+                    </button>
+
+
+
                 </td>
             </ng-container>
 
@@ -127,7 +136,7 @@
                 <th mat-header-cell *matHeaderCellDef>Print</th>
                 <td mat-cell *matCellDef="let element">
                     <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button"
-                        (click)="onEditNewCustomers(element)">
+                        (click)="print(element)">
                         <mat-icon aria-label="print" color="primary">print</mat-icon>
                     </button>
 

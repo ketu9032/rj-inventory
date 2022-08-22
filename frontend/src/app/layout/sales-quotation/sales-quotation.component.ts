@@ -8,8 +8,10 @@ import { ISalesQuotationData } from 'src/app/models/sales-quotation';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { TiersService } from '../customers/services/tiers.service';
-import { ItemsService } from '../items/services/items.service';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
+import { DeleteQuotationComponent } from './delete-quotation/delete-quotation.component';
+import { MoveSalesComponent } from './move-sales/move-sales.component';
+import { PrintComponent } from './print/print.component';
 import { salesQuotationService } from './services/sales-quotation.service';
 @Component({
     selector: 'app-sales-quotation',
@@ -39,8 +41,7 @@ export class SalesQuotationComponent implements OnInit {
     loader: boolean = false;
     selectTireLoader: boolean = false;
     totalRows: number;
-    tireName;
-    tireNameNone
+    tireName : string;
     isShow = true;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
@@ -61,7 +62,6 @@ export class SalesQuotationComponent implements OnInit {
         this.getTierDropDown()
         this.getSalesQuotation();
     }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
@@ -71,14 +71,12 @@ export class SalesQuotationComponent implements OnInit {
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-
     toggleCreateButton(){
         if(this.tireName === '' ){
             this.isShow = true
         }else {
             this.isShow = false
         }
-
     }
     getSalesQuotation() {
       this.loader = true;
@@ -103,11 +101,14 @@ export class SalesQuotationComponent implements OnInit {
         () => { }
       );
     }
-    onAddNewCreateQuotation(): void {
+    onAddNewCreateQuotation(): void{
       this.dialog
         .open(CreateQuotationComponent, {
             width: '1000px',
-            height: '700px'
+            height: '700px',
+            data:{
+                    tier: this.tireName
+            }
         })
         .afterClosed()
         .subscribe((result) => {
@@ -130,29 +131,41 @@ export class SalesQuotationComponent implements OnInit {
           }
         });
     }
+    onSelectCustomers(element){
+        this.dialog
+        .open(MoveSalesComponent, {
+            width: '400px',
+            height: 'auto',
+            data: element
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getSalesQuotation();
+          }
+        });
+    }
+    confirmDialog(id: string): void {
+      this.dialog
+        .open(DeleteQuotationComponent, {
+          maxWidth: '400px',
+          data: id
+        })
+        .afterClosed()
+        .subscribe(() => {
+            this.getSalesQuotation();
 
-    // confirmDialog(id: string): void {
-    //   this.dialog
-    //     .open(DeleteCustomersComponent, {
-    //       maxWidth: '400px',
-    //       data: id
-    //     })
-    //     .afterClosed()
-    //     .subscribe((result) => {
-    //       if (result && result.data === true) {
-    //         this.getItems();
-    //       }
-    //     });
-    // }
+        });
+    }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-        //  this.getItems();
+         this.getSalesQuotation();
     }
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
-        // this.getItems();
+        this.getSalesQuotation();
     }
     getTierDropDown() {
         this.selectTireLoader = true;
@@ -174,4 +187,18 @@ export class SalesQuotationComponent implements OnInit {
                 () => { }
             );
     }
+    print(element) {
+        this.dialog
+        .open(PrintComponent, {
+            width: '1000px',
+            height: 'auto',
+            data: element
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (result) {
+            this.getSalesQuotation();
+          }
+        });
+     }
 }

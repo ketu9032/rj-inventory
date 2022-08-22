@@ -4,11 +4,13 @@ import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
 import { IItemActiveParams, IItemParams } from 'src/app/models/item';
 import { ISalesQuotationActiveParams, ISalesQuotationParams } from 'src/app/models/sales-quotation';
+import { ISalesQuotationToSalesParams } from 'src/app/models/sales';
 
 
 @Injectable({ providedIn: 'root' })
 export class salesQuotationService {
     private salesQuotationURL = 'api/sales_quotation';
+    private addSalesURL = 'api/addSales';
     private changeStatusURL = 'api/sales_quotation/changeStatus';
     private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
     private getItemDropDownURL  = 'api/item/getItemDropDown';
@@ -25,10 +27,13 @@ export class salesQuotationService {
     public addSalesQuotation(item: ISalesQuotationParams) {
         return this.restService.post(`${this.salesQuotationURL}`, item);
     }
+    public addSalesQuotationToSales(sales: ISalesQuotationToSalesParams) {
+        return this.restService.post(`${this.addSalesURL}`, sales);
+      }
     public editSalesQuotation(item: ISalesQuotationParams) {
         return this.restService.put(`${this.salesQuotationURL}`, item);
     }
-    public removeItemsQuotation(id: string) {
+    public removeSalesQuotation(id: string) {
         return this.restService.delete(`${this.salesQuotationURL}?id=${id}`);
     }
     public changeStatus(item: ISalesQuotationActiveParams) {

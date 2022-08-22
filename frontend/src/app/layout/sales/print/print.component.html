@@ -1,0 +1,64 @@
+<div class="main-header">
+    <h1 mat-dialog-title><b> Move to Sales</b> </h1>
+    <button mat-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-divider></mat-divider>
+<br>
+<div id="print">
+    <div style="border: 1px solid black; padding: 10px;
+    font-size: 14pxS;">
+        <div style="display: flex; justify-content: space-between;">
+            <div>
+                <b>{{user}}</b>
+            </div>
+            <div>
+                <b>No #: 1 </b>
+            </div>
+        </div>
+        <div style="float: right;">
+            {{date | date: 'MMM d, y, h:mm:ss a'}}
+        </div>
+        <br>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid black">
+            <div>S.No.</div>
+            <div>Qty</div>
+            <div>Item </div>
+            <div>Price </div>
+            <div>Amount </div>
+        </div>
+        <div style="display: flex; justify-content: space-between;border-top: 1px solid black;">
+            <div>{{no}}</div>
+            <div>{{qty}}</div>
+            <div>{{item}}</div>
+            <div>{{price}}</div>
+            <div>{{amount}}</div>
+        </div>
+        <div style="border-top: 1px solid black;"></div>
+        <div style="display: flex; justify-content: space-between;">
+            <div><b>Total Qty: {{totalQty}}</b></div>
+            <br>
+            <div>
+                <div>
+                    <b>Total: {{amount | currency: 'INR'}}</b>
+                </div>
+            </div>
+        </div>
+        <div style="float: right;">
+            LB Due {{lastDue | currency: 'INR'}}
+        </div>
+        <br>
+        <div style="border-top: 2px solid black;"></div>
+        <div style="float: right; "><b> Grand Total : {{grandTotal | currency: 'INR'}}</b></div><br>
+        <div style="float: right;">Shipping: {{shipping | currency: 'INR'}}</div><br>
+        <div style="float: right;">GST: {{gst | currency: 'INR'}}</div><br>
+        <div style="border-top: 2px solid black;">
+            <div style="float: right;">
+                <b> Total Due: {{totalDue | currency: 'INR'}}</b>
+            </div><br>
+        </div>
+    </div>
+</div>
+<br>
+<button color="primary" mat-raised-button (click)="print()">Print</button>
