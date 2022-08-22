@@ -2,13 +2,14 @@ import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
-import { ISalesParams, ISalesQuotationToSalesParams } from 'src/app/models/sales';
+import { ISalesActiveParams, ISalesParams, ISalesQuotationToSalesParams } from 'src/app/models/sales';
 
 @Injectable({ providedIn: 'root'})
 export class SalesService {
   private salesURL = 'api/sales';
   private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
   private   getItemDropDownURL  = 'api/item/getItemDropDown';
+  private salesChangeStatusURl = 'api/sales/changeStatus';
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -25,6 +26,9 @@ export class SalesService {
   }
   public removeItems(id: string) {
     return this.restService.delete(`${this.salesURL}?id=${id}`);
+  }
+  public changeStatus(sales: ISalesActiveParams) {
+    return this.restService.put(`${this.salesChangeStatusURl}`, sales);
   }
 
   public getCustomerDropDown() {

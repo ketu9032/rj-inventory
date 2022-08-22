@@ -12,6 +12,7 @@ import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
 import { salesQuotationService } from '../services/sales-quotation.service';
 import { salesQuotationDetailsService } from '../services/sales-quotation-details.service';
+import { getLocaleFirstDayOfWeek } from '@angular/common';
 @Component({
     selector: 'app-create-quotation',
     templateUrl: './create-quotation.component.html',
@@ -63,8 +64,9 @@ export class CreateQuotationComponent implements OnInit {
     lastBillDue: number = 0;
     dueLimit: number;
     grandDueTotal: number;
-    shippingPayment: number = 0;
-    gst: number = 0;
+    shippingPayment;
+    shippingPay;
+    gst;
     totalDue;
     total: number;
     users;
@@ -119,6 +121,14 @@ export class CreateQuotationComponent implements OnInit {
         });
     }
     saveSalesQuotation(): void {
+        console.log(this.shippingPay);
+
+        if(this.shippingPayment === undefined) {
+            this.shippingPayment = 0;
+        }
+        if(this.gst === undefined) {
+            this.gst = 0;
+        }
         const { tier,
             date,
             invoice_no,
@@ -358,14 +368,17 @@ export class CreateQuotationComponent implements OnInit {
         this.countTotal.push(this.total)
         this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
         this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-        this.totalDue = this.grandDueTotal
+       this.totalDue = this.grandDueTotal
     }
     totalDueCount() {
-        if (this.shippingPayment || this.gst) {
-            this.totalDue = (+this.grandDueTotal + +this.shippingPayment + +this.gst)
-        } else {
-            this.totalDue = this.grandDueTotal
-        }
+        // this.shippingPay
+console.log(this.shippingPay);
+
+        // if (this.shippingPayment === undefined || this.gst === undefined ) {
+        //     this.totalDue = this.grandDueTotal
+        // } else {
+            this.totalDue = (+this.grandDueTotal + +this.shippingPay)
+     //   }
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({

@@ -243,8 +243,8 @@
 
                 <mat-form-field>
                     <mat-label>Shipping (₹) </mat-label>
-                    <input matInput disable (keyup)="totalDueCount()" [(ngModel)]="shippingPayment"
-                        value={{this.shippingPayment}} />
+                    <input matInput disable  [(ngModel)]="shippingPay"  (keyup)="totalDueCount()"
+                         />
                 </mat-form-field>
             </div>
             <div class="width

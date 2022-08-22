@@ -49,7 +49,7 @@ export class MoveSalesComponent implements OnInit {
                 invoice_no: this.data.invoice_no,
                 qty: this.data.qty,
                 amount: this.data.amount,
-                total_due: this.data.total_due,
+                total_due: this.payment,
                 user_name: this.data.user_name,
                 tier: this.data.tier,
                 remarks: this.data.remarks,

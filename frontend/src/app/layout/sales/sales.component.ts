@@ -132,29 +132,45 @@ export class SalesComponent implements OnInit {
                 }
             });
     }
-    // // confirmDialog(id: string): void {
-    // //   this.dialog
-    // //     .open(DeleteCustomersComponent, {
-    // //       maxWidth: '400px',
-    // //       data: id
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result && result.data === true) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
+    changeStatus(id: number): void {
+        this.salesService
+            .changeStatus({ id: id, status: !this.tableParams.active })
+            .subscribe(
+                (response) => {
+                    if (!this.tableParams.active) {
+                        this.snackBar.open('Sales active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    } else {
+                        this.snackBar.open('Sales de-active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    }
+                    this.getSales()
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok',
+                        {
+                            duration: 3000
+                        }
+                    );
+                },
+                () => { }
+            );
+    }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-        //  this.getItems();
+         this.getSales();
     }
     toggleType() {
         this.tableParams.active = !this.tableParams
             .active;
         this.tableParams.pageNumber = 1;
-        // this.getItems();
+        this.getSales();
+
     }
     toggleCreateAddSalesButton() {
         if (this.customerName
@@ -206,7 +222,7 @@ export class SalesComponent implements OnInit {
     //     })
 
     // }
-    //   paymentCount() {
-    //       this.payment =  this.data.amount +  this.customer.balance
-    //   }
+      paymentCount() {
+          this.payment =  this.customer.amount +  this.customer.balance
+      }
 }
