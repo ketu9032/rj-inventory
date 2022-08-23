@@ -26,6 +26,7 @@ exports.findAll = async (req, res) => {
           or pending_due::text ilike '%${search}%'
           or amount_pd_total::text ilike '%${search}%'
           or other_payment::text ilike '%${search}%'
+          or token::text ilike '%${search}%'
         )`;
     }
     searchQuery += ` and s.is_active = ${active}`;
@@ -46,7 +47,8 @@ exports.findAll = async (req, res) => {
       customer,
       pending_due,
       other_payment,
-      amount_pd_total
+      amount_pd_total,
+      token
       FROM sales s
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
@@ -81,7 +83,6 @@ exports.delete = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const {
-      date,
       invoice_no,
       qty,
       amount,
@@ -113,6 +114,7 @@ exports.add = async (req, res) => {
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
+
     const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
@@ -128,9 +130,12 @@ exports.add = async (req, res) => {
        payment,
        customer,
        other_payment,
-       amount_pd_total
+       amount_pd_total,
+       token
      )
-    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer}', '${other_payment}', '${amount_pd_total}') returning id;`;
+    VALUES(now(), '${invoice_no}', '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
+
+    console.log(insertSalesQuotationQuery);
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
@@ -159,7 +164,6 @@ exports.add = async (req, res) => {
 exports.addSales = async (req, res) => {
   try {
     const {
-      date,
       invoice_no,
       qty,
       amount,
@@ -199,9 +203,11 @@ exports.addSales = async (req, res) => {
        remarks,
        pending_due,
        customer,
-       amount_pd_total
+       amount_pd_total,
+       token
      )
-    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}', '${pending_due}', '${customer}', '${amount_pd_total}')`;
+    VALUES(now(), '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}', '${pending_due}', '${customer}', '${amount_pd_total}',(select count(token)+1 from sales  where date::date = now()::date)
+    )`;
     await pool.query(insertSalesQuotationQuery);
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {

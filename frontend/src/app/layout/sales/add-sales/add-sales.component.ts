@@ -86,7 +86,6 @@ export class AddSalesComponent implements OnInit {
     ) { }
     ngOnInit() {
         console.log(this.data);
-
         this.users = this.authService.getUserData();
         this.customer = this.data.customer[0]
         this.companyName = this.customer.company
@@ -130,13 +129,11 @@ export class AddSalesComponent implements OnInit {
         const pendingDueTotal = +this.totalPrice + +this.lastBillDue
         this.company
         const {
-            date,
             invoice_no,
         } = this.formGroup.value;
         this.isShowLoader = true;
         this.salesService
             .addSales({
-                date,
                 invoice_no,
                 qty: this.Qty,
                 amount: this.totalPrice,
@@ -371,6 +368,4 @@ export class AddSalesComponent implements OnInit {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
-
-
 }

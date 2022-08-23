@@ -12,7 +12,7 @@
             <mat-form-field class="margin field-width">
                 <mat-label>Select Customer</mat-label>
                 <mat-select name="tier" [(ngModel)]="customerName">
-                    <mat-option value="" (click)="toggleCreateAddSalesButton()">All Customer</mat-option>
+                    <mat-option value="" (click)="toggleCreateAddSalesButton()">All Company</mat-option>
                     <mat-option *ngFor="let customer of customers" [value]="customer"
                         (click)="toggleCreateAddSalesButton(); customerData(customer); find(customer.id)">
                         {{customer.company | uppercase}}
@@ -48,7 +48,7 @@
             <ng-container matColumnDef="t">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>T</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.t}}
+                    {{ element.token}}
                 </td>
             </ng-container>
 
@@ -60,7 +60,7 @@
             </ng-container>
 
             <ng-container matColumnDef="customer">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer </th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>company</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.customer | uppercase }}
                 </td>

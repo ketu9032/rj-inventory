@@ -186,9 +186,6 @@
         <tr mat-row *matRowDef="let supplierData; columns: displayedColumns"></tr>
     </table>
 </div>
-<br>
-<mat-divider class="mat-divider"></mat-divider>
-<br>
 <!-- bill container -->
 <div class="bill-container">
     <form [formGroup]="formBill" (ngSubmit)="onSubmit()">

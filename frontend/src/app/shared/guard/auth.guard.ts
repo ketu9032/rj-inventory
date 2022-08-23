@@ -80,14 +80,7 @@ export class AuthGuard implements CanActivate {
           return false;
         }
       }
-      else if (state.url === '/purchaseQuotation') {
-        if (this.user && this.user.permission && this.user.permission.purchase_quotation) {
-          return true;
-        } else {
-          this.navigateToLoginPage();
-          return false;
-        }
-      }
+
       else if (state.url === '/purchase') {
         if (this.user && this.user.permission && this.user.permission.purchase) {
           return true;

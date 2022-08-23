@@ -29,7 +29,6 @@ export class AddUserComponent implements OnInit {
     sales_quotation: false,
     suppliers: false,
     purchase: false,
-    purchase_quotation: false,
     expense: false,
     transfer: false,
     analysis: false,
