@@ -62,12 +62,7 @@ const routes: Routes = [
                 loadChildren: () =>
                     import('./suppliers/suppliers.module').then((m) => m.SuppliersModule)
             },
-            {
-                path: 'purchaseQuotation',
-                canActivate: [AuthGuard],
-                loadChildren: () =>
-                    import('./purchase-quotation/purchase-quotation.module').then((m) => m.PurchaseQuotationModule)
-            },
+
             {
                 path: 'purchase',
                 canActivate: [AuthGuard],

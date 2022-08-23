@@ -61,12 +61,7 @@ export class SidebarComponent implements OnInit {
             key: 'suppliers'
 
         },
-        {
-            link: '/purchaseQuotation',
-            name: 'Purchase Quotation',
-            icon: 'payment',
-            key: 'purchase_quotation'
-        },
+
         {
             link: '/purchase',
             name: 'Purchase',
