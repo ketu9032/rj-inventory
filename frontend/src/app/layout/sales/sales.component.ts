@@ -116,7 +116,7 @@ export class SalesComponent implements OnInit {
     }
     customerData(customer) {
         this.allFiledCustomer.push(customer)
-  //      this.allFiledCustomer.push(this.customer)
+        //      this.allFiledCustomer.push(this.customer)
     }
     onEditNewCustomers(element) {
         this.dialog
@@ -163,7 +163,7 @@ export class SalesComponent implements OnInit {
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-         this.getSales();
+        this.getSales();
     }
     toggleType() {
         this.tableParams.active = !this.tableParams
@@ -222,7 +222,8 @@ export class SalesComponent implements OnInit {
     //     })
 
     // }
-      paymentCount() {
-          this.payment =  this.customer.amount +  this.customer.balance
-      }
+    paymentCount() {
+        this.payment = this.customer.amount + this.customer.balance
+    }
+
 }

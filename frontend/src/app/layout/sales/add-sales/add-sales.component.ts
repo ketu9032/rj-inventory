@@ -86,7 +86,6 @@ export class AddSalesComponent implements OnInit {
     ) { }
     ngOnInit() {
         console.log(this.data);
-
         this.users = this.authService.getUserData();
         this.customer = this.data.customer[0]
         this.companyName = this.customer.company
@@ -371,6 +370,4 @@ export class AddSalesComponent implements OnInit {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
-
-
 }

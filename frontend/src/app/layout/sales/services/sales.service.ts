@@ -20,7 +20,6 @@ export class SalesService {
   public addSales(sales: ISalesParams) {
     return this.restService.post(`${this.salesURL}`, sales);
   }
-
   public editSales(sales: ISalesParams) {
     return this.restService.put(`${this.salesURL}`, sales);
   }
@@ -30,7 +29,6 @@ export class SalesService {
   public changeStatus(sales: ISalesActiveParams) {
     return this.restService.put(`${this.salesChangeStatusURl}`, sales);
   }
-
   public getCustomerDropDown() {
     return this.restService.get<any>(`${this.getCdfToCustomerDropDownURL}`);
   }
