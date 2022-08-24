@@ -6,6 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { ItemsService } from '../items/services/items.service';
+import { AddPurchaseComponent } from './add-purchase/add-purchase.component';
+import { PurchaseService } from './services/purchase.service';
 
 @Component({
     selector: 'app-purchase',
@@ -34,6 +36,8 @@ export class PurchaseComponent implements OnInit {
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
+    isShow: boolean = true;
+    selectSupplierLoader: boolean = false;
     totalRows: number;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
@@ -43,14 +47,17 @@ export class PurchaseComponent implements OnInit {
         search: '',
         active: true
     }
+    suppliers;
+    supplierName: string;
 
     constructor(
         public dialog: MatDialog,
-        private itemsService: ItemsService,
+        private purchaseService: PurchaseService,
         public snackBar: MatSnackBar
     ) { }
 
     ngOnInit(): void {
+        this.getSuppliersDropDown();
         this.getItems();
     }
 
@@ -67,7 +74,7 @@ export class PurchaseComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
     }
 
-    // getItems() {
+    // getPurchase() {
     //   this.loader = true;
     //   this.itemsService.getItems(this.tableParams).subscribe(
     //     (newCustomers: any[]) => {
@@ -91,19 +98,21 @@ export class PurchaseComponent implements OnInit {
     //   );
     // }
 
-    // // onAddNewCustomers(): void {
-    // //   this.dialog
-    // //     .open(AddCustomersComponent, {
-    // //       width: '400px'
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
+    onAddNewPurchase(): void {
+        this.dialog
+            .open(AddPurchaseComponent, {
+                width: '1000px',
+                height: '800px',
+                //  data: { customer: this.allFiledCustomer }
 
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    // this.getPurchase();
+                }
+            });
+    }
     // // onEditNewCustomers(element) {
     // //   this.dialog
     // //     .open(AddCustomersComponent, {
@@ -142,6 +151,35 @@ export class PurchaseComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         // this.getItems();
     }
+    toggleCreateAddPurchaseButton() {
+        if (this.supplierName
+            === '') {
+            this.isShow = true
+        } else {
+            this.isShow = false
+        }
+    }
+    getSuppliersDropDown() {
+        this.selectSupplierLoader = true;
+        this.purchaseService
+            .getSupplierDropDown()
+            .subscribe(
+                (response) => {
+                    this.suppliers = response;
+                    this.selectSupplierLoader = false;
 
+
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
 
 }

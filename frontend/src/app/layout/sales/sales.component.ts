@@ -40,10 +40,10 @@ export class SalesComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     selectCustomerLoader: boolean = false;
+    isShow: boolean = true;
     totalRows: number;
     customerName: string;
     customers = [];
-    isShow: boolean = true;
     user: any;
     payment: number = 0;
     allFiledCustomer = []

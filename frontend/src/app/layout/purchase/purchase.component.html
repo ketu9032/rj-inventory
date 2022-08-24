@@ -9,9 +9,23 @@
             <button color="primary" class="margin btn" mat-raised-button (click)="getItems()">
                 Search
             </button>
+            <mat-form-field class="margin field-width">
+                <mat-label>Select Suppliers</mat-label>
+                <mat-select name="tier" [(ngModel)]="supplierName">
+                    <mat-option value="" (click)="toggleCreateAddPurchaseButton()">All suppliers</mat-option>
+                    <mat-option *ngFor="let supplier of suppliers" [value]="customer"
+                        (click)="toggleCreateAddPurchaseButton(); customerData(customer); find(customer.id)">
+                        {{supplier.company | uppercase}}
+                    </mat-option>
+                </mat-select>
+                <mat-spinner class="selectSupplierLoader" *ngIf="selectSupplierLoader" diameter="20"></mat-spinner>
+            </mat-form-field>
             <button color="primary" class="margin btn" mat-raised-button>
                 <mat-icon class="icon">cloud_download</mat-icon>
                 Download
+            </button>
+            <button color="primary" class="margin btn" mat-raised-button *ngIf="!isShow" (click)="onAddNewPurchase()">
+                Add New Purchase
             </button>
         </div>
         <div>
