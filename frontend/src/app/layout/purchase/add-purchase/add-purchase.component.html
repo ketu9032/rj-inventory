@@ -12,7 +12,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Supplier Name</mat-label>
-                    <input matInput formControlName="company" [(ngModel)]="supplierName" value={{supplierName}}  required>
+                    <input matInput formControlName="supplier" [(ngModel)]="supplierName" value="{{supplierName | uppercase }}"  required>
                 </mat-form-field>
             </div>
             <div class="block">
@@ -135,7 +135,7 @@
                     (click)="supplierFillForm(element.sales_id)">
                     <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
-                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="confirmDialog(element.id)">
+                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="removePurchaseDetails(element)">
                     <mat-icon aria-label="Delete">delete</mat-icon>
                 </button>
             </td>
@@ -218,7 +218,7 @@
     </div>
     <mat-divider></mat-divider>
     <div class="flex tierLimitAndButton">
-        <div><br><b>{{tier}}</b> Due Limit:
+        <div><br> Due Limit:
             <span class="error">
                 {{this.dueLimit | currency: 'INR'}}
             </span>

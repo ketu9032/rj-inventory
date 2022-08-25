@@ -15,6 +15,7 @@ import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
 import { salesQuotationService } from '../../sales-quotation/services/sales-quotation.service';
 import { SalesService } from '../../sales/services/sales.service';
+import { PurchaseDetailsService } from '../services/purchase-details.service';
 import { PurchaseService } from '../services/purchase.service';
 
 @Component({
@@ -68,14 +69,12 @@ export class AddPurchaseComponent implements OnInit {
     users;
     customer;
     companyName;
-    com: string = "ketan";
-    tier: string = '';
     remarks: string = " ";
     company: number = 75
 
     invoice_no: number = 0;
     currentDate = new Date();
-
+    findPurchaseDetails
     supplierName
     supplierDetails
     constructor(
@@ -86,9 +85,7 @@ export class AddPurchaseComponent implements OnInit {
         private _formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
         private purchaseService: PurchaseService,
-        private itemsSuppliersService: ItemsSuppliersService,
-        private salesQuotationService: salesQuotationService,
-        private salesService: SalesService,
+        private purchaseDetailsService: PurchaseDetailsService,
         public authService: AuthService
     ) { }
     ngOnInit() {
@@ -101,14 +98,15 @@ export class AddPurchaseComponent implements OnInit {
             this.dueLimit = this.supplierDetails.due_limit
 
         }
-       this.getItemDropDown()
+        this.getItemDropDown()
         this.initializeForm();
          this.initializeSupplierForm();
          this.initializeSalesBillForm()
 
        if (this.data.id) {
            this.fillForm();
-            this.getItemSupplier();
+           // this.getItemSupplier();
+            this.test();
         }
     }
     initializeForm(): void {
@@ -146,10 +144,9 @@ export class AddPurchaseComponent implements OnInit {
                 user_name: this.users.user_name,
                 pending_due: this.lastBillDue,
                 total_due: this.totalDue,
-                tier: this.tier,
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
-                supplier: this.com,
+                supplier: this.supplierName,
                 payment: this.currentPayment,
                 other_payment: this.otherPayment,
                 sales: this.sales,
@@ -191,7 +188,6 @@ export class AddPurchaseComponent implements OnInit {
     //             amount: this.currentPayment,
     //             total_due: this.totalDue,
     //             user_name: this.user_name,
-    //             tier: this.tier,
     //             remarks: this.remarks,
     //             sales: this.sales
     //         })
@@ -251,21 +247,23 @@ export class AddPurchaseComponent implements OnInit {
     }
     fillForm() {
         const {
+            supplier,
             date,
             invoice_no,
         } = this.data;
         this.formGroup.patchValue({
+            supplier,
             date,
             invoice_no,
         })
+        this.supplierName = this.data.supplier,
         this.totalPrice = this.data.amount,
             this.Qty = this.data.qty
         this.lastBillDue = this.data.pending_due,
             this.totalDue = this.data.total_due,
-            this.tier = this.data.tier,
+
             this.grandDueTotal = this.data.grand_total,
             this.remarks = this.data.remarks,
-            this.companyName = this.data.customer,
             this.currentPayment = this.data.payment,
             this.otherPayment = this.data.other_payment
     }
@@ -297,13 +295,35 @@ export class AddPurchaseComponent implements OnInit {
         this.supplierDataSource = [];
         this.suppliers = []
         this.tableParams.itemId = this.data.id;
-        this.itemsSuppliersService.getItemSupplier(this.tableParams).subscribe(
+        this.purchaseDetailsService.getPurchaseDetail(this.tableParams).subscribe(
             (newItemSupplier: any[]) => {
                 this.suppliers.push(...newItemSupplier);
                 this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
                 if (newItemSupplier.length > 0) {
                     this.totalRows = newItemSupplier[0].total;
                 }
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
+    }
+    test() {
+        this.supplierDataSource = [];
+        this.suppliers = []
+        this.tableParams.itemId = this.data.id;
+        this.purchaseDetailsService.getPurchaseDetail(this.tableParams).subscribe(
+            (response) => {
+              this.findPurchaseDetails  = response.filter(val => {
+                return (val.purchase_id) === this.data.id
+              })
+            //  console.log(findPurchaseDetails)
+           //   this.supplierDataSource.push(findPurchaseDetails);
+
+              this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.findPurchaseDetails);
             },
             (error) => {
                 this.snackBar.open(error.error.message || error.message, 'Ok', {
@@ -363,5 +383,12 @@ export class AddPurchaseComponent implements OnInit {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
-
+    removePurchaseDetails(element): void {
+        this.purchaseDetailsService.removePurchaseDetail(element.id).subscribe(
+            (response) => {
+                this.savePurchase();
+            },
+            () => { }
+        );
+    }
 }

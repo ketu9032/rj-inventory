@@ -20,19 +20,19 @@ exports.findAll = async (req, res) => {
     }
     searchQuery += ` and is_active = ${active}`;
     if (salesQuotationId) {
-      searchQuery += ` and sales_id = ${salesQuotationId}`;
+      searchQuery += ` and purchase_id = ${salesQuotationId}`;
     }
     const query = `
     SELECT
-      Count(sales_bill.id) OVER() AS total,
+      Count(purchase_details.id) OVER() AS total,
         id,
         item_code,
         qty,
         available,
         selling_price,
         total,
-        sales_id
-    FROM sales_bill
+        purchase_id
+    FROM purchase_details
 
 ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     console.log(query);
@@ -53,8 +53,8 @@ exports.delete = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    await pool.query(`UPDATE sales_quotation_details
-        SET is_deleted = true where "id" = '${id}'`);
+    await pool.query(`delete from purchase_details
+         where "id" = '${id}'`);
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -72,7 +72,7 @@ exports.add = async (req, res) => {
       return;
     }
     await pool.query(
-      `INSERT INTO sales_bill
+      `INSERT INTO purchase_details
       (
         item_code,
         qty,
@@ -100,7 +100,7 @@ exports.update = async (req, res) => {
       return;
     }
     await pool.query(
-      `UPDATE sales_bill
+      `UPDATE purchase_details
       SET  item_code='${item_code}', qty='${qty}' , available='${available}',selling_price='${selling_price}', total='${total}'where id = ${id};`
     );
     res.status(STATUS_CODE.SUCCESS).send();

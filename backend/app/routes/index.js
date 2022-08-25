@@ -14,6 +14,7 @@ const sales_bill = require('./../controllers/sales_bill.controller')
 const sales_quotation = require('./../controllers/sales_quotation.controller');
 const sales_quotation_detail = require('./../controllers/sales_quotation_detail.controller');
 const purchase = require('./../controllers/purchase.controller');
+const purchase_details = require('./../controllers/purchase_details.controller')
 router.post('/api/addSales', sales.addSales);
 
 
@@ -138,5 +139,10 @@ router.get('/api/purchase', purchase.findAll);
 router.post('/api/purchase', purchase.add);
 router.put('/api/purchase', purchase.update);
 router.put('/api/purchase/changeStatus', purchase.changeStatus);
+
+router.delete('/api/purchase_details', purchase_details.delete);
+router.get('/api/purchase_details', purchase_details.findAll);
+router.post('/api/purchase_details', purchase_details.add);
+router.put('/api/purchase_details', purchase_details.update);
 
 module.exports = router;
