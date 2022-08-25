@@ -291,29 +291,7 @@ export class CreateQuotationComponent implements OnInit {
             total: ''
         });
     }
-    // getSalesQuotationDetails() {
-    //     this.salesDataSource = [];
-    //     this.sales = []
-    //     this.tableParams.salesQuotationId = this.data.id;
-    //     this.salesQuotationDetailsService.getSalesQuotationDetail(this.tableParams).subscribe(
-    //         // (newSalesDetails: any[]) => {
-    //         //     this.sales.push(...newSalesDetails);
-    //         //     this.salesDataSource = new MatTableDataSource<ISalesQuotationDetailsData>(newSalesDetails);
-    //         //     if (newSalesDetails.length > 0) {
-    //         //         this.totalRows = newSalesDetails[0].total;
-    //         //     }
-    //         // },
-    //         (response) => {
-    //             console.log(response);
-    //         },
-    //         (error) => {
-    //             this.snackBar.open(error.error.message || error.message, 'Ok', {
-    //                 duration: 3000
-    //             });
-    //         },
-    //         () => { }
-    //     );
-    // }
+
     getSalesQuotationDetails() {
         this.salesDataSource = [];
         this.sales = []
@@ -372,7 +350,7 @@ export class CreateQuotationComponent implements OnInit {
     }
     totalDueCount() {
         // this.shippingPay
-console.log(this.shippingPay);
+      console.log(this.shippingPay);
 
         // if (this.shippingPayment === undefined || this.gst === undefined ) {
         //     this.totalDue = this.grandDueTotal

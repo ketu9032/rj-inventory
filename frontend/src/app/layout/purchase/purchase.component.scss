@@ -12,6 +12,13 @@ table {
     left: 45%;
 }
 
+.selectSupplierLoader {
+    position: absolute;
+    top: 5px;
+    float: right;
+    right: 16px;
+}
+
 .margin {
     margin: 0 7px 0 7px;
 }
@@ -25,9 +32,11 @@ table {
     font-size: 13px;
     height: 33px;
 }
-.icon{
+
+.icon {
     vertical-align: text-top;
 }
+
 .header {
     display: flex;
     align-items: center;

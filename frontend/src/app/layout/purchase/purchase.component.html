@@ -4,14 +4,28 @@
         <div>
             <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
-                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getItems()">
+                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getPurchase()">
             </mat-form-field>
-            <button color="primary" class="margin btn" mat-raised-button (click)="getItems()">
+            <button color="primary" class="margin btn" mat-raised-button (click)="getPurchase()">
                 Search
             </button>
+            <mat-form-field class="margin field-width">
+                <mat-label>Select Suppliers</mat-label>
+                <mat-select name="tier" [(ngModel)]="supplierName">
+                    <mat-option value="" (click)="toggleCreateAddPurchaseButton()">All suppliers</mat-option>
+                    <mat-option *ngFor="let supplier of suppliers" [value]="supplier.company"
+                        (click)="toggleCreateAddPurchaseButton(); customerData(supplier); find(supplier.id)">
+                        {{supplier.company | uppercase}}
+                    </mat-option>
+                </mat-select>
+                <mat-spinner class="selectSupplierLoader" *ngIf="selectSupplierLoader" diameter="20"></mat-spinner>
+            </mat-form-field>
             <button color="primary" class="margin btn" mat-raised-button>
                 <mat-icon class="icon">cloud_download</mat-icon>
                 Download
+            </button>
+            <button color="primary" class="margin btn" mat-raised-button *ngIf="!isShow" (click)="onAddNewPurchase()">
+                Add New Purchase
             </button>
         </div>
         <div>
@@ -32,13 +46,13 @@
             <ng-container matColumnDef="t">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>T</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.t}}
+                    {{ element.token}}
                 </td>
             </ng-container>
             <ng-container matColumnDef="date">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.date }}
+                    {{ element.date  | date:  'M/d/yy, h:mm a'}}
                 </td>
             </ng-container>
             <ng-container matColumnDef="supplier">
@@ -54,7 +68,7 @@
             <ng-container matColumnDef="pd">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>PD</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.pd | currency: 'INR' }}
+                    {{ element.pending_due | currency: 'INR' }}
                 </td>
             </ng-container>
             <ng-container matColumnDef="total">
@@ -69,15 +83,15 @@
             </ng-container>
             <ng-container matColumnDef="td">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>TD</th>
-                <td mat-cell *matCellDef="let element">{{ element.td | currency: 'INR'}}</td>
+                <td mat-cell *matCellDef="let element">{{ element.total_due | currency: 'INR'}}</td>
             </ng-container>
             <ng-container matColumnDef="op">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>OP</th>
-                <td mat-cell *matCellDef="let element">{{ element.op | currency: 'INR' }}</td>
+                <td mat-cell *matCellDef="let element">{{ element.other_payment | currency: 'INR' }}</td>
             </ng-container>
             <ng-container matColumnDef="user">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
-                <td mat-cell *matCellDef="let element">{{ element.user | currency: 'INR' }}</td>
+                <td mat-cell *matCellDef="let element">{{ element.user_name }}</td>
             </ng-container>
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
@@ -86,17 +100,17 @@
                         (click)="onEditNewCustomers(element)">
                         <mat-icon aria-label="Edit">edit</mat-icon>
                     </button>
-                    <button mat-icon-button matTooltip="Click to Delete" color="warn"
-                        (click)="confirmDialog(element.id)">
-                        <mat-icon aria-label="Delete">delete</mat-icon>
-                    </button>
+                    <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
+                    color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
+                    <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
+                </button>
                 </td>
             </ng-container>
             <ng-container matColumnDef="print">
                 <th mat-header-cell *matHeaderCellDef>Print</th>
                 <td mat-cell *matCellDef="let element">
                     <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button"
-                        (click)="onEditNewCustomers(element)">
+                        (click)="print(element)">
                         <mat-icon aria-label="PRINT" color="primary">print</mat-icon>
                     </button>
                 </td>

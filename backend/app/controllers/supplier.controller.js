@@ -121,7 +121,7 @@ exports.changeStatus = async (req, res) => {
 exports.getSupplierDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, company FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
+      `select id, company, due_limit, balance FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
