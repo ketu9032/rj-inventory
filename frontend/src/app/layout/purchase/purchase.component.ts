@@ -3,10 +3,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from 'src/app/auth/auth.service';
+import { IPurchaseData } from 'src/app/models/purchase';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { ItemsService } from '../items/services/items.service';
+import { SalesService } from '../sales/services/sales.service';
 import { AddPurchaseComponent } from './add-purchase/add-purchase.component';
+import { PrintComponent } from './print/print.component';
 import { PurchaseService } from './services/purchase.service';
 
 @Component({
@@ -36,9 +41,15 @@ export class PurchaseComponent implements OnInit {
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
-    isShow: boolean = true;
+    selectCustomerLoader: boolean = false;
     selectSupplierLoader: boolean = false;
+    isShow: boolean = true;
     totalRows: number;
+    supplierName: string;
+    customers = [];
+    user: any;
+    payment: number = 0;
+    allFiledCustomer = []
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -47,109 +58,124 @@ export class PurchaseComponent implements OnInit {
         search: '',
         active: true
     }
+    customer;
     suppliers;
-    supplierName: string;
-
     constructor(
         public dialog: MatDialog,
+        private salesService: SalesService,
         private purchaseService: PurchaseService,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        public authService: AuthService
     ) { }
-
     ngOnInit(): void {
-        this.getSuppliersDropDown();
-        this.getItems();
+       //this.getCustomerDropDown();
+        this.getSuppliersDropDown()
+        this.getPurchase();
+        this.user = this.authService.getUserData();
     }
-
-    getItems() { }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
-        // this.getItems();
+        this.getPurchase();
     }
-
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-
-    // getPurchase() {
-    //   this.loader = true;
-    //   this.itemsService.getItems(this.tableParams).subscribe(
-    //     (newCustomers: any[]) => {
-    //       this.dataSource = new MatTableDataSource<ICustomersData>(newCustomers);
-    //       if (newCustomers.length > 0) {
-    //         this.totalRows = newCustomers[0].total;
-    //       }
-    //       setTimeout(() => {
-    //         this.paginator.pageIndex = this.tableParams.pageNumber - 1;
-    //         this.paginator.length = +this.totalRows;
-    //       });
-    //       this.loader = false;
-    //     },
-    //     (error) => {
-    //       this.loader = false;
-    //       this.snackBar.open(error.error.message || error.message, 'Ok', {
-    //         duration: 3000
-    //       });
-    //     },
-    //     () => { }
-    //   );
-    // }
-
+    getPurchase() {
+        this.loader = true;
+        this.purchaseService.getPurchase(this.tableParams).subscribe(
+            (newPurchase: any[]) => {
+                this.dataSource = new MatTableDataSource<IPurchaseData>(newPurchase);
+                if (newPurchase.length > 0) {
+                    this.totalRows = newPurchase[0].total;
+                }
+                setTimeout(() => {
+                    this.paginator.pageIndex = this.tableParams.pageNumber - 1;
+                    this.paginator.length = +this.totalRows;
+                });
+                this.loader = false;
+            },
+            (error) => {
+                this.loader = false;
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
+    }
     onAddNewPurchase(): void {
         this.dialog
             .open(AddPurchaseComponent, {
                 width: '1000px',
                 height: '800px',
-                //  data: { customer: this.allFiledCustomer }
+                data: { supplierDetails: this.allFiledCustomer }
 
             })
             .afterClosed()
             .subscribe((result) => {
                 if (result) {
-                    // this.getPurchase();
+                    this.getPurchase();
                 }
             });
     }
-    // // onEditNewCustomers(element) {
-    // //   this.dialog
-    // //     .open(AddCustomersComponent, {
-    // //       width: '400px',
-    // //       data: element
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
-
-    // // confirmDialog(id: string): void {
-    // //   this.dialog
-    // //     .open(DeleteCustomersComponent, {
-    // //       maxWidth: '400px',
-    // //       data: id
-    // //     })
-    // //     .afterClosed()
-    // //     .subscribe((result) => {
-    // //       if (result && result.data === true) {
-    // //         this.getItems();
-    // //       }
-    // //     });
-    // // }
-
+    customerData(supplier) {
+        this.allFiledCustomer.push(supplier)
+    }
+    onEditNewCustomers(element) {
+        this.dialog
+            .open(AddPurchaseComponent, {
+                width: '1000px',
+                height: '800px',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getPurchase();
+                }
+            });
+    }
+    changeStatus(id: number): void {
+        this.purchaseService
+            .changeStatus({ id: id, status: !this.tableParams.active })
+            .subscribe(
+                (response) => {
+                    if (!this.tableParams.active) {
+                        this.snackBar.open('Purchase active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    } else {
+                        this.snackBar.open('Purchase de-active successfully', 'OK', {
+                            duration: 3000
+                        })
+                    }
+                    this.getPurchase();
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok',
+                        {
+                            duration: 3000
+                        }
+                    );
+                },
+                () => { }
+            );
+    }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-        //  this.getItems();
+        this.getPurchase();
     }
     toggleType() {
-        this.tableParams.active = !this.tableParams.active;
+        this.tableParams.active = !this.tableParams
+            .active;
         this.tableParams.pageNumber = 1;
-        // this.getItems();
+        this.getPurchase();
+
     }
     toggleCreateAddPurchaseButton() {
         if (this.supplierName
@@ -159,6 +185,52 @@ export class PurchaseComponent implements OnInit {
             this.isShow = false
         }
     }
+    // getCustomerDropDown() {
+    //     this.selectCustomerLoader = true;
+    //     this.salesService
+    //         .getCustomerDropDown()
+    //         .subscribe(
+    //             (response) => {
+    //                 this.customers = response;
+    //                 this.selectCustomerLoader = false;
+
+    //             },
+    //             (error) => {
+    //                 this.snackBar.open(
+    //                     (error.error && error.error.message) || error.message,
+    //                     'Ok', {
+    //                     duration: 3000
+    //                 }
+    //                 );
+    //             },
+    //             () => { }
+    //         );
+    // }
+    print(element) {
+        this.dialog
+            .open(PrintComponent, {
+                width: '1000px',
+                height: 'auto',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getPurchase();
+                }
+            });
+    }
+    find(element) {
+        this.customer = this.suppliers.find(val => {
+            return (val.id) === element
+        })
+
+
+    }
+    paymentCount() {
+        this.payment = this.customer.amount + this.customer.balance
+    }
+
     getSuppliersDropDown() {
         this.selectSupplierLoader = true;
         this.purchaseService

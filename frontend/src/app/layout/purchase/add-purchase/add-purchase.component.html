@@ -11,20 +11,20 @@
         <div class="box">
             <div class="block">
                 <mat-form-field>
-                    <mat-label>Company</mat-label>
-                    <input matInput formControlName="company" required>
+                    <mat-label>Supplier Name</mat-label>
+                    <input matInput formControlName="company" [(ngModel)]="supplierName" value={{supplierName}}  required>
                 </mat-form-field>
             </div>
             <div class="block">
                 <mat-form-field>
                     <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" required>
+                    <input matInput formControlName="date" [(ngModel)]="currentDate" value={{currentDate}} required>
                 </mat-form-field>
             </div>
             <div class="block">
                 <mat-form-field>
                     <mat-label>Invoice No</mat-label>
-                    <input matInput required>
+                    <input matInput required value={{invoice_no}}>
                 </mat-form-field>
             </div>
             <div class="block">
@@ -58,36 +58,22 @@
                     </mat-select>
 
                 </mat-form-field>
-                <!-- <div>
-                    <ng-container *ngIf="
-                    formSupplier.controls.item_code.touched &&
-                    !formSupplier.controls.item_code.value
-                    ">
-                        <span class="error">Item Code is Required</span>
-                    </ng-container>
-                </div> -->
+
                 <mat-spinner class="loader" *ngIf="selectItemLoader" diameter="20"></mat-spinner>
             </div>
             <!-- qty start -->
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Qty.</mat-label>
-                    <input matInput (keyup)="count()" (click)="count()" required />
+                    <input matInput formControlName="qty"  (keyup)="count()" (click)="count()"  />
                 </mat-form-field>
-                <!-- <div>
-                    <ng-container *ngIf="
-                formSupplier.controls.qty.touched &&
-                !formSupplier.controls.qty.value
-                ">
-                        <span class="error">Qty is Required</span>
-                    </ng-container>
-                </div> -->
+
             </div>
             <!-- available start -->
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Available</mat-label>
-                    <input matInput matTooltip="Not Editable" readonly />
+                    <input matInput formControlName="available" matTooltip="Not Editable" readonly />
                 </mat-form-field>
 
             </div>
@@ -95,7 +81,7 @@
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Selling Price</mat-label>
-                    <input matInput matTooltip="Not Editable" readonly />
+                    <input matInput formControlName="selling_price" matTooltip="Not Editable" readonly />
                 </mat-form-field>
 
             </div>
@@ -103,7 +89,7 @@
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Total</mat-label>
-                    <input matInput matTooltip="Not Editable" readonly />
+                    <input matInput matTooltip="Not Editable" formControlName="total" readonly />
                 </mat-form-field>
 
             </div>
@@ -247,7 +233,7 @@
             </div>
             <br>
             <div class="">
-                <button mat-raised-button color="primary">
+                <button mat-raised-button color="primary" (click)="savePurchase()">
                     <span *ngIf="!isShowLoader">
                         Save & Rack
                     </span>
@@ -256,5 +242,5 @@
             </div>
         </div>
     </div>
-
+<!-- </form> -->
 </div>
