@@ -45,7 +45,8 @@ exports.findAll = async (req, res) => {
       user_name,
       invoice_no,
       qty,
-      remarks
+      remarks,
+      bill_no
       FROM purchase p
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
@@ -124,9 +125,10 @@ exports.add = async (req, res) => {
        supplier,
        other_payment,
        amount_pd_total,
-       token
+       token,
+       bill_no
      )
-    VALUES(now(), '${invoice_no}', '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${remarks}', '${payment}', '${supplier}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from purchase  where date::date = now()::date) ) returning id;`;
+    VALUES(now(), '${invoice_no}', '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${remarks}', '${payment}', '${supplier}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from purchase  where date::date = now()::date),(select count(bill_no)+1 from purchase where supplier = '${supplier}') ) returning id;`;
 
     console.log(insertSalesQuotationQuery);
     const { rows } = await pool.query(insertSalesQuotationQuery);
