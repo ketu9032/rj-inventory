@@ -267,32 +267,29 @@ export class AddPurchaseComponent implements OnInit {
             this.currentPayment = this.data.payment,
             this.otherPayment = this.data.other_payment
     }
-    // supplierFillForm(suppliersId) {
+    supplierFillForm(element) {
     //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
     //     this.formSupplier.patchValue({
     //         salesQuotationId: this.data.id, item_code, item_supplier_rate: itemSupplierRate
     //     });
-    // }
+    const {
+        item_code,
+        qty,
+        available,
+        selling_price,
+        total
+    } = element;
+    this.formSupplier.patchValue({
+        item_code,
+        qty,
+        available,
+        selling_price,
+        total
+    });
+     }
 
-    // getSuppliersDropDown() {
-    //     this.itemsSuppliersService
-    //         .getItemSupplierDropDown()
-    //         .subscribe(
-    //             (response) => {
-    //                 this.suppliersCompany = response;
-    //             },
-    //             (error) => {
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok', {
-    //                     duration: 3000
-    //                 }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-    // }
-    getItemSupplier() {
+
+    getPurchaseSupplier() {
         this.supplierDataSource = [];
         this.suppliers = []
         this.tableParams.itemId = this.data.id;
@@ -392,7 +389,7 @@ export class AddPurchaseComponent implements OnInit {
     removePurchaseDetails(element): void {
         this.purchaseDetailsService.removePurchaseDetail(element.id).subscribe(
             (response) => {
-                this.savePurchase();
+                this.test();
             },
             () => { }
         );

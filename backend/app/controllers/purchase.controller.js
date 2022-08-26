@@ -170,16 +170,28 @@ exports.update = async (req, res) => {
       supplier,
       other_payment,
       amount_pd_total } = req.body;
-    // if (!id || !date || !invoice_no || !ref_no || !companyId) {
-    //   res
-    //     .status(STATUS_CODE.BAD)
-    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-    //   return;
-    // }
-    await pool.query(
-      `UPDATE purchase SET date='now()',invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}', pending_due='${pending_due}', user_name='${user_name}', remarks='${remarks}', payment='${payment}', supplier='${supplier}', other_payment='${other_payment}', amount_pd_total='${amount_pd_total}',  where id = ${id};
+
+
+      const updatePurchaseQuery =  `UPDATE purchase SET date='now()',invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}', pending_due='${pending_due}', user_name='${user_name}', remarks='${remarks}', payment='${payment}', supplier='${supplier}', other_payment='${other_payment}', amount_pd_total='${amount_pd_total}',  where id = ${id};
        `
-    );
+    await pool.query(updatePurchaseQuery)
+        const { updateRows } = await pool.query(updatePurchaseQuery);
+        const {updatePurchaseId} = updateRows.length;
+       for (let index = 0; index < updatePurchaseId.length; index++) {
+         const element = updatePurchaseId[index];
+         const updatePurchaseDetailsQuery = `INSERT INTO sales_quotation_details
+     (
+       qty,
+       available,
+       selling_price,
+       total,
+       purchase_id
+        )
+        VALUES( '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${purchaseId}') ;
+        `;
+        // item_code,'${element.item_code}',
+         await pool.query(updatePurchaseDetailsQuery);
+       }
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
