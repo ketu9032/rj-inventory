@@ -5,6 +5,7 @@ const { pool } = require('../db');
 
 exports.findAll = async(req, res) => {
     try {
+     // var total = gettotal()
         const { orderBy, direction, pageSize, pageNumber, search, active } =
         req.query;
         let searchQuery = 'where true';
@@ -15,11 +16,12 @@ exports.findAll = async(req, res) => {
           or user_name ilike '%${search}%'
           or amount::text ilike '%${search}%'
           or date::text ilike '%${search}%'
+          or user ilike '%${search}%'
         )`;
         }
         searchQuery += ` and t.is_active = ${active}`;
         let query = `
-    select count(t.id) over() as total, t.id, description, t.is_deleted, amount, t.user_id, u.user_name, t.date
+    select count(t.id) over() as total, t.id, description, t.is_deleted, amount, t.user_id, u.user_name, t.date, user
       FROM transfers t
       join users u
       on u.id = t.user_id  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
@@ -53,20 +55,23 @@ exports.delete = async(req, res) => {
         });
     }
 };
+// function gettotal(value) {
+
+// }
 
 exports.add = async(req, res) => {
     try {
-        const { userId, description, amount, date } = req.body;
+        const { userId, description, amount, date, user } = req.body;
 
-        if (!userId || !description || !amount || !date) {
+        if (!userId || !description || !amount || !date || !user) {
             res
                 .status(STATUS_CODE.BAD)
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
             return;
         }
         await pool.query(
-            `INSERT INTO transfers (user_id, description, amount, date)
-      VALUES('${userId}', '${description}', '${amount}', '${date}');
+            `INSERT INTO transfers (user_id, description, amount, date, user)
+      VALUES('${userId}', '${description}', '${amount}', '${date}', '${user}');
       `
         );
 
@@ -80,16 +85,16 @@ exports.add = async(req, res) => {
 
 exports.update = async(req, res) => {
     try {
-        const { userId, description, amount, date, id } = req.body;
+        const { userId, description, amount, date, id , user} = req.body;
 
-        if (!userId || !description || !amount || !date || !id) {
+        if (!userId || !description || !amount || !date || !user ||  !id) {
             res
                 .status(STATUS_CODE.BAD)
                 .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
             return;
         }
         await pool.query(
-            `UPDATE transfers SET user_id='${userId}', description='${description}' , amount='${amount}', date='${date}' where id = ${id};
+            `UPDATE transfers SET user_id='${userId}', description='${description}' , amount='${amount}', date='${date}', user='${user}' where id = ${id};
        `
         );
 

@@ -46,6 +46,10 @@
             </ng-container>
             <ng-container matColumnDef="user_name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
+                <td mat-cell *matCellDef="let element">{{ element.user }}</td>
+            </ng-container>
+            <ng-container matColumnDef="to">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>To</th>
                 <td mat-cell *matCellDef="let element">{{ element.user_name }}</td>
             </ng-container>
             <ng-container matColumnDef="action">

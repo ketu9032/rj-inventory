@@ -31,7 +31,6 @@ exports.findAll = async (req, res) => {
       JOIN suppliers as s
         ON s.id = item_supplier.suppliers_id
 ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

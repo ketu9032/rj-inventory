@@ -35,7 +35,6 @@ exports.findAll = async (req, res) => {
     FROM purchase_details
 
 ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -64,8 +63,8 @@ exports.delete = async (req, res) => {
 };
 exports.add = async (req, res) => {
   try {
-    const { item_code, qty, available, selling_price,  total } = req.body;
-    if (!item_code || !qty|| !available|| !selling_price|| !total) {
+    const { item_code, qty, available, selling_price,  total, purchase_id } = req.body;
+    if (!item_code || !qty|| !available|| !selling_price|| !total || !purchase_id) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -78,9 +77,10 @@ exports.add = async (req, res) => {
         qty,
         available,
         selling_price,
-        total
+        total,
+        purchase_id
          )
-      VALUES('${item_code}', '${qty}', '${available}', '${selling_price}', '${total}');
+      VALUES('${item_code}', '${qty}', '${available}', '${selling_price}', '${total}', '${purchase_id}');
       `
     );
     res.status(STATUS_CODE.SUCCESS).send();
@@ -92,8 +92,8 @@ exports.add = async (req, res) => {
 };
 exports.update = async (req, res) => {
   try {
-    const { id,  item_code, qty, available, selling_price,  total } = req.body;
-    if (!item_code || !qty|| !available|| !selling_price|| !total || !id) {
+    const { id,  item_code, qty, available, selling_price,  total, purchase_id } = req.body;
+    if (!item_code || !qty|| !available|| !selling_price|| !total || !purchase_id || !id) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -101,7 +101,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE purchase_details
-      SET  item_code='${item_code}', qty='${qty}' , available='${available}',selling_price='${selling_price}', total='${total}'where id = ${id};`
+      SET  item_code='${item_code}', qty='${qty}' , available='${available}',selling_price='${selling_price}', total='${total}', purchase_id='${purchase_id} 'where id = ${id};`
     );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
