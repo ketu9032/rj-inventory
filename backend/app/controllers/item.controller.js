@@ -116,7 +116,6 @@ exports.add = async (req, res) => {
       VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}', '${categoryId}') returning id;
       `;
 
-    console.log(insertItemQuery);
     const { rows } = await pool.query(insertItemQuery);
     const itemId = rows[0].id;
     for (let index = 0; index < suppliers.length; index++) {

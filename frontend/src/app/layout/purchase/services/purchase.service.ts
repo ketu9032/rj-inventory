@@ -20,7 +20,7 @@ export class PurchaseService {
     public addPurchase(purchase: IPurchaseParams) {
         return this.restService.post(`${this.url}`, purchase);
     }
-    public editPurchases(purchase: IPurchaseParams) {
+    public editPurchase(purchase: IPurchaseParams) {
         return this.restService.put(`${this.url}`, purchase);
     }
     public removePurchase(id: string) {
