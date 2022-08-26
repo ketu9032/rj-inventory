@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -23,6 +24,9 @@ export class AnalysisComponent implements OnInit {
         'actual_stock',
         'required'
     ];
+    toppings = new FormControl('');
+
+  toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     public defaultPageSize = PAGE_SIZE;

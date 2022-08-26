@@ -1,6 +1,16 @@
 <div>
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
+        <h1>Smart Purchase Target (SPT)</h1>
+        <div>
+            <mat-form-field appearance="fill">
+            <mat-label>All Categories</mat-label>
+            <mat-select [formControl]="toppings" multiple>
+
+              <mat-option *ngFor="let topping of toppingList" [value]="topping">{{topping}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
         <div>
             <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
