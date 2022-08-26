@@ -77,6 +77,7 @@ export class AddPurchaseComponent implements OnInit {
     findPurchaseDetails
     supplierName
     supplierDetails
+    showEditButton: boolean = false;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IPurchaseData,
         public dialog: MatDialog,
@@ -218,7 +219,16 @@ export class AddPurchaseComponent implements OnInit {
         } else {
             this.savePurchase();
         }
-        // this.clearSupplierForm();
+
+    }
+
+    addAndEditPurchaseDetails(){
+        if(this.data.id){
+            this.updatePurchaseDetails();
+        } else{
+          this.addSalesQuotation()
+        }
+
     }
     addSalesQuotation() {
         const {
@@ -237,15 +247,53 @@ export class AddPurchaseComponent implements OnInit {
         }
         this.sales.push(sale)
         this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.sales);
+        this.clearSupplierForm();
 
-        this.formSupplier.patchValue({
-            item_code: '',
-            qty: '',
-            available: '',
-            selling_price: '',
-            total: ''
-        })
     }
+
+    updatePurchaseDetails(): void {
+
+        const {
+            item_code,
+            qty,
+            available,
+            selling_price,
+            total
+        } = this.formSupplier.value;
+        this.purchaseDetailsService
+            .editPurchaseDetail({
+                id: this.data.id,
+                item_code,
+                qty,
+                available,
+                selling_price,
+                total,
+                purchase_id: +this.data.id
+
+
+            })
+            .subscribe(
+                (response) => {
+                    this.isShowLoader = false;
+                    this.snackBar.open('Purchase updated successfully', 'OK', {
+                        duration: 3000
+                    });
+                    this.dialogRef.close(true);
+                },
+                (error) => {
+                    this.isShowLoader = false;
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+
+
     fillForm() {
         const {
             supplier,
@@ -272,6 +320,13 @@ export class AddPurchaseComponent implements OnInit {
     //     this.formSupplier.patchValue({
     //         salesQuotationId: this.data.id, item_code, item_supplier_rate: itemSupplierRate
     //     });
+
+    if(element.purchase_id) {
+      this.showEditButton = true;
+    }
+
+
+
     const {
         item_code,
         qty,
@@ -289,26 +344,28 @@ export class AddPurchaseComponent implements OnInit {
      }
 
 
-    getPurchaseSupplier() {
-        this.supplierDataSource = [];
-        this.suppliers = []
-        this.tableParams.itemId = this.data.id;
-        this.purchaseDetailsService.getPurchaseDetail(this.tableParams).subscribe(
-            (newItemSupplier: any[]) => {
-                this.suppliers.push(...newItemSupplier);
-                this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
-                if (newItemSupplier.length > 0) {
-                    this.totalRows = newItemSupplier[0].total;
-                }
-            },
-            (error) => {
-                this.snackBar.open(error.error.message || error.message, 'Ok', {
-                    duration: 3000
-                });
-            },
-            () => { }
-        );
-    }
+
+
+    // getPurchaseSupplier() {
+    //     this.supplierDataSource = [];
+    //     this.suppliers = []
+    //     this.tableParams.itemId = this.data.id;
+    //     this.purchaseDetailsService.getPurchaseDetail(this.tableParams).subscribe(
+    //         (newItemSupplier: any[]) => {
+    //             this.suppliers.push(...newItemSupplier);
+    //             this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
+    //             if (newItemSupplier.length > 0) {
+    //                 this.totalRows = newItemSupplier[0].total;
+    //             }
+    //         },
+    //         (error) => {
+    //             this.snackBar.open(error.error.message || error.message, 'Ok', {
+    //                 duration: 3000
+    //             });
+    //         },
+    //         () => { }
+    //     );
+    // }
     test() {
         this.supplierDataSource = [];
         this.suppliers = []
@@ -393,6 +450,15 @@ export class AddPurchaseComponent implements OnInit {
             },
             () => { }
         );
+    }
+    clearSupplierForm(){
+        this.formSupplier.patchValue({
+            item_code: '',
+            qty: '',
+            available: '',
+            selling_price: '',
+            total: ''
+        })
     }
 
 }

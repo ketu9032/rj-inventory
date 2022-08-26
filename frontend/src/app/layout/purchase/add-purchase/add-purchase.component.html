@@ -44,7 +44,7 @@
 <br>
 <!-- supplier form -->
 <h1 mat-dialog-title>Purchase Details</h1>
-<form [formGroup]="formSupplier" (ngSubmit)="addSalesQuotation()">
+<form [formGroup]="formSupplier" (ngSubmit)="addAndEditPurchaseDetails()">
     <div class="sales_details_table">
         <div class="box">
             <div class="block">
@@ -95,7 +95,9 @@
             </div>
             <!-- ADD BUTTON -->
             <button mat-raised-button color="primary" class="add_button" type="submit" (click)="add()">
-                Add
+
+                {{ !showEditButton ? 'Add' : 'Update'}}
+
             </button>
         </div>
     </div>

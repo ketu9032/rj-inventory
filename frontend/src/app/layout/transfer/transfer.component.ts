@@ -4,6 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from 'src/app/auth/auth.service';
 import { IMatTableParams } from 'src/app/models/table';
 import { ITransferData } from 'src/app/models/transfer';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
@@ -23,6 +24,7 @@ export class TransferComponent implements OnInit {
         'description',
         'amount',
         'user_name',
+        'to',
         'action'
     ];
     dataSource: any = [];
@@ -44,7 +46,8 @@ export class TransferComponent implements OnInit {
     constructor(
         public dialog: MatDialog,
         private transferService: TransferService,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        public authService: AuthService,
     ) { }
 
     ngOnInit(): void {
