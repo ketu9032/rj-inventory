@@ -5,9 +5,9 @@
     "ng": "ng",
     "start": "node ./server.js",
     "dev:start": "ng serve",
-    "build": "ng build --prod",
+    "build": "ng build --configuration production",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
-    "gitbuild": "ng build --prod --base-href /start-javascript/sb-admin-material/master/dist/",
+    "gitbuild": "ng build --configuration production --base-href /start-javascript/sb-admin-material/master/dist/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -22,7 +22,7 @@
     "@angular/animations": "^14.2.0",
     "@angular/cdk": "^14.2.0",
     "@angular/common": "^14.2.0",
-    "@angular/compiler": "11.2.14",
+    "@angular/compiler": "12.2.16",
     "@angular/core": "^14.2.0",
     "@angular/flex-layout": "^14.0.0-beta.40",
     "@angular/forms": "^14.2.0",
@@ -40,13 +40,13 @@
     "path": "^0.12.7",
     "rxjs": "6.5.5",
     "web-animations-js": "^2.3.2",
-    "zone.js": "~0.10.3"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.1",
-    "@angular/cli": "^11.2.19",
-    "@angular/compiler-cli": "11.2.14",
-    "@angular/language-service": "11.2.14",
+    "@angular/cli": "^12.2.18",
+    "@angular/compiler-cli": "12.2.16",
+    "@angular/language-service": "12.2.16",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "2.0.8",
     "@types/node": "^13.11.1",
@@ -63,6 +63,6 @@
     "ts-node": "8.8.2",
     "tslib": "^2.0.0",
     "tslint": "~6.1.0",
-    "typescript": "4.0.8"
+    "typescript": "4.3.5"
   }
 }

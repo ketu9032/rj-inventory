@@ -14,7 +14,7 @@ import 'core-js/es/symbol';
 import 'core-js/es/weak-map';
 // import 'core-js/es/reflect';
 import 'web-animations-js';
-import 'zone.js/dist/zone';
+import 'zone.js';
 
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
