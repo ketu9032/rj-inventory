@@ -23,11 +23,14 @@ exports.findAll = async (req, res) => {
       searchQuery += ` and from_user_id  = ${res.locals.tokenData.id} or to_user_id =  ${res.locals.tokenData.id}`;
     }
 
-    if (fromDate != 'undefined' && toDate != 'undefined') {
-      searchQuery += ` and date  between   '${fromDate }' and  '${toDate}' `;
+    if (fromDate && toDate) {
+      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
     }
-    if (fromUserId != 'undefined' && toUserId != 'undefined') {
-      searchQuery += ` and  from_user_id = ${+fromUserId} and to_user_id = ${+toUserId} `;
+    if (fromUserId) {
+      searchQuery += ` and from_user_id = ${+fromUserId} `;
+    }
+    if (toUserId ) {
+      searchQuery += ` and to_user_id = ${+toUserId} `;
     }
 
     if (search) {
@@ -65,7 +68,6 @@ exports.findAll = async (req, res) => {
             order by ${orderBy} ${direction}
             OFFSET ${offset} LIMIT ${pageSize}`;
 
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

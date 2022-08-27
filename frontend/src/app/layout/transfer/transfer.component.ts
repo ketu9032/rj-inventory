@@ -4,6 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IMatTableParams, IMatTableParamsWithSearchParams } from 'src/app/models/table';
 import { ITransferData } from 'src/app/models/transfer';
@@ -20,6 +21,7 @@ import { TransferService } from './services/transfer.service';
 })
 export class TransferComponent implements OnInit {
     displayedColumns: string[] = [
+        "transferId",
         'transferDate',
         'description',
         'amount',
@@ -95,10 +97,18 @@ export class TransferComponent implements OnInit {
     getTransfer() {
         this.loader = true;
         this.totalRows = 0;
-        this.tableParams.fromUserId = this.fromUserId,
-        this.tableParams.toUserId = this.toUserId,
-        this.tableParams.fromDate =this.fromDate,
-        this.tableParams.toDate = this.toDate,
+        if (this.fromUserId && +this.fromUserId !== 0 ) {
+            this.tableParams.fromUserId = this.fromUserId;
+        }
+        if (this.toUserId && +this.toUserId !== 0 ) {
+            this.tableParams.toUserId = this.toUserId;
+        }
+        if (this.fromDate) {
+            this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
         this.transferService.getTransfer(this.tableParams).subscribe(
             (newTransfer: any[]) => {
                 this.dataSource = new MatTableDataSource<ITransferData>(newTransfer);
@@ -240,5 +250,18 @@ export class TransferComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+
+    clearSearch() {
+        this.fromDate = '';
+        this.toDate = '';
+        this.fromUserId = 0;
+        this.toUserId = 0;
+        this.tableParams.search = '';
+        this.tableParams.fromUserId = '';
+        this.tableParams.toUserId = '';
+        this.tableParams.fromDate = '';
+        this.tableParams.toDate = '';
+        this.getTransfer();
     }
 }
