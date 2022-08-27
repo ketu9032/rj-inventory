@@ -2,7 +2,56 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
-            <mat-form-field class="field-width">
+            <!-- form date -->
+            <!-- <mat-form-field class="field-width margin" color="primary">
+                <mat-label>From Date</mat-label>
+                <input matInput [matDatepicker]="date" [max]="currentDate" required [(ngModel)]="fromDate">
+                <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+                <mat-datepicker #date></mat-datepicker>
+            </mat-form-field> -->
+            <!-- to date -->
+            <!-- <mat-form-field class="field-width margin">
+                <mat-label>To date</mat-label>
+                <input matInput [matDatepicker]="date1" [max]="currentDate" required [(ngModel)]="toDate">
+                <mat-datepicker-toggle matSuffix [for]="date1"></mat-datepicker-toggle>
+                <mat-datepicker #date1></mat-datepicker>
+            </mat-form-field> -->
+
+            <mat-form-field appearance="fill">
+                <mat-label>Enter a date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                  <input matStartDate placeholder="Start date">
+                  <input matEndDate placeholder="End date">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+              </mat-form-field>
+
+
+            <!-- from user start -->
+            <mat-form-field class="field-width margin">
+                <mat-label>From User</mat-label>
+                <mat-select [(ngModel)]="fromUserId">
+                    <mat-option>From User</mat-option>
+                    <mat-option *ngFor="let user of users" [value]="user.id">
+                        {{user.user_name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- to user -->
+            <mat-form-field class="field-width margin">
+                <mat-label>To User </mat-label>
+
+                <mat-select [(ngModel)]="toUserId">
+                    <mat-option>To User</mat-option>
+                    <mat-option *ngFor="let user of users" [value]="user.id">
+                        {{user.user_name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="field-width margin">
+
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getTransfer()">
             </mat-form-field>
@@ -10,7 +59,8 @@
                 Search
             </button>
             <button color="primary" class="margin btn" mat-raised-button
-                (click)="tableParams.search = ''; getTransfer()">
+                (click)="tableParams.search = '';  getTransfer()">
+                <!-- tableParams.formUserId = ''; tableParams.toUserId = ''; -->
                 Clear Search
             </button>
             <button color="primary" class="margin btn" mat-raised-button (click)="onAddNewUser()">

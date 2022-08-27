@@ -5,9 +5,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from 'src/app/auth/auth.service';
-import { IMatTableParams } from 'src/app/models/table';
+import { IMatTableParams, IMatTableParamsWithSearchParams } from 'src/app/models/table';
 import { ITransferData } from 'src/app/models/transfer';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
+import { UserService } from '../user/services/user.service';
 import { AddTransferComponent } from './add-transfer/add-transfer.component';
 import { DeleteTransferComponent } from './delete-transfer/delete-transfer.component';
 import { TransferService } from './services/transfer.service';
@@ -34,21 +35,32 @@ export class TransferComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     totalRows: number;
-    tableParams: IMatTableParams = {
+    tableParams: IMatTableParamsWithSearchParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
         orderBy: 't.id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        fromDate: '',
+        toDate: '',
+        fromUserId: '',
+        toUserId: ''
     }
     loggedInUserId: any;
     loggedInUsersData: any;
     loggedInUserRole: any;
+    users = []
+    fromDate: any;
+    toDate:any;
+    fromUserId: number;
+    toUserId: number;
+    currentDate = new Date()
     constructor(
         public dialog: MatDialog,
         private transferService: TransferService,
         public snackBar: MatSnackBar,
+        private userService: UserService,
         public authService: AuthService,
     ) { }
 
@@ -56,8 +68,7 @@ export class TransferComponent implements OnInit {
         this.loggedInUsersData = this.authService.getUserData();
         this.loggedInUserId = this.loggedInUsersData.id
         this.loggedInUserRole = this.loggedInUsersData.role
-        console.log(this.loggedInUserId);
-
+        this.getUserDropDown()
         this.getTransfer();
     }
 
@@ -84,6 +95,10 @@ export class TransferComponent implements OnInit {
     getTransfer() {
         this.loader = true;
         this.totalRows = 0;
+        this.tableParams.fromUserId = this.fromUserId,
+        this.tableParams.toUserId = this.toUserId,
+        this.tableParams.fromDate =this.fromDate,
+        this.tableParams.toDate = this.toDate,
         this.transferService.getTransfer(this.tableParams).subscribe(
             (newTransfer: any[]) => {
                 this.dataSource = new MatTableDataSource<ITransferData>(newTransfer);
@@ -208,4 +223,22 @@ export class TransferComponent implements OnInit {
             );
     }
 
+    getUserDropDown() {
+        this.userService
+            .getUserDropDown()
+            .subscribe(
+                (response) => {
+                    this.users = response
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
 }

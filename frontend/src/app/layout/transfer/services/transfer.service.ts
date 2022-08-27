@@ -1,6 +1,6 @@
 import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
-import { IMatTableParams } from 'src/app/models/table';
+import { IMatTableParams, IMatTableParamsWithSearchParams } from 'src/app/models/table';
 import { ITransferActiveParams, ITransferParams } from 'src/app/models/transfer';
 import { RestService } from 'src/app/shared/services';
 
@@ -13,7 +13,7 @@ export class TransferService {
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
-  public getTransfer(tablePrams: IMatTableParams) {
+  public getTransfer(tablePrams: IMatTableParamsWithSearchParams) {
     const queryString = this.commonService.toQueryString(tablePrams);
     return this.restService.get<any>(`${this.url}${queryString}`);
   }

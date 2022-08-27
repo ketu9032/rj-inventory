@@ -4,13 +4,30 @@ const { generateToken } = require('../utils/common');
 const { pool } = require('../db');
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active } =
-      req.query;
+    const {
+      orderBy,
+      direction,
+      pageSize,
+      pageNumber,
+      search,
+      active,
+      fromDate,
+      toDate,
+      fromUserId,
+      toUserId
+    } = req.query;
     let searchQuery = 'where true';
     const offset = pageSize * pageNumber - pageSize;
 
     if (res.locals.tokenData.role === 'Employees') {
       searchQuery += ` and from_user_id  = ${res.locals.tokenData.id} or to_user_id =  ${res.locals.tokenData.id}`;
+    }
+
+    if (fromDate != 'undefined' && toDate != 'undefined') {
+      searchQuery += ` and date  between   '${fromDate }' and  '${toDate}' `;
+    }
+    if (fromUserId != 'undefined' && toUserId != 'undefined') {
+      searchQuery += ` and  from_user_id = ${+fromUserId} and to_user_id = ${+toUserId} `;
     }
 
     if (search) {
@@ -79,7 +96,7 @@ exports.delete = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const { description, amount, toUserId } = req.body;
-    if (!description || !amount  || !toUserId) {
+    if (!description || !amount || !toUserId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -114,9 +131,8 @@ exports.add = async (req, res) => {
 };
 exports.update = async (req, res) => {
   try {
-    const { transferId, description, amount, toUserId } =
-      req.body;
-    if (!toUserId || !description || !amount  || !transferId) {
+    const { transferId, description, amount, toUserId } = req.body;
+    if (!toUserId || !description || !amount || !transferId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
