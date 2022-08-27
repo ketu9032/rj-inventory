@@ -5,7 +5,7 @@ export interface IExpenseData {
 }
 
 export interface IExpenseParams {
-    id?: number, userId: number, description: string, amount: number, date: string, categoryId: number
+    id?: number, description: string, amount: number, categoryId: number, isCashIn: boolean
 
 }
 export interface IExpenseActiveParams {

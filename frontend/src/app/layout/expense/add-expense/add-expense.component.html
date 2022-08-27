@@ -8,17 +8,10 @@
 <br>
 <div class="container">
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-        <!-- Date start -->
-        <mat-form-field color="accent">
-            <mat-label>Date</mat-label>
-            <input matInput formControlName="date" [matDatepicker]="date" [max]="currentDate" required>
-            <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
-            <mat-datepicker #date></mat-datepicker>
-        </mat-form-field>
         <!-- Description start -->
         <mat-form-field>
             <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" required ></textarea>
+            <textarea matInput formControlName="description" required></textarea>
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -31,7 +24,7 @@
         <!-- Category start -->
         <mat-form-field>
             <mat-label>Category</mat-label>
-            <mat-select formControlName="user" name="user" required>
+            <mat-select formControlName="categoryId" name="categoryId" required>
                 <mat-option *ngFor="let category of categories" [value]="category.id">
                     {{category.code}}
                 </mat-option>
@@ -50,16 +43,12 @@
                 <span class="error">Amount Balance is Required</span>
             </ng-container>
         </div>
-        <!-- <mat-slide-toggle>{{!this.amount ? 'Cash in': 'Cash out'}}</mat-slide-toggle> -->
-        <!-- user start -->
-        <mat-form-field>
-            <mat-label>User To</mat-label>
-            <mat-select formControlName="user" name="user" required >
-                <mat-option *ngFor="let user of users" [value]="user.id">
-                    {{user.user_name}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+        <div>
+            <mat-slide-toggle formControlName="isCashIn">{{formGroup.controls.isCashIn.value ? 'Cash in': 'Cash out'}}
+            </mat-slide-toggle>
+        </div>
+        <br>
+
         <div class="btn-update">
             <button mat-raised-button color="primary" [disabled]="!formGroup.valid" type="submit">
                 <span>
