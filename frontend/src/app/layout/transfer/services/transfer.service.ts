@@ -1,6 +1,6 @@
 import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
-import { IMatTableParams } from 'src/app/models/table';
+import { IMatTableParams, IMatTableParamsWithSearchParams } from 'src/app/models/table';
 import { ITransferActiveParams, ITransferParams } from 'src/app/models/transfer';
 import { RestService } from 'src/app/shared/services';
 
@@ -8,11 +8,12 @@ import { RestService } from 'src/app/shared/services';
 export class TransferService {
   private url = 'api/transfers';
   private changeStatusURL = 'api/transfers/changeStatus';
+  private approvedURL = 'api/transfers/approved';
 
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
-  public getTransfer(tablePrams: IMatTableParams) {
+  public getTransfer(tablePrams: IMatTableParamsWithSearchParams) {
     const queryString = this.commonService.toQueryString(tablePrams);
     return this.restService.get<any>(`${this.url}${queryString}`);
   }
@@ -28,7 +29,8 @@ export class TransferService {
   public changeStatus(transfer: ITransferActiveParams) {
     return this.restService.put(`${this.changeStatusURL}`, transfer);
   }
-
-
+  public approved(transferId: number) {
+    return this.restService.put(`${this.approvedURL}`, {transferId});
+  }
 }
 

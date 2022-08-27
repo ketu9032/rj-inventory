@@ -4,8 +4,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 import { AuthService } from 'src/app/auth/auth.service';
-import { IMatTableParams } from 'src/app/models/table';
+import { IMatTableParams, IMatTableParamsWithSearchParams } from 'src/app/models/table';
 import { ITransferData } from 'src/app/models/transfer';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { UserService } from '../user/services/user.service';
@@ -20,12 +21,14 @@ import { TransferService } from './services/transfer.service';
 })
 export class TransferComponent implements OnInit {
     displayedColumns: string[] = [
-        'date',
+        "transferId",
+        'transferDate',
         'description',
         'amount',
-        'user_name',
-        'to',
-        'action'
+        'fromUserName',
+        'toUserName',
+        'isApproved',
+        'action',
     ];
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -34,27 +37,53 @@ export class TransferComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     totalRows: number;
-    tableParams: IMatTableParams = {
+    tableParams: IMatTableParamsWithSearchParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
-        orderBy: 'id',
+        orderBy: 't.id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        fromDate: '',
+        toDate: '',
+        fromUserId: '',
+        toUserId: ''
     }
-
+    loggedInUserId: any;
+    loggedInUsersData: any;
+    loggedInUserRole: any;
+    users = []
+    fromDate: any;
+    toDate:any;
+    fromUserId: number;
+    toUserId: number;
+    currentDate = new Date()
     constructor(
         public dialog: MatDialog,
         private transferService: TransferService,
         public snackBar: MatSnackBar,
+        private userService: UserService,
         public authService: AuthService,
     ) { }
 
     ngOnInit(): void {
+        this.loggedInUsersData = this.authService.getUserData();
+        this.loggedInUserId = this.loggedInUsersData.id
+        this.loggedInUserRole = this.loggedInUsersData.role
+        this.getUserDropDown()
         this.getTransfer();
     }
 
     sortData(sort: Sort) {
+        if (sort.active === 'transferDate') {
+            sort.active = 't.date';
+        }
+        if (sort.active === 'fromUserName') {
+            sort.active = 'from_user.user_name';
+        }
+        if (sort.active === 'toUserName') {
+            sort.active = 'to_user.user_name';
+        }
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
@@ -67,9 +96,23 @@ export class TransferComponent implements OnInit {
 
     getTransfer() {
         this.loader = true;
+        this.totalRows = 0;
+        if (this.fromUserId && +this.fromUserId !== 0 ) {
+            this.tableParams.fromUserId = this.fromUserId;
+        }
+        if (this.toUserId && +this.toUserId !== 0 ) {
+            this.tableParams.toUserId = this.toUserId;
+        }
+        if (this.fromDate) {
+            this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
         this.transferService.getTransfer(this.tableParams).subscribe(
             (newTransfer: any[]) => {
                 this.dataSource = new MatTableDataSource<ITransferData>(newTransfer);
+                console.log(this.dataSource.filteredData)
                 if (newTransfer.length > 0) {
                     this.totalRows = newTransfer[0].total;
                 }
@@ -138,9 +181,9 @@ export class TransferComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         this.getTransfer();
     }
-    changeStatus(id: number): void {
+    changeStatus(transferId: number): void {
         this.transferService
-            .changeStatus({ id: id, status: !this.tableParams.active })
+            .changeStatus({ transferId, status: !this.tableParams.active })
             .subscribe(
                 (response) => {
                     if (!this.tableParams.active) {
@@ -167,4 +210,58 @@ export class TransferComponent implements OnInit {
             );
     }
 
+    onApproved(transferId: number): void {
+        this.transferService
+            .approved(transferId)
+            .subscribe(
+                (response) => {
+                    this.snackBar.open('Transfer Approved successfully', 'OK', {
+                        duration: 3000
+                    })
+                    this.getTransfer();
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok',
+                        {
+                            duration: 3000
+                        }
+                    );
+                },
+                () => { }
+            );
+    }
+
+    getUserDropDown() {
+        this.userService
+            .getUserDropDown()
+            .subscribe(
+                (response) => {
+                    this.users = response
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+
+    clearSearch() {
+        this.fromDate = '';
+        this.toDate = '';
+        this.fromUserId = 0;
+        this.toUserId = 0;
+        this.tableParams.search = '';
+        this.tableParams.fromUserId = '';
+        this.tableParams.toUserId = '';
+        this.tableParams.fromDate = '';
+        this.tableParams.toDate = '';
+        this.getTransfer();
+    }
 }

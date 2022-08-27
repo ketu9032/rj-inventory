@@ -46,19 +46,19 @@ export class AddExpenseComponent implements OnInit {
 
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            date: ['', Validators.required],
             description: ['', Validators.required],
+            categoryId: ['', Validators.required],
             amount: ['', Validators.required],
-            user: ['', Validators.required],
+            isCashIn: [true]
         });
     }
 
     saveExpense(): void {
-        const { user: userId, description, amount, date, category: categoryId } = this.formGroup.value;
+        const {description, amount, categoryId,  isCashIn} = this.formGroup.value;
         this.isShowLoader = true;
         this.expenseService
             .addExpense({
-                userId, description, amount, date, categoryId
+                description, amount, categoryId, isCashIn
             })
             .subscribe(
                 (response) => {
@@ -82,12 +82,12 @@ export class AddExpenseComponent implements OnInit {
     }
 
     updateExpense(): void {
-        const { user: userId, description, amount, date, category: categoryId} = this.formGroup.value;
+        const { description, amount, categoryId, isCashIn} = this.formGroup.value;
         this.isShowLoader = true;
         this.expenseService
             .editExpense({
                 id: this.data.id,
-                userId, description, amount, date, categoryId
+                description, amount, categoryId, isCashIn
             })
             .subscribe(
                 (response) => {

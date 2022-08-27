@@ -10,28 +10,10 @@
 <div class="container">
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
 
-        <!-- Date start -->
-        <mat-form-field color="accent">
-            <mat-label>Date</mat-label>
-            <input matInput formControlName="date" [matDatepicker]="date" [max]="currentDate" required>
-            <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
-            <mat-datepicker #date></mat-datepicker>
-        </mat-form-field>
-
-        <div>
-            <ng-container *ngIf="
-        formGroup.controls.date.touched &&
-        !formGroup.controls.date.value
-      ">
-                <span class="error">Date is Required</span>
-            </ng-container>
-        </div>
-
-
         <!-- Description start -->
         <mat-form-field>
             <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" required ></textarea>
+            <textarea matInput formControlName="description" required></textarea>
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -45,12 +27,13 @@
         <!-- Amount start -->
         <mat-form-field>
             <mat-label>Amount</mat-label>
-            <input matInput formControlName="amount" type="number" required/>
+            <input matInput formControlName="amount" type="number"  required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
           formGroup.controls.amount.touched &&
-          !formGroup.controls.amount.value
+          !formGroup.controls.amount.value &&
+          !formGroup.controls.amount.errors.required
         ">
                 <span class="error">Amount Balance is Required</span>
 
@@ -60,7 +43,7 @@
         <!-- user start -->
         <mat-form-field>
             <mat-label>User To</mat-label>
-            <mat-select formControlName="user" name="user" required>
+            <mat-select formControlName="toUserId" name="toUserId" required>
                 <mat-option *ngFor="let user of users" [value]="user.id">
                     {{user.user_name}}
                 </mat-option>
@@ -68,8 +51,8 @@
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.user.touched &&
-          !formGroup.controls.user.value
+          formGroup.controls.toUserId.touched &&
+          !formGroup.controls.toUserId.value
         ">
                 <span class="error">User is Required</span>
 
@@ -81,7 +64,7 @@
         <div class="btn-update">
             <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">
                 <span *ngIf="!isShowLoader">
-                    {{ !this.data ? 'Save' : 'Update' }}
+                    {{ !this.data ? 'Save Transfer' : 'Update Transfer' }}
                 </span>
                 <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
             </button>

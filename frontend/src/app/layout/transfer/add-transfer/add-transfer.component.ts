@@ -4,11 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ITransferData } from 'src/app/models/transfer';
 import { IUserData } from 'src/app/models/user';
 import { UserService } from '../../user/services/user.service';
 import { TransferService } from '../services/transfer.service';
-
 @Component({
     selector: 'app-add-transfer',
     templateUrl: './add-transfer.component.html',
@@ -20,8 +20,8 @@ export class AddTransferComponent implements OnInit {
     users = []
     isShowLoader = false;
     currentDate = new Date();
-
-
+    loggedInUser: any;
+    numberRegEx = /\-?\d*\.?\d{1,2}/;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ITransferData,
         public dialog: MatDialog,
@@ -31,31 +31,32 @@ export class AddTransferComponent implements OnInit {
         private router: Router,
         private transferService: TransferService,
         private userService: UserService,
+        public authService: AuthService,
     ) { }
-
     ngOnInit() {
         this.initializeForm();
         this.getUserDropDown()
-        if (this.data && this.data.id) {
+        this.loggedInUser = this.authService.getUserData();
+        if (this.data && this.data.transferId) {
             this.fillForm();
         }
     }
-
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            date: ['', Validators.required],
+
             description: ['', Validators.required],
             amount: ['', Validators.required],
-            user: ['', Validators.required],
+            // amount: ['', Validators.required, Validators.pattern(this.numberRegEx)],
+            toUserId: ['', Validators.required],
         });
     }
-
     saveTransfer(): void {
-        const { user: userId, description, amount, date } = this.formGroup.value;
+        const { toUserId, description, amount } = this.formGroup.value;
+        const fromUserId = this.loggedInUser.id;
         this.isShowLoader = true;
         this.transferService
             .addTransfer({
-                userId, description, amount, date
+                toUserId, description, amount, fromUserId
             })
             .subscribe(
                 (response) => {
@@ -63,14 +64,11 @@ export class AddTransferComponent implements OnInit {
                         duration: 3000
                     });
                     this.isShowLoader = false;
-
                     this.dialogRef.close(true);
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
-
                         (error.error && error.error.message) || error.message,
                         'Ok', {
                         duration: 3000
@@ -80,15 +78,14 @@ export class AddTransferComponent implements OnInit {
                 () => { }
             );
     }
-
     updateTransfer(): void {
-        const { user: userId, description, amount, date } = this.formGroup.value;
+        const { toUserId, description, amount } = this.formGroup.value;
+        const fromUserId = this.loggedInUser.id;
         this.isShowLoader = true;
-
         this.transferService
             .editTransfer({
-                id: this.data.id,
-                userId, description, amount, date
+                transferId: this.data.transferId,
+                toUserId, description, amount, fromUserId
             })
             .subscribe(
                 (response) => {
@@ -96,12 +93,10 @@ export class AddTransferComponent implements OnInit {
                         duration: 3000
                     });
                     this.isShowLoader = false;
-
                     this.dialogRef.close(true);
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
@@ -112,25 +107,22 @@ export class AddTransferComponent implements OnInit {
                 () => { }
             );
     }
-
     onSubmit() {
-        if (this.data && this.data.id) {
+        if (this.data && this.data.transferId) {
             this.updateTransfer();
         } else {
             this.saveTransfer();
         }
     }
-
     fillForm() {
-        const { user_id: userId, description: description, amount: amount, date: date } = this.data;
+        const { toUserId, description: description, amount: amount } = this.data;
         this.formGroup.patchValue({
             description,
             amount,
-            user: userId,
-            date: date
+            toUserId,
+
         });
     }
-
     getUserDropDown() {
         this.userService
             .getUserDropDown()
@@ -148,6 +140,5 @@ export class AddTransferComponent implements OnInit {
                 },
                 () => { }
             );
-
     }
 }

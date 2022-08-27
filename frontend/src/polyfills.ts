@@ -12,9 +12,7 @@ import 'core-js/es/set';
 import 'core-js/es/string';
 import 'core-js/es/symbol';
 import 'core-js/es/weak-map';
-// import 'core-js/es/reflect';
-import 'web-animations-js';
-import 'zone.js/dist/zone';
+import 'zone.js';
 
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
@@ -37,8 +35,6 @@ import 'zone.js/dist/zone';
  */
 
 /** IE9, IE10 and IE11 requires all of the following polyfills. **/
-/** IE10 and IE11 requires the following for NgClass support on SVG elements */
-// import 'classlist.js';  // Run `npm install --save classlist.js`.
 
 /** IE10 and IE11 requires the following for the Reflect API. */
 import 'core-js/es/reflect';

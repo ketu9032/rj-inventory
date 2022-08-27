@@ -17,21 +17,24 @@ exports.findAll = async (req, res) => {
           or date::text ilike '%${search}%'
         )`;
     }
-    searchQuery += ` and t.is_active = ${active}`;
+    searchQuery += ` and expense.is_active = ${active}`;
     let query = `
-    select count(t.id) over() as total,
-           t.id,
-           description,
-           t.is_deleted,
-           amount,
-           t.user_id,
-           u.user_name,
-           t.date,
-           t.category_id,
-           c.code
-      FROM expenses t
-      INNER join categories c on c.id = t.category_id
-      INNER join users u  on u.id = t.user_id  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+        select count(expense.id) over() as total,
+          expense.id as "expenseId",
+          description ,
+          expense.is_deleted as "isDeleted",
+          amount as "amount",
+          expense.user_id as "userId",
+          u.user_name as "userName",
+          expense.date as "expenseDate",
+          expense.category_id as "categoryId",
+          c.name as "categoryName"
+      FROM expenses expense
+      INNER join categories c on c.id = expense.category_id
+      INNER join users u  on u.id = expense.user_id
+      ${searchQuery}
+      order by ${orderBy} ${direction}
+      OFFSET ${offset} LIMIT ${pageSize}`;
 
     const response = await pool.query(query);
 
@@ -65,19 +68,23 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const { userId, description, amount, date, categoryId } = req.body;
+    const { description, amount, categoryId, isCashIn } = req.body;
 
-    if (!userId || !description || !amount || !date || !categoryId) {
+    if (!description || !amount || !categoryId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
+    const query =   `
+    INSERT INTO expenses (user_id, description, amount, date, category_id, is_cash_in)
+    VALUES (${res.locals.tokenData.id}, '${description}', ${amount}, now(), ${categoryId}, ${isCashIn})
+    `
+    console.log(query);
     await pool.query(
-      `INSERT INTO expenses (user_id, description, amount, date, category_id)
-      VALUES('${userId}', '${description}', '${amount}', '${date}', '${categoryId}');
-      `
+      query
     );
+
 
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -89,17 +96,24 @@ exports.add = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const { userId, description, amount, date, id, categoryId } = req.body;
+    const { description, amount, id, categoryId, isCashIn } = req.body;
 
-    if (!userId || !description || !amount || !date || !id
-    || !categoryId) {
+    if (!description || !amount || !id || !categoryId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
     await pool.query(
-      `UPDATE expenses SET user_id='${userId}', description='${description}' , amount='${amount}', date='${date}' category_id='${categoryId}' where id = ${id};
+      `UPDATE
+        expenses
+      SET
+        description = '${description}',
+        amount = ${amount},
+        category_id = ${categoryId},
+        is_cash_in = ${isCashIn}
+      where
+        id = ${id}
        `
     );
 
