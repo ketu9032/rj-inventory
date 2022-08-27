@@ -127,5 +127,7 @@
       }
     }
   },
-  "defaultProject": "ng-material"
+  "cli": {
+    "analytics": false
+  }
 }

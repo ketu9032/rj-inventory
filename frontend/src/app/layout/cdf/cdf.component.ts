@@ -11,7 +11,6 @@ import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config'
 import { AddCdfComponent } from './add-cdf/add-cdf.component';
 import { CdfService } from './services/cdf.service';
 import { DeleteCdfComponent } from './delete-cdf/delete-cdf.component';
-import { collectExternalReferences, identifierModuleUrl } from '@angular/compiler';
 import { MatSelectChange } from '@angular/material/select';
 import { AddCustomersComponent } from '../customers/add-customers/add-customers.component';
 import { CdfToCustomersComponent } from './cdf-to-customers/cdf-to-customers.component';
