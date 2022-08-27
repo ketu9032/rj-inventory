@@ -8,7 +8,6 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { IMatTableParams } from 'src/app/models/table';
 import { ITransferData } from 'src/app/models/transfer';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { UserService } from '../user/services/user.service';
 import { AddTransferComponent } from './add-transfer/add-transfer.component';
 import { DeleteTransferComponent } from './delete-transfer/delete-transfer.component';
 import { TransferService } from './services/transfer.service';
@@ -20,12 +19,13 @@ import { TransferService } from './services/transfer.service';
 })
 export class TransferComponent implements OnInit {
     displayedColumns: string[] = [
-        'date',
+        'transferDate',
         'description',
         'amount',
-        'user_name',
-        'to',
-        'action'
+        'fromUserName',
+        'toUserName',
+        'isApproved',
+        'action',
     ];
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -37,12 +37,14 @@ export class TransferComponent implements OnInit {
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
-        orderBy: 'id',
+        orderBy: 't.id',
         direction: "desc",
         search: '',
         active: true
     }
-
+    loggedInUserId: any;
+    loggedInUsersData: any;
+    loggedInUserRole: any;
     constructor(
         public dialog: MatDialog,
         private transferService: TransferService,
@@ -51,10 +53,24 @@ export class TransferComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.loggedInUsersData = this.authService.getUserData();
+        this.loggedInUserId = this.loggedInUsersData.id
+        this.loggedInUserRole = this.loggedInUsersData.role
+        console.log(this.loggedInUserId);
+
         this.getTransfer();
     }
 
     sortData(sort: Sort) {
+        if (sort.active === 'transferDate') {
+            sort.active = 't.date';
+        }
+        if (sort.active === 'fromUserName') {
+            sort.active = 'from_user.user_name';
+        }
+        if (sort.active === 'toUserName') {
+            sort.active = 'to_user.user_name';
+        }
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
@@ -67,9 +83,11 @@ export class TransferComponent implements OnInit {
 
     getTransfer() {
         this.loader = true;
+        this.totalRows = 0;
         this.transferService.getTransfer(this.tableParams).subscribe(
             (newTransfer: any[]) => {
                 this.dataSource = new MatTableDataSource<ITransferData>(newTransfer);
+                console.log(this.dataSource.filteredData)
                 if (newTransfer.length > 0) {
                     this.totalRows = newTransfer[0].total;
                 }
@@ -138,9 +156,9 @@ export class TransferComponent implements OnInit {
         this.tableParams.pageNumber = 1;
         this.getTransfer();
     }
-    changeStatus(id: number): void {
+    changeStatus(transferId: number): void {
         this.transferService
-            .changeStatus({ id: id, status: !this.tableParams.active })
+            .changeStatus({ transferId, status: !this.tableParams.active })
             .subscribe(
                 (response) => {
                     if (!this.tableParams.active) {
@@ -152,6 +170,29 @@ export class TransferComponent implements OnInit {
                             duration: 3000
                         })
                     }
+                    this.getTransfer();
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok',
+                        {
+                            duration: 3000
+                        }
+                    );
+                },
+                () => { }
+            );
+    }
+
+    onApproved(transferId: number): void {
+        this.transferService
+            .approved(transferId)
+            .subscribe(
+                (response) => {
+                    this.snackBar.open('Transfer Approved successfully', 'OK', {
+                        duration: 3000
+                    })
                     this.getTransfer();
                 },
                 (error) => {

@@ -65,6 +65,7 @@ router.get('/api/transfers', transfers.findAll);
 router.post('/api/transfers', transfers.add);
 router.put('/api/transfers', transfers.update);
 router.put('/api/transfers/changeStatus', transfers.changeStatus);
+router.put('/api/transfers/approved', transfers.approved);
 
 router.delete('/api/suppliers', suppliers.delete);
 router.get('/api/suppliers', suppliers.findAll);

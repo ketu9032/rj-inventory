@@ -1,15 +1,9 @@
-
 export interface ITransferData {
-  id: number,  user_id: number, description: string, amount: number,  date: string
-
+    transferId: number, toUserId: number, description: string, amount: number, transferDate: string, isDeleted: boolean, toUserName: string, fromUserId: number, fromUserName: string, isApproved: boolean, isActive: boolean
 }
-
 export interface ITransferParams {
-  id?: number,  userId: number, description: string, amount: number, date: string
-
+    transferId?: number, toUserId: number, description: string, amount: number, transferDate: string, fromUserId: number
 }
-
 export interface ITransferActiveParams {
-    id: number, status: boolean
+    transferId: number, status: boolean
 }
-

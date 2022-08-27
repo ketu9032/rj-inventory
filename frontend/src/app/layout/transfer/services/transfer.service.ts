@@ -8,6 +8,7 @@ import { RestService } from 'src/app/shared/services';
 export class TransferService {
   private url = 'api/transfers';
   private changeStatusURL = 'api/transfers/changeStatus';
+  private approvedURL = 'api/transfers/approved';
 
 
   constructor(private restService: RestService, private commonService: CommonService) {}
@@ -28,7 +29,8 @@ export class TransferService {
   public changeStatus(transfer: ITransferActiveParams) {
     return this.restService.put(`${this.changeStatusURL}`, transfer);
   }
-
-
+  public approved(transferId: number) {
+    return this.restService.put(`${this.approvedURL}`, {transferId});
+  }
 }
 

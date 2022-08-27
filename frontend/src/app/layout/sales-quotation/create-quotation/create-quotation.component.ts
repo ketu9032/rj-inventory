@@ -65,9 +65,9 @@ export class CreateQuotationComponent implements OnInit {
     dueLimit: number;
     grandDueTotal: number;
     shippingPayment;
-    shippingPay;
-    gst;
-    totalDue;
+    shippingPay: number;
+    gst: number;
+    totalDue: number;
     total: number;
     users;
     user_name: string;
@@ -75,6 +75,7 @@ export class CreateQuotationComponent implements OnInit {
     remarks: string = "";
     invoiceNo: number = 0;
     currentDate = new Date();
+    isShippingChecked = false;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISalesQuotationData,
         public dialog: MatDialog,
@@ -123,10 +124,10 @@ export class CreateQuotationComponent implements OnInit {
     saveSalesQuotation(): void {
         console.log(this.shippingPay);
 
-        if(this.shippingPayment === undefined) {
+        if (this.shippingPayment === undefined) {
             this.shippingPayment = 0;
         }
-        if(this.gst === undefined) {
+        if (this.gst === undefined) {
             this.gst = 0;
         }
         const { tier,
@@ -284,7 +285,7 @@ export class CreateQuotationComponent implements OnInit {
 
     clearSalesDetailsForm(): void {
         this.formSupplier.patchValue({
-            item_code :  '',
+            item_code: '',
             qty: '',
             available: '',
             selling_price: ' ',
@@ -346,17 +347,17 @@ export class CreateQuotationComponent implements OnInit {
         this.countTotal.push(this.total)
         this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
         this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-       this.totalDue = this.grandDueTotal
     }
-    totalDueCount() {
-        // this.shippingPay
-      console.log(this.shippingPay);
+    totalShippingDueCount() {
+        this.totalDue = (+this.grandDueTotal + +this.shippingPay)
 
-        // if (this.shippingPayment === undefined || this.gst === undefined ) {
-        //     this.totalDue = this.grandDueTotal
-        // } else {
-            this.totalDue = (+this.grandDueTotal + +this.shippingPay)
-     //   }
+    }
+    totalGstDueCount() {
+        if (this.gst != 0) {
+            this.totalDue = (+this.totalDue + +this.gst)
+
+        }
+
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
@@ -376,5 +377,8 @@ export class CreateQuotationComponent implements OnInit {
             },
             () => { }
         );
+    }
+    showGst() {
+        this.isShippingChecked = true
     }
 }
