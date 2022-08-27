@@ -21,6 +21,7 @@ export class AddTransferComponent implements OnInit {
     isShowLoader = false;
     currentDate = new Date();
     loggedInUser: any;
+    numberRegEx = /\-?\d*\.?\d{1,2}/;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ITransferData,
         public dialog: MatDialog,
@@ -42,19 +43,20 @@ export class AddTransferComponent implements OnInit {
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-            transferDate: ['', Validators.required],
+
             description: ['', Validators.required],
             amount: ['', Validators.required],
+            // amount: ['', Validators.required, Validators.pattern(this.numberRegEx)],
             toUserId: ['', Validators.required],
         });
     }
     saveTransfer(): void {
-        const { toUserId, description, amount, transferDate } = this.formGroup.value;
+        const { toUserId, description, amount } = this.formGroup.value;
         const fromUserId = this.loggedInUser.id;
         this.isShowLoader = true;
         this.transferService
             .addTransfer({
-                toUserId, description, amount, transferDate, fromUserId
+                toUserId, description, amount, fromUserId
             })
             .subscribe(
                 (response) => {
@@ -77,13 +79,13 @@ export class AddTransferComponent implements OnInit {
             );
     }
     updateTransfer(): void {
-        const { toUserId, description, amount, transferDate } = this.formGroup.value;
+        const { toUserId, description, amount } = this.formGroup.value;
         const fromUserId = this.loggedInUser.id;
         this.isShowLoader = true;
         this.transferService
             .editTransfer({
                 transferId: this.data.transferId,
-                toUserId, description, amount, transferDate, fromUserId
+                toUserId, description, amount, fromUserId
             })
             .subscribe(
                 (response) => {
@@ -113,12 +115,12 @@ export class AddTransferComponent implements OnInit {
         }
     }
     fillForm() {
-        const { toUserId, description: description, amount: amount, transferDate } = this.data;
+        const { toUserId, description: description, amount: amount } = this.data;
         this.formGroup.patchValue({
             description,
             amount,
             toUserId,
-            transferDate
+
         });
     }
     getUserDropDown() {

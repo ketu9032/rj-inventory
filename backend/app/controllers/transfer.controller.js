@@ -78,8 +78,8 @@ exports.delete = async (req, res) => {
 };
 exports.add = async (req, res) => {
   try {
-    const { description, amount, transferDate, toUserId } = req.body;
-    if (!description || !amount || !transferDate || !toUserId) {
+    const { description, amount, toUserId } = req.body;
+    if (!description || !amount  || !toUserId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -99,7 +99,7 @@ exports.add = async (req, res) => {
           ${res.locals.tokenData.id},
           '${description}',
           ${amount},
-          '${transferDate}',
+          'now()',
           ${toUserId},
           false
         )
@@ -114,9 +114,9 @@ exports.add = async (req, res) => {
 };
 exports.update = async (req, res) => {
   try {
-    const { transferId, description, amount, transferDate, toUserId } =
+    const { transferId, description, amount, toUserId } =
       req.body;
-    if (!toUserId || !description || !amount || !transferDate || !transferId) {
+    if (!toUserId || !description || !amount  || !transferId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -128,7 +128,7 @@ exports.update = async (req, res) => {
           to_user_id = '${toUserId}',
           description = '${description}',
           amount = '${amount}',
-          date = '${transferDate}'
+          date = 'now()'
         where
           id = ${transferId};
        `
