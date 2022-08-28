@@ -36,10 +36,12 @@ export class AddExpenseComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        console.log(this.data);
+
         this.initializeForm();
         this.getUserDropDown()
         this.getCategoryDropDown('Expense')
-        if (this.data && this.data.id) {
+        if (this.data && this.data.expenseId) {
             this.fillForm();
         }
     }
@@ -86,7 +88,7 @@ export class AddExpenseComponent implements OnInit {
         this.isShowLoader = true;
         this.expenseService
             .editExpense({
-                id: this.data.id,
+                id: this.data.expenseId,
                 description, amount, categoryId, isCashIn
             })
             .subscribe(
@@ -111,7 +113,7 @@ export class AddExpenseComponent implements OnInit {
     }
 
     onSubmit() {
-        if (this.data && this.data.id) {
+        if (this.data && this.data.expenseId) {
             this.updateExpense();
         } else {
             this.saveExpense();
@@ -119,13 +121,12 @@ export class AddExpenseComponent implements OnInit {
     }
 
     fillForm() {
-        const { user_id: userId, description: description, amount: amount, date: date, category_id: categoryId } = this.data;
-        this.formGroup.patchValue({
+       const {  description, amount,  categoryId, isCashIn } = this.data;
+         this.formGroup.patchValue({
             description,
             amount,
-            user: userId,
-            date: date,
-            category: categoryId
+            categoryId,
+            isCashIn
         });
     }
 

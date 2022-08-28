@@ -13,7 +13,7 @@ table {
 }
 
 .margin {
-    margin: 0 7px 0 7px;
+    margin: 0 2px 0 2px;
 }
 
 .field-width {
@@ -47,4 +47,24 @@ th {
 td {
     color: rgb(73 70 70 / 87%);
     font-size: 14px;
+}
+
+.red {
+    background-color: #f3e1e1;
+}
+.green{
+    background-color: #daf8da;
+}
+
+.dark-red {
+    color: red;
+}
+.dark-green{
+    color: green;
+}
+
+
+.approved {
+    font-weight: bold;
+    color: black;
 }

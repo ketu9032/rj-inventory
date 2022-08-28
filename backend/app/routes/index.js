@@ -86,6 +86,7 @@ router.get('/api/expense', expense.findAll);
 router.post('/api/expense', expense.add);
 router.put('/api/expense', expense.update);
 router.put('/api/expense/changeStatus', expense.changeStatus);
+router.put('/api/expense/approved', expense.approved);
 
 router.delete('/api/item', item.delete);
 router.get('/api/item', item.findAll);
