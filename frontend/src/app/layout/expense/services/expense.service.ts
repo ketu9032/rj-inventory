@@ -8,6 +8,7 @@ import { IExpenseActiveParams, IExpenseParams } from 'src/app/models/expense';
 export class ExpenseService {
     private url = 'api/expense';
     private changeStatusURL = 'api/expense/changeStatus';
+    private approvedURL = 'api/expense/approved';
 
 
     constructor(private restService: RestService, private commonService: CommonService) { }
@@ -29,4 +30,8 @@ export class ExpenseService {
     public changeStatus(transfer: IExpenseActiveParams) {
         return this.restService.put(`${this.changeStatusURL}`, transfer);
     }
+    public approved(expenseId: number) {
+        return this.restService.put(`${this.approvedURL}`, {expenseId});
+      }
+
 }

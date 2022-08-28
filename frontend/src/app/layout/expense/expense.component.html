@@ -2,12 +2,50 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
-            <mat-form-field class="field-width">
+              <!-- Select date range -->
+              <mat-form-field class="field-width margin">
+                <mat-label>Select date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                    <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+
+            <ng-container *ngIf="loggedInUserRole !== 'Employees'">
+            <!-- from user -->
+            <mat-form-field class="field-width margin">
+                <mat-label>From User</mat-label>
+                <mat-select [(ngModel)]="userId">
+                    <mat-option value="0">--Select--</mat-option>
+                    <mat-option *ngFor="let user of users" [value]="user.id">
+                        {{user.user_name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            </ng-container>
+                <!-- Category start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>Category</mat-label>
+            <mat-select  required [(ngModel)]="categoryId">
+                <mat-option value="0">--Select--</mat-option>
+                <mat-option *ngFor="let category of categories" [value]="category.id">
+                    {{category.code}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+                <!-- search -->
+            <mat-form-field class="field-width margin">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)=" getExpense()">
             </mat-form-field>
+
             <button color="primary" class="margin btn" mat-raised-button (click)="getExpense()">
                 Search
+            </button>
+            <button color="primary" class="margin btn" mat-raised-button (click)="clearSearch()">
+                Clear Search
             </button>
             <button color="primary" class="margin btn" mat-raised-button (click)="onAddNewExpense()">
                 Add Expense
@@ -30,16 +68,16 @@
 <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="id"
         matSortDirection="asc">
-        <ng-container matColumnDef="id">
+        <ng-container matColumnDef="expenseId">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
             <td mat-cell *matCellDef="let element">
-                {{ element.id}}
+                {{ element.expenseId}}
             </td>
         </ng-container>
-        <ng-container matColumnDef="date">
+        <ng-container matColumnDef="expenseDate">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
             <td mat-cell *matCellDef="let element">
-                {{ element.date }}
+                {{ element.expenseDate | date: 'medium' }}
             </td>
         </ng-container>
         <ng-container matColumnDef="description">
@@ -48,42 +86,53 @@
                 {{ element.description }}
             </td>
         </ng-container>
-        <ng-container matColumnDef="code">
+        <ng-container matColumnDef="categoryName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
             <td mat-cell *matCellDef="let element">
-                {{ element.code }}
+                {{ element.categoryName }}
             </td>
         </ng-container>
         <ng-container matColumnDef="amount">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
             <td mat-cell *matCellDef="let element">{{ element.amount | currency: 'INR' }}</td>
         </ng-container>
-        <ng-container matColumnDef="user_name">
+        <ng-container matColumnDef="userName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
-            <td mat-cell *matCellDef="let element">{{ element.user_name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
         </ng-container>
         <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let element">
+                <ng-container *ngIf="!element.isApproved">
                 <button *ngIf="tableParams.active" mat-icon-button matTooltip="Click to Edit" color="primary"
                     type="button" (click)=" onEditNewExpense(element)">
                     <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
                 <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
-                    color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
+                    color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.expenseId)">
                     <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
                 </button>
+            </ng-container>
             </td>
         </ng-container>
-        <ng-container matColumnDef="print">
-            <th mat-header-cell *matHeaderCellDef>Print</th>
+        <ng-container matColumnDef="isApproved">
+            <th mat-header-cell *matHeaderCellDef>Approve</th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button"
-                    (click)="onEditNewExpense(element)">
-                    <mat-icon aria-label="PRINT" color="primary">print</mat-icon>
-                </button>
+                <ng-container *ngIf="element.isActive">
+                    <button *ngIf="!element.isApproved && element.userId !== loggedInUserId" mat-icon-button
+                        matTooltip="Click here to approve" color="primary" type="button"
+                        (click)="onApproved(element.expenseId)">
+                        <mat-icon aria-label="thumb_up">thumb_up</mat-icon>
+                    </button>
+
+                    <button *ngIf="element.isApproved" mat-icon-button class="green">
+                        <mat-icon>check</mat-icon>
+                    </button>
+                </ng-container>
+
             </td>
         </ng-container>
+    >
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
     </table>
