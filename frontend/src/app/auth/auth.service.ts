@@ -5,24 +5,24 @@ import { RestService } from '../shared/services';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private url = 'api/users';
-  constructor(
-    private router: Router,
-    private restService: RestService
-  ) {
+    private url = 'api/users';
+    constructor(
+        private router: Router,
+        private restService: RestService
+    ) {
 
-  }
+    }
 
-  login(user: { userName: string, password: string }): Observable<any> {
-    return this.restService.post(`${this.url}/login`, user);
-  }
+    login(user: { userName: string, password: string }): Observable<any> {
+        return this.restService.post(`${this.url}/login`, user);
+    }
 
-  logout() {
-    localStorage.removeItem('user');
-    this.router.navigate(['/login']);
-  }
+    logout() {
+        localStorage.removeItem('user');
+        this.router.navigate(['/login']);
+    }
 
-  getUserData() {
-    return JSON.parse(window.localStorage.getItem('user'));
-  }
+    getUserData() {
+        return JSON.parse(window.localStorage.getItem('user'));
+    }
 }

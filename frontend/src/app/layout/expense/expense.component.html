@@ -2,8 +2,8 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
-              <!-- Select date range -->
-              <mat-form-field class="field-width margin">
+            <!-- Select date range -->
+            <mat-form-field class="field-width margin">
                 <mat-label>Select date range</mat-label>
                 <mat-date-range-input [rangePicker]="picker">
                     <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
@@ -13,29 +13,41 @@
                 <mat-date-range-picker #picker></mat-date-range-picker>
             </mat-form-field>
 
-            <ng-container *ngIf="loggedInUserRole !== 'Employees'">
-            <!-- from user -->
+            <ng-container *ngIf="loggedInUsersData.role !== 'Employees'">
+                <!-- from user -->
+                <mat-form-field class="field-width margin">
+                    <mat-label>From User</mat-label>
+                    <mat-select [(ngModel)]="userId">
+                        <mat-option value="0">--Select--</mat-option>
+                        <mat-option *ngFor="let user of userData" [value]="user.id">
+                            {{user.user_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </ng-container>
+            <!-- Category start -->
             <mat-form-field class="field-width margin">
-                <mat-label>From User</mat-label>
-                <mat-select [(ngModel)]="userId">
+                <mat-label>Category</mat-label>
+                <mat-select [(ngModel)]="categoryId">
                     <mat-option value="0">--Select--</mat-option>
-                    <mat-option *ngFor="let user of users" [value]="user.id">
-                        {{user.user_name}}
+                    <mat-option *ngFor="let category of categories" [value]="category.id">
+                        {{category.code}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            </ng-container>
-                <!-- Category start -->
-        <mat-form-field class="field-width margin">
-            <mat-label>Category</mat-label>
-            <mat-select  required [(ngModel)]="categoryId">
-                <mat-option value="0">--Select--</mat-option>
-                <mat-option *ngFor="let category of categories" [value]="category.id">
-                    {{category.code}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-                <!-- search -->
+
+            <!-- cash  -->
+            <mat-form-field class="field-width margin">
+                <mat-label>All Cash</mat-label>
+                <mat-select [(ngModel)]="isCashIn">
+                    <mat-option>--Select--</mat-option>
+                    <mat-option *ngFor="let cash of cashes" [value]="cash.value">
+                        {{cash.text}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <!-- search -->
             <mat-form-field class="field-width margin">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)=" getExpense()">
@@ -69,7 +81,7 @@
     <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="id"
         matSortDirection="asc">
         <ng-container matColumnDef="expenseId">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID#</th>
             <td mat-cell *matCellDef="let element">
                 {{ element.expenseId}}
             </td>
@@ -94,7 +106,13 @@
         </ng-container>
         <ng-container matColumnDef="amount">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
-            <td mat-cell *matCellDef="let element">{{ element.amount | currency: 'INR' }}</td>
+            <td mat-cell *matCellDef="let element">
+                <span [class]="element.isCashIn ? 'dark-green': 'dark-red'">
+                    <b>
+                        {{ element.amount | currency: 'INR' }}
+                    </b>
+                </span>
+            </td>
         </ng-container>
         <ng-container matColumnDef="userName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
@@ -103,38 +121,38 @@
         <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let element">
-                <ng-container *ngIf="!element.isApproved">
-                <button *ngIf="tableParams.active" mat-icon-button matTooltip="Click to Edit" color="primary"
-                    type="button" (click)=" onEditNewExpense(element)">
-                    <mat-icon aria-label="Edit">edit</mat-icon>
-                </button>
-                <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
-                    color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.expenseId)">
-                    <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
-                </button>
-            </ng-container>
+                <ng-container *ngIf="!element.isApproved && element.userId === loggedInUsersData.id">
+                    <button *ngIf="tableParams.active" mat-icon-button matTooltip="Click to Edit" color="primary"
+                        type="button" (click)=" onEditNewExpense(element)">
+                        <mat-icon aria-label="Edit">edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
+                        color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.expenseId)">
+                        <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
+                    </button>
+                </ng-container>
             </td>
         </ng-container>
         <ng-container matColumnDef="isApproved">
             <th mat-header-cell *matHeaderCellDef>Approve</th>
             <td mat-cell *matCellDef="let element">
                 <ng-container *ngIf="element.isActive">
-                    <button *ngIf="!element.isApproved && element.userId !== loggedInUserId" mat-icon-button
+                    <button *ngIf="!element.isApproved && element.userId !== loggedInUsersData.id" mat-icon-button
                         matTooltip="Click here to approve" color="primary" type="button"
                         (click)="onApproved(element.expenseId)">
                         <mat-icon aria-label="thumb_up">thumb_up</mat-icon>
                     </button>
 
-                    <button *ngIf="element.isApproved" mat-icon-button class="green">
-                        <mat-icon>check</mat-icon>
+                    <button *ngIf="element.isApproved" mat-icon-button disabled>
+                        <mat-icon class="approved">check</mat-icon>
                     </button>
                 </ng-container>
 
             </td>
         </ng-container>
-    >
+        >
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
+        <tr mat-row *matRowDef="let element; columns: displayedColumns" [class]="element.isCashIn? 'green': 'red'"></tr>
     </table>
     <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons
         (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">

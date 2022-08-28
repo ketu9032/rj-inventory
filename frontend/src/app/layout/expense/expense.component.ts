@@ -21,6 +21,10 @@ import { AuthService } from 'src/app/auth/auth.service';
     styleUrls: ['./expense.component.scss']
 })
 export class ExpenseComponent implements OnInit {
+    cashes = [
+        { text: 'Cash In', value: true },
+        { text: 'Cash Out', value: false },
+    ]
     displayedColumns: string[] = [
         'expenseId',
         'expenseDate',
@@ -47,19 +51,19 @@ export class ExpenseComponent implements OnInit {
         search: '',
         active: true,
         fromDate: '',
-         toDate: '',
-         userId: '',
-         categoryId: '',
+        toDate: '',
+        userId: '',
+        categoryId: '',
+        isCashIn: null
     }
     categories = []
-    loggedInUserId: any;
     loggedInUsersData: any;
-    loggedInUserRole: any;
-    users = []
-    fromDate: any;
-    toDate:any;
-    userId: any;
-    categoryId: any;
+    userData = []
+    fromDate: string;
+    toDate: string;
+    userId?: number;
+    categoryId?: number;
+    isCashIn?: boolean
 
     constructor(
         public dialog: MatDialog,
@@ -72,14 +76,24 @@ export class ExpenseComponent implements OnInit {
 
     ngOnInit(): void {
         this.loggedInUsersData = this.authService.getUserData();
-        this.loggedInUserId = this.loggedInUsersData.id;
-        this.loggedInUserRole = this.loggedInUsersData.role;
         this.getUserDropDown()
         this.getCategoryDropDown('Expense')
         this.getExpense()
     }
 
     sortData(sort: Sort) {
+        if (sort.active === 'expenseId') {
+            sort.active = 'expense.id';
+        }
+        if (sort.active === 'expenseDate') {
+            sort.active = 'expense.date';
+        }
+        if (sort.active === 'categoryName') {
+            sort.active = 'c.name';
+        }
+        if (sort.active === 'userName') {
+            sort.active = 'u.user_name';
+        }
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
@@ -92,23 +106,19 @@ export class ExpenseComponent implements OnInit {
 
     getExpense() {
         this.loader = true;
-        if (this.userId && +this.userId !== 0 ) {
+        if (this.userId && +this.userId !== 0) {
             this.tableParams.userId = this.userId;
-        } else {
-            this.tableParams.userId = '';
         }
-        if (this.categoryId && +this.categoryId !== 0 ) {
+        if (this.categoryId && +this.categoryId !== 0) {
             this.tableParams.categoryId = this.categoryId;
-        }else {
-            this.tableParams.categoryId = '';
         }
-
         if (this.fromDate) {
             this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
         }
         if (this.toDate) {
             this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
         }
+        this.tableParams.isCashIn = this.isCashIn;
         this.expenseService.getExpense(this.tableParams).subscribe(
             (newCustomers: any[]) => {
                 this.dataSource = new MatTableDataSource<IExpenseData>(newCustomers);
@@ -212,7 +222,7 @@ export class ExpenseComponent implements OnInit {
             .getUserDropDown()
             .subscribe(
                 (response) => {
-                    this.users = response
+                    this.userData = response
                 },
                 (error) => {
                     this.snackBar.open(
@@ -269,11 +279,15 @@ export class ExpenseComponent implements OnInit {
     clearSearch() {
         this.fromDate = '';
         this.toDate = '';
+        this.userId = null;
+        this.categoryId = null;
+        this.isCashIn = undefined;
         this.tableParams.search = '';
         this.tableParams.userId = '';
         this.tableParams.categoryId = '';
         this.tableParams.fromDate = '';
         this.tableParams.toDate = '';
+        this.tableParams.isCashIn = undefined;
         this.getExpense();
     }
 }
