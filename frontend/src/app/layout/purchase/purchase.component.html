@@ -2,15 +2,20 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
-            <mat-form-field class="field-width">
-                <mat-label>Search...</mat-label>
-                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getPurchase()">
-            </mat-form-field>
-            <button color="primary" class="margin btn" mat-raised-button (click)="getPurchase()">
-                Search
-            </button>
+                  <!-- Select date range -->
+                  <mat-form-field class="field-width margin">
+                    <mat-label>Select date range</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                        <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+
+            <!-- All supplier -->
             <mat-form-field class="margin field-width">
-                <mat-label>Select Suppliers</mat-label>
+                <mat-label>All Suppliers</mat-label>
                 <mat-select name="tier" [(ngModel)]="supplierName">
                     <mat-option value="" (click)="toggleCreateAddPurchaseButton()">All suppliers</mat-option>
                     <mat-option *ngFor="let supplier of suppliers" [value]="supplier.company"
@@ -20,6 +25,25 @@
                 </mat-select>
                 <mat-spinner class="selectSupplierLoader" *ngIf="selectSupplierLoader" diameter="20"></mat-spinner>
             </mat-form-field>
+        <!-- All user -->
+        <mat-form-field class="field-width margin">
+         <mat-label>All User</mat-label>
+         <mat-select [(ngModel)]="userId">
+             <mat-option value="0">--Select--</mat-option>
+             <mat-option *ngFor="let user of userData" [value]="user.id">
+                 {{user.user_name}}
+             </mat-option>
+         </mat-select>
+     </mat-form-field>
+       <!-- search  -->
+       <mat-form-field class="field-width">
+        <mat-label>Search...</mat-label>
+        <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getPurchase()">
+    </mat-form-field>
+    <button color="primary" class="margin btn" mat-raised-button (click)="getPurchase()">
+        Search
+    </button>
+     <!-- download  -->
             <button color="primary" class="margin btn" mat-raised-button>
                 <mat-icon class="icon">cloud_download</mat-icon>
                 Download

@@ -143,7 +143,7 @@ export class AddSalesComponent implements OnInit {
                 tier: this.tier,
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
-                customer: this.com,
+                customer: this.companyName,
                 payment: this.currentPayment,
                 other_payment: this.otherPayment,
                 sales: this.sales,
@@ -301,7 +301,7 @@ export class AddSalesComponent implements OnInit {
     }
     count() {
         if (this.formSupplier.value.qty !== '') {
-            this.total = (this.formSupplier.value.qty * this.formSupplier.value.selling_price)
+            this.total = +(+this.formSupplier.value.qty * +this.formSupplier.value.selling_price)
             this.formSupplier.patchValue({
                 total: this.total
             })

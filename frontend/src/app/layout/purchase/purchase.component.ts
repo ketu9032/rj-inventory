@@ -10,6 +10,7 @@ import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { ItemsService } from '../items/services/items.service';
 import { SalesService } from '../sales/services/sales.service';
+import { UserService } from '../user/services/user.service';
 import { AddPurchaseComponent } from './add-purchase/add-purchase.component';
 import { PrintComponent } from './print/print.component';
 import { PurchaseService } from './services/purchase.service';
@@ -60,18 +61,24 @@ export class PurchaseComponent implements OnInit {
     }
     customer;
     suppliers;
+    fromDate: string;
+    toDate: string;
+    userData = [];
+    userId? : number;
     constructor(
         public dialog: MatDialog,
         private salesService: SalesService,
         private purchaseService: PurchaseService,
         public snackBar: MatSnackBar,
+        private userService: UserService,
         public authService: AuthService
     ) { }
     ngOnInit(): void {
        //this.getCustomerDropDown();
+       this.getUserDropDown()
         this.getSuppliersDropDown()
         this.getPurchase();
-        this.user = this.authService.getUserData();
+      //  this.user = this.authService.getUserData();
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
@@ -254,4 +261,22 @@ export class PurchaseComponent implements OnInit {
             );
     }
 
+    getUserDropDown() {
+        this.userService
+            .getUserDropDown()
+            .subscribe(
+                (response) => {
+                    this.userData = response
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
 }

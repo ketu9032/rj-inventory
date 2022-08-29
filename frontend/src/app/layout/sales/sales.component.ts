@@ -4,6 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ISalesData } from 'src/app/models/sales';
 import { IMatTableParams } from 'src/app/models/table';
@@ -44,7 +45,7 @@ export class SalesComponent implements OnInit {
     totalRows: number;
     customerName: string;
     customers = [];
-    user: any;
+    loggedInUsersData: any;
     payment: number = 0;
     allFiledCustomer = []
     tableParams: IMatTableParams = {
@@ -56,6 +57,8 @@ export class SalesComponent implements OnInit {
         active: true
     }
     customer;
+    currentDate = new Date();
+    date
     constructor(
         public dialog: MatDialog,
         private salesService: SalesService,
@@ -63,9 +66,10 @@ export class SalesComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit(): void {
+        this.date = moment(this.currentDate).format('YYYY-MM-DD');
         this.getCustomerDropDown();
         this.getSales();
-        this.user = this.authService.getUserData();
+        this.loggedInUsersData = this.authService.getUserData();
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
