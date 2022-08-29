@@ -83,7 +83,10 @@
         <ng-container matColumnDef="expenseId">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ID#</th>
             <td mat-cell *matCellDef="let element">
-                {{ element.expenseId}}
+                <b>
+                    {{ element.expenseId}}
+
+                </b>
             </td>
         </ng-container>
         <ng-container matColumnDef="expenseDate">
@@ -95,13 +98,13 @@
         <ng-container matColumnDef="description">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
             <td mat-cell *matCellDef="let element">
-                {{ element.description }}
+                {{ element.description | titlecase }}
             </td>
         </ng-container>
         <ng-container matColumnDef="categoryName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
             <td mat-cell *matCellDef="let element">
-                {{ element.categoryName }}
+                {{ element.categoryName | uppercase }}
             </td>
         </ng-container>
         <ng-container matColumnDef="amount">
@@ -116,7 +119,7 @@
         </ng-container>
         <ng-container matColumnDef="userName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
-            <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
+            <td mat-cell *matCellDef="let element"><b>{{ element.userName | uppercase }}</b></td>
         </ng-container>
         <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef>Actions</th>

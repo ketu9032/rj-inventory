@@ -27,8 +27,8 @@ export class TransferComponent implements OnInit {
         'amount',
         'fromUserName',
         'toUserName',
-        'isApproved',
         'action',
+        'isApproved',
     ];
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;

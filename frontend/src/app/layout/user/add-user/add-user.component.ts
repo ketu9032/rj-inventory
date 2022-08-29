@@ -33,7 +33,7 @@ export class AddUserComponent implements OnInit {
     transfer: false,
     analysis: false,
     roj_med: false,
-    users: false,
+    users: true,
     history: false
   };
   isLoggedInUserIsOwner = false;
