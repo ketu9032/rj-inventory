@@ -128,15 +128,11 @@ export class AddSalesComponent implements OnInit {
         });
     }
     saveSales(): void {
-        const pendingDueTotal = +this.totalPrice + +this.lastBillDue
-        this.company
-        const {
-            invoice_no,
-        } = this.formGroup.value;
+        const pendingDueTotal = +this.totalPrice + +this.lastBillDue;
+
         this.isShowLoader = true;
         this.salesService
             .addSales({
-                invoice_no,
                 qty: this.Qty,
                 amount: this.totalPrice,
                 user_name: this.users.user_name,

@@ -13,7 +13,7 @@ exports.findAll = async (req, res) => {
         (
            no::text ilike '%${search}%'
           or s.date::text ilike '%${search}%'
-          or invoice_no::text ilike '%${search}%'
+          or bill_no::text ilike '%${search}%'
           or qty::text ilike '%${search}%'
           or amount::text ilike '%${search}%'
           or total_due::text ilike '%${search}%'
@@ -35,7 +35,7 @@ exports.findAll = async (req, res) => {
       s.id,
       no,
       s.date,
-      invoice_no,
+      bill_no,
       qty,
       amount,
       total_due,
@@ -83,7 +83,7 @@ exports.delete = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const {
-      invoice_no,
+
       qty,
       amount,
       total_due,
@@ -100,7 +100,7 @@ exports.add = async (req, res) => {
     } = req.body;
     // if (
     //   !date ||
-    //   !invoice_no ||
+    //   !bill_no ||
     //   !qty ||
     //   !amount ||
     //   !total_due ||
@@ -118,7 +118,7 @@ exports.add = async (req, res) => {
     const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
-       invoice_no,
+       bill_no,
        qty,
        amount,
        total_due,
@@ -133,7 +133,7 @@ exports.add = async (req, res) => {
        amount_pd_total,
        token
      )
-    VALUES(now(), '${invoice_no}', '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
+    VALUES(now(), (select count(bill_no)+1 from sales  where customer = '${customer}'), '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
 
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesId = rows[0].id;
@@ -163,7 +163,7 @@ exports.add = async (req, res) => {
 exports.addSales = async (req, res) => {
   try {
     const {
-      invoice_no,
+      bill_no,
       qty,
       amount,
       total_due,
@@ -176,7 +176,7 @@ exports.addSales = async (req, res) => {
     } = req.body;
     // if (
     //   !date ||
-    //   !invoice_no ||
+    //   !bill_no ||
     //   !qty ||
     //   !amount ||
     //   !total_due ||
@@ -193,7 +193,7 @@ exports.addSales = async (req, res) => {
     const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
-       invoice_no,
+       bill_no,
        qty,
        amount,
        total_due,
@@ -205,7 +205,7 @@ exports.addSales = async (req, res) => {
        amount_pd_total,
        token
      )
-    VALUES(now(), '${invoice_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}', '${pending_due}', '${customer}', '${amount_pd_total}',(select count(token)+1 from sales  where date::date = now()::date)
+    VALUES(now(), '${bill_no}', '${qty}', '${amount}', '${total_due}','${user_name}', '${tier}', '${remarks}', '${pending_due}', '${customer}', '${amount_pd_total}',(select count(token)+1 from sales  where date::date = now()::date)
     )`;
     await pool.query(insertSalesQuotationQuery);
     res.status(STATUS_CODE.SUCCESS).send();
@@ -218,15 +218,15 @@ exports.addSales = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const { id, date, invoice_no, ref_no, companyId } = req.body;
-    if (!id || !date || !invoice_no || !ref_no || !companyId) {
+    const { id, date, bill_no, ref_no, companyId } = req.body;
+    if (!id || !date || !bill_no || !ref_no || !companyId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
     await pool.query(
-      `UPDATE sales SET date='${date}',invoice_no='${invoice_no}', ref_no='${ref_no}', company_id='${companyId}' where id = ${id};
+      `UPDATE sales SET date='${date}',bill_no='${bill_no}', ref_no='${ref_no}', company_id='${companyId}' where id = ${id};
        `
     );
     res.status(STATUS_CODE.SUCCESS).send();
