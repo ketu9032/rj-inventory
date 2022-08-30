@@ -28,49 +28,34 @@ export class AddSalesComponent implements OnInit {
         'action',
     ];
     formSupplier: FormGroup;
-    formGroup: FormGroup;
     formBill: FormGroup;
     isShowLoader = false;
-    public defaultPageSize = PAGE_SIZE;
-    supplier = []
-    dataSource: any = [];
-    suppliers = []
-    supplierDataSource: any = [];
-    totalRows: number;
-    customers = [];
+    salesItemDataSource: any = [];
+    selectItemLoader: boolean = false;
     items = [];
     tableParams: IMatTableParams = {
-        pageSize: this.defaultPageSize,
+        pageSize: PAGE_SIZE,
         pageNumber: 1,
         orderBy: 'id',
         direction: "desc",
         search: '',
         active: true
     }
-    selectCustomerLoader: boolean = false;
-    selectItemLoader: boolean = false;
-    lastBillNo: number;
-    countQty = [];
-    Qty: number;
-    countTotal = [];
-    totalPrice: number;
-    lastBillDue: number;
-    dueLimit: number;
-    grandDueTotal: number;
-    currentPayment: number;
+    totalQty: number = 0;
+    totalPrice: number = 0;
+    lastBillDue: number = 0;
+    dueLimit: number = 0;
+    grandDueTotal: number = 0;
+    currentPayment: number = 0;
     otherPayment: number = 0;
-    totalDue: number;
-    sales = [];
-    total: number;
-    users;
-    customer;
-    companyName;
-    com: string = "ketan";
+    totalDue: number = 0;
+    saleItems = [];
+    total: number = 0;
+    loggedInUser;
+    customerData: any;
+    customerName: string;
     tier: string = '';
-    remarks: string = " ";
-    company: number = 75
-
-    invoice_no:number = 0;
+    remarks: string;
     currentDate = new Date();
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISalesData,
@@ -86,35 +71,26 @@ export class AddSalesComponent implements OnInit {
     ) { }
     ngOnInit() {
         console.log(this.data);
-        this.users = this.authService.getUserData();
-        this.customer = this.data.customer[0]
-        this.companyName = this.customer.company
-        this.lastBillDue = this.customer.balance
-        this.grandDueTotal = this.customer.balance
-        this.dueLimit = this.customer.due_limit
-        this.tier = this.customer.tier_code
-        this.totalDue = this.customer.balance
-        this.initializeForm();
+        this.loggedInUser = this.authService.getUserData();
+        this.customerData = this.data.customer[0]
+        this.customerName = this.customerData.company
+        debugger
+        this.lastBillDue = this.customerData.balance
+        this.grandDueTotal = this.customerData.balance
+        this.dueLimit = this.customerData.due_limit
+        this.tier = this.customerData.tier_code
+        this.totalDue = this.customerData.balance
         this.initializeSupplierForm();
         this.initializeSalesBillForm()
-        this.getCustomerDropDown();
         this.getItemDropDown();
-        //  this.getSuppliersDropDown()
         if (this.data.id) {
             this.fillForm();
-            this.getItemSupplier();
+            this.getItemsBySalesId();
         }
-    }
-    initializeForm(): void {
-        this.formGroup = this.formBuilder.group({
-            company: ['', Validators.required],
-            date: ['', Validators.required],
-            invoice_no: ['', Validators.required],
-        });
     }
     initializeSupplierForm(): void {
         this.formSupplier = this.formBuilder.group({
-            item_code: ['', Validators.required],
+            item_id: ['', Validators.required],
             qty: ['', Validators.required],
             available: ['', Validators.required],
             total: ['', Validators.required],
@@ -122,29 +98,28 @@ export class AddSalesComponent implements OnInit {
         });
     }
     initializeSalesBillForm(): void {
-        this.formBill= this.formBuilder.group({
+        this.formBill = this.formBuilder.group({
             payment: ['', Validators.required],
-            remarks: ['', Validators.required]
+            remarks: ['']
         });
     }
     saveSales(): void {
         const pendingDueTotal = +this.totalPrice + +this.lastBillDue;
-
         this.isShowLoader = true;
         this.salesService
             .addSales({
-                qty: this.Qty,
+                qty: this.totalQty,
                 amount: this.totalPrice,
-                user_name: this.users.user_name,
+                user_name: this.loggedInUser.user_name,
                 pending_due: this.lastBillDue,
                 total_due: this.totalDue,
                 tier: this.tier,
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
-                customer: this.companyName,
+                customer: this.customerName,
                 payment: this.currentPayment,
                 other_payment: this.otherPayment,
-                sales: this.sales,
+                sales: this.saleItems,
                 amount_pd_total: pendingDueTotal
             })
             .subscribe(
@@ -168,24 +143,18 @@ export class AddSalesComponent implements OnInit {
             );
     }
     // updateSalesQuotation(): void {
-    //     const {
-    //         date,
-    //         invoice_no,
-    //     } = this.formGroup.value;
+
     //     this.isShowLoader = true;
-    //     this.salesQuotationService
-    //         .editSalesQuotation({
+    //     this.salesService
+    //         .editSales({
     //             id: this.data.id,
-    //             date,
-    //             invoice_no,
-    //             // companyId: this.company,
-    //             qty: this.Qty,
+    //             qty: this.totalQty,
     //             amount: this.currentPayment,
     //             total_due: this.totalDue,
     //             user_name: this.user_name,
     //             tier: this.tier,
     //             remarks: this.remarks,
-    //             sales: this.sales
+    //             sales: this.sales,
     //         })
     //         .subscribe(
     //             (response) => {
@@ -217,85 +186,49 @@ export class AddSalesComponent implements OnInit {
     }
     addSalesQuotation() {
         const {
-            item_code,
+            item_id,
             qty,
             available,
             selling_price,
             total
-        } = this.formSupplier.value
+        } = this.formSupplier.value;
+        const item = this.items.find(x => x.id === item_id);
         const sale = {
-            item_code,
+            item_code: item.item_code,
+            item_id,
             qty,
             available,
             selling_price,
             total
         }
-        this.sales.push(sale)
-        this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.sales);
+        this.saleItems.push(sale);
+        this.totalQty = 0
+        this.totalPrice = 0;
+        this.saleItems.forEach(saleItem => {
+            this.totalQty += saleItem.qty;
+            this.totalPrice += saleItem.total;
+        });
+        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
+        if (qty <= 0) {
+            this.formBill.get("remarks").setValidators(Validators.required);
+            setTimeout(() => {
+                this.formBill.get("remarks").updateValueAndValidity()
+            })
+        }
+        this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+        this.clearSalesDetailsForm();
     }
     fillForm() {
-        const {
-            date,
-            invoice_no,
-        } = this.data;
-        this.formGroup.patchValue({
-            date,
-            invoice_no,
-        })
-        this.totalPrice = this.data.amount,
-            this.Qty = this.data.qty
+            this.totalPrice = this.data.amount,
+            this.totalQty = this.data.qty
             this.lastBillDue = this.data.pending_due,
             this.totalDue = this.data.total_due,
             this.tier = this.data.tier,
             this.grandDueTotal = this.data.grand_total,
             this.remarks = this.data.remarks,
-            this.companyName = this.data.customer,
+            this.customerName = this.data.customer,
             this.currentPayment = this.data.payment,
             this.otherPayment = this.data.other_payment
-    }
-    // supplierFillForm(suppliersId) {
-    //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
-    //     this.formSupplier.patchValue({
-    //         salesQuotationId: this.data.id, item_code, item_supplier_rate: itemSupplierRate
-    //     });
-    // }
-    // getSuppliersDropDown() {
-    //     this.itemsSuppliersService
-    //         .getItemSupplierDropDown()
-    //         .subscribe(
-    //             (response) => {
-    //                 this.suppliersCompany = response;
-    //             },
-    //             (error) => {
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok', {
-    //                     duration: 3000
-    //                 }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-    // }
-    getItemSupplier() {
-        this.supplierDataSource = [];
-        this.suppliers = []
-        this.tableParams.itemId = this.data.id;
-        this.itemsSuppliersService.getItemSupplier(this.tableParams).subscribe(
-            (newItemSupplier: any[]) => {
-                this.suppliers.push(...newItemSupplier);
-                this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
-                if (newItemSupplier.length > 0) {
-                    this.totalRows = newItemSupplier[0].total;
-                }
-            },
-            (error) => {
-                this.snackBar.open(error.error.message || error.message, 'Ok', {
-                    duration: 3000
-                });
-            },
-            () => { }
-        );
     }
     count() {
         if (this.formSupplier.value.qty !== '') {
@@ -304,26 +237,6 @@ export class AddSalesComponent implements OnInit {
                 total: this.total
             })
         }
-    }
-    getCustomerDropDown() {
-        this.selectCustomerLoader = true;
-        this.salesQuotationService
-            .getCustomerDropDown()
-            .subscribe(
-                (response) => {
-                    this.customers = response;
-                    this.selectCustomerLoader = false;
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
     }
     getItemDropDown() {
         this.selectItemLoader = true;
@@ -345,20 +258,12 @@ export class AddSalesComponent implements OnInit {
                 () => { }
             );
     }
-    add() {
-        this.countQty.push(this.formSupplier.value.qty)
-        this.Qty = this.countQty.reduce((acc, cur) => acc + cur, 0);
-        this.countTotal.push(this.total)
-        this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
-        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-    }
     totalDueCount() {
-            this.totalDue = this.grandDueTotal - this.currentPayment
-
+        this.totalDue = this.grandDueTotal - this.currentPayment
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
-            item_code: item.item_code,
+            item_id: item.id,
             available: item.int_qty,
             selling_price: item.silver
         });
@@ -366,5 +271,26 @@ export class AddSalesComponent implements OnInit {
     fillDueAndDueLimit(customer) {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
+    }
+    removeItem(element): void {
+        for (let index = 0; index < this.saleItems.length; index++) {
+        const filteredElement = this.saleItems[index];
+        if(filteredElement.item_id === element){
+           this.saleItems.splice(this.saleItems[index])
+           this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+        }
+        }
+        console.log(element);
+    }
+    getItemsBySalesId() {
+    }
+    clearSalesDetailsForm(): void {
+        this.formSupplier.patchValue({
+            item_id: '',
+            qty: '',
+            available: '',
+            selling_price: ' ',
+            total: ''
+        });
     }
 }

@@ -109,7 +109,7 @@ export class SalesComponent implements OnInit {
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                data: { customer: this.allFiledCustomer }
+                 data: { customer: this.allFiledCustomer }
 
             })
             .afterClosed()
@@ -121,7 +121,6 @@ export class SalesComponent implements OnInit {
     }
     customerData(customer) {
         this.allFiledCustomer.push(customer)
-        //      this.allFiledCustomer.push(this.customer)
     }
     onEditNewCustomers(element) {
         this.dialog
@@ -193,8 +192,6 @@ export class SalesComponent implements OnInit {
                 (response) => {
                     this.customers = response;
                     this.selectCustomerLoader = false;
-                    console.log(this.customers);
-
                 },
                 (error) => {
                     this.snackBar.open(

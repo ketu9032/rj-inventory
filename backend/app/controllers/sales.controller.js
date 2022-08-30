@@ -134,21 +134,21 @@ exports.add = async (req, res) => {
        token
      )
     VALUES(now(), (select count(bill_no)+1 from sales  where customer = '${customer}'), '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
-
+console.log(insertSalesQuotationQuery);
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
       const element = sales[index];
       const insertSalesQuotationDetailsQuery = `INSERT INTO sales_bill
       (
-        item_code,
+        item_id,
         qty,
         available,
         selling_price,
         total,
         sales_id
         )
-        VALUES('${element.item_code}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesId}') ;
+        VALUES('${element.item_id}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesId}') ;
         `;
       await pool.query(insertSalesQuotationDetailsQuery);
     }
