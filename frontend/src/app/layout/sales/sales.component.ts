@@ -104,6 +104,7 @@ export class SalesComponent implements OnInit {
         );
     }
     onAddNewSales(): void {
+        this.customerName = '';
         this.dialog
             .open(AddSalesComponent, {
                 width: '1000px',
