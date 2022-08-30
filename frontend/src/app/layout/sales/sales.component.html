@@ -12,8 +12,8 @@
             <mat-form-field class="margin field-width">
                 <mat-label>Select Customer</mat-label>
                 <mat-select name="tier" [(ngModel)]="customerName">
-                    <mat-option value="" (click)="toggleCreateAddSalesButton()">All Company</mat-option>
-                    <mat-option *ngFor="let customer of customers" [value]="customer"
+                    <mat-option value=""  (click)="toggleCreateAddSalesButton()">All Company</mat-option>
+                    <mat-option *ngFor="let customer of customers" [value]="customer.company"
                         (click)="toggleCreateAddSalesButton(); customerData(customer); find(customer.id)">
                         {{customer.company | uppercase}}
                     </mat-option>
@@ -112,19 +112,25 @@
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let element">
-                    <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
-                        (click)="onEditNewCustomers(element)">
-                        <mat-icon aria-label="Edit">edit</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
-                    color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
-                    <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
-                </button>
+
+                    <ng-container *ngIf="loggedInUsersData.user_name === element.user_name && (element.date | date: 'M/d/yy')  ===  (currentDate | date: 'M/d/yy')">
+                         <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
+                             (click)="onEditNewCustomers(element)">
+                             <mat-icon aria-label="Edit">edit</mat-icon>
+                         </button>
+                         <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
+                         color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
+                         <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
+                         </button>
+                   </ng-container>
+
+                <ng-container *ngIf="element.qty < 0  && loggedInUsersData.role !== 'Employees' && loggedInUsersData.user_name !== element.user_name ">
+
                     <button mat-icon-button matTooltip="Click to thumb" color="primary" type="button"
                         (click)="onEditNewCustomers(element)">
                         <mat-icon aria-label="like">thumb_up</mat-icon>
                     </button>
-
+                </ng-container>
 
 
                 </td>
@@ -144,7 +150,8 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
+            <tr mat-row *matRowDef="let element; columns: displayedColumns" [class]="element.qty < 0  ? 'red'
+                : 'white'"></tr>
         </table>
 
         <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons

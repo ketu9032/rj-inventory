@@ -14,9 +14,9 @@
             </mat-form-field>
 
             <ng-container *ngIf="loggedInUsersData.role !== 'Employees'">
-                <!-- from user -->
+                <!-- All user -->
                 <mat-form-field class="field-width margin">
-                    <mat-label>From User</mat-label>
+                    <mat-label>All User</mat-label>
                     <mat-select [(ngModel)]="userId">
                         <mat-option value="0">--Select--</mat-option>
                         <mat-option *ngFor="let user of userData" [value]="user.id">

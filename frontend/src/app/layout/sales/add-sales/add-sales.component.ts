@@ -90,8 +90,10 @@ export class AddSalesComponent implements OnInit {
         this.customer = this.data.customer[0]
         this.companyName = this.customer.company
         this.lastBillDue = this.customer.balance
+        this.grandDueTotal = this.customer.balance
         this.dueLimit = this.customer.due_limit
         this.tier = this.customer.tier_code
+        this.totalDue = this.customer.balance
         this.initializeForm();
         this.initializeSupplierForm();
         this.initializeSalesBillForm()
@@ -143,7 +145,7 @@ export class AddSalesComponent implements OnInit {
                 tier: this.tier,
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
-                customer: this.com,
+                customer: this.companyName,
                 payment: this.currentPayment,
                 other_payment: this.otherPayment,
                 sales: this.sales,
@@ -301,7 +303,7 @@ export class AddSalesComponent implements OnInit {
     }
     count() {
         if (this.formSupplier.value.qty !== '') {
-            this.total = (this.formSupplier.value.qty * this.formSupplier.value.selling_price)
+            this.total = (+this.formSupplier.value.qty * +this.formSupplier.value.selling_price)
             this.formSupplier.patchValue({
                 total: this.total
             })
@@ -355,7 +357,8 @@ export class AddSalesComponent implements OnInit {
         this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
     }
     totalDueCount() {
-        this.totalDue = this.grandDueTotal - this.currentPayment
+            this.totalDue = this.grandDueTotal - this.currentPayment
+
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
