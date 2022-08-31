@@ -337,14 +337,35 @@ exports.onCheckMobile = async (req, res) => {
     });
   }
 };
-exports.getCdfTOCustomerDropDown = async(req, res) => {
+exports.getCdfTOCustomerDropDown = async (req, res) => {
   try {
-      const response = await pool.query(`select id, company,balance, tier_id, tier_code, due_limit FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active'`);
+    const response = await pool.query(
+      `select id, company,balance, tier_id, tier_code, due_limit FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active'`
+    );
 
-      res.status(STATUS_CODE.SUCCESS).send(response.rows);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
-      res.status(STATUS_CODE.ERROR).send({
-          message: error.message || MESSAGES.COMMON.ERROR
-      });
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+exports.getCustomerById = async (req, res) => {
+  try {
+    const { customerId } = req.query;
+    const response = await pool.query(
+      `select id, company,balance, tier_id, tier_code, due_limit FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active' and id = ${customerId} limit 1`
+    );
+    if (response.rows && response.rows.length > 0) {
+      return res.status(STATUS_CODE.SUCCESS).send(response.rows[0]);
+    }
+    return res.status(STATUS_CODE.ERROR).send({
+      message: MESSAGES.COMMON.DATA_NOT_FOUND
+    });
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
   }
 };

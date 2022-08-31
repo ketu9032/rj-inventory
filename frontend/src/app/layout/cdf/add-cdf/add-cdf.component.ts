@@ -19,8 +19,9 @@ export class AddCdfComponent implements OnInit {
     references = [{ value: 'Person/Company', id: 1 }, { value: 'Google', id: 2 }, { value: 'IndiaMart', id: 3 }, { value: 'Other', id: 4 }];
     ListOfSites = [{ value: 'Flipkart', id: 1 }, { value: 'Snapdeal', id: 2 }, { value: 'Amazon', id: 3 }, { value: 'Paytm', id: 4 }, { value: 'Limeraod', id: 5 }, { value: 'Shopclues', id: 6 }, { value: 'Facebook/Instagram', id: 7 }, { value: 'Offline', id: 8 }];
 
+    brands: string[] = ['Titan', 'Volga', 'Rolex'];
     platforms: string[] =  ['Flipkart', 'Amazon', 'Offline'];
-   // platforms: string[] =  ['Flipkart', 'Snapdeal', 'Amazon', 'Paytm',  'Limeraod',  'Shopclues', 'Facebook/Instagram', 'Offline'];
+    displayNames: string[] =  [];
 
 
     currentDate = new Date();
@@ -31,7 +32,6 @@ export class AddCdfComponent implements OnInit {
     isCompanyExist: boolean = true;
     isMobileExist: boolean = true;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-    brands: string[] = ['Titan', 'Volga', 'Rolex'];
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ICdfData,
         public dialog: MatDialog,
@@ -53,11 +53,9 @@ export class AddCdfComponent implements OnInit {
         if ((value).trim()) {
             this.brands.push(value);
         }
-        console.log(this.brands);
         if (input) {
             input.value = '';
         }
-        console.log(this.brands);
     }
     removeBrands(brands): void {
         const index = this.brands.indexOf(brands);
@@ -71,16 +69,30 @@ export class AddCdfComponent implements OnInit {
         if ((value).trim()) {
             this.platforms.push(value);
         }
-        console.log(this.platforms);
         if (input) {
             input.value = '';
         }
-        console.log(this.platforms);
     }
     removePlatform(platforms): void {
         const index = this.platforms.indexOf(platforms);
         if (index >= 0) {
             this.platforms.splice(index, 1);
+        }
+    }
+    addDisplayNameForm(event: MatChipInputEvent): void {
+        const input = event.input;
+        const value = event.value;
+        if ((value).trim()) {
+            this.displayNames.push(value);
+        }
+        if (input) {
+            input.value = '';
+        }
+    }
+    removeDisplayName(displayName): void {
+        const index = this.displayNames.indexOf(displayName);
+        if (index >= 0) {
+            this.displayNames.splice(index, 1);
         }
     }
     initializeForm(): void {

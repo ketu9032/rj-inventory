@@ -11,10 +11,9 @@
             </button>
             <mat-form-field class="margin field-width">
                 <mat-label>Select Customer</mat-label>
-                <mat-select name="tier" [(ngModel)]="customerName">
-                    <mat-option value=""  (click)="toggleCreateAddSalesButton()">All Customer</mat-option>
-                    <mat-option *ngFor="let customer of customers" [value]="customer.company"
-                        (click)="toggleCreateAddSalesButton(); customerData(customer); find(customer.id)">
+                <mat-select name="tier" [(ngModel)]="customerId" (selectionChange)="toggleCreateAddSalesButton();">
+                    <mat-option>All Customer</mat-option>
+                    <mat-option *ngFor="let customer of customers" [value]="customer.id">
                         {{customer.company | uppercase}}
                     </mat-option>
                 </mat-select>
@@ -24,7 +23,7 @@
                 <mat-icon class="icon">cloud_download</mat-icon>
                 Download
             </button>
-            <button color="primary" class="margin" mat-raised-button *ngIf="!isShow" (click)="onAddNewSales()">
+            <button color="primary" class="margin" mat-raised-button *ngIf="isShow" (click)="onAddNewSales()">
                 Add New Sales
             </button>
         </div>
@@ -60,7 +59,7 @@
             </ng-container>
 
             <ng-container matColumnDef="customer">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>company</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.customer | uppercase }}
                 </td>

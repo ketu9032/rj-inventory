@@ -68,7 +68,6 @@ exports.findAll = async (req, res) => {
       order by ${orderBy} ${direction}
       OFFSET ${offset} LIMIT ${pageSize}`;
 
-    console.log(query);
     const response = await pool.query(query);
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

@@ -41,13 +41,12 @@ export class SalesComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     selectCustomerLoader: boolean = false;
-    isShow: boolean = true;
+    isShow: boolean = false;
     totalRows: number;
-    customerName: string;
+    customerId: number;
     customers = [];
     loggedInUsersData: any;
     payment: number = 0;
-    allFiledCustomer = []
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -104,12 +103,11 @@ export class SalesComponent implements OnInit {
         );
     }
     onAddNewSales(): void {
-        this.customerName = '';
         this.dialog
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                 data: { customer: this.allFiledCustomer }
+                 data: { customerId: this.customerId }
 
             })
             .afterClosed()
@@ -119,15 +117,12 @@ export class SalesComponent implements OnInit {
                 }
             });
     }
-    customerData(customer) {
-        this.allFiledCustomer.push(customer)
-    }
     onEditNewCustomers(element) {
         this.dialog
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                data: element
+                data: {customerId: this.customerId, salesId: element.id}
             })
             .afterClosed()
             .subscribe((result) => {
@@ -177,11 +172,9 @@ export class SalesComponent implements OnInit {
 
     }
     toggleCreateAddSalesButton() {
-        if (this.customerName
-            === '') {
+        this.isShow = false;
+        if (this.customerId) {
             this.isShow = true
-        } else {
-            this.isShow = false
         }
     }
     getCustomerDropDown() {
@@ -218,12 +211,7 @@ export class SalesComponent implements OnInit {
                 }
             });
     }
-    // find(element) {
-    //     this.customer = this.customers.find(val => {
-    //         return (val.id) === element
-    //     })
 
-    // }
     paymentCount() {
         this.payment = this.customer.amount + this.customer.balance
     }

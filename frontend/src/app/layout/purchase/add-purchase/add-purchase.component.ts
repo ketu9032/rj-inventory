@@ -107,7 +107,7 @@ export class AddPurchaseComponent implements OnInit {
         if (this.data.id) {
             this.fillForm();
             // this.getItemSupplier();
-            this.test();
+            this.getPurchaseSupplier();
         }
     }
     initializeForm(): void {
@@ -366,12 +366,14 @@ export class AddPurchaseComponent implements OnInit {
     //         () => { }
     //     );
     // }
-    test() {
+    getPurchaseSupplier() {
         this.supplierDataSource = [];
         this.suppliers = []
         this.tableParams.itemId = this.data.id;
         this.purchaseDetailsService.getPurchaseDetail(this.tableParams).subscribe(
             (response) => {
+                console.log(response);
+
                 this.findPurchaseDetails = response.filter(val => {
                     return (val.purchase_id) === this.data.id
                 })
@@ -446,7 +448,7 @@ export class AddPurchaseComponent implements OnInit {
     removePurchaseDetails(element): void {
         this.purchaseDetailsService.removePurchaseDetail(element.id).subscribe(
             (response) => {
-                this.test();
+                this.getPurchaseSupplier();
             },
             () => { }
         );

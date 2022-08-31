@@ -7,6 +7,7 @@ import { ISalesActiveParams, ISalesParams, ISalesQuotationToSalesParams } from '
 @Injectable({ providedIn: 'root'})
 export class SalesService {
   private salesURL = 'api/sales';
+  private getSalesByIdURL = 'api/getSalesById';
   private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
   private   getItemDropDownURL  = 'api/item/getItemDropDown';
   private salesChangeStatusURl = 'api/sales/changeStatus';
@@ -34,5 +35,8 @@ export class SalesService {
   }
   public getItemDropDown() {
     return this.restService.get<any>(`${this.getItemDropDownURL}`);
+  }
+  public getSalesById(salesId: number) {
+    return this.restService.get<any>(`${this.getSalesByIdURL}?salesId=${salesId}`);
   }
 }
