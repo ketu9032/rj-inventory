@@ -7,7 +7,7 @@ import { ISalesActiveParams, ISalesParams, ISalesQuotationToSalesParams } from '
 @Injectable({ providedIn: 'root'})
 export class SalesService {
   private salesURL = 'api/sales';
-  private getSalesByIdURL = 'api/getSalesById';
+  private getSalesByIdURL = 'api/sales/getSalesById';
   private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
   private   getItemDropDownURL  = 'api/item/getItemDropDown';
   private salesChangeStatusURl = 'api/sales/changeStatus';

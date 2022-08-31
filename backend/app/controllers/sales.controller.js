@@ -46,6 +46,7 @@ exports.findAll = async (req, res) => {
         payment,
         customer_id,
         cdf.company as customer,
+        cdf.due_limit as due_limit,
         pending_due,
         other_payment,
         amount_pd_total,
@@ -324,7 +325,7 @@ exports.getSalesById = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    const {rows} = await pool.query(
+    const query =
       ` SELECT
 
           s.id,
@@ -341,15 +342,16 @@ exports.getSalesById = async (req, res) => {
           payment,
           customer_id,
           cdf.company as customer,
+          cdf.due_limit as due_limit,
           pending_due,
           other_payment,
-          amount_pd_total,
+          amount_pd_total
         FROM sales s
         join cdf as cdf
         on cdf.id = s.customer_id
         where s.is_active = true and s.id = ${salesId}`
-    );
-    res.status(STATUS_CODE.SUCCESS).send(rows);
+      const response =  await pool.query( query  );
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

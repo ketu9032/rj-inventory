@@ -53,15 +53,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-                    formSupplier.controls.item_id.touched &&
-                    !formSupplier.controls.item_id.value
-                    ">
-                        <span class="error">Item Code is Required</span>
-                    </ng-container>
-                </div>
-                <mat-spinner class="loader" *ngIf="selectItemLoader" diameter="20"></mat-spinner>
+                               <mat-spinner class="loader" *ngIf="selectItemLoader" diameter="20"></mat-spinner>
             </div>
             <!-- qty start -->
             <div class="block">
@@ -69,15 +61,7 @@
                     <mat-label>Qty.</mat-label>
                     <input matInput formControlName="qty" type="number" (keyup)="count()" (click)="count()" required />
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-                formSupplier.controls.qty.touched &&
-                !formSupplier.controls.qty.value
-                ">
-                        <span class="error">Qty is Required</span>
-                    </ng-container>
-                </div>
-            </div>
+                           </div>
             <!-- available start -->
             <div class="block">
                 <mat-form-field class="input_width">
@@ -190,7 +174,7 @@
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Last Bill No</mat-label>
-                        <input matInput disable [(ngModel)]="lastBillNo" />
+                        <input matInput disable value="{{this.lastBillNo}}" readonly />
                     </mat-form-field>
                 </div>
             </span>
@@ -217,7 +201,7 @@
             <div class="remakes">
                 <mat-form-field>
                     <textarea matInput class="padding" id="" cdkAutosizeMinRows="8" cdkAutosizeMaxRows="8"
-                        placeholder="Enter Remarks..." formControlName="remarks"></textarea>
+                        placeholder="Enter Remarks..." [(ngModel)]="remarks" formControlName="remarks"></textarea>
                 </mat-form-field>
                 <!-- <div>
                 <ng-container *ngIf="

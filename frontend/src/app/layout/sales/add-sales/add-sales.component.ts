@@ -74,14 +74,15 @@ export class AddSalesComponent implements OnInit {
     ) { }
     ngOnInit() {
         this.loggedInUser = this.authService.getUserData();
+
         this.getCustomerById();
         // this.customerData = this.data.customer[0]
         this.initializeSupplierForm();
         this.initializeSalesBillForm()
         this.getItemDropDown();
         if (this.data.salesId) {
-            this.getSalesById();
             this.getItemsBySalesId();
+            this.getSalesById();
         }
     }
     initializeSupplierForm(): void {
@@ -144,7 +145,7 @@ export class AddSalesComponent implements OnInit {
         this.isShowLoader = true;
         this.salesService
             .editSales({
-                // id: this.data.id,
+                 id: this.data.salesId,
                 qty: this.totalQty,
                 bill_no: this.bill_no,
                 amount: this.totalPrice,
@@ -336,13 +337,15 @@ export class AddSalesComponent implements OnInit {
             );
     }
     getSalesById() {
+        console.log(this.data.salesId);
         this.salesService.getSalesById(this.data.salesId).subscribe(
             (response) => {
-                this.salesData = response
+                this.salesData = response[0]
                 console.log(this.salesData);
+                this.totalQty = this.salesData.qty
                     this.totalPrice = this.salesData.amount,
-                    this.totalQty = this.salesData.qty
                     this.lastBillDue = this.salesData.pending_due,
+                    this.lastBillNo = this.salesData.bill_no,
                     this.totalDue = this.salesData.total_due,
                     this.tier = this.salesData.tier,
                     this.grandDueTotal = this.salesData.grand_total,
