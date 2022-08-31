@@ -152,11 +152,11 @@
                 </div>
                 <!-- List of Display Names start -->
                 <div class="block">
-                    <!-- <mat-form-field>
+                   <mat-form-field>
                         <mat-label>List of Display Names</mat-label>
                         <input matInput formControlName="displayNames" required />
-                    </mat-form-field> -->
-                    <mat-form-field class="example-chip-list">
+                    </mat-form-field>
+                    <!-- <mat-form-field class="example-chip-list">
                         <mat-label>List of Display Names</mat-label>
                         <mat-chip-list #chipLists aria-label="displayName selection" required>
                             <mat-chip *ngFor="let displayName of displayNames" [selectable]="selectable"
@@ -168,7 +168,7 @@
                                 [matChipInputFor]="chipLists" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                                 [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="addDisplayNameForm($event)">
                         </mat-chip-list>
-                    </mat-form-field>
+                    </mat-form-field> -->
                     <div>
                         <ng-container *ngIf="
       formGroup.controls.displayNames.touched &&

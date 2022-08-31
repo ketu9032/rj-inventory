@@ -358,3 +358,37 @@ exports.getSalesById = async (req, res) => {
     });
   }
 };
+
+exports.updateValue = async (req, res) => {
+  try {
+    const { customer_id, qty, payment,
+    } = req.body;
+    if (!customer_id|| !qty || !payment) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
+    const query = `select
+         id,
+         balance
+        from
+        cdf as cdf
+        where "id" = ${customer_id}`;
+    const response = await pool.query(query);
+    const expenseData = response.rows ? response.rows[0] : null;
+
+
+
+    return res
+      .status(STATUS_CODE.BAD)
+      .send({ message: MESSAGES.TRANSFER.INVALID_TRANSFER_ID });
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+
+
