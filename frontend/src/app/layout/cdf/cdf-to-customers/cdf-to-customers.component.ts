@@ -68,6 +68,7 @@ export class CdfToCustomersComponent implements OnInit {
                 cdfStatus,
                 other,
                 tierId,
+
                 date: '',
                 reference: '',
                 referencePerson: '',
