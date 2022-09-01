@@ -32,7 +32,7 @@ exports.findAll = async (req, res) => {
           or address ilike '%${search}%'
           or due_limit ilike '%${search}%'
           or payment ilike '%${search}%'
-          or total_due::text ilike '%${search}%'
+          or cdf_total_due::text ilike '%${search}%'
           or balance ilike '%${search}%'
           or tier ilike '%${search}%'
         )`;
@@ -58,7 +58,7 @@ exports.findAll = async (req, res) => {
           mobile,
           address,
           due_limit,
-          total_due,
+          cdf_total_due,
           payment,
           balance,
           tier_id as tier_id,
@@ -258,32 +258,34 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
       email,
       mobile,
       dueLimit,
+      cdf_total_due,
       balance,
       other,
       tierId,
       tier_code
     } = req.body;
-    if (
-      !company ||
-      !name ||
-      !address ||
-      !email ||
-      !mobile ||
-      !dueLimit ||
-      !balance ||
-      !other ||
-      !tierId ||
-      !tier_code ||
-      !id
-    ) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
-    }
+    // if (
+    //   !company ||
+    //   !name ||
+    //   !address ||
+    //   !email ||
+    //   !cdf_total_due ||
+    //   !mobile ||
+    //   !dueLimit ||
+    //   !balance ||
+    //   !other ||
+    //   !tierId ||
+    //   !tier_code ||
+    //   !id
+    // ) {
+    //   res
+    //     .status(STATUS_CODE.BAD)
+    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+    //   return;
+    // }
     await pool.query(
       `UPDATE cdf
-      SET  company='${company}', name='${name}',  address='${address}',  email='${email}', mobile='${mobile}', cdf_status='active',  due_limit='${dueLimit}', balance='${balance}', other='${other}', tier_id='${tierId}', tier_code='${tier_code}' where id = ${id};
+      SET  company='${company}', name='${name}',  address='${address}',  email='${email}', cdf_total_due=${cdf_total_due}, mobile='${mobile}', cdf_status='active',  due_limit=${dueLimit}, balance=${balance}, other='${other}', tier_id='${tierId}', tier_code='${tier_code}' where id = ${id};
        `
     );
     res.status(STATUS_CODE.SUCCESS).send();
@@ -344,7 +346,7 @@ exports.onCheckMobile = async (req, res) => {
 exports.getCdfTOCustomerDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, company,balance, tier_id, tier_code, due_limit FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active'`
+      `select id, company,balance, tier_id, tier_code, cdf_total_due FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active'`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -359,7 +361,7 @@ exports.getCustomerById = async (req, res) => {
   try {
     const { customerId } = req.query;
     const response = await pool.query(
-      `select id, company,balance, tier_id, tier_code, due_limit, total_due FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active' and id = ${customerId} limit 1`
+      `select id, company,balance, tier_id, tier_code, due_limit, cdf_total_due FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active' and id = ${customerId} limit 1`
     );
     if (response.rows && response.rows.length > 0) {
       return res.status(STATUS_CODE.SUCCESS).send(response.rows[0]);

@@ -37,7 +37,7 @@ exports.findAll = async (req, res) => {
         bill_no,
         qty,
         amount,
-        s.total_due,
+        s.total_due as "salesTotalDue",
         tier,
         grand_total,
         user_name,
@@ -355,18 +355,13 @@ exports.updateValue = async (req, res) => {
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-    let updateCdfQuery = `
-		update
-      cdf
-        set
-          balance = +balance + ${buyingPrice},
-          payment = payment + ${ payment},
-          total_due = balance - payment
-        where
-          id = ${customer_id}
-      `;
-    console.log(updateCdfQuery);
-    await pool.query(updateCdfQuery);
+    let updateCdfBalance = ` update cdf set balance =  COALESCE(balance,0)  + ${buyingPrice} where id = ${customer_id}`;
+    await pool.query(updateCdfBalance);
+    let updateCdfPayment= ` update cdf set payment =  COALESCE(payment,0) + ${payment} where id = ${customer_id}`;
+    await pool.query(updateCdfPayment);
+    let updateCdfTotalDue= ` update cdf set  cdf_total_due =  COALESCE(balance,0) - COALESCE(payment,0) where id = ${customer_id}`;
+    await pool.query(updateCdfTotalDue);
+
     let  updateUserQuery = `update users set balance = balance + ${+payment}  where id = ${res.locals.tokenData.id}`;
     await pool.query(updateUserQuery);
   } catch (error) {

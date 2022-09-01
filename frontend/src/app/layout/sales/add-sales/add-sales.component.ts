@@ -109,7 +109,7 @@ export class AddSalesComponent implements OnInit {
                 amount: this.totalPrice,
                 bill_no: this.bill_no,
                 user_name: this.loggedInUser.user_name,
-                pending_due: this.lastBillDue,
+                pending_due:0,
                 total_due: this.totalDue,
                 tier: this.tier,
                 grand_total: this.grandDueTotal,
@@ -321,14 +321,12 @@ export class AddSalesComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.customerData = response;
-                    debugger
                     this.customerName = this.customerData.company;
-                    this.lastBillDue = this.customerData.total_due;
-                    this.grandDueTotal = this.customerData.total_due;
+                    this.lastBillDue = this.customerData.cdf_total_due;
+                    this.grandDueTotal = this.customerData.cdf_total_due;
                     this.dueLimit = this.customerData.due_limit;
-                   // this. =this.currentDate.total_due
                     this.tier = this.customerData.tier_code;
-                    this.totalDue = this.customerData.total_due;
+                    this.totalDue = this.customerData.cdf_total_due;
                 },
                 (error) => {
                     this.snackBar.open(
