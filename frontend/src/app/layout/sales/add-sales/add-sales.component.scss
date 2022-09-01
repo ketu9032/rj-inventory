@@ -97,11 +97,19 @@ table {
 .margin {
     margin-right: 10px;
 }
-.loader {
-    bottom: 45px;
+.float{
     float: right;
-    right: 30px;
+}
+.loader {
+    bottom: 53px;
+    float: right;
+    right: 24px;
 }
 mat-spinner{
     margin: 7px;
+}
+
+.checkbox-margin{
+    margin-top: 23px;
+    margin-right: 14px;
 }

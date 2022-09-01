@@ -112,6 +112,7 @@ router.put('/api/cdf/onCheckEmail', cdf.onCheckEmail);
 router.put('/api/cdf/onCheckCompany', cdf.onCheckCompany);
 router.put('/api/cdf/onCheckMobile', cdf.onCheckMobile);
 router.get('/api/cdf/getCdfTOCustomerDropDown', cdf.getCdfTOCustomerDropDown);
+router.get('/api/cdf/getCustomerById', cdf.getCustomerById);
 
 router.delete('/api/sales', sales.delete);
 router.get('/api/sales', sales.findAll);
@@ -119,6 +120,8 @@ router.post('/api/sales', sales.add);
 router.post('/api/addSales', sales.addSales);
 router.put('/api/sales', sales.update);
 router.put('/api/sales/changeStatus', sales.changeStatus);
+router.get('/api/sales/getSalesById', sales.getSalesById);
+router.put('/api/sales/updateValue', sales.updateValue);
 
 router.delete('/api/sales_bill', sales_bill.delete);
 router.get('/api/sales_bill', sales_bill.findAll);

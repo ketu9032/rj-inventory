@@ -13,11 +13,12 @@ export class salesQuotationService {
     private addSalesURL = 'api/addSales';
     private changeStatusURL = 'api/sales_quotation/changeStatus';
     private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
-    private getItemDropDownURL  = 'api/item/getItemDropDown';
+    private getCustomerByIdURL = 'api/cdf/getCustomerById';
+    private getItemDropDownURL = 'api/item/getItemDropDown';
 
     constructor(
         private restService: RestService,
-         private commonService: CommonService
+        private commonService: CommonService
     ) { }
 
     public getSalesQuotation(tablePrams: IMatTableParams) {
@@ -29,7 +30,7 @@ export class salesQuotationService {
     }
     public addSalesQuotationToSales(sales: ISalesQuotationToSalesParams) {
         return this.restService.post(`${this.addSalesURL}`, sales);
-      }
+    }
     public editSalesQuotation(item: ISalesQuotationParams) {
         return this.restService.put(`${this.salesQuotationURL}`, item);
     }
@@ -41,11 +42,13 @@ export class salesQuotationService {
     }
     public getCustomerDropDown() {
         return this.restService.get<any>(`${this.getCdfToCustomerDropDownURL}`);
-      }
-      public getItemDropDown() {
+    }
+    public getItemDropDown() {
         return this.restService.get<any>(`${this.getItemDropDownURL}`);
-      }
-
+    }
+    public getCustomerById(customerId: number) {
+        return this.restService.get<any>(`${this.getCustomerByIdURL}?customerId=${customerId}`);
+    }
 }
 
 

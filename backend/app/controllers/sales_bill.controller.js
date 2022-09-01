@@ -4,37 +4,23 @@ const { generateToken } = require('../utils/common');
 const { pool } = require('../db');
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active, salesQuotationId } =
-      req.query;
-    let searchQuery = 'where true';
-    const offset = pageSize * pageNumber - pageSize;
-    if (search) {
-      searchQuery += ` and
-        (
-          or item_code ilike '%${search}%'
-          or qty::text ilike '%${search}%'
-          or available::text ilike '%${search}%'
-          or selling_price::text ilike '%${search}%'
-          or total::text ilike '%${search}%'
-        )`;
-    }
-    searchQuery += ` and is_active = ${active}`;
-    if (salesQuotationId) {
-      searchQuery += ` and sales_id = ${salesQuotationId}`;
-    }
+    const { salesId } = req.query;
     const query = `
-    SELECT
-      Count(sales_bill.id) OVER() AS total,
-        id,
-        item_code,
-        qty,
-        available,
-        selling_price,
-        total,
-        sales_id
-    FROM sales_bill
-
-${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+      SELECT
+        Count(sales_bill.id) OVER() AS total,
+          sales_bill.id,
+          item.item_code as item_code,
+          item_id,
+          item_code as item_code,
+          qty,
+          available,
+          selling_price,
+          total,
+          sales_id
+      FROM sales_bill
+      join item as item
+      on item.id = sales_bill.item_id
+      where sales_id = ${salesId}`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -63,8 +49,8 @@ exports.delete = async (req, res) => {
 };
 exports.add = async (req, res) => {
   try {
-    const { item_code, qty, available, selling_price,  total } = req.body;
-    if (!item_code || !qty|| !available|| !selling_price|| !total) {
+    const { item_id, qty, available, selling_price, total } = req.body;
+    if (!item_id || !qty || !available || !selling_price || !total) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -73,13 +59,13 @@ exports.add = async (req, res) => {
     await pool.query(
       `INSERT INTO sales_bill
       (
-        item_code,
+        item_id,
         qty,
         available,
         selling_price,
         total
          )
-      VALUES('${item_code}', '${qty}', '${available}', '${selling_price}', '${total}');
+      VALUES('${item_id}', '${qty}', '${available}', '${selling_price}', '${total}');
       `
     );
     res.status(STATUS_CODE.SUCCESS).send();
@@ -91,8 +77,8 @@ exports.add = async (req, res) => {
 };
 exports.update = async (req, res) => {
   try {
-    const { id,  item_code, qty, available, selling_price,  total } = req.body;
-    if (!item_code || !qty|| !available|| !selling_price|| !total || !id) {
+    const { id, item_id, qty, available, selling_price, total } = req.body;
+    if (!item_id || !qty || !available || !selling_price || !total || !id) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -100,7 +86,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE sales_bill
-      SET  item_code='${item_code}', qty='${qty}' , available='${available}',selling_price='${selling_price}', total='${total}'where id = ${id};`
+      SET  item_id='${item_id}', qty='${qty}' , available='${available}',selling_price='${selling_price}', total='${total}'where id = ${id};`
     );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
