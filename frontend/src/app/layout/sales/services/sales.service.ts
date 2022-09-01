@@ -2,7 +2,7 @@ import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
-import { ISalesActiveParams, ISalesParams, ISalesQuotationToSalesParams } from 'src/app/models/sales';
+import { ICdfUpdateParams, ISalesActiveParams, ISalesParams, ISalesQuotationToSalesParams } from 'src/app/models/sales';
 
 @Injectable({ providedIn: 'root'})
 export class SalesService {
@@ -11,6 +11,8 @@ export class SalesService {
   private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
   private   getItemDropDownURL  = 'api/item/getItemDropDown';
   private salesChangeStatusURl = 'api/sales/changeStatus';
+  private updateValueURL = 'api/sales/updateValue';
+
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -38,5 +40,9 @@ export class SalesService {
   }
   public getSalesById(salesId: number) {
     return this.restService.get<any>(`${this.getSalesByIdURL}?salesId=${salesId}`);
+  }
+
+  public updateValue(sales: ICdfUpdateParams) {
+    return this.restService.put(`${this.updateValueURL}`,sales);
   }
 }

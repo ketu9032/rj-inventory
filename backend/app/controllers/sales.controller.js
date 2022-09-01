@@ -1,7 +1,6 @@
 const { MESSAGES } = require('../constant/messages');
 const { STATUS_CODE } = require('../constant/response-status');
 const { pool } = require('../db');
-
 exports.findAll = async (req, res) => {
   try {
     const { orderBy, direction, pageSize, pageNumber, search, active } =
@@ -38,15 +37,15 @@ exports.findAll = async (req, res) => {
         bill_no,
         qty,
         amount,
-        total_due,
+        s.total_due,
         tier,
         grand_total,
         user_name,
         remarks,
-        payment,
+        s.payment,
         customer_id,
         cdf.company as customer,
-        cdf.due_limit as due_limit,
+        cdf.due_limit as cdf_due_limit,
         pending_due,
         other_payment,
         amount_pd_total,
@@ -63,7 +62,6 @@ exports.findAll = async (req, res) => {
     });
   }
 };
-
 exports.delete = async (req, res) => {
   try {
     const { id } = req.query;
@@ -83,11 +81,9 @@ exports.delete = async (req, res) => {
     });
   }
 };
-
 exports.add = async (req, res) => {
   try {
     const {
-
       qty,
       amount,
       total_due,
@@ -118,7 +114,6 @@ exports.add = async (req, res) => {
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-
     const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
@@ -162,7 +157,6 @@ exports.add = async (req, res) => {
     });
   }
 };
-
 exports.addSales = async (req, res) => {
   try {
     const {
@@ -221,7 +215,6 @@ exports.addSales = async (req, res) => {
             date :: date = now() :: date
         )
       )
-
     `;
     await pool.query(insertSalesQuotationQuery);
     res.status(STATUS_CODE.SUCCESS).send();
@@ -231,7 +224,6 @@ exports.addSales = async (req, res) => {
     });
   }
 };
-
 exports.update = async (req, res) => {
   try {
     const { id,
@@ -251,7 +243,6 @@ exports.update = async (req, res) => {
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-
    const updateSalesQuery =   `
       UPDATE
           sales
@@ -294,7 +285,6 @@ exports.update = async (req, res) => {
     });
   }
 };
-
 exports.changeStatus = async (req, res) => {
   try {
     const { id, status } = req.body;
@@ -314,8 +304,6 @@ exports.changeStatus = async (req, res) => {
     });
   }
 };
-
-
 exports.getSalesById = async (req, res) => {
   try {
     const { salesId } = req.query;
@@ -327,7 +315,6 @@ exports.getSalesById = async (req, res) => {
     }
     const query =
       ` SELECT
-
           s.id,
           no,
           s.date,
@@ -358,37 +345,33 @@ exports.getSalesById = async (req, res) => {
     });
   }
 };
-
 exports.updateValue = async (req, res) => {
   try {
-    const { customer_id, qty, payment,
+    const { customer_id, qty, buyingPrice, payment
     } = req.body;
-    if (!customer_id|| !qty || !payment) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
-    }
-    const query = `select
-         id,
-         balance
-        from
-        cdf as cdf
-        where "id" = ${customer_id}`;
-    const response = await pool.query(query);
-    const expenseData = response.rows ? response.rows[0] : null;
-
-
-
-    return res
-      .status(STATUS_CODE.BAD)
-      .send({ message: MESSAGES.TRANSFER.INVALID_TRANSFER_ID });
+    // if (!customer_id ||  !qty || !amount || !payment) {
+    //   res
+    //     .status(STATUS_CODE.BAD)
+    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+    //   return;
+    // }
+    let updateCdfQuery = `
+		update
+      cdf
+        set
+          balance = +balance + ${buyingPrice},
+          payment = payment + ${ payment},
+          total_due = balance - payment
+        where
+          id = ${customer_id}
+      `;
+    console.log(updateCdfQuery);
+    await pool.query(updateCdfQuery);
+    let  updateUserQuery = `update users set balance = balance + ${+payment}  where id = ${res.locals.tokenData.id}`;
+    await pool.query(updateUserQuery);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
 };
-
-
-

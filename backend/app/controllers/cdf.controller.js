@@ -359,7 +359,7 @@ exports.getCustomerById = async (req, res) => {
   try {
     const { customerId } = req.query;
     const response = await pool.query(
-      `select id, company,balance, tier_id, tier_code, due_limit FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active' and id = ${customerId} limit 1`
+      `select id, company,balance, tier_id, tier_code, due_limit, total_due FROM cdf where COALESCE(is_deleted,false) = false and is_active = true and cdf_status = 'active' and id = ${customerId} limit 1`
     );
     if (response.rows && response.rows.length > 0) {
       return res.status(STATUS_CODE.SUCCESS).send(response.rows[0]);

@@ -115,7 +115,7 @@ export class AddSalesComponent implements OnInit {
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
                 customer_id: this.data.customerId,
-                payment: this.currentPayment,
+                payment: this.formBill.value.payment,
                 other_payment: this.otherPayment,
                 sales: this.saleItems,
                 amount_pd_total: pendingDueTotal
@@ -133,11 +133,12 @@ export class AddSalesComponent implements OnInit {
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
+                            duration: 3000
+                        }
+                        );
+
+                    },
+                    () => { }
             );
     }
     updateSales(): void {
@@ -156,7 +157,7 @@ export class AddSalesComponent implements OnInit {
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
                 customer_id: this.salesData.customer_id,
-                payment: this.currentPayment,
+                payment: this.formBill.value.payment,
                 other_payment: this.otherPayment,
                 sales: this.saleItems,
                 amount_pd_total: pendingDueTotal
@@ -168,6 +169,7 @@ export class AddSalesComponent implements OnInit {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
+                    // this.updateValue(this.data.customerId)
                 },
                 (error) => {
                     this.isShowLoader = false;
@@ -184,9 +186,11 @@ export class AddSalesComponent implements OnInit {
     onSubmit() {
         if (this.data.salesId) {
                this.updateSales();
+
         } else {
             this.saveSales();
         }
+        this.updateValue()
     }
     addSalesQuotation() {
         const {
@@ -284,7 +288,7 @@ export class AddSalesComponent implements OnInit {
             );
     }
     totalDueCount() {
-        this.totalDue = this.grandDueTotal - this.currentPayment
+        this.totalDue = this.grandDueTotal - this.formBill.value.payment;
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
@@ -317,12 +321,14 @@ export class AddSalesComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.customerData = response;
-                    this.customerName = this.customerData.company
-                    this.lastBillDue = this.customerData.balance
-                    this.grandDueTotal = this.customerData.balance
-                    this.dueLimit = this.customerData.due_limit
-                    this.tier = this.customerData.tier_code
-                    this.totalDue = this.customerData.balance
+                    debugger
+                    this.customerName = this.customerData.company;
+                    this.lastBillDue = this.customerData.total_due;
+                    this.grandDueTotal = this.customerData.total_due;
+                    this.dueLimit = this.customerData.due_limit;
+                   // this. =this.currentDate.total_due
+                    this.tier = this.customerData.tier_code;
+                    this.totalDue = this.customerData.total_due;
                 },
                 (error) => {
                     this.snackBar.open(
@@ -350,7 +356,7 @@ export class AddSalesComponent implements OnInit {
                     this.grandDueTotal = this.salesData.grand_total,
                     this.remarks = this.salesData.remarks,
                     this.customerName = this.salesData.customer,
-                    this.currentPayment = this.salesData.payment,
+                    this.formBill.value.payment = this.salesData.payment,
                     this.otherPayment = this.salesData.other_payment
             },
             (error) => {
@@ -367,5 +373,22 @@ export class AddSalesComponent implements OnInit {
         }else{
             this.isShowOtherPayment = false;
         }
+    }
+    updateValue(): void {
+        this.salesService
+            .updateValue({
+                qty: this.totalQty,
+                payment: this.formBill.value.payment,
+                customer_id: this.data.customerId,
+                buyingPrice:this.totalPrice
+
+    })
+            .subscribe(
+                (response) => {
+
+
+                },
+                () => { }
+            );
     }
 }
