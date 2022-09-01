@@ -31,6 +31,8 @@ exports.findAll = async (req, res) => {
           or mobile::text ilike '%${search}%'
           or address ilike '%${search}%'
           or due_limit ilike '%${search}%'
+          or payment ilike '%${search}%'
+          or total_due::text ilike '%${search}%'
           or balance ilike '%${search}%'
           or tier ilike '%${search}%'
         )`;
@@ -56,6 +58,8 @@ exports.findAll = async (req, res) => {
           mobile,
           address,
           due_limit,
+          total_due,
+          payment,
           balance,
           tier_id as tier_id,
           t.code as tier_code

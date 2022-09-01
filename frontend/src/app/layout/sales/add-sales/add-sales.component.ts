@@ -61,6 +61,7 @@ export class AddSalesComponent implements OnInit {
     bill_no: number = 0;
     salesData;
     customer_id
+    isShowOtherPayment: boolean = false;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number },
         public dialog: MatDialog,
@@ -74,7 +75,6 @@ export class AddSalesComponent implements OnInit {
     ) { }
     ngOnInit() {
         this.loggedInUser = this.authService.getUserData();
-
         this.getCustomerById();
         // this.customerData = this.data.customer[0]
         this.initializeSupplierForm();
@@ -155,7 +155,7 @@ export class AddSalesComponent implements OnInit {
                 tier: this.tier,
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
-                customer_id: this.customer_id,
+                customer_id: this.salesData.customer_id,
                 payment: this.currentPayment,
                 other_payment: this.otherPayment,
                 sales: this.saleItems,
@@ -183,7 +183,6 @@ export class AddSalesComponent implements OnInit {
     }
     onSubmit() {
         if (this.data.salesId) {
-            debugger
                this.updateSales();
         } else {
             this.saveSales();
@@ -361,5 +360,12 @@ export class AddSalesComponent implements OnInit {
             },
             () => { }
         );
+    }
+    hideShowOther(){
+        if(this.isShowOtherPayment === false){
+            this.isShowOtherPayment  = true
+        }else{
+            this.isShowOtherPayment = false;
+        }
     }
 }
