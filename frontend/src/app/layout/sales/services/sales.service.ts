@@ -12,6 +12,7 @@ export class SalesService {
   private   getItemDropDownURL  = 'api/item/getItemDropDown';
   private salesChangeStatusURl = 'api/sales/changeStatus';
   private updateValueURL = 'api/sales/updateValue';
+  private isCustomerIdInSalesURL = 'api/sales/isCustomerIdInSales';
 
 
   constructor(private restService: RestService, private commonService: CommonService) {}
@@ -24,6 +25,7 @@ export class SalesService {
     return this.restService.post(`${this.salesURL}`, sales);
   }
   public editSales(sales: ISalesParams) {
+    debugger
     return this.restService.put(`${this.salesURL}`, sales);
   }
   public removeItems(id: string) {
@@ -43,6 +45,9 @@ export class SalesService {
   }
 
   public updateValue(sales: ICdfUpdateParams) {
-    return this.restService.put(`${this.updateValueURL}`,sales);
-  }
+      return this.restService.put(`${this.updateValueURL}`,sales);
+    }
+    public isCustomerIdInSales(customerID: number) {
+      return this.restService.get<any>(`${this.isCustomerIdInSalesURL}?customerID=${customerID}`);
+    }
 }

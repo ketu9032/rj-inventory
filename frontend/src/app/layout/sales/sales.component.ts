@@ -122,7 +122,7 @@ export class SalesComponent implements OnInit {
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                data: {customerId: this.customerId, salesId: element.id}
+                data: {customerId: element.customer_id, salesId: element.id}
             })
             .afterClosed()
             .subscribe((result) => {

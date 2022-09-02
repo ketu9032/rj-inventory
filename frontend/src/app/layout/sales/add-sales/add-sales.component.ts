@@ -60,7 +60,8 @@ export class AddSalesComponent implements OnInit {
     findSalesBill;
     bill_no: number = 0;
     salesData;
-    customer_id
+    customerID: number;
+    isCustomerId: number;
     isShowOtherPayment: boolean = false;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number },
@@ -87,16 +88,17 @@ export class AddSalesComponent implements OnInit {
     }
     initializeSupplierForm(): void {
         this.formSupplier = this.formBuilder.group({
-            item_id: ['', Validators.required],
-            qty: ['', Validators.required],
-            available: ['', Validators.required],
-            total: ['', Validators.required],
-            selling_price: ['', Validators.required],
+            item_id: [''],
+            qty: [''],
+            available: [''],
+            total: [''],
+            selling_price: [''],
         });
     }
     initializeSalesBillForm(): void {
         this.formBill = this.formBuilder.group({
             payment: ['', Validators.required],
+            otherPayment: [''],
             remarks: ['']
         });
     }
@@ -109,14 +111,14 @@ export class AddSalesComponent implements OnInit {
                 amount: this.totalPrice,
                 bill_no: this.bill_no,
                 user_name: this.loggedInUser.user_name,
-                pending_due:0,
+                pending_due: this.lastBillDue,
                 total_due: this.totalDue,
                 tier: this.tier,
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
                 customer_id: this.data.customerId,
                 payment: this.formBill.value.payment,
-                other_payment: this.otherPayment,
+                other_payment: this.formBill.value.otherPayment,
                 sales: this.saleItems,
                 amount_pd_total: pendingDueTotal
             })
@@ -136,7 +138,6 @@ export class AddSalesComponent implements OnInit {
                             duration: 3000
                         }
                         );
-
                     },
                     () => { }
             );
@@ -158,7 +159,7 @@ export class AddSalesComponent implements OnInit {
                 remarks: this.remarks,
                 customer_id: this.salesData.customer_id,
                 payment: this.formBill.value.payment,
-                other_payment: this.otherPayment,
+                other_payment: this.formBill.value.otherPayment,
                 sales: this.saleItems,
                 amount_pd_total: pendingDueTotal
             })
@@ -186,7 +187,6 @@ export class AddSalesComponent implements OnInit {
     onSubmit() {
         if (this.data.salesId) {
                this.updateSales();
-
         } else {
             this.saveSales();
         }
@@ -233,16 +233,20 @@ export class AddSalesComponent implements OnInit {
         this.clearSalesDetailsForm();
     }
     fillForm() {
-        // this.totalPrice = this.data.amount,
-        // this.totalQty = this.data.qty
-        // this.lastBillDue = this.data.pending_due,
-        // this.totalDue = this.data.total_due,
-        // this.tier = this.data.tier,
-        // this.grandDueTotal = this.data.grand_total,
-        // this.remarks = this.data.remarks,
-        // this.customerName = this.data.customer,
-        // this.currentPayment = this.data.payment,
-        // this.otherPayment = this.data.other_payment
+        if(+this.isCustomerId === 0){
+            this.lastBillDue = this.customerData.balance;
+            this.grandDueTotal = this.customerData.balance;
+            this.totalDue = this.customerData.balance;
+        }
+        else{
+            this.lastBillDue = this.customerData.cdf_total_due;
+            this.grandDueTotal = this.customerData.cdf_total_due;
+            this.totalDue = this.customerData.cdf_total_due;
+        }
+                    this.customerName = this.customerData.company;
+                    this.dueLimit = this.customerData.due_limit;
+                    this.customerID = this.customerData.id
+                    this.tier = this.customerData.tier_code;
     }
     getItemsBySalesId() {
         this.salesItemDataSource = [];
@@ -289,6 +293,10 @@ export class AddSalesComponent implements OnInit {
     }
     totalDueCount() {
         this.totalDue = this.grandDueTotal - this.formBill.value.payment;
+
+
+
+
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
@@ -301,6 +309,9 @@ export class AddSalesComponent implements OnInit {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
+    supplierFillForm(element) {
+
+    }
     removeItem(itemId: number): void {
         const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
         this.saleItems = filteredItems;
@@ -311,7 +322,7 @@ export class AddSalesComponent implements OnInit {
             item_id: '',
             qty: '',
             available: '',
-            selling_price: ' ',
+            selling_price: '',
             total: ''
         });
     }
@@ -321,12 +332,17 @@ export class AddSalesComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.customerData = response;
-                    this.customerName = this.customerData.company;
-                    this.lastBillDue = this.customerData.cdf_total_due;
-                    this.grandDueTotal = this.customerData.cdf_total_due;
-                    this.dueLimit = this.customerData.due_limit;
-                    this.tier = this.customerData.tier_code;
-                    this.totalDue = this.customerData.cdf_total_due;
+                    this.customerID = this.customerData.id
+                    // if(!this.customerID){
+                    //     this.lastBillDue = this.customerData.balance;
+                    // }
+                    // this.lastBillDue = this.customerData.cdf_total_due;
+                    // this.customerName = this.customerData.company;
+                    // this.grandDueTotal = this.customerData.cdf_total_due;
+                    // this.dueLimit = this.customerData.due_limit;
+                    // this.tier = this.customerData.tier_code;
+                    // this.totalDue = this.customerData.cdf_total_due;
+                    this.getCustomerIdInSales();
                 },
                 (error) => {
                     this.snackBar.open(
@@ -340,11 +356,9 @@ export class AddSalesComponent implements OnInit {
             );
     }
     getSalesById() {
-        console.log(this.data.salesId);
         this.salesService.getSalesById(this.data.salesId).subscribe(
             (response) => {
                 this.salesData = response[0]
-                console.log(this.salesData);
                 this.totalQty = this.salesData.qty
                     this.totalPrice = this.salesData.amount,
                     this.lastBillDue = this.salesData.pending_due,
@@ -355,7 +369,7 @@ export class AddSalesComponent implements OnInit {
                     this.remarks = this.salesData.remarks,
                     this.customerName = this.salesData.customer,
                     this.formBill.value.payment = this.salesData.payment,
-                    this.otherPayment = this.salesData.other_payment
+                    this.formBill.value.otherPayment = this.salesData.other_payment
             },
             (error) => {
                 this.snackBar.open(error.error.message || error.message, 'Ok', {
@@ -377,16 +391,31 @@ export class AddSalesComponent implements OnInit {
             .updateValue({
                 qty: this.totalQty,
                 payment: this.formBill.value.payment,
+                otherPayment: this.formBill.value.otherPayment,
                 customer_id: this.data.customerId,
                 buyingPrice:this.totalPrice
-
     })
             .subscribe(
                 (response) => {
-
-
                 },
                 () => { }
             );
     }
+    getCustomerIdInSales() {
+        this.salesService.isCustomerIdInSales(this.customerID).subscribe(
+            (response) => {
+                this.isCustomerId = response[0].count
+                console.log(this.isCustomerId);
+                this.fillForm();
+},
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
+    }
+
+
 }

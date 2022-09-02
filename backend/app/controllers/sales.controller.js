@@ -326,7 +326,7 @@ exports.getSalesById = async (req, res) => {
           grand_total,
           user_name,
           remarks,
-          payment,
+          s.payment,
           customer_id,
           cdf.company as customer,
           cdf.due_limit as due_limit,
@@ -347,7 +347,7 @@ exports.getSalesById = async (req, res) => {
 };
 exports.updateValue = async (req, res) => {
   try {
-    const { customer_id, qty, buyingPrice, payment
+    const { customer_id, qty, buyingPrice, payment, otherPayment
     } = req.body;
     // if (!customer_id ||  !qty || !amount || !payment) {
     //   res
@@ -355,18 +355,31 @@ exports.updateValue = async (req, res) => {
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-    let updateCdfBalance = ` update cdf set balance =  COALESCE(balance,0)  + ${buyingPrice} where id = ${customer_id}`;
-    await pool.query(updateCdfBalance);
-    let updateCdfPayment= ` update cdf set payment =  COALESCE(payment,0) + ${payment} where id = ${customer_id}`;
-    await pool.query(updateCdfPayment);
-    let updateCdfTotalDue= ` update cdf set  cdf_total_due =  COALESCE(balance,0) - COALESCE(payment,0) where id = ${customer_id}`;
-    await pool.query(updateCdfTotalDue);
-
-    let  updateUserQuery = `update users set balance = balance + ${+payment}  where id = ${res.locals.tokenData.id}`;
-    await pool.query(updateUserQuery);
+       let updateCdfBalance = ` update cdf set balance =  COALESCE(balance,0)  + ${buyingPrice} where id = ${customer_id}`;
+       await pool.query(updateCdfBalance);
+       let updateCdfPayment= ` update cdf set payment =  COALESCE(payment,0) + ${payment} where id = ${customer_id}`;
+       await pool.query(updateCdfPayment);
+       let updateCdfTotalDue= ` update cdf set  cdf_total_due =  COALESCE(balance,0) - COALESCE(payment,0) where id = ${customer_id}`;
+       await pool.query(updateCdfTotalDue);
+       let  updateUserBalanceQuery = `update users set balance = balance + ${+payment}  where id = ${res.locals.tokenData.id}`;
+       await pool.query(updateUserBalanceQuery);
+       let  updateUserOtherBalanceQuery = `update users set balance = balance + ${+otherPayment}  where id = ${res.locals.tokenData.id}`;
+       await pool.query(updateUserOtherBalanceQuery);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
 };
+exports.isCustomerIdInSales = async (req, res) => {
+  try {
+      const {customerID} = req.query;
+      const  query  =  `select count(id) from sales where customer_id = ${customerID}`
+      const response = await pool.query(query)
+      res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+}

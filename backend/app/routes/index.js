@@ -122,6 +122,7 @@ router.put('/api/sales', sales.update);
 router.put('/api/sales/changeStatus', sales.changeStatus);
 router.get('/api/sales/getSalesById', sales.getSalesById);
 router.put('/api/sales/updateValue', sales.updateValue);
+router.get('/api/sales/isCustomerIdInSales', sales.isCustomerIdInSales);
 
 router.delete('/api/sales_bill', sales_bill.delete);
 router.get('/api/sales_bill', sales_bill.findAll);

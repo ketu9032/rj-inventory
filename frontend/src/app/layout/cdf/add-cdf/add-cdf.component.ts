@@ -21,7 +21,7 @@ export class AddCdfComponent implements OnInit {
 
     brands: string[] = ['Titan', 'Volga', 'Rolex'];
     platforms: string[] =  ['Flipkart', 'Amazon', 'Offline'];
-    displayNames: string[] =  [];
+    displayNames: string[] =  ['name'];
 
 
     currentDate = new Date();
@@ -95,6 +95,7 @@ export class AddCdfComponent implements OnInit {
             this.displayNames.splice(index, 1);
         }
     }
+
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
             email: ['', [Validators.required, Validators.email]],

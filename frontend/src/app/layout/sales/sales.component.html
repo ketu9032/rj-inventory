@@ -93,7 +93,7 @@
 
             <ng-container matColumnDef="td">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>TD</th>
-                <td mat-cell *matCellDef="let element">{{   element.total_due | currency: 'INR'}}</td>
+                <td mat-cell *matCellDef="let element">{{   element.salesTotalDue | currency: 'INR'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="op">
