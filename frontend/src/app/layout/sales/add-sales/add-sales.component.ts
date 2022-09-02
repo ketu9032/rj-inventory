@@ -63,6 +63,7 @@ export class AddSalesComponent implements OnInit {
     customerID: number;
     isCustomerId: number;
     isShowOtherPayment: boolean = false;
+    isEditSalesItem = false;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number },
         public dialog: MatDialog,
@@ -97,8 +98,8 @@ export class AddSalesComponent implements OnInit {
     }
     initializeSalesBillForm(): void {
         this.formBill = this.formBuilder.group({
-            payment: ['', Validators.required],
-            otherPayment: [''],
+            payment: [0, Validators.required],
+            otherPayment: [0],
             remarks: ['']
         });
     }
@@ -203,8 +204,8 @@ export class AddSalesComponent implements OnInit {
         const item = this.items.find(x => x.id === item_id);
         const salesItem = this.saleItems.find(x => +x.item_id === +item_id);
         if (salesItem) {
-            salesItem.qty += +qty;
-            salesItem.total += +total;
+            salesItem.qty = +salesItem.qty + +qty;
+            salesItem.total= +salesItem.total + +total;
         } else {
             this.saleItems.push({
                 item_code: item.item_code,
@@ -218,17 +219,18 @@ export class AddSalesComponent implements OnInit {
         this.totalQty = 0
         this.totalPrice = 0;
         this.saleItems.forEach(saleItem => {
-            this.totalQty += +saleItem.qty;
-            this.totalPrice += +saleItem.total;
+            this.totalQty = +this.totalQty + +saleItem.qty;
+            this.totalPrice = +this.totalPrice + +saleItem.total;
         });
         this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-        this.totalDue = this.grandDueTotal
+        this.totalDue = +this.grandDueTotal
         if (qty <= 0) {
             this.formBill.get("remarks").setValidators(Validators.required);
             setTimeout(() => {
                 this.formBill.get("remarks").updateValueAndValidity()
             })
         }
+        this.isEditSalesItem = false;
         this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
         this.clearSalesDetailsForm();
     }
@@ -292,11 +294,7 @@ export class AddSalesComponent implements OnInit {
             );
     }
     totalDueCount() {
-        this.totalDue = this.grandDueTotal - this.formBill.value.payment;
-
-
-
-
+        this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
     }
     fillSellingPrice(item) {
         this.formSupplier.patchValue({
@@ -309,13 +307,31 @@ export class AddSalesComponent implements OnInit {
         this.lastBillDue = customer.balance,
             this.dueLimit = customer.due_limit
     }
-    supplierFillForm(element) {
+    supplierFillForm(itemId: number) {
+        this.isEditSalesItem = true;
+        const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
 
+        const {item_id,qty,available, selling_price, total} = filteredItem;
+        this.formSupplier.patchValue({
+            item_id,
+            available,
+            qty,
+            selling_price,
+            total
+        })
     }
     removeItem(itemId: number): void {
         const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
         this.saleItems = filteredItems;
-        this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+        this.totalQty = 0;
+        this.totalPrice =  0;
+        this.saleItems.forEach(saleItem => {
+            this.totalQty += +saleItem.qty;
+            this.totalPrice += +saleItem.total;
+        })
+        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
+        this.totalDue = this.grandDueTotal
+            this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
     }
     clearSalesDetailsForm(): void {
         this.formSupplier.patchValue({
@@ -405,7 +421,6 @@ export class AddSalesComponent implements OnInit {
         this.salesService.isCustomerIdInSales(this.customerID).subscribe(
             (response) => {
                 this.isCustomerId = response[0].count
-                console.log(this.isCustomerId);
                 this.fillForm();
 },
             (error) => {
@@ -416,6 +431,4 @@ export class AddSalesComponent implements OnInit {
             () => { }
         );
     }
-
-
 }

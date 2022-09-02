@@ -90,7 +90,6 @@ export class AddPurchaseComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit() {
-        console.log(this.data)
         this.users = this.authService.getUserData();
         if (this.data.supplierDetails) {
             this.supplierDetails = this.data.supplierDetails[0]
@@ -372,8 +371,6 @@ export class AddPurchaseComponent implements OnInit {
         this.tableParams.itemId = this.data.id;
         this.purchaseDetailsService.getPurchaseDetail(this.tableParams).subscribe(
             (response) => {
-                console.log(response);
-
                 this.findPurchaseDetails = response.filter(val => {
                     return (val.purchase_id) === this.data.id
                 })

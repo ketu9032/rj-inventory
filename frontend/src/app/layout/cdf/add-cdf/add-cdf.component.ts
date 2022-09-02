@@ -187,7 +187,6 @@ export class AddCdfComponent implements OnInit {
             .subscribe(
                 (response: boolean) => {
                     this.isEmailExist = response
-                    console.log(response);
                 })
     }
     onCompanyCheck() {
@@ -196,7 +195,6 @@ export class AddCdfComponent implements OnInit {
             .subscribe(
                 (response: boolean) => {
                     this.isCompanyExist = response
-                    console.log(response);
                 })
     }
     onMobileCheck() {
@@ -205,7 +203,6 @@ export class AddCdfComponent implements OnInit {
             .subscribe(
                 (response: boolean) => {
                     this.isMobileExist = response
-                    console.log(response);
                 })
     }
 }

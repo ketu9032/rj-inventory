@@ -112,7 +112,6 @@ export class TransferComponent implements OnInit {
         this.transferService.getTransfer(this.tableParams).subscribe(
             (newTransfer: any[]) => {
                 this.dataSource = new MatTableDataSource<ITransferData>(newTransfer);
-                console.log(this.dataSource.filteredData)
                 if (newTransfer.length > 0) {
                     this.totalRows = newTransfer[0].total;
                 }

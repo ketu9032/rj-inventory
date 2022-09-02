@@ -25,7 +25,6 @@ export class SalesService {
     return this.restService.post(`${this.salesURL}`, sales);
   }
   public editSales(sales: ISalesParams) {
-    debugger
     return this.restService.put(`${this.salesURL}`, sales);
   }
   public removeItems(id: string) {

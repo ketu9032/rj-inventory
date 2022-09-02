@@ -31,7 +31,6 @@ export class PrintComponent implements OnInit {
 
     ) { }
     ngOnInit() {
-        console.log(this.data);
             this.user = this.data.user_name,
             this.sr = this.data.sr,
             this.date = this.data.date,
