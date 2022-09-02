@@ -347,14 +347,14 @@ exports.getSalesById = async (req, res) => {
 };
 exports.updateValue = async (req, res) => {
   try {
-    const { customer_id, qty, buyingPrice, payment, otherPayment
+    const { customer_id,  buyingPrice, payment, otherPayment, salesItemDetails
     } = req.body;
-    // if (!customer_id ||  !qty || !amount || !payment) {
-    //   res
-    //     .status(STATUS_CODE.BAD)
-    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-    //   return;
-    // }
+    if (!customer_id ||  !salesItemDetails || !buyingPrice || !payment || !otherPayment) {
+      res
+        .status(STATUS_CODE.BAD)
+        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+      return;
+    }
        let updateCdfBalance = ` update cdf set balance =  COALESCE(balance,0)  + ${buyingPrice} where id = ${customer_id}`;
        await pool.query(updateCdfBalance);
        let updateCdfPayment= ` update cdf set payment =  COALESCE(payment,0) + ${payment} where id = ${customer_id}`;
@@ -365,6 +365,15 @@ exports.updateValue = async (req, res) => {
        await pool.query(updateUserBalanceQuery);
        let  updateUserOtherBalanceQuery = `update users set balance = balance + ${+otherPayment}  where id = ${res.locals.tokenData.id}`;
        await pool.query(updateUserOtherBalanceQuery);
+
+
+       for (let index = 0; index < salesItemDetails.length; index++) {
+        const element = salesItemDetails[index];
+
+      let updateItemQty =`  update item set int_qty = int_qty - ${element.qty} where id = ${element.item_id}`
+      await pool.query(updateItemQty);
+    }
+
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

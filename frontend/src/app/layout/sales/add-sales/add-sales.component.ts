@@ -1,3 +1,4 @@
+import { ThisReceiver } from '@angular/compiler';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -405,11 +406,12 @@ export class AddSalesComponent implements OnInit {
     updateValue(): void {
         this.salesService
             .updateValue({
-                qty: this.totalQty,
+                totalQty: this.totalQty,
                 payment: this.formBill.value.payment,
                 otherPayment: this.formBill.value.otherPayment,
                 customer_id: this.data.customerId,
-                buyingPrice:this.totalPrice
+                buyingPrice:this.totalPrice,
+                salesItemDetails: this.saleItems
     })
             .subscribe(
                 (response) => {
