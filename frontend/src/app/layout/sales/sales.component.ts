@@ -20,17 +20,17 @@ import { SalesService } from './services/sales.service';
 })
 export class SalesComponent implements OnInit {
     displayedColumns: string[] = [
-        'no',
-        't',
-        'date',
-        'customer',
+        'id',
+        'token',
+        'sales_date',
+        'customer_name',
         'amount',
-        'pd',
-        'total',
+        'past_due',
+        'total_amount',
         'payment',
-        'td',
-        'op',
-        'user',
+        'total_due',
+        'other_payment',
+        'user_name',
         'action',
         'print'
     ];
@@ -50,7 +50,7 @@ export class SalesComponent implements OnInit {
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
-        orderBy: 'id',
+        orderBy: 's.id',
         direction: "desc",
         search: '',
         active: true

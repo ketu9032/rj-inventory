@@ -37,31 +37,31 @@
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="company"
             matSortDirection="asc">
 
-            <ng-container matColumnDef="no">
+            <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>No</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.no}}
+                    {{ element.id}}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="t">
+            <ng-container matColumnDef="token">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>T</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.token}}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="date">
+            <ng-container matColumnDef="sales_date">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.date | date: 'MMM d, y, h:mm:ss' }}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="customer">
+            <ng-container matColumnDef="customer_name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.customer | uppercase }}
+                    {{ element.customer_name | uppercase }}
                 </td>
             </ng-container>
 
@@ -70,17 +70,17 @@
                 <td mat-cell *matCellDef="let element">{{ element.amount | currency: 'INR' }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="pd">
+            <ng-container matColumnDef="past_due">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>PD</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.pending_due | currency: 'INR' }}
+                    {{ element.past_due | currency: 'INR' }}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="total">
+            <ng-container matColumnDef="total_amount">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.amount_pd_total | currency: 'INR'}}
+                    {{ element.total_amount | currency: 'INR'}}
                 </td>
             </ng-container>
 
@@ -91,18 +91,18 @@
             </ng-container>
 
 
-            <ng-container matColumnDef="td">
+            <ng-container matColumnDef="total_due">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>TD</th>
-                <td mat-cell *matCellDef="let element">{{   element.salesTotalDue | currency: 'INR'}}</td>
+                <td mat-cell *matCellDef="let element">{{   element.total_due | currency: 'INR'}}</td>
             </ng-container>
 
-            <ng-container matColumnDef="op">
+            <ng-container matColumnDef="other_payment">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>OP</th>
                 <td mat-cell *matCellDef="let element">{{ element.other_payment ? (element.other_payment | currency:
                     'INR' ) : 0 | currency: 'INR' }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="user">
+            <ng-container matColumnDef="user_name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
                 <td mat-cell *matCellDef="let element">{{ element.user_name | uppercase }}</td>
             </ng-container>

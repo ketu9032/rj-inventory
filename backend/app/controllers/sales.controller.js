@@ -10,20 +10,15 @@ exports.findAll = async (req, res) => {
     if (search) {
       searchQuery += ` and
         (
-           no::text ilike '%${search}%'
+          s.id::text ilike '%${search}%'
           or s.date::text ilike '%${search}%'
           or bill_no::text ilike '%${search}%'
-          or qty::text ilike '%${search}%'
-          or amount::text ilike '%${search}%'
-          or total_due::text ilike '%${search}%'
-          or grand_total::text ilike '%${search}%'
-          or user_name ilike '%${search}%'
+          or users.user_name ilike '%${search}%'
           or tier ilike '%${search}%'
           or remarks ilike '%${search}%'
           or cdf.company ilike '%${search}%'
           or payment::text ilike '%${search}%'
-          or pending_due::text ilike '%${search}%'
-          or amount_pd_total::text ilike '%${search}%'
+          or COALESCE(past_due,0)::text ilike '%${search}%'
           or other_payment::text ilike '%${search}%'
           or token::text ilike '%${search}%'
         )`;
@@ -31,29 +26,47 @@ exports.findAll = async (req, res) => {
     searchQuery += ` and s.is_active = ${active}`;
     const query = `  SELECT
         Count(s.id) OVER() AS total,
-        s.id,
-        no,
+        s.id as id,
         s.date,
         bill_no,
-        qty,
-        amount,
-        s.total_due as "salesTotalDue",
         tier,
-        grand_total,
-        user_name,
+        users.user_name as user_name,
         remarks,
-        s.payment,
+        s.payment as payment,
         customer_id,
-        cdf.company as customer,
+        cdf.company as customer_name,
         cdf.due_limit as cdf_due_limit,
-        pending_due,
-        other_payment,
-        amount_pd_total,
-        token
+        other_payment as other_payment,
+        token,
+        COALESCE(past_due,0) as past_due,
+        sum(COALESCE(sales_bill.qty,0) * COALESCE(sales_bill.selling_price,0)) + COALESCE(past_due,0) as total_amount,
+        sum(COALESCE(sales_bill.qty,0) * COALESCE(sales_bill.selling_price,0)) as amount,
+        sum(COALESCE(sales_bill.qty,0) * COALESCE(sales_bill.selling_price,0)) + COALESCE(past_due,0) - s.payment as total_due
       FROM sales s
       join cdf as cdf
-      on cdf.id = s.customer_id
-     ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+        on cdf.id = s.customer_id
+      join users as users
+        on users.id = s.user_id
+      left join sales_bill
+      on sales_bill.sales_id = s.id
+      group by
+        s.id,
+          s.date,
+          bill_no,
+          tier,
+          users.user_name,
+          remarks,
+          s.payment ,
+          customer_id,
+          cdf.company,
+          cdf.due_limit ,
+          other_payment,
+          token,
+          COALESCE(past_due,0)
+      -- ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
+      `;
+
+
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -84,55 +97,28 @@ exports.delete = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const {
-      qty,
-      amount,
-      total_due,
-      user_name,
-      pending_due,
-      grand_total,
+      user_id,
       tier,
       remarks,
       sales,
       payment,
       customer_id,
       other_payment,
-      amount_pd_total
     } = req.body;
-    // if (
-    //   !date ||
-    //   !bill_no ||
-    //   !qty ||
-    //   !amount ||
-    //   !total_due ||
-    //   !user_name ||
-    //   !tier ||
-    //   !sales ||
-    //   !remarks
-    // ) {
-    //   res
-    //     .status(STATUS_CODE.BAD)
-    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-    //   return;
-    // }
     const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
        bill_no,
-       qty,
-       amount,
-       total_due,
-       pending_due,
-       user_name,
-       grand_total,
+       user_id,
        tier,
        remarks,
        payment,
        customer_id,
        other_payment,
-       amount_pd_total,
-       token
+       token,
+       past_due
      )
-    VALUES(now(), (select count(bill_no)+1 from sales  where customer_id = ${customer_id}), '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer_id}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
+    VALUES(now(), (select count(bill_no)+1 from sales  where customer_id = ${customer_id}), '${user_id}', '${tier}', '${remarks}', '${payment}', '${customer_id}', '${other_payment}', (select count(token)+1 from sales  where date::date = now()::date), (select cdf_total_due from cdf where id = ${customer_id}) ) returning id;`;
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
@@ -316,7 +302,6 @@ exports.getSalesById = async (req, res) => {
     const query =
       ` SELECT
           s.id,
-          no,
           s.date,
           bill_no,
           qty,
@@ -349,12 +334,12 @@ exports.updateValue = async (req, res) => {
   try {
     const { customer_id,  buyingPrice, payment, otherPayment, salesItemDetails
     } = req.body;
-    if (!customer_id ||  !salesItemDetails || !buyingPrice || !payment || !otherPayment) {
-      res
-        .status(STATUS_CODE.BAD)
-        .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-      return;
-    }
+    // if (!customer_id ||  !salesItemDetails || !buyingPrice || !payment || !otherPayment) {
+    //   res
+    //     .status(STATUS_CODE.BAD)
+    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+    //   return;
+    // }
        let updateCdfBalance = ` update cdf set balance =  COALESCE(balance,0)  + ${buyingPrice} where id = ${customer_id}`;
        await pool.query(updateCdfBalance);
        let updateCdfPayment= ` update cdf set payment =  COALESCE(payment,0) + ${payment} where id = ${customer_id}`;
@@ -370,10 +355,20 @@ exports.updateValue = async (req, res) => {
        for (let index = 0; index < salesItemDetails.length; index++) {
         const element = salesItemDetails[index];
 
-      let updateItemQty =`  update item set int_qty = int_qty - ${element.qty} where id = ${element.item_id}`
-      await pool.query(updateItemQty);
-    }
 
+      let updateItems =`
+               update
+               item
+             set
+               item_sold = COALESCE(item_sold, 0) + ${element.qty},
+               item_available = COALESCE(int_qty, 0) - ${element.qty},
+               item_price_total = (COALESCE(int_qty, 0) - ${element.qty}) * silver)
+             where
+               id = ${element.item_id}
+      `
+      console.log(updateItems);
+      await pool.query(updateItems);
+    }
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

@@ -109,20 +109,14 @@ export class AddSalesComponent implements OnInit {
         this.isShowLoader = true;
         this.salesService
             .addSales({
-                qty: this.totalQty,
-                amount: this.totalPrice,
                 bill_no: this.bill_no,
-                user_name: this.loggedInUser.user_name,
-                pending_due: this.lastBillDue,
-                total_due: this.totalDue,
+                user_id: this.loggedInUser.id,
                 tier: this.tier,
-                grand_total: this.grandDueTotal,
                 remarks: this.remarks,
                 customer_id: this.data.customerId,
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
                 sales: this.saleItems,
-                amount_pd_total: pendingDueTotal
             })
             .subscribe(
                 (response) => {
@@ -149,21 +143,15 @@ export class AddSalesComponent implements OnInit {
         this.isShowLoader = true;
         this.salesService
             .editSales({
-                 id: this.data.salesId,
-                qty: this.totalQty,
+                id: this.data.salesId,
                 bill_no: this.bill_no,
-                amount: this.totalPrice,
-                user_name: this.loggedInUser.user_name,
-                pending_due: this.lastBillDue,
-                total_due: this.totalDue,
+                user_id: this.loggedInUser.id,
                 tier: this.tier,
-                grand_total: this.grandDueTotal,
                 remarks: this.remarks,
                 customer_id: this.salesData.customer_id,
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
                 sales: this.saleItems,
-                amount_pd_total: pendingDueTotal
             })
             .subscribe(
                 (response) => {

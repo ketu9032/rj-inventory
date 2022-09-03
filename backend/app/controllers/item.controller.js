@@ -13,6 +13,10 @@ exports.findAll = async (req, res) => {
            item_code ilike '%${search}%'
           or item_name ilike '%${search}%'
           or int_qty ilike '%${search}%'
+          or COALESCE(item_purchased,0) ilike '%${search}%'
+          or COALESCE(item_sold,0) ilike '%${search}%'
+          or COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0) ilike '%${search}%'
+          or (COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0)) * silver ilike '%${search}%'
           or silver ilike '%${search}%'
           or category ilike '%${search}%'
           or supplier_name ilike '%${search}%'
@@ -26,6 +30,10 @@ exports.findAll = async (req, res) => {
       item_code,
       item_name,
       int_qty,
+      COALESCE(item_purchased,0) as item_purchased,
+      COALESCE(item_sold,0) as item_sold ,
+      COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0) as item_available,
+      (COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0)) * silver as item_price_total,
       comment,
       silver,
       retail,
@@ -38,6 +46,8 @@ exports.findAll = async (req, res) => {
     FROM item i
      INNER JOIN categories as c  ON c.id = i.category_id
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+
+     console.log(query);
     const response = await pool.query(query);
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -111,9 +121,11 @@ exports.add = async (req, res) => {
       gold,
       india_mart,
       dealer,
-      category_id
+      category_id,
+      item_purchased,
+      item_sold
       )
-      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}', '${categoryId}') returning id;
+      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}',  '${categoryId}', 0 , 0) returning id;
       `;
 
     const { rows } = await pool.query(insertItemQuery);
