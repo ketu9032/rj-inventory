@@ -13,9 +13,7 @@ exports.findAll = async (req, res) => {
           item_id,
           item_code as item_code,
           qty,
-          available,
           selling_price,
-          total,
           sales_id
       FROM sales_bill
       join item as item

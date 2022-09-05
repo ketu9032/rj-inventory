@@ -1,16 +1,13 @@
-import { ThisReceiver } from '@angular/compiler';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IItemSupplierData } from 'src/app/models/item_supplier';
-import { ISalesData } from 'src/app/models/sales';
 import { ISalesBillData } from 'src/app/models/sales_bill';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE } from 'src/app/shared/global/table-config';
-import { CdfService } from '../../cdf/services/cdf.service';
 import { salesQuotationService } from '../../sales-quotation/services/sales-quotation.service';
 import { SalesBillService } from '../services/sales-bill.service';
 import { SalesService } from '../services/sales.service';
@@ -50,7 +47,6 @@ export class AddSalesComponent implements OnInit {
     otherPayment: number = 0;
     totalDue: number = 0;
     saleItems = [];
-    total: number = 0;
     loggedInUser;
     lastBillNo: number = 0;
     customerData: any;
@@ -65,6 +61,7 @@ export class AddSalesComponent implements OnInit {
     isCustomerId: number;
     isShowOtherPayment: boolean = false;
     isEditSalesItem = false;
+    availableItemById = 0;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number },
         public dialog: MatDialog,
@@ -92,8 +89,6 @@ export class AddSalesComponent implements OnInit {
         this.formSupplier = this.formBuilder.group({
             item_id: [''],
             qty: [''],
-            available: [''],
-            total: [''],
             selling_price: [''],
         });
     }
@@ -105,7 +100,6 @@ export class AddSalesComponent implements OnInit {
         });
     }
     saveSales(): void {
-        const pendingDueTotal = +this.totalPrice + +this.lastBillDue;
         this.isShowLoader = true;
         this.salesService
             .addSales({
@@ -117,6 +111,7 @@ export class AddSalesComponent implements OnInit {
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
                 sales: this.saleItems,
+                past_due: this.lastBillDue
             })
             .subscribe(
                 (response) => {
@@ -131,15 +126,14 @@ export class AddSalesComponent implements OnInit {
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
-                            duration: 3000
-                        }
-                        );
-                    },
-                    () => { }
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
             );
     }
     updateSales(): void {
-        const pendingDueTotal = +this.totalPrice + +this.lastBillDue;
         this.isShowLoader = true;
         this.salesService
             .editSales({
@@ -152,6 +146,7 @@ export class AddSalesComponent implements OnInit {
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
                 sales: this.saleItems,
+                past_due: this.lastBillDue
             })
             .subscribe(
                 (response) => {
@@ -160,7 +155,6 @@ export class AddSalesComponent implements OnInit {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
-                    // this.updateValue(this.data.customerId)
                 },
                 (error) => {
                     this.isShowLoader = false;
@@ -176,43 +170,31 @@ export class AddSalesComponent implements OnInit {
     }
     onSubmit() {
         if (this.data.salesId) {
-               this.updateSales();
+            this.updateSales();
         } else {
             this.saveSales();
         }
-        this.updateValue()
     }
     addSalesQuotation() {
         const {
             item_id,
             qty,
-            available,
             selling_price,
-            total
         } = this.formSupplier.value;
         const item = this.items.find(x => x.id === item_id);
         const salesItem = this.saleItems.find(x => +x.item_id === +item_id);
         if (salesItem) {
             salesItem.qty = +salesItem.qty + +qty;
-            salesItem.total= +salesItem.total + +total;
+            salesItem.total = +salesItem.total + (+salesItem.qty * +salesItem.selling_price);
         } else {
             this.saleItems.push({
                 item_code: item.item_code,
                 item_id,
                 qty,
-                available,
                 selling_price,
-                total
             });
         }
-        this.totalQty = 0
-        this.totalPrice = 0;
-        this.saleItems.forEach(saleItem => {
-            this.totalQty = +this.totalQty + +saleItem.qty;
-            this.totalPrice = +this.totalPrice + +saleItem.total;
-        });
-        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-        this.totalDue = +this.grandDueTotal
+        this.bindItemQtyAndTotal();
         if (qty <= 0) {
             this.formBill.get("remarks").setValidators(Validators.required);
             setTimeout(() => {
@@ -221,29 +203,43 @@ export class AddSalesComponent implements OnInit {
         }
         this.isEditSalesItem = false;
         this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+        this.availableItemById = 0;
         this.clearSalesDetailsForm();
     }
+    bindItemQtyAndTotal() {
+        this.totalQty = 0
+        this.totalPrice = 0;
+        this.saleItems.forEach(saleItem => {
+            this.totalQty = +this.totalQty + +saleItem.qty;
+            this.totalPrice = +this.totalPrice + (+saleItem.qty * +saleItem.selling_price);
+        });
+        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
+        this.totalDue = +this.grandDueTotal
+    }
     fillForm() {
-        if(+this.isCustomerId === 0){
+        if (+this.isCustomerId === 0) {
             this.lastBillDue = this.customerData.balance;
             this.grandDueTotal = this.customerData.balance;
             this.totalDue = this.customerData.balance;
         }
-        else{
+        else {
             this.lastBillDue = this.customerData.cdf_total_due;
             this.grandDueTotal = this.customerData.cdf_total_due;
             this.totalDue = this.customerData.cdf_total_due;
         }
-                    this.customerName = this.customerData.company;
-                    this.dueLimit = this.customerData.due_limit;
-                    this.customerID = this.customerData.id
-                    this.tier = this.customerData.tier_code;
+
+
+        this.customerName = this.customerData.company;
+        this.dueLimit = this.customerData.due_limit;
+        this.customerID = this.customerData.id
+        this.tier = this.customerData.tier_code;
     }
     getItemsBySalesId() {
         this.salesItemDataSource = [];
         this.salesBillService.getItemsBySalesId(this.data.salesId).subscribe(
             (response) => {
                 this.saleItems.push(...response)
+                this.bindItemQtyAndTotal();
                 this.salesItemDataSource = new MatTableDataSource<ISalesBillData>(response);
             },
             (error) => {
@@ -254,14 +250,7 @@ export class AddSalesComponent implements OnInit {
             () => { }
         );
     }
-    count() {
-        if (this.formSupplier.value.qty !== '') {
-            this.total = (+this.formSupplier.value.qty * +this.formSupplier.value.selling_price)
-            this.formSupplier.patchValue({
-                total: this.total
-            })
-        }
-    }
+
     getItemDropDown() {
         this.selectItemLoader = true;
         this.salesQuotationService
@@ -285,10 +274,11 @@ export class AddSalesComponent implements OnInit {
     totalDueCount() {
         this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
     }
-    fillSellingPrice(item) {
+    fillSellingPrice(itemId: number) {
+        const item = this.items.find(x=>x.id === itemId)
+        this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
         this.formSupplier.patchValue({
             item_id: item.id,
-            available: item.int_qty,
             selling_price: item.silver
         });
     }
@@ -299,36 +289,32 @@ export class AddSalesComponent implements OnInit {
     supplierFillForm(itemId: number) {
         this.isEditSalesItem = true;
         const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
-
-        const {item_id,qty,available, selling_price, total} = filteredItem;
+        const { item_id, qty, selling_price, } = filteredItem;
         this.formSupplier.patchValue({
             item_id,
-            available,
             qty,
             selling_price,
-            total
-        })
+        });
+        this.fillSellingPrice(itemId)
     }
     removeItem(itemId: number): void {
         const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
         this.saleItems = filteredItems;
         this.totalQty = 0;
-        this.totalPrice =  0;
+        this.totalPrice = 0;
         this.saleItems.forEach(saleItem => {
             this.totalQty += +saleItem.qty;
             this.totalPrice += +saleItem.total;
         })
         this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
         this.totalDue = this.grandDueTotal
-            this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+        this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
     }
     clearSalesDetailsForm(): void {
         this.formSupplier.patchValue({
             item_id: '',
             qty: '',
-            available: '',
             selling_price: '',
-            total: ''
         });
     }
     getCustomerById() {
@@ -338,15 +324,6 @@ export class AddSalesComponent implements OnInit {
                 (response) => {
                     this.customerData = response;
                     this.customerID = this.customerData.id
-                    // if(!this.customerID){
-                    //     this.lastBillDue = this.customerData.balance;
-                    // }
-                    // this.lastBillDue = this.customerData.cdf_total_due;
-                    // this.customerName = this.customerData.company;
-                    // this.grandDueTotal = this.customerData.cdf_total_due;
-                    // this.dueLimit = this.customerData.due_limit;
-                    // this.tier = this.customerData.tier_code;
-                    // this.totalDue = this.customerData.cdf_total_due;
                     this.getCustomerIdInSales();
                 },
                 (error) => {
@@ -364,17 +341,15 @@ export class AddSalesComponent implements OnInit {
         this.salesService.getSalesById(this.data.salesId).subscribe(
             (response) => {
                 this.salesData = response[0]
-                this.totalQty = this.salesData.qty
-                    this.totalPrice = this.salesData.amount,
-                    this.lastBillDue = this.salesData.pending_due,
-                    this.lastBillNo = this.salesData.bill_no,
-                    this.totalDue = this.salesData.total_due,
-                    this.tier = this.salesData.tier,
-                    this.grandDueTotal = this.salesData.grand_total,
-                    this.remarks = this.salesData.remarks,
-                    this.customerName = this.salesData.customer,
-                    this.formBill.value.payment = this.salesData.payment,
-                    this.formBill.value.otherPayment = this.salesData.other_payment
+                this.lastBillNo = this.salesData.bill_no;
+                this.remarks = this.salesData.remarks;
+                if (this.salesData.other_payment) {
+                    this.isShowOtherPayment = true;
+                }
+                this.formBill.patchValue({
+                    payment: this.salesData.payment,
+                    otherPayment: this.salesData.other_payment
+                });
             },
             (error) => {
                 this.snackBar.open(error.error.message || error.message, 'Ok', {
@@ -384,35 +359,20 @@ export class AddSalesComponent implements OnInit {
             () => { }
         );
     }
-    hideShowOther(){
-        if(this.isShowOtherPayment === false){
-            this.isShowOtherPayment  = true
-        }else{
+    hideShowOther() {
+        if (this.isShowOtherPayment === false) {
+            this.isShowOtherPayment = true
+        } else {
             this.isShowOtherPayment = false;
         }
     }
-    updateValue(): void {
-        this.salesService
-            .updateValue({
-                totalQty: this.totalQty,
-                payment: this.formBill.value.payment,
-                otherPayment: this.formBill.value.otherPayment,
-                customer_id: this.data.customerId,
-                buyingPrice:this.totalPrice,
-                salesItemDetails: this.saleItems
-    })
-            .subscribe(
-                (response) => {
-                },
-                () => { }
-            );
-    }
+
     getCustomerIdInSales() {
         this.salesService.isCustomerIdInSales(this.customerID).subscribe(
             (response) => {
                 this.isCustomerId = response[0].count
                 this.fillForm();
-},
+            },
             (error) => {
                 this.snackBar.open(error.error.message || error.message, 'Ok', {
                     duration: 3000
@@ -420,5 +380,12 @@ export class AddSalesComponent implements OnInit {
             },
             () => { }
         );
+    }
+
+    getItemWiseTotal() {
+        if (this.formSupplier.value.qty !== '') {
+            return (+this.formSupplier.value.qty * +this.formSupplier.value.selling_price)
+        }
+        return 0;
     }
 }

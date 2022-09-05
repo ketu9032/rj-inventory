@@ -47,7 +47,7 @@
                 <mat-form-field class="input_width">
                     <mat-label>Item code</mat-label>
                     <mat-select name="item code" formControlName="item_id">
-                        <mat-option *ngFor="let item of items" [value]="item.id" (click)="fillSellingPrice(item)">
+                        <mat-option *ngFor="let item of items" [value]="item.id" (click)="fillSellingPrice(item.id)">
                             {{item.item_code | uppercase}}
                         </mat-option>
                     </mat-select>
@@ -58,14 +58,14 @@
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Qty.</mat-label>
-                    <input matInput formControlName="qty" type="number" (keyup)="count()" (click)="count()" />
+                    <input matInput formControlName="qty" type="number"/>
                 </mat-form-field>
             </div>
             <!-- available start -->
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Available</mat-label>
-                    <input matInput formControlName="available" matTooltip="Not Editable" readonly />
+                    <input matInput matTooltip="Not Editable" readonly [value]="availableItemById"/>
                 </mat-form-field>
 
             </div>
@@ -81,7 +81,7 @@
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Total</mat-label>
-                    <input matInput formControlName="total" matTooltip="Not Editable" readonly />
+                    <input matInput matTooltip="Not Editable" readonly value="{{getItemWiseTotal()}}" />
                 </mat-form-field>
 
             </div>
@@ -116,7 +116,7 @@
         <ng-container matColumnDef="total">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
             <td mat-cell *matCellDef="let sales">
-                {{ sales.total | currency: 'INR'}}
+                {{ sales.qty *  sales.selling_price | currency: 'INR'}}
             </td>
         </ng-container>
         <ng-container matColumnDef="action">
@@ -206,7 +206,7 @@
                     <div class="flex">
                         <span>
                             <section class="checkbox-margin">
-                                <mat-checkbox color="primary" (change)="hideShowOther()"> </mat-checkbox>
+                                <mat-checkbox color="primary" (change)="hideShowOther()" [checked]="isShowOtherPayment"> </mat-checkbox>
                             </section>
                         </span>
                         <span>
