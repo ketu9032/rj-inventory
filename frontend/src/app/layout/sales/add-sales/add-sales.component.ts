@@ -63,7 +63,7 @@ export class AddSalesComponent implements OnInit {
     isEditSalesItem = false;
     availableItemById = 0;
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number },
+        @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number, pastDue: number },
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddSalesComponent>,
         private formBuilder: FormBuilder,
@@ -76,13 +76,14 @@ export class AddSalesComponent implements OnInit {
     ngOnInit() {
         this.loggedInUser = this.authService.getUserData();
         this.getCustomerById();
-        // this.customerData = this.data.customer[0]
         this.initializeSupplierForm();
         this.initializeSalesBillForm()
         this.getItemDropDown();
         if (this.data.salesId) {
             this.getItemsBySalesId();
             this.getSalesById();
+            this.lastBillDue = this.data.pastDue;
+            this.calculate();
         }
     }
     initializeSupplierForm(): void {
@@ -194,7 +195,7 @@ export class AddSalesComponent implements OnInit {
                 selling_price,
             });
         }
-        this.bindItemQtyAndTotal();
+
         if (qty <= 0) {
             this.formBill.get("remarks").setValidators(Validators.required);
             setTimeout(() => {
@@ -204,31 +205,15 @@ export class AddSalesComponent implements OnInit {
         this.isEditSalesItem = false;
         this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
         this.availableItemById = 0;
+        this.calculate();
         this.clearSalesDetailsForm();
     }
-    bindItemQtyAndTotal() {
-        this.totalQty = 0
-        this.totalPrice = 0;
-        this.saleItems.forEach(saleItem => {
-            this.totalQty = +this.totalQty + +saleItem.qty;
-            this.totalPrice = +this.totalPrice + (+saleItem.qty * +saleItem.selling_price);
-        });
-        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-        this.totalDue = +this.grandDueTotal
-    }
+
     fillForm() {
-        if (+this.isCustomerId === 0) {
-            this.lastBillDue = this.customerData.balance;
-            this.grandDueTotal = this.customerData.balance;
-            this.totalDue = this.customerData.balance;
-        }
-        else {
+        if (!this.data.salesId) {
             this.lastBillDue = this.customerData.cdf_total_due;
-            this.grandDueTotal = this.customerData.cdf_total_due;
-            this.totalDue = this.customerData.cdf_total_due;
+            this.calculate();
         }
-
-
         this.customerName = this.customerData.company;
         this.dueLimit = this.customerData.due_limit;
         this.customerID = this.customerData.id
@@ -239,7 +224,7 @@ export class AddSalesComponent implements OnInit {
         this.salesBillService.getItemsBySalesId(this.data.salesId).subscribe(
             (response) => {
                 this.saleItems.push(...response)
-                this.bindItemQtyAndTotal();
+                this.calculate();
                 this.salesItemDataSource = new MatTableDataSource<ISalesBillData>(response);
             },
             (error) => {
@@ -250,7 +235,6 @@ export class AddSalesComponent implements OnInit {
             () => { }
         );
     }
-
     getItemDropDown() {
         this.selectItemLoader = true;
         this.salesQuotationService
@@ -271,9 +255,7 @@ export class AddSalesComponent implements OnInit {
                 () => { }
             );
     }
-    totalDueCount() {
-        this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
-    }
+
     fillSellingPrice(itemId: number) {
         const item = this.items.find(x=>x.id === itemId)
         this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
@@ -282,10 +264,7 @@ export class AddSalesComponent implements OnInit {
             selling_price: item.silver
         });
     }
-    fillDueAndDueLimit(customer) {
-        this.lastBillDue = customer.balance,
-            this.dueLimit = customer.due_limit
-    }
+
     supplierFillForm(itemId: number) {
         this.isEditSalesItem = true;
         const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
@@ -300,14 +279,7 @@ export class AddSalesComponent implements OnInit {
     removeItem(itemId: number): void {
         const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
         this.saleItems = filteredItems;
-        this.totalQty = 0;
-        this.totalPrice = 0;
-        this.saleItems.forEach(saleItem => {
-            this.totalQty += +saleItem.qty;
-            this.totalPrice += +saleItem.total;
-        })
-        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-        this.totalDue = this.grandDueTotal
+        this.calculate();
         this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
     }
     clearSalesDetailsForm(): void {
@@ -343,6 +315,7 @@ export class AddSalesComponent implements OnInit {
                 this.salesData = response[0]
                 this.lastBillNo = this.salesData.bill_no;
                 this.remarks = this.salesData.remarks;
+
                 if (this.salesData.other_payment) {
                     this.isShowOtherPayment = true;
                 }
@@ -350,6 +323,7 @@ export class AddSalesComponent implements OnInit {
                     payment: this.salesData.payment,
                     otherPayment: this.salesData.other_payment
                 });
+                this.calculate();
             },
             (error) => {
                 this.snackBar.open(error.error.message || error.message, 'Ok', {
@@ -366,7 +340,6 @@ export class AddSalesComponent implements OnInit {
             this.isShowOtherPayment = false;
         }
     }
-
     getCustomerIdInSales() {
         this.salesService.isCustomerIdInSales(this.customerID).subscribe(
             (response) => {
@@ -381,11 +354,22 @@ export class AddSalesComponent implements OnInit {
             () => { }
         );
     }
-
     getItemWiseTotal() {
         if (this.formSupplier.value.qty !== '') {
             return (+this.formSupplier.value.qty * +this.formSupplier.value.selling_price)
         }
         return 0;
+    }
+
+    calculate() {
+        debugger
+        this.totalQty = 0
+        this.totalPrice = 0;
+        this.saleItems.forEach(saleItem => {
+            this.totalQty = +this.totalQty + +saleItem.qty;
+            this.totalPrice = +this.totalPrice + (+saleItem.qty * +saleItem.selling_price);
+        });
+        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue);
+        this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
     }
 }

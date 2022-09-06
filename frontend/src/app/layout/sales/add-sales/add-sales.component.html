@@ -212,7 +212,7 @@
                         <span>
                             <mat-form-field>
                                 <mat-label>payment(₹) </mat-label>
-                                <input matInput disable (keyup)="totalDueCount()" formControlName="payment" />
+                                <input matInput disable (keyup)="calculate()" formControlName="payment" />
                             </mat-form-field>
                         </span>
                     </div>
@@ -220,7 +220,7 @@
                         <ng-container *ngIf="isShowOtherPayment">
                             <mat-form-field>
                                 <mat-label>Other Payment (₹) </mat-label>
-                                <input matInput disable (keyup)="totalDueCount()" formControlName="otherPayment"/>
+                                <input matInput disable formControlName="otherPayment"/>
                             </mat-form-field>
                         </ng-container>
                     </div>

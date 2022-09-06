@@ -117,12 +117,13 @@ export class SalesComponent implements OnInit {
                 }
             });
     }
-    onEditNewCustomers(element) {
+    onEditNewSales(element) {
         this.dialog
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                data: {customerId: element.customer_id, salesId: element.id}
+                data: {customerId: element.customer_id, salesId: element.id,
+                pastDue: element.past_due}
             })
             .afterClosed()
             .subscribe((result) => {

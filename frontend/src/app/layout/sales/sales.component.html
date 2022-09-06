@@ -114,7 +114,7 @@
 
                     <ng-container *ngIf="loggedInUsersData.user_name === element.user_name && (element.date | date: 'M/d/yy')  ===  (currentDate | date: 'M/d/yy')">
                          <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
-                             (click)="onEditNewCustomers(element)">
+                             (click)="onEditNewSales(element)">
                              <mat-icon aria-label="Edit">edit</mat-icon>
                          </button>
                          <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"

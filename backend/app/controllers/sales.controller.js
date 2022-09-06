@@ -95,7 +95,6 @@ exports.delete = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const loggedInUserId = res.locals.tokenData.id;
-
     const {
       user_id,
       tier,
@@ -115,10 +114,9 @@ exports.add = async (req, res) => {
        payment,
        customer_id,
        other_payment,
-       token,
-       past_due
+       token
      )
-    VALUES(now(), (select count(bill_no)+1 from sales  where customer_id = ${customer_id}), '${user_id}', '${tier}', '${remarks}', '${payment}', '${customer_id}', '${other_payment}', (select count(token)+1 from sales  where date::date = now()::date), (select cdf_total_due from cdf where id = ${customer_id}) ) returning id;`;
+    VALUES(now(), (select count(bill_no)+1 from sales  where customer_id = ${customer_id}), '${user_id}', '${tier}', '${remarks}', '${payment}', '${customer_id}', '${other_payment}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesId = rows[0].id;
     await this.updateValue(
@@ -127,7 +125,8 @@ exports.add = async (req, res) => {
       other_payment,
       sales,
       salesId,
-      loggedInUserId
+      loggedInUserId,
+      false
     );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -219,7 +218,8 @@ exports.update = async (req, res) => {
       other_payment,
       sales,
       id,
-      loggedInUserId
+      loggedInUserId,
+      true
     );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -267,7 +267,8 @@ exports.getSalesById = async (req, res) => {
           customer_id,
           cdf.company as customer,
           cdf.due_limit as due_limit,
-          other_payment
+          other_payment,
+          s.past_due as past_due
         FROM sales s
         join cdf as cdf
         on cdf.id = s.customer_id
@@ -286,7 +287,8 @@ exports.updateValue = async (
   otherPayment,
   salesItemDetails,
   salesId,
-  loggedInUserId
+  loggedInUserId,
+  isSalesUpdate
 ) => {
   try {
     let itemsCost = 0;
@@ -294,7 +296,6 @@ exports.updateValue = async (
     const query1 = `select qty, selling_price, item_id from sales_bill where sales_id = ${salesId}`;
     const existingItemResponse = await pool.query(query1);
     const existingItems = existingItemResponse.rows;
-
     for (let index = 0; index < existingItems.length; index++) {
       const item = existingItems[index];
       const query2 = `update item set item_sold = item_sold - ${item.qty}
@@ -304,7 +305,6 @@ exports.updateValue = async (
     }
     const query3 = `delete from sales_bill where sales_id = ${salesId};`;
     await pool.query(query3);
-
     for (let index = 0; index < salesItemDetails.length; index++) {
       const element = salesItemDetails[index];
       const query4 = `INSERT INTO sales_bill
@@ -328,25 +328,33 @@ exports.updateValue = async (
       await pool.query(query5);
       itemsCost = +element.selling_price * +element.qty + itemsCost;
     }
-
-    let query7 = `select payment, other_payment from sales where id = ${salesId}`;
-    const existingBillResponse = await pool.query(query7);
-    const existingBill =
-      existingBillResponse.rows && existingBillResponse.rows.length > 0
-        ? existingBillResponse.rows[0]
-        : null;
     let existingPayment = 0;
     let existingOtherPayment = 0;
-    if (existingBill) {
-      existingPayment = existingBill.payment;
-      existingOtherPayment = existingBill.other_payment;
+    if (isSalesUpdate === true) {
+      let query7 = `select payment, other_payment from sales where id = ${salesId}`;
+      const existingBillResponse = await pool.query(query7);
+      const existingBill =
+        existingBillResponse.rows && existingBillResponse.rows.length > 0
+          ? existingBillResponse.rows[0]
+          : null;
+      if (existingBill) {
+        existingPayment = existingBill.payment;
+        existingOtherPayment = existingBill.other_payment;
+        let query = `update  sales set
+            payment = COALESCE(payment,0) - ${existingPayment} + ${payment},
+            other_payment = COALESCE(other_payment,0) - ${existingOtherPayment} - ${otherPayment}
+          where id = ${salesId}`;
+        await pool.query(query);
+      }
+    } else {
+      let query10 = `update sales set past_due = (select cdf_total_due from cdf where id = ${customerId} ) where id = ${salesId}`;
+      await pool.query(query10);
     }
-
     let query6 = ` update cdf set
         balance =  COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost},
         payment = COALESCE(payment,0) - ${existingPayment} + ${payment},
-        cdf_total_due = (COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(payment,0) - ${existingPayment} + ${payment}) + ${payment} - ${existingPayment}
-      where id = ${customerId}`;
+        cdf_total_due = (COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(payment,0) - ${existingPayment} + ${payment})
+      where id = ${customerId} returning cdf_total_due`;
     await pool.query(query6);
 
     let query8 = `update users set balance = balance - ${existingPayment} - ${existingOtherPayment} + ${+payment}  + ${
