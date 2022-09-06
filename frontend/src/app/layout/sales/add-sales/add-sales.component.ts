@@ -96,6 +96,7 @@ export class AddSalesComponent implements OnInit {
         });
     }
     saveSales(): void {
+
         this.isShowLoader = true;
         this.salesService
             .addSales({
@@ -130,6 +131,9 @@ export class AddSalesComponent implements OnInit {
             );
     }
     updateSales(): void {
+
+
+
         this.isShowLoader = true;
         this.salesService
             .editSales({
@@ -163,6 +167,7 @@ export class AddSalesComponent implements OnInit {
                 },
                 () => { }
             );
+
     }
     onSubmit() {
         if (this.data.salesId) {
@@ -358,4 +363,13 @@ export class AddSalesComponent implements OnInit {
         this.grandDueTotal = (+this.total + +this.lastBillDue);
         this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
     }
+    totalDueOverToDueLimit(value){
+        if(this.dueLimit < this.totalDue){
+          let msg = 'You are Over Due limit!'
+        return false;
+            }else{
+                return true;
+            }
+
+        }
 }

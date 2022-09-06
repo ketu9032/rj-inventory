@@ -1,5 +1,5 @@
 <div class="main-header">
-    <h1 mat-dialog-title><b>Add Sales</b> </h1>
+    <h1 mat-dialog-title><b> {{ !this.data.salesId ? 'Add  Sales' : 'Update  Sales' }}</b> </h1>
     <button mat-button mat-dialog-close>
         <mat-icon>close</mat-icon>
     </button>
@@ -247,7 +247,7 @@
                 <div class="">
                     <button mat-raised-button color="primary" [disabled]="!formBill.valid || isShowLoader">
                         <span *ngIf="!isShowLoader">
-                            Save & Rack
+                            {{!this.data.salesId ? 'Save & Back' : 'Update & Back'}}
                         </span>
                         <mat-spinner *ngIf="isShowLoader" diameter="20"></mat-spinner>
                     </button>
