@@ -17,6 +17,29 @@ import { SalesService } from '../services/sales.service';
     styleUrls: ['./add-sales.component.scss']
 })
 export class AddSalesComponent implements OnInit {
+    totalQty: number = 0;
+    total: number = 0;
+    lastBillDue: number = 0;
+    dueLimit: number = 0;
+    grandDueTotal: number = 0;
+    totalDue: number = 0;
+    lastBillNo: number = 0;
+    bill_no: number = 0;
+    availableItemById = 0;
+    isShowOtherPayment: boolean = false;
+    isEditSalesItem = false;
+    isShowLoader = false;
+    selectItemLoader: boolean = false;
+    loggedInUser: any;
+    customerData: any;
+    currentDate = new Date();
+    salesData: any;
+    customerName: string;
+    tier: string = '';
+
+    salesItemDataSource: any = [];
+    items = [];
+    saleItems = [];
     displayedColumns: string[] = [
         'item_code',
         'qty',
@@ -34,34 +57,6 @@ export class AddSalesComponent implements OnInit {
     }
     formSupplier: FormGroup;
     formBill: FormGroup;
-    isShowLoader = false;
-    selectItemLoader: boolean = false;
-    salesItemDataSource: any = [];
-    items = [];
-    totalQty: number = 0;
-    totalPrice: number = 0;
-    lastBillDue: number = 0;
-    dueLimit: number = 0;
-    grandDueTotal: number = 0;
-    currentPayment: number = 0;
-    otherPayment: number = 0;
-    totalDue: number = 0;
-    saleItems = [];
-    loggedInUser;
-    lastBillNo: number = 0;
-    customerData: any;
-    customerName: string;
-    tier: string = '';
-    remarks: string = 'testing';
-    currentDate = new Date();
-    findSalesBill;
-    bill_no: number = 0;
-    salesData;
-    customerID: number;
-    isCustomerId: number;
-    isShowOtherPayment: boolean = false;
-    isEditSalesItem = false;
-    availableItemById = 0;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number, pastDue: number },
         public dialog: MatDialog,
@@ -107,7 +102,7 @@ export class AddSalesComponent implements OnInit {
                 bill_no: this.bill_no,
                 user_id: this.loggedInUser.id,
                 tier: this.tier,
-                remarks: this.remarks,
+                remarks: this.formBill.value.remarks,
                 customer_id: this.data.customerId,
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
@@ -142,7 +137,7 @@ export class AddSalesComponent implements OnInit {
                 bill_no: this.bill_no,
                 user_id: this.loggedInUser.id,
                 tier: this.tier,
-                remarks: this.remarks,
+                remarks: this.formBill.value.remarks,
                 customer_id: this.salesData.customer_id,
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
@@ -195,7 +190,6 @@ export class AddSalesComponent implements OnInit {
                 selling_price,
             });
         }
-
         if (qty <= 0) {
             this.formBill.get("remarks").setValidators(Validators.required);
             setTimeout(() => {
@@ -208,7 +202,6 @@ export class AddSalesComponent implements OnInit {
         this.calculate();
         this.clearSalesDetailsForm();
     }
-
     fillForm() {
         if (!this.data.salesId) {
             this.lastBillDue = this.customerData.cdf_total_due;
@@ -216,7 +209,6 @@ export class AddSalesComponent implements OnInit {
         }
         this.customerName = this.customerData.company;
         this.dueLimit = this.customerData.due_limit;
-        this.customerID = this.customerData.id
         this.tier = this.customerData.tier_code;
     }
     getItemsBySalesId() {
@@ -255,16 +247,14 @@ export class AddSalesComponent implements OnInit {
                 () => { }
             );
     }
-
     fillSellingPrice(itemId: number) {
-        const item = this.items.find(x=>x.id === itemId)
+        const item = this.items.find(x => x.id === itemId)
         this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
         this.formSupplier.patchValue({
             item_id: item.id,
             selling_price: item.silver
         });
     }
-
     supplierFillForm(itemId: number) {
         this.isEditSalesItem = true;
         const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
@@ -295,7 +285,6 @@ export class AddSalesComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.customerData = response;
-                    this.customerID = this.customerData.id
                     this.getCustomerIdInSales();
                 },
                 (error) => {
@@ -314,8 +303,7 @@ export class AddSalesComponent implements OnInit {
             (response) => {
                 this.salesData = response[0]
                 this.lastBillNo = this.salesData.bill_no;
-                this.remarks = this.salesData.remarks;
-
+                this.formBill.value.remarks = this.salesData.remarks;
                 if (this.salesData.other_payment) {
                     this.isShowOtherPayment = true;
                 }
@@ -341,9 +329,9 @@ export class AddSalesComponent implements OnInit {
         }
     }
     getCustomerIdInSales() {
-        this.salesService.isCustomerIdInSales(this.customerID).subscribe(
+        this.salesService.isCustomerIdInSales(this.data.customerId).subscribe(
             (response) => {
-                this.isCustomerId = response[0].count
+                this.lastBillNo = response[0].count
                 this.fillForm();
             },
             (error) => {
@@ -360,16 +348,14 @@ export class AddSalesComponent implements OnInit {
         }
         return 0;
     }
-
     calculate() {
-        debugger
         this.totalQty = 0
-        this.totalPrice = 0;
+        this.total = 0;
         this.saleItems.forEach(saleItem => {
             this.totalQty = +this.totalQty + +saleItem.qty;
-            this.totalPrice = +this.totalPrice + (+saleItem.qty * +saleItem.selling_price);
+            this.total = +this.total + (+saleItem.qty * +saleItem.selling_price);
         });
-        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue);
+        this.grandDueTotal = (+this.total + +this.lastBillDue);
         this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
     }
 }

@@ -147,7 +147,7 @@
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Total Qty</mat-label>
-                        <input matInput disable matTooltip="Not Editable" readonly value={{this.totalQty}} />
+                        <input matInput disable matTooltip="Not Editable" readonly [value]="totalQty" />
                     </mat-form-field>
                 </div>
                 <div class="width">
@@ -162,14 +162,14 @@
                     <mat-form-field>
                         <mat-label>Total (₹)</mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly
-                            value="{{this.totalPrice  | currency: 'INR'}}" />
+                            [value]="total | currency: 'INR'" />
                     </mat-form-field>
                 </div>
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Last Bill Due (₹)</mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly
-                            value="{{ this.lastBillDue   | currency: 'INR'}}" />
+                            [value]="lastBillDue   | currency: 'INR'" />
                     </mat-form-field>
                 </div>
             </span>
@@ -182,21 +182,21 @@
                     <textarea matInput class="padding" id="" cdkAutosizeMinRows="8" cdkAutosizeMaxRows="8"
                         placeholder="Enter Remarks..." formControlName="remarks"></textarea>
                 </mat-form-field>
-                <!-- <div>
+                 <div>
                 <ng-container *ngIf="
                 formBill.controls.remarks.touched &&
                 !formBill.controls.remarks.value
             ">
                     <span class="error">Remarks is Required</span>
                 </ng-container>
-            </div> -->
+            </div>
             </div>
             <div class="payment">
                 <div class="float">
                     <mat-form-field>
                         <mat-label>Grand Total (₹) </mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly
-                            value="{{this.grandDueTotal  | currency: 'INR'}}" />
+                            [value]="grandDueTotal  | currency: 'INR'" />
                     </mat-form-field>
                 </div>
                 <br>
@@ -232,7 +232,7 @@
         <div class="flex tierLimitAndButton">
             <div><br><b>{{tier | uppercase}}</b> Due Limit:
                 <span class="error">
-                    {{this.dueLimit | currency: 'INR'}}
+                    {{dueLimit | currency: 'INR'}}
                 </span>
             </div>
             <div class="tierLimitAndButton_content_2">
@@ -240,7 +240,7 @@
                     <mat-form-field>
                         <mat-label>Total Due (₹) </mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly
-                            value="{{this.totalDue | currency: 'INR'}}" />
+                            [value]="totalDue | currency: 'INR'" />
                     </mat-form-field>
                 </div>
                 <br>
