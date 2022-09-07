@@ -81,7 +81,7 @@
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Total</mat-label>
-                    <input matInput matTooltip="Not Editable" readonly value="{{getItemWiseTotal()}}" />
+                    <input matInput matTooltip="Not Editable" readonly [value]="getItemWiseTotal()" />
                 </mat-form-field>
 
             </div>
@@ -153,7 +153,7 @@
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Last Bill No</mat-label>
-                        <input matInput disable value="{{this.lastBillNo}}" readonly />
+                        <input matInput disable [value]="this.lastBillNo" readonly />
                     </mat-form-field>
                 </div>
             </span>

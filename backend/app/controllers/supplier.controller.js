@@ -131,3 +131,22 @@ exports.getSupplierDropDown = async (req, res) => {
     });
   }
 };
+
+exports.getSuppliersById = async (req, res) => {
+  try {
+    const { supplierId } = req.query;
+    const response = await pool.query(
+      `select id, company,balance,  due_limit FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true  and id = ${supplierId} limit 1`
+    );
+    if (response.rows && response.rows.length > 0) {
+      return res.status(STATUS_CODE.SUCCESS).send(response.rows[0]);
+    }
+    return res.status(STATUS_CODE.ERROR).send({
+      message: MESSAGES.COMMON.DATA_NOT_FOUND
+    });
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};

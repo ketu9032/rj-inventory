@@ -44,13 +44,13 @@ export class PurchaseComponent implements OnInit {
     loader: boolean = false;
     selectCustomerLoader: boolean = false;
     selectSupplierLoader: boolean = false;
-    isShow: boolean = true;
+    isShowAddPurchase: boolean = true;
     totalRows: number;
     supplierName: string;
     customers = [];
     user: any;
     payment: number = 0;
-    allFiledCustomer = []
+    selectSupplierId: number;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -65,6 +65,8 @@ export class PurchaseComponent implements OnInit {
     toDate: string;
     userData = [];
     userId? : number;
+
+    loggedInUsersData: any;
     constructor(
         public dialog: MatDialog,
         private salesService: SalesService,
@@ -74,11 +76,10 @@ export class PurchaseComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit(): void {
-       //this.getCustomerDropDown();
+       this.loggedInUsersData = this.authService.getUserData();
        this.getUserDropDown()
         this.getSuppliersDropDown()
         this.getPurchase();
-      //  this.user = this.authService.getUserData();
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
@@ -117,8 +118,7 @@ export class PurchaseComponent implements OnInit {
             .open(AddPurchaseComponent, {
                 width: '1000px',
                 height: '800px',
-                data: { supplierDetails: this.allFiledCustomer }
-
+                data: { supplierId: this.selectSupplierId }
             })
             .afterClosed()
             .subscribe((result) => {
@@ -127,15 +127,17 @@ export class PurchaseComponent implements OnInit {
                 }
             });
     }
-    customerData(supplier) {
-        this.allFiledCustomer.push(supplier)
-    }
+
     onEditNewCustomers(element) {
         this.dialog
             .open(AddPurchaseComponent, {
                 width: '1000px',
                 height: '800px',
-                data: element
+                data: {
+                    supplierId: element.customer_id,
+                    purchaseId: element.id,
+                    pastDue: element.past_due
+                }
             })
             .afterClosed()
             .subscribe((result) => {
@@ -178,41 +180,20 @@ export class PurchaseComponent implements OnInit {
         this.getPurchase();
     }
     toggleType() {
-        this.tableParams.active = !this.tableParams
-            .active;
+        this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
         this.getPurchase();
 
     }
     toggleCreateAddPurchaseButton() {
-        if (this.supplierName
-            === '') {
-            this.isShow = true
+        this.isShowAddPurchase = false
+        if (!this.selectSupplierId) {
+            this.isShowAddPurchase = true
         } else {
-            this.isShow = false
+            this.isShowAddPurchase = false
         }
     }
-    // getCustomerDropDown() {
-    //     this.selectCustomerLoader = true;
-    //     this.salesService
-    //         .getCustomerDropDown()
-    //         .subscribe(
-    //             (response) => {
-    //                 this.customers = response;
-    //                 this.selectCustomerLoader = false;
 
-    //             },
-    //             (error) => {
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok', {
-    //                     duration: 3000
-    //                 }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-    // }
     print(element) {
         this.dialog
             .open(PrintComponent, {
@@ -227,16 +208,7 @@ export class PurchaseComponent implements OnInit {
                 }
             });
     }
-    find(element) {
-        this.customer = this.suppliers.find(val => {
-            return (val.id) === element
-        })
 
-
-    }
-    paymentCount() {
-        this.payment = this.customer.amount + this.customer.balance
-    }
 
     getSuppliersDropDown() {
         this.selectSupplierLoader = true;
@@ -246,8 +218,6 @@ export class PurchaseComponent implements OnInit {
                 (response) => {
                     this.suppliers = response;
                     this.selectSupplierLoader = false;
-
-
                 },
                 (error) => {
                     this.snackBar.open(

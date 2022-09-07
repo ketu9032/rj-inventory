@@ -13,7 +13,6 @@ exports.findAll = async (req, res) => {
         (
            no::text ilike '%${search}%'
           or p.date::text ilike '%${search}%'
-          or invoice_no::text ilike '%${search}%'
           or qty::text ilike '%${search}%'
           or amount::text ilike '%${search}%'
           or total_due::text ilike '%${search}%'
@@ -43,11 +42,17 @@ exports.findAll = async (req, res) => {
       total_due,
       other_payment,
       user_name,
-      invoice_no,
       qty,
       remarks,
-      bill_no
+      bill_no,
+      past_due,
+      suppliers.company as supplier_name,
+      suppliers.due_limit as supplier_due_limit
+
       FROM purchase p
+      join suppliers as suppliers
+       on suppliers.id = p.suppliers_id
+
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -81,7 +86,6 @@ exports.delete = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const {
-      invoice_no,
       qty,
       amount,
       total_due,
@@ -96,7 +100,6 @@ exports.add = async (req, res) => {
     } = req.body;
     // if (
     //   !date ||
-    //   !invoice_no ||
     //   !qty ||
     //   !amount ||
     //   !total_due ||
@@ -114,7 +117,6 @@ exports.add = async (req, res) => {
     const insertPurchaseQuery = `INSERT INTO purchase
     (
        date,
-       invoice_no,
        qty,
        amount,
        total_due,
@@ -128,7 +130,7 @@ exports.add = async (req, res) => {
        token,
        bill_no
      )
-    VALUES(now(), '${invoice_no}', '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${remarks}', '${payment}', '${supplier}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from purchase  where date::date = now()::date),(select count(bill_no)+1 from purchase where supplier = '${supplier}') ) returning id;`;
+    VALUES(now(), ${qty}, ${amount}, ${total_due},${pending_due}, '${user_name}', '${remarks}', ${payment}, '${supplier}', ${other_payment}, ${amount_pd_total}, (select count(token)+1 from purchase  where date::date = now()::date),(select count(bill_no)+1 from purchase where supplier = '${supplier}') ) returning id;`;
 
     const { rows } = await pool.query(insertPurchaseQuery);
     const salesId = rows[0].id;
@@ -159,7 +161,6 @@ exports.add = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id,
-      invoice_no,
       qty,
       amount,
       total_due,
@@ -172,7 +173,7 @@ exports.update = async (req, res) => {
       amount_pd_total } = req.body;
 
 
-      const updatePurchaseQuery =  `UPDATE purchase SET date='now()',invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}', pending_due='${pending_due}', user_name='${user_name}', remarks='${remarks}', payment='${payment}', supplier='${supplier}', other_payment='${other_payment}', amount_pd_total='${amount_pd_total}',  where id = ${id};
+      const updatePurchaseQuery =  `UPDATE purchase SET date='now()', qty='${qty}', amount='${amount}', total_due='${total_due}', pending_due='${pending_due}', user_name='${user_name}', remarks='${remarks}', payment='${payment}', supplier='${supplier}', other_payment='${other_payment}', amount_pd_total='${amount_pd_total}',  where id = ${id};
        `
     await pool.query(updatePurchaseQuery)
         const { updateRows } = await pool.query(updatePurchaseQuery);
@@ -219,3 +220,49 @@ exports.changeStatus = async (req, res) => {
     });
   }
 };
+// exports.getPurchaseById = async (req, res) => {
+//   try {
+//     const { purchaseId } = req.query;
+//     if (!purchaseId) {
+//       res
+//         .status(STATUS_CODE.BAD)
+//         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
+//       return;
+//     }
+//     const query = ` SELECT
+//           p.id,
+//           p.date,
+//           bill_no,
+//           user_id,
+//           remarks,
+//           p.payment,
+//           purchase_id,
+//           suppliers.company as supplier_customer,
+//           suppliers.due_limit as supplier_due_limit,
+//           other_payment,
+//           p.past_due as past_due
+//         FROM purchase p
+//         join suppliers as suppliers
+//         on suppliers.id = s.purchase_id
+//         where p.is_active = true and p.id = ${purchaseId}`;
+//     const response = await pool.query(query);
+//     res.status(STATUS_CODE.SUCCESS).send(response.rows);
+//   } catch (error) {
+//     res.status(STATUS_CODE.ERROR).send({
+//       message: error.message || MESSAGES.COMMON.ERROR
+//     });
+//   }
+// };
+
+// exports.isSupplierIdInPurchase = async (req, res) => {
+//   try {
+//     const { supplierID } = req.query;
+//     const query = `select count(id) from purchase where supplier_id = ${supplierID}`;
+//     const response = await pool.query(query);
+//     res.status(STATUS_CODE.SUCCESS).send(response.rows);
+//   } catch (error) {
+//     res.status(STATUS_CODE.ERROR).send({
+//       message: error.message || MESSAGES.COMMON.ERROR
+//     });
+//   }
+// };

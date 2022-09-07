@@ -13,7 +13,7 @@ export class salesQuotationService {
     private addSalesURL = 'api/addSales';
     private changeStatusURL = 'api/sales_quotation/changeStatus';
     private getCdfToCustomerDropDownURL = 'api/cdf/getCdfTOCustomerDropDown';
-    private getCustomerByIdURL = 'api/cdf/getCustomerById';
+
     private getItemDropDownURL = 'api/item/getItemDropDown';
 
     constructor(
@@ -46,9 +46,7 @@ export class salesQuotationService {
     public getItemDropDown() {
         return this.restService.get<any>(`${this.getItemDropDownURL}`);
     }
-    public getCustomerById(customerId: number) {
-        return this.restService.get<any>(`${this.getCustomerByIdURL}?customerId=${customerId}`);
-    }
+
 }
 
 

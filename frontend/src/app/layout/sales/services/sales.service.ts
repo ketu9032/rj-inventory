@@ -13,7 +13,7 @@ export class SalesService {
   private salesChangeStatusURl = 'api/sales/changeStatus';
   private updateValueURL = 'api/sales/updateValue';
   private isCustomerIdInSalesURL = 'api/sales/isCustomerIdInSales';
-
+  private getCustomerByIdURL = 'api/cdf/getCustomerById';
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -48,5 +48,8 @@ export class SalesService {
     }
     public isCustomerIdInSales(customerID: number) {
       return this.restService.get<any>(`${this.isCustomerIdInSalesURL}?customerID=${customerID}`);
+    }
+    public getCustomerById(customerId: number) {
+        return this.restService.get<any>(`${this.getCustomerByIdURL}?customerId=${customerId}`);
     }
 }
