@@ -4,37 +4,21 @@ const { generateToken } = require('../utils/common');
 const { pool } = require('../db');
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active, salesQuotationId } =
-      req.query;
-    let searchQuery = 'where true';
-    const offset = pageSize * pageNumber - pageSize;
-    if (search) {
-      searchQuery += ` and
-        (
-          or item_code ilike '%${search}%'
-          or qty::text ilike '%${search}%'
-          or available::text ilike '%${search}%'
-          or selling_price::text ilike '%${search}%'
-          or total::text ilike '%${search}%'
-        )`;
-    }
-    searchQuery += ` and is_active = ${active}`;
-    if (salesQuotationId) {
-      searchQuery += ` and purchase_id = ${salesQuotationId}`;
-    }
-    const query = `
+    const { purchaseId } = req.query;
+     const query = `
     SELECT
       Count(purchase_details.id) OVER() AS total,
-        id,
-        item_code,
+      purchase_details.id,
+      item.item_code as item_code,
+      item_id,
+      item_code as item_code,
         qty,
-        available,
         selling_price,
-        total,
         purchase_id
     FROM purchase_details
-
-${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+    join item as item
+    on item.id = purchase_details.item_id
+    where sales_id = ${salesId}`;;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

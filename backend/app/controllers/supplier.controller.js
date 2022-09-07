@@ -13,14 +13,22 @@ exports.findAll = async (req, res) => {
       searchQuery += ` and
         (balance description '%${search}%'
           or company ilike '%${search}%'
+          or purchase_price ilike '%${search}%'
+          or purchase_payment ilike '%${search}%'
           or due_limit ilike '%${search}%'
-          or other ilike '%${search}%'
+          or suppliers_total_due ilike '%${search}%'
+
         )`;
     }
 
     searchQuery += ` and is_active = ${active}`;
     const response = await pool.query(
-      `select count(id) over() as total, id, company,due_limit,balance, other from suppliers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
+      `select count(id) over() as total, id, company,due_limit,balance, other,
+      purchase_price,
+      purchase_payment
+
+
+      from suppliers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -121,7 +129,8 @@ exports.changeStatus = async (req, res) => {
 exports.getSupplierDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, company, due_limit, balance FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
+      `select id, company, due_limit, balance,
+      purchase_price, purchase_payment FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

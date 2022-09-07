@@ -57,7 +57,7 @@ export class AddPurchaseComponent implements OnInit {
     otherPayment: number = 0;
     totalDue: number;
     sales = [];
-    users;
+    loggedInUser: any;
     customer;
     companyName;
     remarks: string = " ";
@@ -95,13 +95,14 @@ export class AddPurchaseComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit() {
-        this.users = this.authService.getUserData();
+        this.loggedInUser = this.authService.getUserData();
         this.initializeSupplierForm();
         this.initializeSalesBillForm();
         this.getSuppliersDropDown();
         // this.getSupplierById();
         this.getItemDropDown();
         if (this.data.purchaseId) {
+            this.getSupplierIdInPurchase()
             this.getPurchaseById();
             this.lastBillDue = this.data.pastDue;
             this.calculate();
@@ -123,30 +124,23 @@ export class AddPurchaseComponent implements OnInit {
         });
     }
     savePurchase(): void {
-        const pendingDueTotal = +this.totalPrice + +this.lastBillDue
-        this.company
-
         this.isShowLoader = true;
         this.purchaseService
             .addPurchase({
-                invoice_no: this.invoice_no,
-                qty: this.Qty,
-                amount: this.totalPrice,
-                user_name: this.users.user_name,
+                user_id: this.loggedInUser.id,
                 pending_due: this.lastBillDue,
                 total_due: this.totalDue,
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
-                supplier: this.supplierName,
-                payment: this.currentPayment,
-                other_payment: this.otherPayment,
-                sales: this.sales,
-                amount_pd_total: pendingDueTotal
+                suppliers_id: this.data.supplierId,
+                payment: this.formBill.value.payment,
+                other_payment: this.formBill.value.otherPayment,
+                sales: this.saleItems,
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-                    this.snackBar.open('Sales quotation saved successfully', 'OK', {
+                    this.snackBar.open('Purchase saved successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
@@ -164,29 +158,24 @@ export class AddPurchaseComponent implements OnInit {
             );
     }
     updatePurchase(): void {
-        const pendingDueTotal = +this.totalPrice + +this.lastBillDue
         this.isShowLoader = true;
         this.purchaseService
             .editPurchase({
                 id: this.data.purchaseId,
-                invoice_no: this.invoice_no,
-                qty: this.Qty,
-                amount: this.totalPrice,
-                user_name: this.users.user_name,
+                user_id: this.loggedInUser.id,
                 pending_due: this.lastBillDue,
                 total_due: this.totalDue,
                 grand_total: this.grandDueTotal,
                 remarks: this.remarks,
-                supplier: this.supplierName,
-                payment: this.currentPayment,
-                other_payment: this.otherPayment,
+                suppliers_id: this.data.supplierId,
+                payment: this.formBill.value.payment,
+                other_payment: this.formBill.value.otherPayment,
                 sales: this.sales,
-                amount_pd_total: pendingDueTotal
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-                    this.snackBar.open('Sales quotation updated successfully', 'OK', {
+                    this.snackBar.open('Purchase updated successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
@@ -216,8 +205,8 @@ export class AddPurchaseComponent implements OnInit {
         this.supplierData = this.allSupplierData.find(x => x.id === this.data.supplierId)
         // this.getSupplierIdInPurchase()
         this.supplierName = this.supplierData.company;
+        this.lastBillDue = +this.supplierData.purchase_price -  +this.supplierData.purchase_payment
         this.dueLimit = this.supplierData.due_limit;
-        debugger
     }
 
 
