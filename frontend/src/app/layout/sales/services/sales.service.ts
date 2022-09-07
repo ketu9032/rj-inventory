@@ -52,4 +52,5 @@ export class SalesService {
     public getCustomerById(customerId: number) {
         return this.restService.get<any>(`${this.getCustomerByIdURL}?customerId=${customerId}`);
     }
+
 }

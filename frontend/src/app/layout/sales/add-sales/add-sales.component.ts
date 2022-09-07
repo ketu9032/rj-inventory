@@ -234,7 +234,7 @@ export class AddSalesComponent implements OnInit {
     }
     getItemDropDown() {
         this.selectItemLoader = true;
-        this.salesQuotationService
+        this.salesService
             .getItemDropDown()
             .subscribe(
                 (response) => {

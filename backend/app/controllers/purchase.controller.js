@@ -45,13 +45,9 @@ exports.findAll = async (req, res) => {
       qty,
       remarks,
       bill_no,
-      past_due,
-      suppliers.company as supplier_name,
-      suppliers.due_limit as supplier_due_limit
-
+      past_due
       FROM purchase p
-      join suppliers as suppliers
-       on suppliers.id = p.suppliers_id
+
 
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);

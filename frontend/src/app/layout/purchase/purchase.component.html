@@ -18,8 +18,8 @@
                 <mat-label>All Suppliers</mat-label>
                 <mat-select name="tier" [(ngModel)]="selectSupplierId" (selectionChange)="toggleCreateAddPurchaseButton()">
                     <mat-option >All suppliers</mat-option>
-                    <mat-option *ngFor="let supplier of suppliers" [value]="supplier.company"
-                        (click)="toggleCreateAddPurchaseButton(); customerData(supplier); find(supplier.id)">
+                    <mat-option *ngFor="let supplier of suppliers" [value]="supplier.id"
+                        (click)="toggleCreateAddPurchaseButton();">
                         {{supplier.company | uppercase}}
                     </mat-option>
                 </mat-select>

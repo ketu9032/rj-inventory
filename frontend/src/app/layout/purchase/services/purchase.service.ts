@@ -12,7 +12,7 @@ export class PurchaseService {
     private getItemDropDownURL  = 'api/item/getItemDropDown';
     private isSupplierIdInPurchaseURL = 'api/sales/isSupplierIdInPurchase';
     private getPurchaseByIdURL = 'api/purchase/getPurchaseByIdURL'
-      private getSupplierByIdURL = 'api/supplier/getSuppliersById';
+      private getSupplierByIdURL = 'api/suppliers/getSuppliersById';
 
     constructor(private restService: RestService, private commonService: CommonService) { }
 

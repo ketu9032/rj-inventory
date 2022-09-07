@@ -12,7 +12,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Supplier Name</mat-label>
-                    <input matInput formControlName="supplier" [(ngModel)]="supplierName" value="{{supplierName | uppercase }}"  required>
+                    <input matInput formControlName="supplier" [(ngModel)]="supplierName" [value]="supplierName | uppercase"  required>
                 </mat-form-field>
             </div>
             <div class="block">
