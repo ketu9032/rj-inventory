@@ -32,11 +32,10 @@ exports.findAll = async (req, res) => {
       p.no,
       token,
       date,
-      suppliers,
+      suppliers_id,
+      suppliers.company as suppliers_company,
       amount,
-      pending_due,
       payment,
-      total_due,
       other_payment,
       p.qty,
       remarks,
@@ -44,13 +43,15 @@ exports.findAll = async (req, res) => {
       past_due,
       sum(COALESCE(purchase_details.qty,0) * COALESCE(purchase_details.selling_price,0)) + COALESCE(past_due,0) as total_amount,
       sum(COALESCE(purchase_details.qty,0) * COALESCE(purchase_details.selling_price,0)) as amount,
-      sum(COALESCE(purchase_details.qty,0) * COALESCE(purchase_details.selling_price,0)) + COALESCE(past_due,0) - p.payment as total_due,
+      sum((COALESCE(purchase_details.qty,0) * COALESCE(purchase_details.selling_price,0)) + COALESCE(past_due,0)) - payment as total_due,
       users.id as user_id,
       users.user_name as user_name
 
       FROM purchase p
       join users as users
        on users.id = p.user_id
+       join suppliers as suppliers
+        on suppliers.id = p.suppliers_id
       left join purchase_details
        on purchase_details.purchase_id = p.id
        group by
@@ -58,11 +59,10 @@ exports.findAll = async (req, res) => {
       p.no,
       token,
       date,
-      suppliers,
+      suppliers_id,
+      suppliers.company,
       amount,
-      pending_due,
       payment,
-      total_due,
       other_payment,
       p.qty,
       remarks,
@@ -108,9 +108,9 @@ exports.add = async (req, res) => {
   try {
     const loggedInUserId = res.locals.tokenData.id;
     const {
-      total_due,
+
       user_id,
-      pending_due,
+      past_due,
       remarks,
       sales,
       payment,
@@ -119,7 +119,7 @@ exports.add = async (req, res) => {
     } = req.body;
      const insertPurchaseQuery = `
     INSERT INTO purchase (
-      date, total_due, pending_due, user_id,
+      date,  past_due, user_id,
       remarks, payment, suppliers_id, other_payment,
       token,
       bill_no
@@ -128,8 +128,7 @@ exports.add = async (req, res) => {
     VALUES
       (
         now(),
-        '${total_due}',
-       ' ${pending_due}',
+       ' ${past_due}',
         '${user_id}',
         '${remarks}',
        ' ${payment}',
@@ -328,10 +327,12 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
           where id = ${purchaseId}`;
         await pool.query(query);
       }
-    } else {
-      let query10 = `update purchase set past_due = (select suppliers_total_due from suppliers where id = ${supplierId} ) where id = ${purchaseId}`;
-      await pool.query(query10);
     }
+    // else {
+    //   let query10 = `update purchase set past_due = (select suppliers_total_due from suppliers where id = ${supplierId} ) where id = ${purchaseId}`;
+    //   console.log(query10);
+    //   await pool.query(query10);
+    // }
     // let query6 = ` update suppliers set
     // purchase_price =  COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost},
     // purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment},

@@ -23,16 +23,16 @@ import { PurchaseService } from './services/purchase.service';
 export class PurchaseComponent implements OnInit {
     displayedColumns: string[] = [
         'no',
-        't',
+        'token',
         'date',
-        'supplier',
+        'suppliers_company',
         'amount',
-        'pd',
-        'total',
+        'past_due',
+        'total_amount',
         'payment',
-        'td',
-        'op',
-        'user',
+        'total_due',
+        'other_payment',
+        'user_name',
         'action',
         'print'
     ];

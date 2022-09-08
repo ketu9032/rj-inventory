@@ -145,7 +145,7 @@
 <br>
 <!-- bill container -->
 <div class="bill-container">
-    <!-- <form [formGroup]="formBill" (ngSubmit)="onSubmit()"> -->
+    <form [formGroup]="formBill" (ngSubmit)="onSubmit()">
     <div class="flex totalAndBill">
         <span class="totalAndBill_content-1">
             <div class="width">
@@ -183,14 +183,14 @@
     <div class="flex remakesAndPayment">
         <div class="remakes">
             <textarea class="padding" id="" cols="60" rows="7" placeholder="Enter Remarks..."
-                [(ngModel)]="remarks"></textarea>
+            formControlName="remarks"></textarea>
         </div>
         <div class="payment">
             <div class="width">
                 <mat-form-field>
                     <mat-label>Grand Total (₹) </mat-label>
                     <input matInput disable matTooltip="Not Editable"
-                    [(ngModel)]="grandDueTotal"
+                    [value]="grandDueTotal  | currency: 'INR'"
                         />
                 </mat-form-field>
             </div>
@@ -240,7 +240,7 @@
             </div>
             <br>
             <div class="">
-                <button mat-raised-button color="primary" (click)="savePurchase()">
+                <button mat-raised-button color="primary" >
                     <span *ngIf="!isShowLoader">
                         {{ !this.data.purchaseId ? 'Save & Back' : 'Update & Back' }}
                     </span>
@@ -249,5 +249,5 @@
             </div>
         </div>
     </div>
-<!-- </form> -->
+ </form>
 </div>

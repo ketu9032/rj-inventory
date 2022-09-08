@@ -99,8 +99,8 @@ export class AddPurchaseComponent implements OnInit {
         this.initializeSupplierForm();
         this.initializeSalesBillForm();
         this.getSuppliersDropDown();
-        // this.getSupplierById();
         this.getItemDropDown();
+        // this.getSupplierById();
         if (this.data.purchaseId) {
             this.getSupplierIdInPurchase()
             this.getPurchaseById();
@@ -128,14 +128,12 @@ export class AddPurchaseComponent implements OnInit {
         this.purchaseService
             .addPurchase({
                 user_id: this.loggedInUser.id,
-                pending_due: this.lastBillDue,
-                total_due: this.totalDue,
-                grand_total: this.grandDueTotal,
-                remarks: this.remarks,
+                remarks: this.formBill.value.remarks,
                 suppliers_id: this.data.supplierId,
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
                 sales: this.saleItems,
+                past_due: this.lastBillDue
             })
             .subscribe(
                 (response) => {
@@ -163,14 +161,12 @@ export class AddPurchaseComponent implements OnInit {
             .editPurchase({
                 id: this.data.purchaseId,
                 user_id: this.loggedInUser.id,
-                pending_due: this.lastBillDue,
-                total_due: this.totalDue,
-                grand_total: this.grandDueTotal,
-                remarks: this.remarks,
+                remarks:  this.formBill.value.remarks,
                 suppliers_id: this.data.supplierId,
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
                 sales: this.sales,
+                past_due: this.lastBillDue
             })
             .subscribe(
                 (response) => {
@@ -198,17 +194,7 @@ export class AddPurchaseComponent implements OnInit {
         } else {
             this.savePurchase();
         }
-
     }
-
-    filSupplierDetalis() {
-        this.supplierData = this.allSupplierData.find(x => x.id === this.data.supplierId)
-        // this.getSupplierIdInPurchase()
-        this.supplierName = this.supplierData.company;
-        this.lastBillDue = +this.supplierData.purchase_price -  +this.supplierData.purchase_payment
-        this.dueLimit = this.supplierData.due_limit;
-    }
-
 
     addSalesQuotation() {
         const {
@@ -243,9 +229,6 @@ export class AddPurchaseComponent implements OnInit {
     }
 
 
-
-
-
     fillForm() {
         if (!this.data.purchaseId) {
             this.lastBillDue = this.supplierData.cdf_total_due;
@@ -254,6 +237,37 @@ export class AddPurchaseComponent implements OnInit {
         this.supplierName = this.supplierData.company;
         this.dueLimit = this.supplierData.due_limit;
     }
+
+    getItemDropDown() {
+        this.selectItemLoader = true;
+        this.purchaseService
+            .getItemDropDown()
+            .subscribe(
+                (response) => {
+                    this.items = response;
+                    this.selectItemLoader = false;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+
+    fillSellingPrice(itemId) {
+        const item = this.items.find(x => x.id === itemId)
+        this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
+        this.formSupplier.patchValue({
+            item_id: item.id,
+            selling_price: item.silver
+        });
+    }
+
     supplierFillForm(itemId: number) {
         this.isEditSalesItem = true;
         const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
@@ -266,16 +280,31 @@ export class AddPurchaseComponent implements OnInit {
         this.fillSellingPrice(itemId)
      }
 
+
+     removePurchaseDetails(itemId: number): void {
+        const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
+        this.saleItems = filteredItems;
+        this.calculate();
+        this.purchaseItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+    }
+
+
+    clearPurchaseDetailsForm(): void {
+        this.formSupplier.patchValue({
+            item_id: '',
+            qty: '',
+            selling_price: '',
+        });
+    }
+
      getSuppliersDropDown() {
         this.purchaseService
             .getSupplierDropDown()
             .subscribe(
                 (response) => {
                this.allSupplierData = response;
-
                this.filSupplierDetalis();
                 },
-
 
                 (error) => {
                     this.snackBar.open(
@@ -311,7 +340,8 @@ export class AddPurchaseComponent implements OnInit {
     getPurchaseById() {
         this.purchaseService.getPurchaseById(this.data.purchaseId).subscribe(
             (response) => {
-                this.purchaseData = response[0]
+                this.purchaseData = response
+             //  this.getSupplierIdInPurchase();
                 this.lastBillNo = this.purchaseData.bill_no;
                 this.formBill.value.remarks = this.purchaseData.remarks;
                 if (this.purchaseData.other_payment) {
@@ -331,6 +361,14 @@ export class AddPurchaseComponent implements OnInit {
             () => { }
         );
     }
+
+    hideShowOther() {
+        if (this.isShowOtherPayment === false) {
+            this.isShowOtherPayment = true
+        } else {
+            this.isShowOtherPayment = false;
+        }
+    }
     getSupplierIdInPurchase() {
         this.purchaseService.isSupplierIdInPurchase(this.data.supplierId).subscribe(
             (response) => {
@@ -346,30 +384,6 @@ export class AddPurchaseComponent implements OnInit {
         );
     }
 
-
-    fillSellingPrice(itemId) {
-        const item = this.items.find(x => x.id === itemId)
-        this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
-        this.formSupplier.patchValue({
-            item_id: item.id,
-            selling_price: item.silver
-        });
-    }
-
-    removePurchaseDetails(itemId: number): void {
-        const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
-        this.saleItems = filteredItems;
-        this.calculate();
-        this.purchaseItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
-    }
-
-    clearPurchaseDetailsForm(): void {
-        this.formSupplier.patchValue({
-            item_id: '',
-            qty: '',
-            selling_price: '',
-        });
-    }
 
     getItemWiseTotal() {
         if (this.formSupplier.value.qty !== '') {
@@ -387,33 +401,13 @@ export class AddPurchaseComponent implements OnInit {
         this.grandDueTotal = (+this.total + +this.lastBillDue);
         this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
     }
-    hideShowOther() {
-        if (this.isShowOtherPayment === false) {
-            this.isShowOtherPayment = true
-        } else {
-            this.isShowOtherPayment = false;
-        }
-    }
 
-    getItemDropDown() {
-        this.selectItemLoader = true;
-        this.purchaseService
-            .getItemDropDown()
-            .subscribe(
-                (response) => {
-                    this.items = response;
-                    this.selectItemLoader = false;
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
+    filSupplierDetalis() {
+        this.supplierData = this.allSupplierData.find(x => x.id === this.data.supplierId)
+        // this.getSupplierIdInPurchase()
+        this.supplierName = this.supplierData.company;
+        this.lastBillDue = +this.supplierData.purchase_price -  +this.supplierData.purchase_payment
+        this.dueLimit = this.supplierData.due_limit;
     }
 
 }

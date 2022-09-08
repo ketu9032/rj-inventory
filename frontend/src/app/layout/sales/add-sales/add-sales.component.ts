@@ -302,6 +302,8 @@ export class AddSalesComponent implements OnInit {
                 },
                 () => { }
             );
+
+
     }
     getSalesById() {
         this.salesService.getSalesById(this.data.salesId).subscribe(
