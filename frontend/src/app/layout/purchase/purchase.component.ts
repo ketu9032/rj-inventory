@@ -134,7 +134,7 @@ export class PurchaseComponent implements OnInit {
                 width: '1000px',
                 height: '800px',
                 data: {
-                    supplierId: element.supplier_id,
+                    supplierId: element.suppliers_id,
                     purchaseId: element.id,
                     pastDue: element.past_due
                 }

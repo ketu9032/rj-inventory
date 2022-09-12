@@ -6,19 +6,18 @@
 </div>
 <mat-divider></mat-divider>
 <br>
-<form [formGroup]="formGroup">
     <div class="item-form">
         <div class="box">
             <div class="block">
                 <mat-form-field>
                     <mat-label>Supplier Name</mat-label>
-                    <input matInput formControlName="supplier" [(ngModel)]="supplierName" [value]="supplierName | uppercase"  required>
+                    <input matInput  [(ngModel)]="supplierName" [value]="supplierName | uppercase"  required>
                 </mat-form-field>
             </div>
             <div class="block">
                 <mat-form-field>
                     <mat-label>Date</mat-label>
-                    <input matInput formControlName="date" [(ngModel)]="currentDate" value={{currentDate}} required>
+                    <input matInput  [(ngModel)]="currentDate" [value]=currentDate required>
                 </mat-form-field>
             </div>
 
@@ -34,7 +33,6 @@
             </div>
         </div>
     </div>
-</form>
 <mat-divider class="mat-divider"></mat-divider>
 <br>
 <!-- supplier form -->
@@ -84,7 +82,7 @@
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Total</mat-label>
-                    <input matInput matTooltip="Not Editable" formControlName="total" readonly [value]="getItemWiseTotal()" />
+                    <input matInput matTooltip="Not Editable"  readonly [value]="getItemWiseTotal()" />
                 </mat-form-field>
 
             </div>
@@ -131,7 +129,7 @@
                     (click)="supplierFillForm(element.item_id)">
                     <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
-                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="removePurchaseDetails(element)">
+                <button mat-icon-button matTooltip="Click to Delete" color="warn" (click)="removePurchaseDetails(+element.item_id)">
                     <mat-icon aria-label="Delete">delete</mat-icon>
                 </button>
             </td>
@@ -235,7 +233,7 @@
                     <mat-label>Total Due (₹) </mat-label>
                     <input matInput disable matTooltip="Not Editable"
                     [(ngModel)]="totalDue"
-                        value="{{this.totalDue | currency: 'INR'}}" />
+                        [value]="this.totalDue | currency: 'INR'"/>
                 </mat-form-field>
             </div>
             <br>

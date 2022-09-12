@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IItemSupplierData } from 'src/app/models/item_supplier';
+import { IPurchaseDetailsData } from 'src/app/models/purchase-details';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { PurchaseDetailsService } from '../services/purchase-details.service';
@@ -95,14 +96,17 @@ export class AddPurchaseComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit() {
+        console.log(this.data);
+
         this.loggedInUser = this.authService.getUserData();
+
         this.initializeSupplierForm();
         this.initializeSalesBillForm();
         this.getSuppliersDropDown();
         this.getItemDropDown();
         // this.getSupplierById();
         if (this.data.purchaseId) {
-            this.getSupplierIdInPurchase()
+            this.getItemByPurchaseId()
             this.getPurchaseById();
             this.lastBillDue = this.data.pastDue;
             this.calculate();
@@ -408,6 +412,23 @@ export class AddPurchaseComponent implements OnInit {
         this.supplierName = this.supplierData.company;
         this.lastBillDue = +this.supplierData.purchase_price -  +this.supplierData.purchase_payment
         this.dueLimit = this.supplierData.due_limit;
+    }
+
+    getItemByPurchaseId() {
+        this.purchaseItemDataSource = [];
+        this.purchaseDetailsService.getItemsByPurchaseId(this.data.purchaseId).subscribe(
+            (response) => {
+                this.saleItems.push(...response)
+                this.calculate();
+                this.purchaseItemDataSource = new MatTableDataSource<IPurchaseDetailsData>(response);
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
     }
 
 }

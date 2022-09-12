@@ -36,7 +36,6 @@ export class AddSalesComponent implements OnInit {
     salesData: any;
     customerName: string;
     tier: string = '';
-
     salesItemDataSource: any = [];
     items = [];
     saleItems = [];
@@ -96,7 +95,6 @@ export class AddSalesComponent implements OnInit {
         });
     }
     saveSales(): void {
-
         this.isShowLoader = true;
         this.salesService
             .addSales({
@@ -131,9 +129,6 @@ export class AddSalesComponent implements OnInit {
             );
     }
     updateSales(): void {
-
-
-
         this.isShowLoader = true;
         this.salesService
             .editSales({
@@ -167,7 +162,6 @@ export class AddSalesComponent implements OnInit {
                 },
                 () => { }
             );
-
     }
     onSubmit() {
         if (this.data.salesId) {
@@ -302,8 +296,6 @@ export class AddSalesComponent implements OnInit {
                 },
                 () => { }
             );
-
-
     }
     getSalesById() {
         this.salesService.getSalesById(this.data.salesId).subscribe(
@@ -372,6 +364,5 @@ export class AddSalesComponent implements OnInit {
             }else{
                 return true;
             }
-
         }
 }

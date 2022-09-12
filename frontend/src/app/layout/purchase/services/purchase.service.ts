@@ -11,7 +11,7 @@ export class PurchaseService {
     private purchaseChangeStatusURl = 'api/purchase/changeStatus'
     private getItemDropDownURL  = 'api/item/getItemDropDown';
     private isSupplierIdInPurchaseURL = 'api/sales/isSupplierIdInPurchase';
-    private getPurchaseByIdURL = 'api/purchase/getPurchaseByIdURL'
+    private getPurchaseByIdURL = 'api/purchase/getPurchaseById'
       private getSupplierByIdURL = 'api/suppliers/getSuppliersById';
 
     constructor(private restService: RestService, private commonService: CommonService) { }

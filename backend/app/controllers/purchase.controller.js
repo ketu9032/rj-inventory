@@ -24,9 +24,7 @@ exports.findAll = async (req, res) => {
         )`;
     }
     searchQuery += ` and s.is_active = ${active}`;
-
-
-    const query = `  SELECT
+   const query = `  SELECT
     Count(p.id) OVER() AS total,
       p.id,
       p.no,
@@ -160,13 +158,11 @@ exports.add = async (req, res) => {
   }
 };
 
-
 exports.update = async (req, res) => {
   try {
     const loggedInUserId = res.locals.tokenData.id;
     const {
       id,
-      bill_no,
       remarks,
       past_due,
       suppliers_id,
@@ -174,10 +170,17 @@ exports.update = async (req, res) => {
       other_payment,
       sales
      } = req.body;
-
-
-      const updatePurchaseQuery =  `UPDATE purchase SET date='now()',  bill_no = '${bill_no}',  past_due,='${past_due}',  remarks='${remarks}', payment='${payment}', suppliers_id='${suppliers_id}', other_payment='${other_payment}' where id = ${id};
-       `
+      const updatePurchaseQuery =  `UPDATE
+      purchase
+    SET
+      date = now(),
+      past_due = ${past_due},
+      remarks = '${remarks}',
+      payment = ${payment},
+      suppliers_id = ${suppliers_id},
+      other_payment = ${other_payment}
+    where
+      id = ${id}`
     await pool.query(updatePurchaseQuery);
         await this.updateValue(
           suppliers_id,
@@ -231,14 +234,13 @@ exports.getPurchaseById = async (req, res) => {
           user_id,
           remarks,
           p.payment,
-          purchase_id,
           suppliers.company as supplier_customer,
           suppliers.due_limit as supplier_due_limit,
           other_payment,
           p.past_due as past_due
         FROM purchase p
         join suppliers as suppliers
-        on suppliers.id = s.purchase_id
+        on suppliers.id = p.suppliers_id
         where p.is_active = true and p.id = ${purchaseId}`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -252,7 +254,7 @@ exports.getPurchaseById = async (req, res) => {
 exports.isSupplierIdInPurchase = async (req, res) => {
   try {
     const { supplierID } = req.query;
-    const query = `select count(id) from purchase where supplier_id = ${supplierID}`;
+    const query = `select count(id) from purchase where suppliers_id = ${supplierID}`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -302,7 +304,7 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
         update
           item
         set
-          item_sold = COALESCE(item_sold, 0) + ${element.qty}
+        item_purchased = COALESCE(item_purchased, 0) + ${element.qty}
         where
       id = ${element.item_id}
 `;
@@ -328,14 +330,14 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
         await pool.query(query);
       }
     }
-    // else {
-    //   let query10 = `update purchase set past_due = (select suppliers_total_due from suppliers where id = ${supplierId} ) where id = ${purchaseId}`;
-    //   console.log(query10);
-    //   await pool.query(query10);
-    // }
+
+      let query10 = `update purchase set past_due = (select suppliers_total_due from suppliers where id = ${supplierId} ) where id = ${purchaseId}`;
+      console.log(query10);
+      await pool.query(query10);
+
     // let query6 = ` update suppliers set
     // purchase_price =  COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost},
-    // purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment},
+    // purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment}
     //     cdf_total_due = (COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(purchase_payment,0) - ${existingPayment} + ${payment})
     //   where id = ${supplierId} returning suppliers_total_due`;
     // await pool.query(query6);
