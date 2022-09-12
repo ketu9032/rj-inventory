@@ -410,7 +410,7 @@ export class AddPurchaseComponent implements OnInit {
         this.supplierData = this.allSupplierData.find(x => x.id === this.data.supplierId)
         // this.getSupplierIdInPurchase()
         this.supplierName = this.supplierData.company;
-        this.lastBillDue = +this.supplierData.purchase_price -  +this.supplierData.purchase_payment
+        this.lastBillDue = +this.supplierData.suppliers_total_due;
         this.dueLimit = this.supplierData.due_limit;
     }
 

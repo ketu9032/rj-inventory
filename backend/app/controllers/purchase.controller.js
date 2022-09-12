@@ -335,12 +335,12 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
       console.log(query10);
       await pool.query(query10);
 
-    // let query6 = ` update suppliers set
-    // purchase_price =  COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost},
-    // purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment}
-    //     cdf_total_due = (COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(purchase_payment,0) - ${existingPayment} + ${payment})
-    //   where id = ${supplierId} returning suppliers_total_due`;
-    // await pool.query(query6);
+    let query6 = ` update suppliers set
+    purchase_price =  COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost},
+    purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment},
+    suppliers_total_due = suppliers_total_due + (COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(purchase_payment,0) - ${existingPayment} + ${payment})
+      where id = ${supplierId} returning suppliers_total_due`;
+    await pool.query(query6);
 
     let query8 = `update users set balance = balance - ${existingPayment} - ${existingOtherPayment} + ${+payment}  + ${
       +otherPayment ? otherPayment : 0

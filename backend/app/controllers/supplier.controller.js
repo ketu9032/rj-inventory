@@ -25,7 +25,8 @@ exports.findAll = async (req, res) => {
     const response = await pool.query(
       `select count(id) over() as total, id, company,due_limit,balance, other,
       purchase_price,
-      purchase_payment
+      purchase_payment,
+      suppliers_total_due
 
 
       from suppliers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
@@ -70,7 +71,7 @@ exports.add = async (req, res) => {
       return;
     }
     await pool.query(
-      `INSERT INTO suppliers (company, due_limit, balance, other)
+      `INSERT INTO suppliers (company, due_limit,  suppliers_total_due, other)
       VALUES('${company}', '${dueLimit}', '${balance}', '${other}');
       `
     );
@@ -130,7 +131,7 @@ exports.getSupplierDropDown = async (req, res) => {
   try {
     const response = await pool.query(
       `select id, company, due_limit, balance,
-      purchase_price, purchase_payment FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
+      purchase_price, purchase_payment, suppliers_total_due FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
