@@ -96,13 +96,12 @@ export class AddPurchaseComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit() {
-        console.log(this.data);
+        console.log(this.data.pastDue);
 
         this.loggedInUser = this.authService.getUserData();
-
+        this.getSuppliersDropDown();
         this.initializeSupplierForm();
         this.initializeSalesBillForm();
-        this.getSuppliersDropDown();
         this.getItemDropDown();
         // this.getSupplierById();
         if (this.data.purchaseId) {
@@ -169,7 +168,7 @@ export class AddPurchaseComponent implements OnInit {
                 suppliers_id: this.data.supplierId,
                 payment: this.formBill.value.payment,
                 other_payment: this.formBill.value.otherPayment,
-                sales: this.sales,
+                sales: this.saleItems,
                 past_due: this.lastBillDue
             })
             .subscribe(
@@ -235,8 +234,9 @@ export class AddPurchaseComponent implements OnInit {
 
     fillForm() {
         if (!this.data.purchaseId) {
-            this.lastBillDue = this.supplierData.cdf_total_due;
+            this.lastBillDue = this.supplierData.suppliers_total_due;
             this.calculate();
+
         }
         this.supplierName = this.supplierData.company;
         this.dueLimit = this.supplierData.due_limit;
@@ -352,8 +352,8 @@ export class AddPurchaseComponent implements OnInit {
                     this.isShowOtherPayment = true;
                 }
                 this.formBill.patchValue({
-                    payment: this.purchaseData.payment,
-                    otherPayment: this.purchaseData.other_payment
+                    payment: this.purchaseData[0].payment,
+                    otherPayment: this.purchaseData[0].other_payment
                 });
                 this.calculate();
             },
@@ -377,7 +377,7 @@ export class AddPurchaseComponent implements OnInit {
         this.purchaseService.isSupplierIdInPurchase(this.data.supplierId).subscribe(
             (response) => {
                 this.lastBillNo = response[0].count
-                this.fillForm();
+                // this.fillForm();
             },
             (error) => {
                 this.snackBar.open(error.error.message || error.message, 'Ok', {
@@ -408,9 +408,12 @@ export class AddPurchaseComponent implements OnInit {
 
     filSupplierDetalis() {
         this.supplierData = this.allSupplierData.find(x => x.id === this.data.supplierId)
-        // this.getSupplierIdInPurchase()
+
         this.supplierName = this.supplierData.company;
-        this.lastBillDue = +this.supplierData.suppliers_total_due;
+        if(!this.data.purchaseId){
+            this.lastBillDue = +this.supplierData.suppliers_total_due;
+        }
+
         this.dueLimit = this.supplierData.due_limit;
     }
 

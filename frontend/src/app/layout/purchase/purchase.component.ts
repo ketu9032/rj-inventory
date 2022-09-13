@@ -128,7 +128,7 @@ export class PurchaseComponent implements OnInit {
             });
     }
 
-    onEditNewCustomers(element) {
+    onEditNewPurchase(element) {
         this.dialog
             .open(AddPurchaseComponent, {
                 width: '1000px',

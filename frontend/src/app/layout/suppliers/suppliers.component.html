@@ -45,7 +45,7 @@
             <ng-container matColumnDef="purchase_payment">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.purchase_payment | currency: 'INR' }}
+                    {{ element?.purchase_payment | currency: 'INR' }}
                 </td>
             </ng-container>
             <ng-container matColumnDef="suppliers_total_due">

@@ -136,7 +136,6 @@ exports.add = async (req, res) => {
        (select count(bill_no)+1 from purchase where suppliers_id = '${suppliers_id}')
       ) returning id
     ;`;
-    console.log(insertPurchaseQuery);
 
     const { rows } = await pool.query(insertPurchaseQuery);
     const purchaseId = rows[0].id;
@@ -169,7 +168,13 @@ exports.update = async (req, res) => {
       payment,
       other_payment,
       sales
-     } = req.body;
+    } = req.body;
+    const getOldPaymentQuery = `select payment from purchase where id = ${id}`
+    const paymentResponse = await pool.query(getOldPaymentQuery);
+
+    const getOldPurchasePriceQuery = `SELECT qty*selling_price  AS total_price FROM purchase_details where purchase_id = ${id}`
+    const responsePurchasePrice = await pool.query(getOldPurchasePriceQuery);
+
       const updatePurchaseQuery =  `UPDATE
       purchase
     SET
@@ -189,7 +194,9 @@ exports.update = async (req, res) => {
           sales,
           id,
           loggedInUserId,
-          true
+          true,
+          paymentResponse,
+          responsePurchasePrice
         );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -271,7 +278,9 @@ exports.updateValue = async (
   purchaseItemDetails,
   purchaseId,
   loggedInUserId,
-  isPurchaseUpdate
+  isPurchaseUpdate,
+  paymentResponse,
+  responsePurchasePrice
 ) => {
   try {
     let itemsCost = 0;
@@ -281,13 +290,14 @@ exports.updateValue = async (
     const existingItems = existingItemResponse.rows;
     for (let index = 0; index < existingItems.length; index++) {
       const item = existingItems[index];
-      const query2 = `update item set item_sold = item_sold - ${item.qty}
+      const query2 = `update item set item_purchased = item_purchased - ${item.qty}
       where id = ${item.item_id}`;
       await pool.query(query2);
       existingItemsCost = item.qty * item.selling_price + existingItemsCost;
     }
 const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`;
     await pool.query(query3);
+
     for (let index = 0; index < purchaseItemDetails.length; index++) {
       const element = purchaseItemDetails[index];
       const query4 = `INSERT INTO purchase_details
@@ -311,8 +321,10 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
     await pool.query(query5);
       itemsCost = +element.selling_price * +element.qty + itemsCost;
     }
+
     let existingPayment = 0;
     let existingOtherPayment = 0;
+
     if (isPurchaseUpdate === true) {
       let query7 = `select payment, other_payment from purchase where id = ${purchaseId}`;
       const existingBillResponse = await pool.query(query7);
@@ -328,24 +340,40 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
             other_payment = COALESCE(other_payment,0) - ${existingOtherPayment} - ${otherPayment}
           where id = ${purchaseId}`;
         await pool.query(query);
-      }
-    }
 
+        let query8 = `update users set balance = balance + ${paymentResponse.rows[0].payment} - ${payment}  where id = ${loggedInUserId} `
+        await pool.query(query8);
+
+       let query6 = ` update suppliers set
+          purchase_price = purchase_price - ${responsePurchasePrice.rows[0].total_price}  + ${itemsCost},
+          purchase_payment = purchase_payment - ${paymentResponse.rows[0].payment} +  ${payment},
+          suppliers_total_due = (purchase_price - ${responsePurchasePrice.rows[0].total_price}  + ${itemsCost}) - (purchase_payment - ${paymentResponse.rows[0].payment} + ${payment}) where id = ${supplierId} `
+          console.log(query6);
+       await pool.query(query6);
+
+      }
+
+    }
+    else {
       let query10 = `update purchase set past_due = (select suppliers_total_due from suppliers where id = ${supplierId} ) where id = ${purchaseId}`;
-      console.log(query10);
       await pool.query(query10);
 
-    let query6 = ` update suppliers set
-    purchase_price =  COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost},
-    purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment},
-    suppliers_total_due = suppliers_total_due + (COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(purchase_payment,0) - ${existingPayment} + ${payment})
-      where id = ${supplierId} returning suppliers_total_due`;
-    await pool.query(query6);
+      let query8 = `update users set balance = balance  - ${payment}  where id = ${loggedInUserId} `
+      await pool.query(query8);
 
-    let query8 = `update users set balance = balance - ${existingPayment} - ${existingOtherPayment} + ${+payment}  + ${
-      +otherPayment ? otherPayment : 0
-    }  where id = ${loggedInUserId}`;
-    await pool.query(query8);
+      let query6 = ` update suppliers set
+      purchase_price =  COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost},
+      purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment},
+      suppliers_total_due = suppliers_total_due +  (COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(purchase_payment,0) - ${existingPayment} + ${payment})
+        where id = ${supplierId} returning suppliers_total_due`;
+        console.log(query6);
+      await pool.query(query6);
+
+    }
+
+
+
+
   } catch (error) {
     throw new Error(error.message || MESSAGES.COMMON.ERROR);
   }

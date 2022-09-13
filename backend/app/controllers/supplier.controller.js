@@ -71,8 +71,9 @@ exports.add = async (req, res) => {
       return;
     }
     await pool.query(
-      `INSERT INTO suppliers (company, due_limit,  suppliers_total_due, other)
-      VALUES('${company}', '${dueLimit}', '${balance}', '${other}');
+      `INSERT INTO suppliers (company, due_limit,
+        purchase_price,  suppliers_total_due, other)
+      VALUES('${company}', '${dueLimit}', '${balance}', '${balance}', '${other}');
       `
     );
 
