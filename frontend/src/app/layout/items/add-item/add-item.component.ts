@@ -72,7 +72,7 @@ export class AddItemComponent implements OnInit {
             item_code: ['', Validators.required],
             item_name: ['', Validators.required],
             category: ['', Validators.required],
-            comment: [''],
+            comment: [' '],
             int_qty: ['', Validators.required],
             silver: ['', Validators.required],
             retail: ['', Validators.required],
@@ -170,6 +170,13 @@ export class AddItemComponent implements OnInit {
             item_code,
             item_name, category: categoryId, comment, int_qty, silver, retail, gold, india_mart, dealer
         });
+    }
+    itemSupplierDelete(id: number) {
+        console.log(this.suppliers);
+
+
+
+
     }
     supplierFillForm(suppliersId) {
         const itemSupplierRate = this.suppliers.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;

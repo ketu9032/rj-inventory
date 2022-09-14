@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ICdfData } from 'src/app/models/cdf';
 import { CdfService } from '../services/cdf.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { LowerCasePipe } from '@angular/common';
 @Component({
     selector: 'app-add-cdf',
     templateUrl: './add-cdf.component.html',
@@ -17,11 +18,9 @@ export class AddCdfComponent implements OnInit {
     selectedRole: string
     isShowLoader = false;
     references = [{ value: 'Person/Company', id: 1 }, { value: 'Google', id: 2 }, { value: 'IndiaMart', id: 3 }, { value: 'Other', id: 4 }];
-    ListOfSites = [{ value: 'Flipkart', id: 1 }, { value: 'Snapdeal', id: 2 }, { value: 'Amazon', id: 3 }, { value: 'Paytm', id: 4 }, { value: 'Limeraod', id: 5 }, { value: 'Shopclues', id: 6 }, { value: 'Facebook/Instagram', id: 7 }, { value: 'Offline', id: 8 }];
-
     brands: string[] = ['Titan', 'Volga', 'Rolex'];
-    platforms: string[] =  ['Flipkart', 'Amazon', 'Offline'];
-    displayNames: string[] =  ['name'];
+    platforms: string[] = ['Flipkart', 'Amazon', 'Offline'];
+    displayNames: string[] = ['watch', 'bag', 'belt'];
 
 
     currentDate = new Date();
@@ -104,9 +103,9 @@ export class AddCdfComponent implements OnInit {
             date: ['', Validators.required],
             reference: ['', Validators.required],
             referencePerson: ['', Validators.required],
-            brands: ['', Validators.required],
-            displayNames: ['', Validators.required],
-            platforms: ['', Validators.required],
+            brands: [' '],
+            displayNames: [' '],
+            platforms: [' '],
             other: ['', Validators.required],
             mobile: ['', Validators.required],
             address: ['', Validators.required],
@@ -117,7 +116,7 @@ export class AddCdfComponent implements OnInit {
         this.isShowLoader = true;
         this.cdfService
             .addCdf({
-                email, name, company, date, reference, referencePerson, brands: this.brands, displayNames, platforms: this.platforms, other, mobile, address
+                email, name, company, date, reference, referencePerson, brands: this.brands, displayNames: this.displayNames, platforms: this.platforms, other, mobile, address
             })
             .subscribe(
                 (response) => {
@@ -175,10 +174,18 @@ export class AddCdfComponent implements OnInit {
         }
     }
     fillForm() {
+        this.brands = [];
+        this.platforms = [];
+        this.displayNames = [];
+
+        this.brands = this.data.brands.split(",");
+        this.platforms = this.data.platforms.split(",");
+        this.displayNames = this.data.display_names.split(",");
+
         const { email: email, name: name, company: company, date: date, reference: reference,
-            reference_person: referencePerson, brands: brands, display_names: displayNames, platforms: platforms, other: other, mobile: mobile, address: address, } = this.data;
+            reference_person: referencePerson, other: other, mobile: mobile, address: address, } = this.data;
         this.formGroup.patchValue({
-            email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
+            email, name, company, date, reference, referencePerson, other, mobile, address
         });
     }
     onEmailCheck() {

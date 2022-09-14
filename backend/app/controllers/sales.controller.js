@@ -295,6 +295,7 @@ exports.updateValue = async (
     let existingItemsCost = 0;
     const query1 = `select qty, selling_price, item_id from sales_bill where sales_id = ${salesId}`;
     const existingItemResponse = await pool.query(query1);
+
     const existingItems = existingItemResponse.rows;
     for (let index = 0; index < existingItems.length; index++) {
       const item = existingItems[index];
@@ -305,6 +306,7 @@ exports.updateValue = async (
     }
     const query3 = `delete from sales_bill where sales_id = ${salesId};`;
     await pool.query(query3);
+
     for (let index = 0; index < salesItemDetails.length; index++) {
       const element = salesItemDetails[index];
       const query4 = `INSERT INTO sales_bill

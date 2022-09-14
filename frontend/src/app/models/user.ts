@@ -10,4 +10,6 @@ export interface IUserActiveParams {
     id: number, status: boolean
 }
 
-
+export interface IUserName{
+    userName: string;
+}

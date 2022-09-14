@@ -119,8 +119,6 @@ exports.getCategoryDropDown = async (req, res) => {
   }
 };
 
-
-
 exports.changeStatus = async (req, res) => {
   try {
     const { id, status } = req.body;
@@ -136,6 +134,39 @@ exports.changeStatus = async (req, res) => {
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+exports.onCheckCategoryCode = async (req, res) => {
+  try {
+    const { code } = req.body;
+    const response = await pool.query(
+      `select id from categories where lower(code) = trim(lower('${code}'))`
+    );
+    if (response.rowCount > 0) {
+      return res.status(200).send(false);
+    }
+    return res.status(STATUS_CODE.SUCCESS).send(true);
+  } catch (error) {
+    return res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+exports.onCheckCategoryName = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const response =
+      await pool.query(`select id from categories where lower(name) = trim(lower('${name}') )
+       `);
+    if (response.rowCount > 0) {
+      return res.status(200).send(false);
+    }
+    return res.status(STATUS_CODE.SUCCESS).send(true);
+  } catch (error) {
+    return res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }

@@ -11,9 +11,12 @@
         <!-- Code start -->
         <mat-form-field>
             <mat-label>Code</mat-label>
-            <input matInput formControlName="code" required />
+            <input matInput formControlName="code" (keyup)="onCheckCategoryCode()" required />
         </mat-form-field>
         <div>
+            <ng-container *ngIf="!isCategoryCodeExist">
+                <span class="error">This Category code is exist, Please another Category code. </span>
+            </ng-container>
             <ng-container *ngIf="
           formGroup.controls.code.touched &&
           !formGroup.controls.code.value
@@ -24,9 +27,12 @@
         <!-- Name start -->
         <mat-form-field>
             <mat-label>Name</mat-label>
-            <input matInput formControlName="name" required />
+            <input matInput formControlName="name" (keyup)="onCheckCategoryName()" required />
         </mat-form-field>
         <div>
+            <ng-container *ngIf="!isCategoryNameExist">
+                <span class="error">This Category name is exist, Please another Category name. </span>
+            </ng-container>
             <ng-container *ngIf="
           formGroup.controls.name.touched &&
           !formGroup.controls.name.value

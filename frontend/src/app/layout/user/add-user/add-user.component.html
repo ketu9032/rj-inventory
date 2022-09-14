@@ -11,9 +11,12 @@
         <!-- user name start -->
         <mat-form-field>
             <mat-label>User Name</mat-label>
-            <input matInput formControlName="userName" required />
+            <input matInput formControlName="userName" (keyup)="onUserNameCheck()" required />
         </mat-form-field>
         <div>
+            <ng-container *ngIf="!isUserNameExist">
+                <span class="error">This User name is exist, Please another user name</span>
+            </ng-container>
             <ng-container *ngIf="
           formGroup.controls.userName.touched &&
           !formGroup.controls.userName.value
@@ -21,6 +24,7 @@
                 <span class="error">User name is Required</span>
             </ng-container>
         </div>
+
         <!-- mobile start -->
         <mat-form-field>
             <mat-label>Mobile Number</mat-label>

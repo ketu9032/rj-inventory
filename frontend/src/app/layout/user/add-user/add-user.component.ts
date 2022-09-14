@@ -36,8 +36,9 @@ export class AddUserComponent implements OnInit {
     users: true,
     history: false
   };
-  isLoggedInUserIsOwner = false;
-  isShowLoader = false;
+  isLoggedInUserIsOwner: boolean = false;
+  isShowLoader: boolean = false;
+  isUserNameExist: boolean = true;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IUserData,
@@ -196,4 +197,13 @@ export class AddUserComponent implements OnInit {
       this.permissions[key] = !this.permissions[key];
     }
   }
+
+  onUserNameCheck() {
+    this.userService
+        .onCheckUserName({ userName: this.formGroup.controls.userName.value })
+        .subscribe(
+            (response: boolean) => {
+                this.isUserNameExist = response
+            })
+}
 }

@@ -299,7 +299,7 @@ exports.onCheckEmail = async (req, res) => {
   try {
     const { email } = req.body;
     const response = await pool.query(
-      `select id from cdf where email = trim('${email}')`
+      `select id from cdf where  lower(email) = trim(lower('${email}'))`
     );
     if (response.rowCount > 0) {
       return res.status(STATUS_CODE.SUCCESS).send(false);
@@ -315,7 +315,7 @@ exports.onCheckCompany = async (req, res) => {
   try {
     const { company } = req.body;
     const response =
-      await pool.query(`select id from cdf where company = trim('${company}')
+      await pool.query(`select id from cdf where lower(company) = trim(lower('${company}'))
        `);
     if (response.rowCount > 0) {
       return res.status(200).send(false);

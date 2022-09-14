@@ -10,3 +10,9 @@ export interface ICategoriesParams {
 export interface ICategoriesActiveParams {
     id: number, status: boolean
 }
+export interface ICategoryCode{
+    code: string;
+}
+export interface ICategoryName{
+    name: string;
+}

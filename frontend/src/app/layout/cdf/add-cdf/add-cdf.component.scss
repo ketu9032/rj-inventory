@@ -1,16 +1,19 @@
-.main-header{
+.main-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+
     .mat-dialog-title {
-        margin: 5px 0 0  0;
+        margin: 5px 0 0 0;
         display: block;
     }
+
     .mat-button {
         min-width: 40px;
         padding: 0 10px;
     }
 }
+
 .container {
     .mat-form-field {
         width: 300px;
@@ -34,9 +37,11 @@
         display: table-caption;
     }
 }
-.example-chip-list{
+
+.example-chip-list {
     width: 100%;
-    mat-icon{
+
+    mat-icon {
         color: red;
 
     }

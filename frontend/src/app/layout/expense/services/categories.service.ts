@@ -1,5 +1,5 @@
 import { CommonService } from './../../../shared/services/common.service';
-import { ICategoriesActiveParams, ICategoriesParams } from './../../../models/categories';
+import { ICategoriesActiveParams, ICategoriesParams, ICategoryCode, ICategoryName } from './../../../models/categories';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
@@ -9,14 +9,14 @@ export class CategoriesService {
     private getCategoryDropDownURL = 'api/getCategoryDropDown';
     private url = 'api/categories';
     private categoriesChangeStatusURL = 'api/categories/changeStatus';
-
+    private onCheckCategoriesCodeURL = 'api/categories/onCheckCodeCategory';
+    private onCheckCategoriesNameURL = 'api/categories/onCheckNameCategory';
 
     constructor(private restService: RestService, private commonService: CommonService) { }
 
     public getCategoryDropDown(type: string) {
         return this.restService.get<any>(`${this.getCategoryDropDownURL}?type=${type}`);
     }
-
 
     public getCategory(tablePrams: IMatTableParams) {
         const queryString = this.commonService.toQueryString(tablePrams);
@@ -33,5 +33,11 @@ export class CategoriesService {
     }
     public changeStatus(category: ICategoriesActiveParams) {
         return this.restService.put(`${this.categoriesChangeStatusURL}`, category);
+    }
+    public onCheckCategoryCode(category: ICategoryCode) {
+        return this.restService.put(`${this.onCheckCategoriesCodeURL}`, category);
+    }
+    public onCheckCategoryName(category: ICategoryName) {
+        return this.restService.put(`${this.onCheckCategoriesNameURL}`, category);
     }
 }

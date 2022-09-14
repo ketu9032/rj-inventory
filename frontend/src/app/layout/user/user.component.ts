@@ -46,6 +46,7 @@ export class UserComponent implements OnInit {
     }
     isLoggedInUserIsOwner = false
 
+
     constructor(
         public dialog: MatDialog,
         private userService: UserService,
@@ -55,6 +56,8 @@ export class UserComponent implements OnInit {
 
     ngOnInit(): void {
         const loggedInUser = this.authService.getUserData()
+        console.log(loggedInUser);
+        debugger
         this.isLoggedInUserIsOwner = loggedInUser.role.toLowerCase() === 'owner' ? true : false;
         this.getUser();
     }
@@ -159,4 +162,6 @@ export class UserComponent implements OnInit {
                 () => { }
             );
     }
+
+
 }

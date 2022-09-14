@@ -47,7 +47,7 @@ exports.findAll = async (req, res) => {
      INNER JOIN categories as c  ON c.id = i.category_id
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
 
-     console.log(query);
+    console.log(query);
     const response = await pool.query(query);
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -185,21 +185,35 @@ exports.update = async (req, res) => {
       return;
     }
 
-    const updateItemQuery = `UPDATE item
-    SET  item_code='${item_code}', item_name='${item_name}', int_qty='${int_qty}',  comment='${comment}', silver='${silver}',retail='${retail}',gold='${gold}',india_mart='${india_mart}',dealer='${dealer}', category_id='${categoryId}', suppliers
-    ='${suppliers}', categoryId ='${categoryId}' where id = ${id};`;
-    const { updateRows } = await pool.query(updateItemQuery);
-
-    const UpdateItemId = updateRows[0].id;
-    for (let index = 0; index < UpdateItemId.length; index++) {
-      const element = UpdateItemId[index];
-      const updateSupplierQuery = `INSERT INTO item_supplier
-      ( suppliers_id,
+    const updateItemQuery = `
+    UPDATE
+    item
+  SET
+    item_code = '${item_code}',
+    item_name = '${item_name}',
+    int_qty = ${int_qty},
+    comment = '${comment}',
+    silver = ${silver},
+    retail = ${retail},
+    gold = ${gold},
+    india_mart = ${india_mart},
+    dealer = ${dealer},
+    category_id = ${categoryId}
+  where
+    id = ${id}`;
+    console.log(updateItemQuery);
+    const updateRows = await pool.query(updateItemQuery);
+    for (let index = 0; index < suppliers.length; index++) {
+      const element = suppliers[index];
+      let updateSupplierQuery = `INSERT INTO item_supplier
+      (
+        suppliers_id,
         item_supplier_rate,
         item_id
-         )
-      VALUES('${element.suppliers_id}', '${element.item_supplier_rate}','${itemId}') ;
+      )
+      VALUES(${element.suppliers_id}, ${element.item_supplier_rate},${id}) ;
       `;
+      console.log(updateSupplierQuery);
       await pool.query(updateSupplierQuery);
     }
 
@@ -213,8 +227,7 @@ exports.update = async (req, res) => {
 exports.getItemDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, item_code, int_qty,  item_purchased,
-      item_sold, silver FROM item where is_active = true`
+      `select id, item_code, int_qty, item_purchased, item_sold, silver FROM item where is_active = true`
     );
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
