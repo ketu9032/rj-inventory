@@ -30,6 +30,7 @@ export class AddSalesComponent implements OnInit {
     isEditSalesItem = false;
     isShowLoader = false;
     selectItemLoader: boolean = false;
+    isChecked = true;
     loggedInUser: any;
     customerData: any;
     currentDate = new Date();
@@ -56,6 +57,7 @@ export class AddSalesComponent implements OnInit {
     }
     formSupplier: FormGroup;
     formBill: FormGroup;
+
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number, pastDue: number },
         public dialog: MatDialog,
@@ -65,7 +67,8 @@ export class AddSalesComponent implements OnInit {
         private salesQuotationService: salesQuotationService,
         private salesService: SalesService,
         private salesBillService: SalesBillService,
-        public authService: AuthService
+        public authService: AuthService,
+        private _formBuilder: FormBuilder
     ) { }
     ngOnInit() {
         this.loggedInUser = this.authService.getUserData();
