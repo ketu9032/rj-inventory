@@ -10,20 +10,15 @@ exports.findAll = async (req, res) => {
     if (search) {
       searchQuery += ` and
         (
-           no::text ilike '%${search}%'
+          s.id::text ilike '%${search}%'
           or s.date::text ilike '%${search}%'
           or bill_no::text ilike '%${search}%'
-          or qty::text ilike '%${search}%'
-          or amount::text ilike '%${search}%'
-          or total_due::text ilike '%${search}%'
-          or grand_total::text ilike '%${search}%'
-          or user_name ilike '%${search}%'
+          or users.user_name ilike '%${search}%'
           or tier ilike '%${search}%'
           or remarks ilike '%${search}%'
           or cdf.company ilike '%${search}%'
           or payment::text ilike '%${search}%'
-          or pending_due::text ilike '%${search}%'
-          or amount_pd_total::text ilike '%${search}%'
+          or COALESCE(past_due,0)::text ilike '%${search}%'
           or other_payment::text ilike '%${search}%'
           or token::text ilike '%${search}%'
         )`;
@@ -31,29 +26,45 @@ exports.findAll = async (req, res) => {
     searchQuery += ` and s.is_active = ${active}`;
     const query = `  SELECT
         Count(s.id) OVER() AS total,
-        s.id,
-        no,
+        s.id as id,
         s.date,
         bill_no,
-        qty,
-        amount,
-        s.total_due,
         tier,
-        grand_total,
-        user_name,
+        users.user_name as user_name,
         remarks,
-        s.payment,
+        s.payment as payment,
         customer_id,
-        cdf.company as customer,
+        cdf.company as customer_name,
         cdf.due_limit as cdf_due_limit,
-        pending_due,
-        other_payment,
-        amount_pd_total,
-        token
+        other_payment as other_payment,
+        token,
+        COALESCE(past_due,0) as past_due,
+        sum(COALESCE(sales_bill.qty,0) * COALESCE(sales_bill.selling_price,0)) + COALESCE(past_due,0) as total_amount,
+        sum(COALESCE(sales_bill.qty,0) * COALESCE(sales_bill.selling_price,0)) as amount,
+        sum(COALESCE(sales_bill.qty,0) * COALESCE(sales_bill.selling_price,0)) + COALESCE(past_due,0) - s.payment as total_due
       FROM sales s
       join cdf as cdf
-      on cdf.id = s.customer_id
-     ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+        on cdf.id = s.customer_id
+      join users as users
+        on users.id = s.user_id
+      left join sales_bill
+      on sales_bill.sales_id = s.id
+      group by
+        s.id,
+          s.date,
+          bill_no,
+          tier,
+          users.user_name,
+          remarks,
+          s.payment ,
+          customer_id,
+          cdf.company,
+          cdf.due_limit ,
+          other_payment,
+          token,
+          COALESCE(past_due,0)
+      -- ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
+      `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -83,73 +94,40 @@ exports.delete = async (req, res) => {
 };
 exports.add = async (req, res) => {
   try {
+    const loggedInUserId = res.locals.tokenData.id;
     const {
-      qty,
-      amount,
-      total_due,
-      user_name,
-      pending_due,
-      grand_total,
+      user_id,
       tier,
       remarks,
       sales,
       payment,
       customer_id,
-      other_payment,
-      amount_pd_total
+      other_payment
     } = req.body;
-    // if (
-    //   !date ||
-    //   !bill_no ||
-    //   !qty ||
-    //   !amount ||
-    //   !total_due ||
-    //   !user_name ||
-    //   !tier ||
-    //   !sales ||
-    //   !remarks
-    // ) {
-    //   res
-    //     .status(STATUS_CODE.BAD)
-    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-    //   return;
-    // }
     const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
        bill_no,
-       qty,
-       amount,
-       total_due,
-       pending_due,
-       user_name,
-       grand_total,
+       user_id,
        tier,
        remarks,
        payment,
        customer_id,
        other_payment,
-       amount_pd_total,
        token
      )
-    VALUES(now(), (select count(bill_no)+1 from sales  where customer_id = ${customer_id}), '${qty}', '${amount}', '${total_due}','${pending_due}', '${user_name}', '${grand_total}', '${tier}', '${remarks}', '${payment}', '${customer_id}', '${other_payment}', '${amount_pd_total}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
+    VALUES(now(), (select count(bill_no)+1 from sales  where customer_id = ${customer_id}), '${user_id}', '${tier}', '${remarks}', '${payment}', '${customer_id}', '${other_payment}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesId = rows[0].id;
-    for (let index = 0; index < sales.length; index++) {
-      const element = sales[index];
-      const insertSalesQuotationDetailsQuery = `INSERT INTO sales_bill
-      (
-        item_id,
-        qty,
-        available,
-        selling_price,
-        total,
-        sales_id
-        )
-        VALUES('${element.item_id}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesId}') ;
-        `;
-      await pool.query(insertSalesQuotationDetailsQuery);
-    }
+    await this.updateValue(
+      customer_id,
+      payment,
+      other_payment,
+      sales,
+      salesId,
+      loggedInUserId,
+      false
+    );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -171,22 +149,6 @@ exports.addSales = async (req, res) => {
       customer_id,
       amount_pd_total
     } = req.body;
-    // if (
-    //   !date ||
-    //   !bill_no ||
-    //   !qty ||
-    //   !amount ||
-    //   !total_due ||
-    //   !user_name ||
-    //   !tier ||
-    //   !sales ||
-    //   !remarks
-    // ) {
-    //   res
-    //     .status(STATUS_CODE.BAD)
-    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-    //   return;
-    // }
     const insertSalesQuotationQuery = `
     INSERT INTO sales (
       date, bill_no, qty, amount, total_due,
@@ -226,58 +188,39 @@ exports.addSales = async (req, res) => {
 };
 exports.update = async (req, res) => {
   try {
-    const { id,
-        bill_no,
-        qty,
-        amount,
-        total_due,
-        remarks,
-        pending_due,
-        customer_id,
-        amount_pd_total,
-        sales,
+    const loggedInUserId = res.locals.tokenData.id;
+    const {
+      id,
+      bill_no,
+      remarks,
+      past_due,
+      customer_id,
+      payment,
+      other_payment,
+      sales
     } = req.body;
-    // if (!id  || !bill_no ||  !companyId) {
-    //   res
-    //     .status(STATUS_CODE.BAD)
-    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-    //   return;
-    // }
-   const updateSalesQuery =   `
+    const updateSalesQuery = `
       UPDATE
           sales
         SET
           date = now(),
           bill_no = '${bill_no}',
-          qty = '${qty}',
-          amount = '${amount}',
-          total_due = '${total_due}',
           remarks = '${remarks}',
-          pending_due = '${pending_due}',
-          customer_id = '${customer_id}',
-          amount_pd_total = '${amount_pd_total}'
+          past_due = '${past_due}',
+          customer_id = '${customer_id}'
         where
           id = ${id};
-       `
-       await pool.query(updateSalesQuery);
-       const query = `delete from sales_bill where sales_id = ${id};`
-       await pool.query(query);
-       for (let index = 0; index < sales.length; index++) {
-         const element = sales[index];
-         const insertSalesBillQuery = `
-          INSERT INTO sales_bill
-          (
-            item_id,
-            qty,
-            available,
-            selling_price,
-            total,
-            sales_id
-          )
-            VALUES(${element.item_id}, ${element.qty}, ${element.available}, ${element.selling_price}, ${element.total},  ${id}) ;
-           `;
-          await pool.query(insertSalesBillQuery);
-        }
+       `;
+    await pool.query(updateSalesQuery);
+    await this.updateValue(
+      customer_id,
+      payment,
+      other_payment,
+      sales,
+      id,
+      loggedInUserId,
+      true
+    );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -313,31 +256,24 @@ exports.getSalesById = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    const query =
-      ` SELECT
+    const query = ` SELECT
           s.id,
-          no,
           s.date,
           bill_no,
-          qty,
-          amount,
-          total_due,
           tier,
-          grand_total,
-          user_name,
+          user_id,
           remarks,
-          payment,
+          s.payment,
           customer_id,
           cdf.company as customer,
           cdf.due_limit as due_limit,
-          pending_due,
           other_payment,
-          amount_pd_total
+          s.past_due as past_due
         FROM sales s
         join cdf as cdf
         on cdf.id = s.customer_id
-        where s.is_active = true and s.id = ${salesId}`
-      const response =  await pool.query( query  );
+        where s.is_active = true and s.id = ${salesId}`;
+    const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -345,30 +281,98 @@ exports.getSalesById = async (req, res) => {
     });
   }
 };
-exports.updateValue = async (req, res) => {
+exports.updateValue = async (
+  customerId,
+  payment,
+  otherPayment,
+  salesItemDetails,
+  salesId,
+  loggedInUserId,
+  isSalesUpdate
+) => {
   try {
-    const { customer_id, qty, buyingPrice, payment
-    } = req.body;
-    // if (!customer_id ||  !qty || !amount || !payment) {
-    //   res
-    //     .status(STATUS_CODE.BAD)
-    //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
-    //   return;
-    // }
-    let updateCdfQuery = `
-		update
-      cdf
+    let itemsCost = 0;
+    let existingItemsCost = 0;
+    const query1 = `select qty, selling_price, item_id from sales_bill where sales_id = ${salesId}`;
+    const existingItemResponse = await pool.query(query1);
+
+    const existingItems = existingItemResponse.rows;
+    for (let index = 0; index < existingItems.length; index++) {
+      const item = existingItems[index];
+      const query2 = `update item set item_sold = item_sold - ${item.qty}
+      where id = ${item.item_id}`;
+      await pool.query(query2);
+      existingItemsCost = item.qty * item.selling_price + existingItemsCost;
+    }
+    const query3 = `delete from sales_bill where sales_id = ${salesId};`;
+    await pool.query(query3);
+
+    for (let index = 0; index < salesItemDetails.length; index++) {
+      const element = salesItemDetails[index];
+      const query4 = `INSERT INTO sales_bill
+      (
+        item_id,
+        qty,
+        selling_price,
+        sales_id
+        )
+        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price},   ${salesId}) ;
+        `;
+      await pool.query(query4);
+      let query5 = `
+        update
+          item
         set
-          balance = +balance + ${buyingPrice},
-          payment = payment + ${ payment},
-          total_due = balance - payment
+          item_sold = COALESCE(item_sold, 0) + ${element.qty}
         where
-          id = ${customer_id}
-      `;
-    console.log(updateCdfQuery);
-    await pool.query(updateCdfQuery);
-    let  updateUserQuery = `update users set balance = balance + ${+payment}  where id = ${res.locals.tokenData.id}`;
-    await pool.query(updateUserQuery);
+      id = ${element.item_id}
+`;
+      await pool.query(query5);
+      itemsCost = +element.selling_price * +element.qty + itemsCost;
+    }
+    let existingPayment = 0;
+    let existingOtherPayment = 0;
+    if (isSalesUpdate === true) {
+      let query7 = `select payment, other_payment from sales where id = ${salesId}`;
+      const existingBillResponse = await pool.query(query7);
+      const existingBill =
+        existingBillResponse.rows && existingBillResponse.rows.length > 0
+          ? existingBillResponse.rows[0]
+          : null;
+      if (existingBill) {
+        existingPayment = existingBill.payment;
+        existingOtherPayment = existingBill.other_payment;
+        let query = `update  sales set
+            payment = COALESCE(payment,0) - ${existingPayment} + ${payment},
+            other_payment = COALESCE(other_payment,0) - ${existingOtherPayment} - ${otherPayment}
+          where id = ${salesId}`;
+        await pool.query(query);
+      }
+    } else {
+      let query10 = `update sales set past_due = (select cdf_total_due from cdf where id = ${customerId} ) where id = ${salesId}`;
+      await pool.query(query10);
+    }
+    let query6 = ` update cdf set
+        balance =  COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost},
+        payment = COALESCE(payment,0) - ${existingPayment} + ${payment},
+        cdf_total_due = (COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(payment,0) - ${existingPayment} + ${payment})
+      where id = ${customerId} returning cdf_total_due`;
+    await pool.query(query6);
+
+    let query8 = `update users set balance = balance - ${existingPayment} - ${existingOtherPayment} + ${+payment}  + ${
+      +otherPayment ? otherPayment : 0
+    }  where id = ${loggedInUserId}`;
+    await pool.query(query8);
+  } catch (error) {
+    throw new Error(error.message || MESSAGES.COMMON.ERROR);
+  }
+};
+exports.isCustomerIdInSales = async (req, res) => {
+  try {
+    const { customerID } = req.query;
+    const query = `select count(id) from sales where customer_id = ${customerID}`;
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

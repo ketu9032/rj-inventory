@@ -3,18 +3,11 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IItemSupplierData } from 'src/app/models/item_supplier';
-import { IPurchaseData } from 'src/app/models/purchase';
-import { ISalesData } from 'src/app/models/sales';
-import { ISalesQuotationData } from 'src/app/models/sales-quotation';
-import { ISalesBillData } from 'src/app/models/sales_bill';
+import { IPurchaseDetailsData } from 'src/app/models/purchase-details';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE } from 'src/app/shared/global/table-config';
-import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
-import { salesQuotationService } from '../../sales-quotation/services/sales-quotation.service';
-import { SalesService } from '../../sales/services/sales.service';
 import { PurchaseDetailsService } from '../services/purchase-details.service';
 import { PurchaseService } from '../services/purchase.service';
 
@@ -65,8 +58,7 @@ export class AddPurchaseComponent implements OnInit {
     otherPayment: number = 0;
     totalDue: number;
     sales = [];
-    total: number;
-    users;
+    loggedInUser: any;
     customer;
     companyName;
     remarks: string = " ";
@@ -77,9 +69,23 @@ export class AddPurchaseComponent implements OnInit {
     findPurchaseDetails
     supplierName
     supplierDetails
+
+    //
+    totalQty: number = 0;
+    total: number = 0;
+    availableItemById: number = 0
+
+    purchaseData: any;
+    supplierData: any;
+    saleItems = [];
+    allSupplierData : any;
+    purchaseItemDataSource: any = [];
+    isEditSalesItem = false;
     showEditButton: boolean = false;
+    isShowOtherPayment: boolean = false;
+    isEditPurchaseItem: boolean = false;
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: IPurchaseData,
+        @Inject(MAT_DIALOG_DATA) public data:  { supplierId: number, purchaseId?: number, pastDue: number },
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddPurchaseComponent>,
         private formBuilder: FormBuilder,
@@ -90,73 +96,52 @@ export class AddPurchaseComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit() {
-        console.log(this.data)
-        this.users = this.authService.getUserData();
-        if (this.data.supplierDetails) {
-            this.supplierDetails = this.data.supplierDetails[0]
-            this.supplierName = this.supplierDetails.company
-            this.lastBillDue = this.supplierDetails.balance
-            this.dueLimit = this.supplierDetails.due_limit
+        console.log(this.data.pastDue);
 
-        }
-        this.getItemDropDown()
-        this.initializeForm();
+        this.loggedInUser = this.authService.getUserData();
+        this.getSuppliersDropDown();
         this.initializeSupplierForm();
-        this.initializeSalesBillForm()
+        this.initializeSalesBillForm();
+        this.getItemDropDown();
+        // this.getSupplierById();
+        if (this.data.purchaseId) {
+            this.getItemByPurchaseId()
+            this.getPurchaseById();
+            this.lastBillDue = this.data.pastDue;
+            this.calculate();
 
-        if (this.data.id) {
-            this.fillForm();
-            // this.getItemSupplier();
-            this.getPurchaseSupplier();
         }
-    }
-    initializeForm(): void {
-        this.formGroup = this.formBuilder.group({
-            company: ['', Validators.required],
-            date: ['', Validators.required],
-            invoice_no: ['', Validators.required]
-        });
     }
     initializeSupplierForm(): void {
         this.formSupplier = this.formBuilder.group({
-            item_code: ['', Validators.required],
+            item_id: [''],
             qty: [''],
-            available: [''],
-            total: [''],
             selling_price: [''],
         });
     }
     initializeSalesBillForm(): void {
         this.formBill = this.formBuilder.group({
-            payment: ['', Validators.required],
-            remarks: ['', Validators.required]
+            payment: [0, Validators.required],
+            otherPayment: [0],
+            remarks: ['']
         });
     }
     savePurchase(): void {
-        const pendingDueTotal = +this.totalPrice + +this.lastBillDue
-        this.company
-
         this.isShowLoader = true;
         this.purchaseService
             .addPurchase({
-                invoice_no: this.invoice_no,
-                qty: this.Qty,
-                amount: this.totalPrice,
-                user_name: this.users.user_name,
-                pending_due: this.lastBillDue,
-                total_due: this.totalDue,
-                grand_total: this.grandDueTotal,
-                remarks: this.remarks,
-                supplier: this.supplierName,
-                payment: this.currentPayment,
-                other_payment: this.otherPayment,
-                sales: this.sales,
-                amount_pd_total: pendingDueTotal
+                user_id: this.loggedInUser.id,
+                remarks: this.formBill.value.remarks,
+                suppliers_id: this.data.supplierId,
+                payment: this.formBill.value.payment,
+                other_payment: this.formBill.value.otherPayment,
+                sales: this.saleItems,
+                past_due: this.lastBillDue
             })
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-                    this.snackBar.open('Sales quotation saved successfully', 'OK', {
+                    this.snackBar.open('Purchase saved successfully', 'OK', {
                         duration: 3000
                     });
                     this.dialogRef.close(true);
@@ -173,104 +158,18 @@ export class AddPurchaseComponent implements OnInit {
                 () => { }
             );
     }
-    updateSalesQuotation(): void {
-        const pendingDueTotal = +this.totalPrice + +this.lastBillDue
+    updatePurchase(): void {
         this.isShowLoader = true;
         this.purchaseService
             .editPurchase({
-                id: this.data.id,
-                invoice_no: this.invoice_no,
-                qty: this.Qty,
-                amount: this.totalPrice,
-                user_name: this.users.user_name,
-                pending_due: this.lastBillDue,
-                total_due: this.totalDue,
-                grand_total: this.grandDueTotal,
-                remarks: this.remarks,
-                supplier: this.supplierName,
-                payment: this.currentPayment,
-                other_payment: this.otherPayment,
-                sales: this.sales,
-                amount_pd_total: pendingDueTotal
-            })
-            .subscribe(
-                (response) => {
-                    this.isShowLoader = false;
-                    this.snackBar.open('Sales quotation updated successfully', 'OK', {
-                        duration: 3000
-                    });
-                    this.dialogRef.close(true);
-                },
-                (error) => {
-                    this.isShowLoader = false;
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
-    }
-    onSubmit() {
-        if (this.data.id) {
-            this.updateSalesQuotation();
-        } else {
-            this.savePurchase();
-        }
-
-    }
-
-    addAndEditPurchaseDetails(){
-        if(this.data.id){
-            this.updatePurchaseDetails();
-        } else{
-          this.addSalesQuotation()
-        }
-
-    }
-    addSalesQuotation() {
-        const {
-            item_code,
-            qty,
-            available,
-            selling_price,
-            total
-        } = this.formSupplier.value
-        const sale = {
-            item_code,
-            qty,
-            available,
-            selling_price,
-            total
-        }
-        this.sales.push(sale)
-        this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.sales);
-        this.clearSupplierForm();
-
-    }
-
-    updatePurchaseDetails(): void {
-
-        const {
-            item_code,
-            qty,
-            available,
-            selling_price,
-            total
-        } = this.formSupplier.value;
-        this.purchaseDetailsService
-            .editPurchaseDetail({
-                id: this.data.id,
-                item_code,
-                qty,
-                available,
-                selling_price,
-                total,
-                purchase_id: +this.data.id
-
-
+                id: this.data.purchaseId,
+                user_id: this.loggedInUser.id,
+                remarks:  this.formBill.value.remarks,
+                suppliers_id: this.data.supplierId,
+                payment: this.formBill.value.payment,
+                other_payment: this.formBill.value.otherPayment,
+                sales: this.saleItems,
+                past_due: this.lastBillDue
             })
             .subscribe(
                 (response) => {
@@ -292,103 +191,55 @@ export class AddPurchaseComponent implements OnInit {
                 () => { }
             );
     }
+    onSubmit() {
+        if (this.data.purchaseId) {
+            this.updatePurchase();
+        } else {
+            this.savePurchase();
+        }
+    }
+
+    addSalesQuotation() {
+        const {
+            item_id,
+            qty,
+            selling_price,
+        } = this.formSupplier.value;
+        const item = this.items.find(x => x.id === item_id);
+        const salesItem = this.saleItems.find(x => +x.item_id === +item_id);
+        if (salesItem) {
+            salesItem.qty = +salesItem.qty + +qty;
+            salesItem.total = +salesItem.total + (+salesItem.qty * +salesItem.selling_price);
+        } else {
+            this.saleItems.push({
+                item_code: item.item_code,
+                item_id,
+                qty,
+                selling_price,
+            });
+        }
+        if (qty <= 0) {
+            this.formBill.get("remarks").setValidators(Validators.required);
+            setTimeout(() => {
+                this.formBill.get("remarks").updateValueAndValidity()
+            })
+        }
+        this.isEditPurchaseItem = false;
+        this.purchaseItemDataSource  = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+        this.availableItemById = 0;
+        this.calculate();
+        this.clearPurchaseDetailsForm();
+    }
 
 
     fillForm() {
-        const {
-            supplier,
-            date,
-            invoice_no,
-        } = this.data;
-        this.formGroup.patchValue({
-            supplier,
-            date,
-            invoice_no,
-        })
-            this.supplierName = this.data.supplier,
-            this.totalPrice = this.data.amount,
-            this.Qty = this.data.qty
-            this.lastBillDue = this.data.pending_due,
-            this.totalDue = this.data.total_due,
-            this.grandDueTotal = this.data.amount_pd_total,
-            this.remarks = this.data.remarks,
-            this.currentPayment = this.data.payment,
-            this.otherPayment = this.data.other_payment
-    }
-    supplierFillForm(element) {
-    //     const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
-    //     this.formSupplier.patchValue({
-    //         salesQuotationId: this.data.id, item_code, item_supplier_rate: itemSupplierRate
-    //     });
+        if (!this.data.purchaseId) {
+            this.lastBillDue = this.supplierData.suppliers_total_due;
+            this.calculate();
 
-    if(element.purchase_id) {
-      this.showEditButton = true;
-    }
-
-
-
-    const {
-        item_code,
-        qty,
-        available,
-        selling_price,
-        total
-    } = element;
-    this.formSupplier.patchValue({
-        item_code,
-        qty,
-        available,
-        selling_price,
-        total
-    });
-     }
-
-
-
-
-    // getPurchaseSupplier() {
-    //     this.supplierDataSource = [];
-    //     this.suppliers = []
-    //     this.tableParams.itemId = this.data.id;
-    //     this.purchaseDetailsService.getPurchaseDetail(this.tableParams).subscribe(
-    //         (newItemSupplier: any[]) => {
-    //             this.suppliers.push(...newItemSupplier);
-    //             this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(newItemSupplier);
-    //             if (newItemSupplier.length > 0) {
-    //                 this.totalRows = newItemSupplier[0].total;
-    //             }
-    //         },
-    //         (error) => {
-    //             this.snackBar.open(error.error.message || error.message, 'Ok', {
-    //                 duration: 3000
-    //             });
-    //         },
-    //         () => { }
-    //     );
-    // }
-    getPurchaseSupplier() {
-        this.supplierDataSource = [];
-        this.suppliers = []
-        this.tableParams.itemId = this.data.id;
-        this.purchaseDetailsService.getPurchaseDetail(this.tableParams).subscribe(
-            (response) => {
-                console.log(response);
-
-                this.findPurchaseDetails = response.filter(val => {
-                    return (val.purchase_id) === this.data.id
-                })
-                //  console.log(findPurchaseDetails)
-                //   this.supplierDataSource.push(findPurchaseDetails);
-
-                this.supplierDataSource = new MatTableDataSource<IItemSupplierData>(this.findPurchaseDetails);
-            },
-            (error) => {
-                this.snackBar.open(error.error.message || error.message, 'Ok', {
-                    duration: 3000
-                });
-            },
-            () => { }
-        );
+        }
+        this.supplierName = this.supplierData.company;
+        this.dueLimit = this.supplierData.due_limit;
     }
 
     getItemDropDown() {
@@ -411,56 +262,176 @@ export class AddPurchaseComponent implements OnInit {
                 () => { }
             );
     }
-    count() {
-        if (this.formSupplier.value.qty !== '') {
-            this.total = (this.formSupplier.value.qty * this.formSupplier.value.selling_price)
-            this.formSupplier.patchValue({
-                total: this.total
-            })
-        }
-    }
-    add() {
-        this.countQty.push(+this.formSupplier.value.qty)
-        this.Qty = this.countQty.reduce((acc, cur) => acc + cur, 0);
-        this.countTotal.push(this.total)
-        this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
-        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-    }
-    totalPaymentToDueCount() {
-        this.totalDue = +this.grandDueTotal - +this.currentPayment
-    }
-    totalOtherToDueCount() {
-        if (this.otherPayment != 0) {
-            this.totalDue = +this.totalDue - +this.otherPayment
-        }
-    }
-    fillSellingPrice(item) {
+
+    fillSellingPrice(itemId) {
+        const item = this.items.find(x => x.id === itemId)
+        this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
         this.formSupplier.patchValue({
-            item_code: item.item_code,
-            available: item.int_qty,
+            item_id: item.id,
             selling_price: item.silver
         });
     }
-    fillDueAndDueLimit(customer) {
-        this.lastBillDue = customer.balance,
-            this.dueLimit = customer.due_limit
+
+    supplierFillForm(itemId: number) {
+        this.isEditSalesItem = true;
+        const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
+        const { item_id, qty, selling_price, } = filteredItem;
+        this.formSupplier.patchValue({
+            item_id,
+            qty,
+            selling_price,
+        });
+        this.fillSellingPrice(itemId)
+     }
+
+
+     removePurchaseDetails(itemId: number): void {
+        const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
+        this.saleItems = filteredItems;
+        this.calculate();
+        this.purchaseItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
     }
-    removePurchaseDetails(element): void {
-        this.purchaseDetailsService.removePurchaseDetail(element.id).subscribe(
+
+
+    clearPurchaseDetailsForm(): void {
+        this.formSupplier.patchValue({
+            item_id: '',
+            qty: '',
+            selling_price: '',
+        });
+    }
+
+     getSuppliersDropDown() {
+        this.purchaseService
+            .getSupplierDropDown()
+            .subscribe(
+                (response) => {
+               this.allSupplierData = response;
+               this.filSupplierDetalis();
+                },
+
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+    //  getSupplierById() {
+    //     this.purchaseService
+    //         .getSupplierById(this.data.supplierId)
+    //         .subscribe(
+    //             (response) => {
+    //                 this.supplierData = response;
+    //                 debugger
+    //                 this.getSupplierIdInPurchase();
+    //             },
+    //             (error) => {
+    //                 this.snackBar.open(
+    //                     (error.error && error.error.message) || error.message,
+    //                     'Ok', {
+    //                     duration: 3000
+    //                 }
+    //                 );
+    //             },
+    //             () => { }
+    //         );
+    // }
+    getPurchaseById() {
+        this.purchaseService.getPurchaseById(this.data.purchaseId).subscribe(
             (response) => {
-                this.getPurchaseSupplier();
+                this.purchaseData = response
+             //  this.getSupplierIdInPurchase();
+                this.lastBillNo = this.purchaseData.bill_no;
+                this.formBill.value.remarks = this.purchaseData.remarks;
+                if (this.purchaseData.other_payment) {
+                    this.isShowOtherPayment = true;
+                }
+                this.formBill.patchValue({
+                    payment: this.purchaseData[0].payment,
+                    otherPayment: this.purchaseData[0].other_payment
+                });
+                this.calculate();
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
             },
             () => { }
         );
     }
-    clearSupplierForm(){
-        this.formSupplier.patchValue({
-            item_code: '',
-            qty: '',
-            available: '',
-            selling_price: '',
-            total: ''
-        })
+
+    hideShowOther() {
+        if (this.isShowOtherPayment === false) {
+            this.isShowOtherPayment = true
+        } else {
+            this.isShowOtherPayment = false;
+        }
+    }
+    getSupplierIdInPurchase() {
+        this.purchaseService.isSupplierIdInPurchase(this.data.supplierId).subscribe(
+            (response) => {
+                this.lastBillNo = response[0].count
+                // this.fillForm();
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
+    }
+
+
+    getItemWiseTotal() {
+        if (this.formSupplier.value.qty !== '') {
+            return (+this.formSupplier.value.qty * +this.formSupplier.value.selling_price)
+        }
+        return 0;
+    }
+    calculate() {
+        this.totalQty = 0
+        this.total = 0;
+        this.saleItems.forEach(saleItem => {
+            this.totalQty = +this.totalQty + +saleItem.qty;
+            this.total = +this.total + (+saleItem.qty * +saleItem.selling_price);
+        });
+        this.grandDueTotal = (+this.total + +this.lastBillDue);
+        this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
+    }
+
+    filSupplierDetalis() {
+        this.supplierData = this.allSupplierData.find(x => x.id === this.data.supplierId)
+
+        this.supplierName = this.supplierData.company;
+        if(!this.data.purchaseId){
+            this.lastBillDue = +this.supplierData.suppliers_total_due;
+        }
+
+        this.dueLimit = this.supplierData.due_limit;
+    }
+
+    getItemByPurchaseId() {
+        this.purchaseItemDataSource = [];
+        this.purchaseDetailsService.getItemsByPurchaseId(this.data.purchaseId).subscribe(
+            (response) => {
+                this.saleItems.push(...response)
+                this.calculate();
+                this.purchaseItemDataSource = new MatTableDataSource<IPurchaseDetailsData>(response);
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
     }
 
 }

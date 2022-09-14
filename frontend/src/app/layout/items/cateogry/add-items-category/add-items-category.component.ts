@@ -13,7 +13,9 @@ import { ITiersData } from 'src/app/models/tiers';
 export class AddItemsCategoryComponent implements OnInit {
     formGroup: FormGroup;
     selectedRole: string
-    isShowLoader = false;
+    isShowLoader: boolean = false;
+    isCategoryCodeExist : boolean = true;
+    isCategoryNameExist : boolean = true;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ITiersData,
@@ -108,9 +110,26 @@ export class AddItemsCategoryComponent implements OnInit {
     }
 
     fillForm() {
-        const { code: code } = this.data;
+        const { code, name } = this.data;
         this.formGroup.patchValue({
-            code
+            code, name
         });
+    }
+
+    onCheckCategoryCode() {
+        this.itemsCategoriesService
+            .onCheckCategoryCode({ code: this.formGroup.controls.code.value })
+            .subscribe(
+                (response: boolean) => {
+                    this.isCategoryCodeExist = response
+                })
+    }
+    onCheckCategoryName() {
+        this.itemsCategoriesService
+            .onCheckCategoryName({ name: this.formGroup.controls.name.value })
+            .subscribe(
+                (response: boolean) => {
+                    this.isCategoryNameExist = response
+                })
     }
 }

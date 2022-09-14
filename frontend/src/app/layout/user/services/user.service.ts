@@ -1,7 +1,7 @@
 import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
-import { IUserActiveParams, IUserParams } from 'src/app/models/user';
+import { IUserActiveParams, IUserName, IUserParams } from 'src/app/models/user';
 import { RestService } from 'src/app/shared/services';
 
 @Injectable({ providedIn: 'root' })
@@ -9,6 +9,7 @@ export class UserService {
   private url = 'api/users';
   private getUserDropDownURL = 'api/getUserDropDown';
   private changeStatusURL = 'api/users/changeStatus';
+  private onCheckUserNameURL = 'api/users/onCheckUserName';
 
   constructor(
     private restService: RestService,
@@ -34,4 +35,8 @@ export class UserService {
   public changeStatus(user: IUserActiveParams) {
     return this.restService.put(`${this.changeStatusURL}`, user);
   }
+
+  public onCheckUserName(userName: IUserName) {
+    return this.restService.put(`${this.onCheckUserNameURL}`, userName);
+}
 }

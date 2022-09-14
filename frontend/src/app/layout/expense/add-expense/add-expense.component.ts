@@ -36,8 +36,6 @@ export class AddExpenseComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        console.log(this.data);
-
         this.initializeForm();
         this.getUserDropDown()
         this.getCategoryDropDown('Expense')

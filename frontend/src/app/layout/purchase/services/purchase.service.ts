@@ -10,6 +10,9 @@ export class PurchaseService {
     private SupplierUrl = 'api/supplierDropDown'
     private purchaseChangeStatusURl = 'api/purchase/changeStatus'
     private getItemDropDownURL  = 'api/item/getItemDropDown';
+    private isSupplierIdInPurchaseURL = 'api/sales/isSupplierIdInPurchase';
+    private getPurchaseByIdURL = 'api/purchase/getPurchaseById'
+      private getSupplierByIdURL = 'api/suppliers/getSuppliersById';
 
     constructor(private restService: RestService, private commonService: CommonService) { }
 
@@ -35,4 +38,15 @@ export class PurchaseService {
     public getItemDropDown() {
         return this.restService.get<any>(`${this.getItemDropDownURL}`);
       }
+
+      public getPurchaseById(purchaseId: number) {
+        return this.restService.get<any>(`${this.getPurchaseByIdURL}?purchaseId=${purchaseId}`);
+      }
+
+      public isSupplierIdInPurchase(supplierID: number) {
+        return this.restService.get<any>(`${this.isSupplierIdInPurchaseURL}?supplierID=${supplierID}`);
+      }
+      public getSupplierById(supplierId: number) {
+        return this.restService.get<any>(`${this.getSupplierByIdURL}?supplierId=${supplierId}`);
+    }
 }

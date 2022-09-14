@@ -19,56 +19,53 @@ import { SalesService } from './services/sales.service';
     styleUrls: ['./sales.component.scss']
 })
 export class SalesComponent implements OnInit {
+    pageSizeOptions = PAGE_SIZE_OPTION;
+    defaultPageSize = PAGE_SIZE;
+    totalRows: number;
+    loader: boolean = false;
+    selectCustomerLoader: boolean = false;
+    isShowAddSales: boolean = false;
+    selectedCustomerId: number;
+    currentDate : string;
+    customers = [];
+    dataSource: any = [];
+    loggedInUsersData: any;
     displayedColumns: string[] = [
-        'no',
-        't',
-        'date',
-        'customer',
+        'id',
+        'token',
+        'sales_date',
+        'customer_name',
         'amount',
-        'pd',
-        'total',
+        'past_due',
+        'total_amount',
         'payment',
-        'td',
-        'op',
-        'user',
+        'total_due',
+        'other_payment',
+        'user_name',
         'action',
         'print'
     ];
-    dataSource: any = [];
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    public defaultPageSize = PAGE_SIZE;
-    public pageSizeOptions = PAGE_SIZE_OPTION;
-    @ViewChild(MatSort) sort: MatSort;
-    loader: boolean = false;
-    selectCustomerLoader: boolean = false;
-    isShow: boolean = false;
-    totalRows: number;
-    customerId: number;
-    customers = [];
-    loggedInUsersData: any;
-    payment: number = 0;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
-        orderBy: 'id',
+        orderBy: 's.id',
         direction: "desc",
         search: '',
         active: true
-    }
-    customer;
-    currentDate = new Date();
-    date
+    };
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
     constructor(
-        public dialog: MatDialog,
+        private dialog: MatDialog,
         private salesService: SalesService,
-        public snackBar: MatSnackBar,
-        public authService: AuthService
+        private snackBar: MatSnackBar,
+        private authService: AuthService
     ) { }
     ngOnInit(): void {
-        this.date = moment(this.currentDate).format('YYYY-MM-DD');
+        this.currentDate = moment().format('YYYY-MM-DD');
+        this.loggedInUsersData = this.authService.getUserData();
         this.getCustomerDropDown();
         this.getSales();
-        this.loggedInUsersData = this.authService.getUserData();
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
@@ -83,6 +80,7 @@ export class SalesComponent implements OnInit {
         this.loader = true;
         this.salesService.getSales(this.tableParams).subscribe(
             (newSales: any[]) => {
+                this.totalRows = 0;
                 this.dataSource = new MatTableDataSource<ISalesData>(newSales);
                 if (newSales.length > 0) {
                     this.totalRows = newSales[0].total;
@@ -107,8 +105,7 @@ export class SalesComponent implements OnInit {
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                 data: { customerId: this.customerId }
-
+                 data: { customerId: this.selectedCustomerId }
             })
             .afterClosed()
             .subscribe((result) => {
@@ -117,12 +114,16 @@ export class SalesComponent implements OnInit {
                 }
             });
     }
-    onEditNewCustomers(element) {
+    onEditNewSales(element) {
         this.dialog
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                data: {customerId: this.customerId, salesId: element.id}
+                data: {
+                    customerId: element.customer_id,
+                    salesId: element.id,
+                    pastDue: element.past_due
+                }
             })
             .afterClosed()
             .subscribe((result) => {
@@ -133,7 +134,7 @@ export class SalesComponent implements OnInit {
     }
     changeStatus(id: number): void {
         this.salesService
-            .changeStatus({ id: id, status: !this.tableParams.active })
+            .changeStatus({ id, status: !this.tableParams.active })
             .subscribe(
                 (response) => {
                     if (!this.tableParams.active) {
@@ -165,16 +166,14 @@ export class SalesComponent implements OnInit {
         this.getSales();
     }
     toggleType() {
-        this.tableParams.active = !this.tableParams
-            .active;
+        this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
         this.getSales();
-
     }
     toggleCreateAddSalesButton() {
-        this.isShow = false;
-        if (this.customerId) {
-            this.isShow = true
+        this.isShowAddSales = false;
+        if (this.selectedCustomerId) {
+            this.isShowAddSales = true
         }
     }
     getCustomerDropDown() {
@@ -197,6 +196,7 @@ export class SalesComponent implements OnInit {
                 () => { }
             );
     }
+
     print(element) {
         this.dialog
             .open(PrintComponent, {
@@ -211,9 +211,4 @@ export class SalesComponent implements OnInit {
                 }
             });
     }
-
-    paymentCount() {
-        this.payment = this.customer.amount + this.customer.balance
-    }
-
 }

@@ -61,24 +61,25 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="purchased">
+            <ng-container matColumnDef="item_purchased">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Purchased</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.purchased }}
+                    {{ element.item_purchased }}
+
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="sold">
+            <ng-container matColumnDef="item_sold">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Sold</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.sold }}
+                    {{ element.item_sold }}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="available">
+            <ng-container matColumnDef="item_available">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Available </th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.available }}
+                    {{ element.item_available }}
                 </td>
             </ng-container>
 
@@ -89,11 +90,10 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="total_balance">
+            <ng-container matColumnDef="item_price_total">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
-                <td mat-cell *matCellDef="let element">{{ element.total_balance | currency: 'INR' }}</td>
+                <td mat-cell *matCellDef="let element">{{ element.item_price_total | currency: 'INR' }}</td>
             </ng-container>
-
 
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>

@@ -19,6 +19,7 @@ export class CdfToCustomersComponent implements OnInit {
     tiers = []
     isShowLoader = false;
     tierName
+    total_due: number = 0;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ICustomersData,
         public dialog: MatDialog,
@@ -68,7 +69,7 @@ export class CdfToCustomersComponent implements OnInit {
                 cdfStatus,
                 other,
                 tierId,
-
+                cdf_total_due: this.total_due,
                 date: '',
                 reference: '',
                 referencePerson: '',

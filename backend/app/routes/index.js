@@ -10,13 +10,12 @@ const item = require('./../controllers/item.controller');
 const item_supplier = require('./../controllers/item-supplier.controller');
 const cdf = require('./../controllers/cdf.controller');
 const sales = require('./../controllers/sales.controller');
-const sales_bill = require('./../controllers/sales_bill.controller')
+const sales_bill = require('./../controllers/sales_bill.controller');
 const sales_quotation = require('./../controllers/sales_quotation.controller');
 const sales_quotation_detail = require('./../controllers/sales_quotation_detail.controller');
 const purchase = require('./../controllers/purchase.controller');
-const purchase_details = require('./../controllers/purchase_details.controller')
+const purchase_details = require('./../controllers/purchase_details.controller');
 router.post('/api/addSales', sales.addSales);
-
 
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
@@ -45,6 +44,7 @@ router.post('/api/users', users.add);
 router.put('/api/users', users.update);
 router.put('/api/users/changeStatus', users.changeStatus);
 router.get('/api/getUserDropDown', users.getUserDropDown);
+router.put('/api/users/onCheckUserName', users.onCheckUserName);
 
 router.delete('/api/customers', customers.delete);
 router.get('/api/customers', customers.findAll);
@@ -73,6 +73,7 @@ router.post('/api/suppliers', suppliers.add);
 router.put('/api/suppliers', suppliers.update);
 router.put('/api/suppliers/changeStatus', suppliers.changeStatus);
 router.get('/api/supplierDropDown', suppliers.getSupplierDropDown);
+router.get('/api/suppliers/getSuppliersById', suppliers.getSuppliersById);
 
 router.delete('/api/categories', categories.delete);
 router.get('/api/categories', categories.findAll);
@@ -80,6 +81,14 @@ router.post('/api/categories', categories.add);
 router.put('/api/categories', categories.update);
 router.put('/api/categories/changeStatus', categories.changeStatus);
 router.get('/api/getCategoryDropDown', categories.getCategoryDropDown);
+router.put(
+  '/api/categories/onCheckCodeCategory',
+  categories.onCheckCategoryCode
+);
+router.put(
+  '/api/categories/onCheckNameCategory',
+  categories.onCheckCategoryName
+);
 
 router.delete('/api/expense', expense.delete);
 router.get('/api/expense', expense.findAll);
@@ -121,7 +130,7 @@ router.post('/api/addSales', sales.addSales);
 router.put('/api/sales', sales.update);
 router.put('/api/sales/changeStatus', sales.changeStatus);
 router.get('/api/sales/getSalesById', sales.getSalesById);
-router.put('/api/sales/updateValue', sales.updateValue);
+router.get('/api/sales/isCustomerIdInSales', sales.isCustomerIdInSales);
 
 router.delete('/api/sales_bill', sales_bill.delete);
 router.get('/api/sales_bill', sales_bill.findAll);
@@ -144,6 +153,11 @@ router.get('/api/purchase', purchase.findAll);
 router.post('/api/purchase', purchase.add);
 router.put('/api/purchase', purchase.update);
 router.put('/api/purchase/changeStatus', purchase.changeStatus);
+router.get('/api/purchase/getPurchaseById', purchase.getPurchaseById);
+router.get(
+  '/api/purchase/isSupplierIdInPurchase',
+  purchase.isSupplierIdInPurchase
+);
 
 router.delete('/api/purchase_details', purchase_details.delete);
 router.get('/api/purchase_details', purchase_details.findAll);
@@ -151,3 +165,4 @@ router.post('/api/purchase_details', purchase_details.add);
 router.put('/api/purchase_details', purchase_details.update);
 
 module.exports = router;
+

@@ -13,7 +13,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Company</mat-label>
-                    <input class="background_color" matInput formControlName="company" readonly   matTooltip="NOT Editable" required/>
+                    <input matInput formControlName="company" readonly matTooltip="NOT Editable" />
                 </mat-form-field>
 
             </div>
@@ -21,7 +21,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>First Name</mat-label>
-                    <input class="background_color" matInput formControlName="name"  readonly matTooltip="NOT Editable" required/>
+                    <input matInput formControlName="name" readonly matTooltip="NOT Editable" />
                 </mat-form-field>
 
             </div>
@@ -31,15 +31,15 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Address</mat-label>
-                    <textarea class="background_color" matInput formControlName="address" readonly  matTooltip="NOT Editable" required></textarea>
+                    <textarea matInput formControlName="address" readonly matTooltip="NOT Editable"></textarea>
                 </mat-form-field>
 
             </div>
             <!-- Email start -->
-            <div class="block" >
-                <mat-form-field >
+            <div class="block">
+                <mat-form-field>
                     <mat-label>Email</mat-label>
-                    <input  class="background_color" matInput formControlName="email" required  readonly  matTooltip="NOT Editable" required/>
+                    <input matInput formControlName="email" required readonly matTooltip="NOT Editable" />
                 </mat-form-field>
 
             </div>
@@ -49,7 +49,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Mobile Number</mat-label>
-                    <input class="background_color" matInput formControlName="mobile" type="tel" type="number" readonly  matTooltip="NOT Editable" required />
+                    <input matInput formControlName="mobile" readonly matTooltip="NOT Editable" />
                 </mat-form-field>
 
             </div>
@@ -74,7 +74,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Initial Balance</mat-label>
-                    <input matInput formControlName="balance" type="number" required/>
+                    <input matInput formControlName="balance" type="number" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -100,12 +100,12 @@
                     </ng-container>
                 </div>
             </div> -->
-              <!-- tire start -->
-              <div class="block">
+            <!-- tire start -->
+            <div class="block">
                 <mat-form-field>
                     <mat-label>Select Tier</mat-label>
-                    <mat-select formControlName="tier" name="tier"  required>
-                        <mat-option *ngFor="let tire of tiers"  [value]="tire.id" (click)="findTierName(tire.id)">
+                    <mat-select formControlName="tier" name="tier" required>
+                        <mat-option *ngFor="let tire of tiers" [value]="tire.id" (click)="findTierName(tire.id)">
                             {{tire.code}}
                         </mat-option>
                     </mat-select>
@@ -129,7 +129,7 @@
                     <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader"
                         type="submit">
                         <span *ngIf="!isShowLoader">
-                           ADD
+                            ADD
                         </span>
                         <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
                     </button>

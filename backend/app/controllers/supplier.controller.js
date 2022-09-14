@@ -13,14 +13,23 @@ exports.findAll = async (req, res) => {
       searchQuery += ` and
         (balance description '%${search}%'
           or company ilike '%${search}%'
+          or purchase_price ilike '%${search}%'
+          or purchase_payment ilike '%${search}%'
           or due_limit ilike '%${search}%'
-          or other ilike '%${search}%'
+          or suppliers_total_due ilike '%${search}%'
+
         )`;
     }
 
     searchQuery += ` and is_active = ${active}`;
     const response = await pool.query(
-      `select count(id) over() as total, id, company,due_limit,balance, other from suppliers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
+      `select count(id) over() as total, id, company,due_limit,balance, other,
+      purchase_price,
+      purchase_payment,
+      suppliers_total_due
+
+
+      from suppliers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -62,8 +71,9 @@ exports.add = async (req, res) => {
       return;
     }
     await pool.query(
-      `INSERT INTO suppliers (company, due_limit, balance, other)
-      VALUES('${company}', '${dueLimit}', '${balance}', '${other}');
+      `INSERT INTO suppliers (company, due_limit,
+        purchase_price,  suppliers_total_due, other)
+      VALUES('${company}', '${dueLimit}', '${balance}', '${balance}', '${other}');
       `
     );
 
@@ -121,10 +131,30 @@ exports.changeStatus = async (req, res) => {
 exports.getSupplierDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, company, due_limit, balance FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
+      `select id, company, due_limit, balance,
+      purchase_price, purchase_payment, suppliers_total_due FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true `
     );
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+exports.getSuppliersById = async (req, res) => {
+  try {
+    const { supplierId } = req.query;
+    const response = await pool.query(
+      `select id, company,balance,  due_limit FROM suppliers where COALESCE(is_deleted,false) = false and is_active = true  and id = ${supplierId}`
+    );
+    // if (response.rows && response.rows.length > 0) {
+    //   return res.status(STATUS_CODE.SUCCESS).send(response.rows[0]);
+    // }
+    // return res.status(STATUS_CODE.ERROR).send({
+    //   message: MESSAGES.COMMON.DATA_NOT_FOUND
+    // });
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

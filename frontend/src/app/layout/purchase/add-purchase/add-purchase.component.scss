@@ -104,11 +104,19 @@ table {
 }
 
 .loader {
-    bottom: 45px;
+    bottom: -12px;
     float: right;
-    right: 30px;
+    right: 60px;
 }
 
 mat-spinner {
     margin: 7px;
 }
+.checkbox-margin{
+    margin-top: 23px;
+    margin-right: 14px;
+}
+.float{
+    float: right;
+}
+

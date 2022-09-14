@@ -1,5 +1,5 @@
 <div class="main-header">
-    <h1 mat-dialog-title><b>Add Sales</b> </h1>
+    <h1 mat-dialog-title><b> {{ !this.data.salesId ? 'Add  Sales' : 'Update  Sales' }}</b> </h1>
     <button mat-button mat-dialog-close>
         <mat-icon>close</mat-icon>
     </button>
@@ -47,34 +47,27 @@
                 <mat-form-field class="input_width">
                     <mat-label>Item code</mat-label>
                     <mat-select name="item code" formControlName="item_id">
-                        <mat-option *ngFor="let item of items" [value]="item.id" (click)="fillSellingPrice(item)">
+                        <mat-option *ngFor="let item of items" [value]="item.id" (click)="fillSellingPrice(item.id)">
                             {{item.item_code | uppercase}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-spinner class="loader" *ngIf="selectItemLoader" diameter="20"></mat-spinner>
+                <mat-spinner class="loader" *ngIf="!selectItemLoader" diameter="20"></mat-spinner>
             </div>
             <!-- qty start -->
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Qty.</mat-label>
-                    <input matInput formControlName="qty" type="number" (keyup)="count()" (click)="count()" required />
+                    <input matInput formControlName="qty" type="number"/>
                 </mat-form-field>
             </div>
             <!-- available start -->
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Available</mat-label>
-                    <input matInput formControlName="available" matTooltip="Not Editable" readonly />
+                    <input matInput matTooltip="Not Editable" readonly [value]="availableItemById"/>
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-                formSupplier.controls.available.touched &&
-                !formSupplier.controls.available.value
-                ">
-                        <span class="error">Available is Required</span>
-                    </ng-container>
-                </div>
+
             </div>
             <!-- selling_price start -->
             <div class="block">
@@ -82,33 +75,19 @@
                     <mat-label>Selling Price</mat-label>
                     <input matInput formControlName="selling_price" matTooltip="Not Editable" readonly />
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-                formSupplier.controls.selling_price.touched &&
-                !formSupplier.controls.selling_price.value
-                ">
-                        <span class="error">Selling Price is Required</span>
-                    </ng-container>
-                </div>
+
             </div>
             <!-- total start -->
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Total</mat-label>
-                    <input matInput formControlName="total" matTooltip="Not Editable" readonly />
+                    <input matInput matTooltip="Not Editable" readonly [value]="getItemWiseTotal()" />
                 </mat-form-field>
-                <div>
-                    <ng-container *ngIf="
-                formSupplier.controls.total.touched &&
-                !formSupplier.controls.total.value
-                ">
-                        <span class="error">Total Price is Required</span>
-                    </ng-container>
-                </div>
+
             </div>
             <!-- ADD BUTTON -->
-            <button mat-raised-button color="primary" class="add_button" type="submit" [disabled]="!formSupplier.valid">
-                Add
+            <button mat-raised-button color="primary" class="add_button" type="submit" [disabled]="!this.formSupplier.value.item_id|| !this.formSupplier.value.qty ||this.formSupplier.value.item_id === '' || this.formSupplier.value.qty === '' ">
+                {{isEditSalesItem? 'Update': 'Add'}}
             </button>
         </div>
     </div>
@@ -137,14 +116,14 @@
         <ng-container matColumnDef="total">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
             <td mat-cell *matCellDef="let sales">
-                {{ sales.total | currency: 'INR'}}
+                {{ sales.qty *  sales.selling_price | currency: 'INR'}}
             </td>
         </ng-container>
         <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let element">
                 <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
-                    (click)="supplierFillForm(element.sales_id)">
+                    (click)="supplierFillForm(element.item_id)">
                     <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
                 <button mat-icon-button matTooltip="Click to Delete" color="warn"
@@ -168,13 +147,13 @@
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Total Qty</mat-label>
-                        <input matInput disable matTooltip="Not Editable" readonly value={{this.totalQty}} />
+                        <input matInput disable matTooltip="Not Editable" readonly [value]="totalQty" />
                     </mat-form-field>
                 </div>
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Last Bill No</mat-label>
-                        <input matInput disable value="{{this.lastBillNo}}" readonly />
+                        <input matInput disable [value]="this.lastBillNo" readonly />
                     </mat-form-field>
                 </div>
             </span>
@@ -183,14 +162,14 @@
                     <mat-form-field>
                         <mat-label>Total (₹)</mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly
-                            value="{{this.totalPrice  | currency: 'INR'}}" />
+                            [value]="total | currency: 'INR'" />
                     </mat-form-field>
                 </div>
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Last Bill Due (₹)</mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly
-                            value="{{this.lastBillDue  | currency: 'INR'}}" />
+                            [value]="lastBillDue   | currency: 'INR'" />
                     </mat-form-field>
                 </div>
             </span>
@@ -203,21 +182,21 @@
                     <textarea matInput class="padding" id="" cdkAutosizeMinRows="8" cdkAutosizeMaxRows="8"
                         placeholder="Enter Remarks..." formControlName="remarks"></textarea>
                 </mat-form-field>
-                <!-- <div>
+                 <div>
                 <ng-container *ngIf="
                 formBill.controls.remarks.touched &&
                 !formBill.controls.remarks.value
             ">
                     <span class="error">Remarks is Required</span>
                 </ng-container>
-            </div> -->
+            </div>
             </div>
             <div class="payment">
                 <div class="float">
                     <mat-form-field>
                         <mat-label>Grand Total (₹) </mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly
-                            value="{{this.grandDueTotal  | currency: 'INR'}}" />
+                            [value]="grandDueTotal  | currency: 'INR'" />
                     </mat-form-field>
                 </div>
                 <br>
@@ -227,13 +206,13 @@
                     <div class="flex">
                         <span>
                             <section class="checkbox-margin">
-                                <mat-checkbox color="primary" (change)="hideShowOther()"> </mat-checkbox>
+                                <mat-checkbox color="primary" (change)="hideShowOther()" [checked]="isShowOtherPayment"> </mat-checkbox>
                             </section>
                         </span>
                         <span>
                             <mat-form-field>
                                 <mat-label>payment(₹) </mat-label>
-                                <input matInput disable (keyup)="totalDueCount()" formControlName="payment" />
+                                <input matInput disable (keyup)="calculate()" formControlName="payment" />
                             </mat-form-field>
                         </span>
                     </div>
@@ -241,7 +220,7 @@
                         <ng-container *ngIf="isShowOtherPayment">
                             <mat-form-field>
                                 <mat-label>Other Payment (₹) </mat-label>
-                                <input matInput disable (keyup)="totalDueCount()" value={{this.otherPayment}} />
+                                <input matInput disable formControlName="otherPayment"/>
                             </mat-form-field>
                         </ng-container>
                     </div>
@@ -253,7 +232,7 @@
         <div class="flex tierLimitAndButton">
             <div><br><b>{{tier | uppercase}}</b> Due Limit:
                 <span class="error">
-                    {{this.dueLimit | currency: 'INR'}}
+                    {{dueLimit | currency: 'INR'}}
                 </span>
             </div>
             <div class="tierLimitAndButton_content_2">
@@ -261,14 +240,14 @@
                     <mat-form-field>
                         <mat-label>Total Due (₹) </mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly
-                            value="{{this.totalDue | currency: 'INR'}}" />
+                            [value]="totalDue | currency: 'INR'" />
                     </mat-form-field>
                 </div>
                 <br>
                 <div class="">
                     <button mat-raised-button color="primary" [disabled]="!formBill.valid || isShowLoader">
                         <span *ngIf="!isShowLoader">
-                            Save & Rack
+                            {{!this.data.salesId ? 'Save & Back' : 'Update & Back'}}
                         </span>
                         <mat-spinner *ngIf="isShowLoader" diameter="20"></mat-spinner>
                     </button>

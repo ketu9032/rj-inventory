@@ -122,8 +122,6 @@ export class CreateQuotationComponent implements OnInit {
         });
     }
     saveSalesQuotation(): void {
-        console.log(this.shippingPay);
-
         if (this.shippingPayment === undefined) {
             this.shippingPayment = 0;
         }

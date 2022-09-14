@@ -1,6 +1,6 @@
 
 export interface ITiersData {
-  id: number, code: string
+  id: number, code: string, name: string;
 }
 
 export interface ITiersParams {

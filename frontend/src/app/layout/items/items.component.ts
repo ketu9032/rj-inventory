@@ -13,7 +13,6 @@ import { AddItemComponent } from './add-item/add-item.component';
 import { ItemsCategoryComponent } from './cateogry/items-category.component';
 import { ItemsCategoriesService } from './services/items-categories.service';
 import { ItemsService } from './services/items.service';
-
 @Component({
     selector: 'app-items',
     templateUrl: './items.component.html',
@@ -24,11 +23,11 @@ export class ItemsComponent implements OnInit {
         'item_code',
         'item_name',
         'int_qty',
-        'purchased',
-        'sold',
-        'available',
+        'item_purchased',
+        'item_sold',
+        'item_available',
         'silver',
-        'total_balance',
+        'item_price_total',
         'action'
     ];
     dataSource: any = [];
@@ -46,30 +45,23 @@ export class ItemsComponent implements OnInit {
         search: '',
         active: true
     }
-
-
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
         public snackBar: MatSnackBar
     ) { }
-
     ngOnInit(): void {
         this.getItems();
-
     }
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
         this.getItems();
     }
-
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-
     getItems() {
         this.loader = true;
         this.itemsService.getItems(this.tableParams).subscribe(
@@ -93,8 +85,6 @@ export class ItemsComponent implements OnInit {
             () => { }
         );
     }
-
-
     onAddNewItem(): void {
         this.dialog
             .open(AddItemComponent, {
@@ -108,7 +98,6 @@ export class ItemsComponent implements OnInit {
                 }
             });
     }
-
     onEditNewItem(element) {
         this.dialog
             .open(AddItemComponent, {
@@ -120,13 +109,9 @@ export class ItemsComponent implements OnInit {
             .subscribe((result) => {
                 if (result) {
                     this.getItems();
-
                 }
             });
     }
-
-
-
     openItemsCategory() {
         this.dialog
             .open(ItemsCategoryComponent, {
@@ -174,5 +159,4 @@ export class ItemsComponent implements OnInit {
                 () => { }
             );
     }
-
 }

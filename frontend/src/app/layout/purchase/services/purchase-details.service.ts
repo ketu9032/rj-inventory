@@ -13,9 +13,9 @@ export class PurchaseDetailsService {
         private commonService: CommonService
         ) { }
 
-    public getPurchaseDetail(tablePrams: IMatTableParams) {
-        const queryString = this.commonService.toQueryString(tablePrams);
-        return this.restService.get<any>(`${this.purchaseDetailsURL}${queryString}`);
+
+    public getItemsByPurchaseId(purchaseId: number) {
+        return this.restService.get<any>(`${this.purchaseDetailsURL}?purchaseId=${purchaseId}`);
     }
     public addPurchaseDetail(purchaseDetails: IPurchaseDetailsParams) {
         return this.restService.post(`${this.purchaseDetailsURL}`, purchaseDetails);

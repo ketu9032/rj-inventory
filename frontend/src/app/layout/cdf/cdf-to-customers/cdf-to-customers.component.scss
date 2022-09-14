@@ -1,16 +1,19 @@
-.main-header{
+.main-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+
     .mat-dialog-title {
-        margin: 5px 0 0  0;
+        margin: 5px 0 0 0;
         display: block;
     }
+
     .mat-button {
         min-width: 40px;
         padding: 0 10px;
     }
 }
+
 .container {
     .mat-form-field {
         width: 220px;
@@ -24,12 +27,6 @@
 
     .box {
         display: flex;
-    }
-
-    .background_color {
-        background-color: lightgray;
-        padding: 6px 0px 6px 5px;
-        width: 98%;
     }
 
     .block {

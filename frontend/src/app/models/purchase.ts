@@ -1,11 +1,10 @@
 export interface IPurchaseData {
     [x: string]: any
-    id: number, date: string, invoice_no: number, qty: number, amount: number, total_due: number, user_name: string,  remarks: string, supplier: string, payment: number, other_payment: number, pending_due: number, grand_total: number, amount_pd_total: number
+    id: number, date: string,  qty: number, amount: number, total_due: number, user_id: string,  remarks: string, suppliers_id: number, payment: number, other_payment: number, past_due: number
 }
 export interface IPurchaseParams {
-    id?: number, invoice_no: number, qty: number, amount: number, total_due: number, user_name: string, remarks: string, sales: {}, supplier: string, payment: number, other_payment?: number, pending_due: number, grand_total: number, amount_pd_total: number
+    id?: number,  user_id: number, remarks: string, sales: {}, suppliers_id: number, payment: number, other_payment?: number, past_due: number
 }
-
 export interface IPurchaseActiveParams {
     id: number, status: boolean
 }
