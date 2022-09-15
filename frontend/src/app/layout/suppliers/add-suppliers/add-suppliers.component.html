@@ -7,15 +7,16 @@
 <mat-divider></mat-divider>
 <br>
 <div class="container">
-
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-
         <!-- company start -->
         <mat-form-field>
             <mat-label>Company</mat-label>
-            <input matInput formControlName="company" required />
+            <input matInput formControlName="company" (keyup)="onSupplierCompanyExistCheck()" />
         </mat-form-field>
         <div>
+            <ng-container *ngIf="!isSupplierCompanyExist">
+                <span class="error">This company is exist, Please another company.</span>
+            </ng-container>
             <ng-container *ngIf="
           formGroup.controls.company.touched &&
           !formGroup.controls.company.value
@@ -23,7 +24,6 @@
                 <span class="error">Company is Required</span>
             </ng-container>
         </div>
-
         <!--dueLimit start -->
         <mat-form-field>
             <mat-label>Due Limit</mat-label>
@@ -37,7 +37,6 @@
                 <span class="error">Due limit is Required</span>
             </ng-container>
         </div>
-
         <!-- Balance start -->
         <mat-form-field>
             <mat-label>Balance</mat-label>
@@ -54,7 +53,7 @@
         <!-- Other start -->
         <mat-form-field>
             <mat-label>Other</mat-label>
-            <input matInput formControlName="other"  />
+            <input matInput formControlName="other" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
@@ -64,7 +63,6 @@
                 <span class="error">Other is Required</span>
             </ng-container>
         </div>
-
         <!-- button start -->
         <div class="btn-update">
             <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader" type="submit">

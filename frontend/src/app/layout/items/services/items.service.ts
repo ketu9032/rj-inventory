@@ -2,15 +2,15 @@ import { CommonService } from '../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
-import { IItemActiveParams, IItemParams } from 'src/app/models/item';
+import { IItemActiveParams, IItemCode, IItemParams } from 'src/app/models/item';
 import { IItemSupplierParams } from 'src/app/models/item_supplier';
 
 @Injectable({ providedIn: 'root' })
 export class ItemsService {
     private itemURL = 'api/item';
     private changeStatusURL = 'api/item/changeStatus';
-    private itemSupplierURL = 'api/item_supplier';
-    private getSupplierDropDownURL = 'api/getCategoryDropDown';
+    private onCheckItemCodeURL = 'api/item/onCheckItemCode';
+    private getSupplierDropDownURL = 'api/supplierDropDown'
 
     constructor(private restService: RestService, private commonService: CommonService) { }
 
@@ -31,7 +31,13 @@ export class ItemsService {
         return this.restService.put(`${this.changeStatusURL}`, item);
     }
 
+    public onCheckItemCode(itemCode: IItemCode) {
+        return this.restService.put(`${this.onCheckItemCodeURL}`, itemCode);
+    }
 
+    public getSupplierDropDown() {
+        return this.restService.get(`${this.getSupplierDropDownURL}`);
+    }
     // public getItemSupplier(tablePrams: IMatTableParams) {
     //     const queryString = this.commonService.toQueryString(tablePrams);
     //     return this.restService.get<any>(`${this.itemSupplierURL}${queryString}`);

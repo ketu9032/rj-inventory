@@ -10,3 +10,6 @@ export interface ISuppliersActiveParams {
     id: number, status: boolean
 }
 
+export interface ISupplierCompany {
+    company: string;
+}

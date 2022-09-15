@@ -74,6 +74,7 @@ router.put('/api/suppliers', suppliers.update);
 router.put('/api/suppliers/changeStatus', suppliers.changeStatus);
 router.get('/api/supplierDropDown', suppliers.getSupplierDropDown);
 router.get('/api/suppliers/getSuppliersById', suppliers.getSuppliersById);
+router.put('/api/suppliers/onCheckSupplierCompany', suppliers.onCheckSupplierCompany);
 
 router.delete('/api/categories', categories.delete);
 router.get('/api/categories', categories.findAll);
@@ -103,6 +104,8 @@ router.post('/api/item', item.add);
 router.put('/api/item', item.update);
 router.get('/api/item/getItemDropDown', item.getItemDropDown);
 router.put('/api/item/changeStatus', item.changeStatus);
+router.put('/api/item/onCheckItemCode', item.onCheckItemCode);
+
 
 router.delete('/api/item_supplier', item_supplier.delete);
 router.get('/api/item_supplier', item_supplier.findAll);

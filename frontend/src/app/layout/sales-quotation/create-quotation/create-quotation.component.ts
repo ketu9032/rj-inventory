@@ -122,6 +122,7 @@ export class CreateQuotationComponent implements OnInit {
         });
     }
     saveSalesQuotation(): void {
+
         if (this.shippingPayment === undefined) {
             this.shippingPayment = 0;
         }
@@ -145,7 +146,7 @@ export class CreateQuotationComponent implements OnInit {
                 tier,
                 qty: this.Qty,
                 amount: this.grandDueTotal,
-                total_due: this.totalDue,
+                total_due: this.grandDueTotal,
                 shipping: this.shippingPayment,
                 gst: this.gst,
                 user_name: this.users.user_name,

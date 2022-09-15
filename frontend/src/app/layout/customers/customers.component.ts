@@ -4,6 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 import { ICdfData } from 'src/app/models/cdf';
 import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
@@ -40,8 +41,12 @@ export class CustomersComponent implements OnInit {
         orderBy: 'id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        toDate: '',
+        userId: ''
     }
+    fromDate: string;
+    toDate: string;
     constructor(
         public dialog: MatDialog,
         private customersService: CustomersService,
@@ -62,6 +67,12 @@ export class CustomersComponent implements OnInit {
     }
     getCdf() {
         this.loader = true;
+        if (this.fromDate) {
+            this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
         this.tableParams.cdfStatus = 'Active'
         this.cdfService.getCdf(this.tableParams).subscribe(
             (newCdf: any[]) => {
@@ -157,5 +168,13 @@ export class CustomersComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+    clearSearch() {
+        this.fromDate = '';
+        this.toDate = '';
+        this.tableParams.search = '';
+        this.tableParams.fromDate = '';
+        this.tableParams.toDate = '';
+        this.getCdf();
     }
 }

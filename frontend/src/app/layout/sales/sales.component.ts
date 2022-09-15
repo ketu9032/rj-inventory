@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { ISalesData } from 'src/app/models/sales';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { ItemsService } from '../items/services/items.service';
+import { UserService } from '../user/services/user.service';
 import { AddSalesComponent } from './add-sales/add-sales.component';
 import { PrintComponent } from './print/print.component';
 import { SalesService } from './services/sales.service';
@@ -24,11 +24,13 @@ export class SalesComponent implements OnInit {
     totalRows: number;
     loader: boolean = false;
     selectCustomerLoader: boolean = false;
+    selectUserLoader: boolean = false;
     isShowAddSales: boolean = false;
     selectedCustomerId: number;
-    currentDate : string;
+    currentDate: string;
     customers = [];
     dataSource: any = [];
+    userData = [];
     loggedInUsersData: any;
     displayedColumns: string[] = [
         'id',
@@ -51,21 +53,30 @@ export class SalesComponent implements OnInit {
         orderBy: 's.id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        fromDate: '',
+        toDate: '',
+        userId: ''
     };
+    fromDate: string;
+    toDate: string;
+    userId?: number;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     constructor(
         private dialog: MatDialog,
         private salesService: SalesService,
         private snackBar: MatSnackBar,
-        private authService: AuthService
+        private authService: AuthService,
+        private userService: UserService
     ) { }
     ngOnInit(): void {
         this.currentDate = moment().format('YYYY-MM-DD');
         this.loggedInUsersData = this.authService.getUserData();
         this.getCustomerDropDown();
+        this.getUserDropDown();
         this.getSales();
+
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
@@ -78,6 +89,15 @@ export class SalesComponent implements OnInit {
     }
     getSales() {
         this.loader = true;
+        if (this.userId && +this.userId !== 0) {
+            this.tableParams.userId = this.userId;
+        }
+        if (this.fromDate) {
+            this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
         this.salesService.getSales(this.tableParams).subscribe(
             (newSales: any[]) => {
                 this.totalRows = 0;
@@ -105,7 +125,7 @@ export class SalesComponent implements OnInit {
             .open(AddSalesComponent, {
                 width: '1000px',
                 height: '800px',
-                 data: { customerId: this.selectedCustomerId }
+                data: { customerId: this.selectedCustomerId }
             })
             .afterClosed()
             .subscribe((result) => {
@@ -197,6 +217,27 @@ export class SalesComponent implements OnInit {
             );
     }
 
+    getUserDropDown() {
+        this.selectUserLoader = true;
+        this.userService
+            .getUserDropDown()
+            .subscribe(
+                (response) => {
+                    this.userData = response;
+                    this.selectUserLoader = false;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+
     print(element) {
         this.dialog
             .open(PrintComponent, {
@@ -210,5 +251,15 @@ export class SalesComponent implements OnInit {
                     this.getSales();
                 }
             });
+    }
+    clearSearch() {
+        this.fromDate = '';
+        this.toDate = '';
+        this.userId = null;
+        this.tableParams.search = '';
+        this.tableParams.userId = '';
+        this.tableParams.fromDate = '';
+        this.tableParams.toDate = '';
+        this.getSales();
     }
 }

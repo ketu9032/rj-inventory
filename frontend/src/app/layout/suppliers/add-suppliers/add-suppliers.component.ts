@@ -5,7 +5,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ISuppliersData } from 'src/app/models/suppliers';
 import { SuppliersService } from '../services/suppliers.service';
-
 @Component({
     selector: 'app-add-suppliers',
     templateUrl: './add-suppliers.component.html',
@@ -13,10 +12,10 @@ import { SuppliersService } from '../services/suppliers.service';
 })
 export class AddSuppliersComponent implements OnInit {
     formGroup: FormGroup;
-    selectedRole: string
-    users = []
-    isShowLoader = false
-
+    selectedRole: string;
+    users = [];
+    isShowLoader: boolean = false;
+    isSupplierCompanyExist: boolean = true;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISuppliersData,
         public dialog: MatDialog,
@@ -26,14 +25,12 @@ export class AddSuppliersComponent implements OnInit {
         private router: Router,
         private suppliersService: SuppliersService,
     ) { }
-
     ngOnInit() {
         this.initializeForm();
         if (this.data && this.data.id) {
             this.fillForm();
         }
     }
-
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
             company: ['', Validators.required],
@@ -42,7 +39,6 @@ export class AddSuppliersComponent implements OnInit {
             other: ['', Validators.required],
         });
     }
-
     saveSuppliers(): void {
         const { company, dueLimit, balance, other } = this.formGroup.value;
         this.isShowLoader = true;
@@ -73,7 +69,6 @@ export class AddSuppliersComponent implements OnInit {
                 () => { }
             );
     }
-
     updateSuppliers(): void {
         const { company, dueLimit: dueLimit, balance, other } = this.formGroup.value;
         this.isShowLoader = true;
@@ -88,7 +83,6 @@ export class AddSuppliersComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open('Suppliers updated successfully', 'OK', {
                         duration: 3000
                     });
@@ -96,7 +90,6 @@ export class AddSuppliersComponent implements OnInit {
                 },
                 (error) => {
                     this.isShowLoader = false;
-
                     this.snackBar.open(
                         (error.error && error.error.message) || error.message,
                         'Ok', {
@@ -107,7 +100,6 @@ export class AddSuppliersComponent implements OnInit {
                 () => { }
             );
     }
-
     onSubmit() {
         if (this.data && this.data.id) {
             this.updateSuppliers();
@@ -115,7 +107,6 @@ export class AddSuppliersComponent implements OnInit {
             this.saveSuppliers();
         }
     }
-
     fillForm() {
         const { company, due_limit: dueLimit, balance, other } = this.data;
         this.formGroup.patchValue({
@@ -125,6 +116,12 @@ export class AddSuppliersComponent implements OnInit {
             other
         });
     }
-
-
+    onSupplierCompanyExistCheck() {
+        this.suppliersService
+            .onCheckSupplierCompany({ company: this.formGroup.controls.company.value })
+            .subscribe(
+                (response: boolean) => {
+                    this.isSupplierCompanyExist = response
+                })
+    }
 }

@@ -3,24 +3,46 @@ const { STATUS_CODE } = require('../constant/response-status');
 const { pool } = require('../db');
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active } =
-      req.query;
+    const {
+      orderBy,
+      direction,
+      pageSize,
+      pageNumber,
+      search,
+      active,
+      fromDate,
+      toDate,
+      categoryId,
+      supplierId
+    } = req.query;
     let searchQuery = 'where true';
+
+    if (fromDate && toDate) {
+      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
+    }
+    if (categoryId) {
+      searchQuery += ` and category_id = ${+categoryId} `;
+    }
+    if (supplierId) {
+      searchQuery += ` and item.suppliers_id = ${+supplierId} `;
+    }
     const offset = pageSize * pageNumber - pageSize;
+
     if (search) {
       searchQuery += ` and
         (
-           item_code ilike '%${search}%'
-          or item_name ilike '%${search}%'
-          or int_qty ilike '%${search}%'
-          or COALESCE(item_purchased,0) ilike '%${search}%'
-          or COALESCE(item_sold,0) ilike '%${search}%'
-          or COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0) ilike '%${search}%'
-          or (COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0)) * silver ilike '%${search}%'
-          or silver ilike '%${search}%'
-          or category ilike '%${search}%'
-          or supplier_name ilike '%${search}%'
-          or supplier_rate ilike '%${search}%'
+           item_code::text like '%${search}%'
+          or date::text like '%${search}%'
+          or item_name::text like '%${search}%'
+          or int_qty::text like '%${search}%'
+         or COALESCE(item_sold,0)::text like '%${search}%'
+          or COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0)::text like '%${search}%'
+           or (COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0))::text * silver::text like '%${search}%'
+           or COALESCE(item_purchased,0)::text like '%${search}%'
+          or silver::text like '%${search}%'
+          or category::text like '%${search}%'
+          or supplier_name::text like '%${search}%'
+          or supplier_rate::text like '%${search}%'
         )`;
     }
     searchQuery += ` and i.is_active = ${active}`;
@@ -112,7 +134,8 @@ exports.add = async (req, res) => {
       return;
     }
     const insertItemQuery = `INSERT INTO item
-    ( item_code,
+    ( date,
+      item_code,
       item_name,
       int_qty,
       comment,
@@ -124,8 +147,8 @@ exports.add = async (req, res) => {
       category_id,
       item_purchased,
       item_sold
-      )
-      VALUES('${item_code}','${item_name}', '${int_qty}', '${comment}', '${silver}', '${retail}','${gold}','${india_mart}','${dealer}',  '${categoryId}', 0 , 0) returning id;
+        )
+      VALUES(now(), '${item_code}','${item_name}', ${int_qty}, '${comment}', ${silver}, ${retail}, ${gold}, ${india_mart}, ${dealer},  '${categoryId}', 0 , 0) returning id;
       `;
 
     const { rows } = await pool.query(insertItemQuery);
@@ -198,7 +221,8 @@ exports.update = async (req, res) => {
     gold = ${gold},
     india_mart = ${india_mart},
     dealer = ${dealer},
-    category_id = ${categoryId}
+    category_id = ${categoryId},
+    date = now()
   where
     id = ${id}`;
     console.log(updateItemQuery);
@@ -250,6 +274,23 @@ exports.changeStatus = async (req, res) => {
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+exports.onCheckItemCode = async (req, res) => {
+  try {
+    const { itemCode } = req.body;
+    const response =
+      await pool.query(`select id from item where lower(item_code) = trim(lower('${itemCode}'))
+       `);
+    if (response.rowCount > 0) {
+      return res.status(200).send(false);
+    }
+    return res.status(STATUS_CODE.SUCCESS).send(true);
+  } catch (error) {
+    return res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }

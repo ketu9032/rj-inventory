@@ -3,24 +3,41 @@ const { STATUS_CODE } = require('../constant/response-status');
 const { pool } = require('../db');
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active } =
-      req.query;
+    const {
+      orderBy,
+      direction,
+      pageSize,
+      pageNumber,
+      search,
+      active,
+      fromDate,
+      toDate,
+      userId
+    } = req.query;
+
     let searchQuery = 'where true';
+
+    if (fromDate && toDate) {
+      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
+    }
+    if (userId) {
+      searchQuery += ` and expense.user_id = ${+userId} `;
+    }
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
       searchQuery += ` and
         (
-          s.id::text ilike '%${search}%'
-          or s.date::text ilike '%${search}%'
-          or bill_no::text ilike '%${search}%'
-          or users.user_name ilike '%${search}%'
-          or tier ilike '%${search}%'
-          or remarks ilike '%${search}%'
-          or cdf.company ilike '%${search}%'
-          or payment::text ilike '%${search}%'
-          or COALESCE(past_due,0)::text ilike '%${search}%'
-          or other_payment::text ilike '%${search}%'
-          or token::text ilike '%${search}%'
+          id::text like '%${search}%'
+          or s.date::text like '%${search}%'
+          or bill_no::text like '%${search}%'
+          or users.user_name like '%${search}%'
+          or tier like '%${search}%'
+          or remarks like '%${search}%'
+          or cdf.company like '%${search}%'
+          or payment::text like '%${search}%'
+          or COALESCE(past_due,0)::text like '%${search}%'
+          or other_payment::text like '%${search}%'
+          or token::text like '%${search}%'
         )`;
     }
     searchQuery += ` and s.is_active = ${active}`;
@@ -63,8 +80,9 @@ exports.findAll = async (req, res) => {
           other_payment,
           token,
           COALESCE(past_due,0)
-      -- ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
+    -- ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
       `;
+    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

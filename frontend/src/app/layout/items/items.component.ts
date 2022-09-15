@@ -4,11 +4,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 import { ICustomersData } from 'src/app/models/customers';
-import { IItemSupplierData } from 'src/app/models/item_supplier';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { CustomersService } from '../customers/services/customers.service';
 import { AddItemComponent } from './add-item/add-item.component';
 import { ItemsCategoryComponent } from './cateogry/items-category.component';
 import { ItemsCategoriesService } from './services/items-categories.service';
@@ -36,6 +35,8 @@ export class ItemsComponent implements OnInit {
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
+    selectSupplierLoader: boolean = false;
+    selectCategoryLoader: boolean = false;
     totalRows: number;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
@@ -43,15 +44,29 @@ export class ItemsComponent implements OnInit {
         orderBy: 'id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        fromDate: '',
+        toDate: '',
+        categoryId: '',
+        supplierId: ''
     }
+    fromDate: string;
+    toDate: string;
+    categories = [];
+    suppliers;
+    supplierId?: number;
+    categoryId?: number;
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
+        private itemsCategoriesService: ItemsCategoriesService,
+
         public snackBar: MatSnackBar
     ) { }
     ngOnInit(): void {
         this.getItems();
+        this.getCategoriesDropDown('Item');
+        this.getSuppliersDropDown();
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
@@ -64,6 +79,18 @@ export class ItemsComponent implements OnInit {
     }
     getItems() {
         this.loader = true;
+        if (this.fromDate) {
+            this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
+        if (this.categoryId && +this.categoryId !== 0) {
+            this.tableParams.categoryId = this.categoryId;
+        }
+        if (this.supplierId && +this.supplierId !== 0) {
+            this.tableParams.supplierId = this.supplierId;
+        }
         this.itemsService.getItems(this.tableParams).subscribe(
             (newItems: any[]) => {
                 this.dataSource = new MatTableDataSource<ICustomersData>(newItems);
@@ -158,5 +185,60 @@ export class ItemsComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+
+    getCategoriesDropDown(type: string) {
+        this.selectCategoryLoader = true;
+        this.itemsCategoriesService
+            .getCategoriesDropDown(type)
+            .subscribe(
+                (response) => {
+                    this.categories = response;
+                    this.selectCategoryLoader = false;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+
+    getSuppliersDropDown() {
+        this.selectSupplierLoader = true;
+        this.itemsService
+            .getSupplierDropDown()
+            .subscribe(
+                (response) => {
+                    this.suppliers = response;
+                    this.selectSupplierLoader = false;
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+
+    clearSearch() {
+        this.fromDate = '';
+        this.toDate = '';
+        this.supplierId = null;
+        this.categoryId = null;
+        this.tableParams.search = '';
+        this.tableParams.fromDate = '';
+        this.tableParams.toDate = '';
+        this.tableParams.supplierId = '';
+        this.tableParams.categoryId = '';
+        this.getItems();
     }
 }

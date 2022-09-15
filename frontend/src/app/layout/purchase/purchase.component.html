@@ -17,24 +17,24 @@
             <mat-form-field class="margin field-width">
                 <mat-label>All Suppliers</mat-label>
                 <mat-select name="tier" [(ngModel)]="selectSupplierId"
-                    (selectionChange)="toggleCreateAddPurchaseButton()">
+                    (selectionChange)="toggleCreateAddPurchaseButton(); getPurchase()">
                     <mat-option>All suppliers</mat-option>
-                    <mat-option *ngFor="let supplier of suppliers" [value]="supplier.id"
-                        (click)="toggleCreateAddPurchaseButton();">
+                    <mat-option *ngFor="let supplier of suppliers" [value]="supplier.id">
                         {{supplier.company | uppercase}}
                     </mat-option>
                 </mat-select>
-                <mat-spinner class="selectSupplierLoader" *ngIf="selectSupplierLoader" diameter="20"></mat-spinner>
+                <mat-spinner class="selectDropDownLoader" *ngIf="selectSupplierLoader" diameter="20"></mat-spinner>
             </mat-form-field>
             <!-- All user -->
             <mat-form-field class="field-width margin">
                 <mat-label>All User</mat-label>
-                <mat-select [(ngModel)]="userId">
+                <mat-select [(ngModel)]="userId" (selectionChange)="getPurchase()">
                     <mat-option value="0">--Select--</mat-option>
                     <mat-option *ngFor="let user of userData" [value]="user.id">
                         {{user.user_name}}
                     </mat-option>
                 </mat-select>
+                <mat-spinner class="selectDropDownLoader" *ngIf="selectUserLoader" diameter="20"></mat-spinner>
             </mat-form-field>
             <!-- search  -->
             <mat-form-field class="field-width">

@@ -52,10 +52,10 @@ exports.findAll = async (req, res) => {
     let searchQuery = 'where true';
     if (search) {
       searchQuery += ` and
-        (user_name ilike '%${search}%'
-          or mobile_number ilike '%${search}%'
-          or balance::text ilike '%${search}%'
-          or role ilike '%${search}%'
+        (user_name like '%${search}%'
+          or mobile_number::text like '%${search}%'
+          or balance::text like '%${search}%'
+          or role like '%${search}%'
         )`;
     }
     searchQuery += ` and is_active = ${active}`;
