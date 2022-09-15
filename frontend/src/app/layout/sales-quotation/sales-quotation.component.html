@@ -3,12 +3,28 @@
         <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
         <div class="header">
             <div>
+                <!-- Select date range -->
+                <mat-form-field class="field-width margin">
+                    <mat-label>Select date range</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                        <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+                <!-- search text box  -->
                 <mat-form-field class="field-width">
                     <mat-label>Search...</mat-label>
                     <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getSalesQuotation()">
                 </mat-form-field>
+                <!-- search button -->
                 <button color="primary" class="margin btn" mat-raised-button (click)="getSalesQuotation()">
                     Search
+                </button>
+                <!-- clear search box-->
+                <button color="primary" class="margin btn" mat-raised-button (click)="clearSearch()">
+                    Clear Search
                 </button>
                 <!-- category start -->
                 <mat-form-field class="margin field-width">
@@ -100,10 +116,10 @@
                             (click)="onEditNewCustomers(element)">
                             <mat-icon aria-label="Edit">edit</mat-icon>
                         </button>
-                       <button mat-icon-button matTooltip="Click to Delete" color="warn"
-                        (click)="confirmDialog(element.id)">
-                        <mat-icon aria-label="Delete">delete</mat-icon>
-                    </button>
+                        <button mat-icon-button matTooltip="Click to Delete" color="warn"
+                            (click)="confirmDialog(element.id)">
+                            <mat-icon aria-label="Delete">delete</mat-icon>
+                        </button>
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="print">

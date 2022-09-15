@@ -11,30 +11,35 @@ exports.findAll = async (req, res) => {
       pageNumber,
       search,
       active,
-      cdfStatus
+      cdfStatus,
+      fromDate,
+      toDate
     } = req.query;
     let searchQuery = 'where true';
+    if (fromDate && toDate) {
+      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
+    }
     //and is_deleted = false
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
       searchQuery += ` and
-        (email ilike '%${search}%'
-          or name ilike '%${search}%'
-          or company ilike '%${search}%'
-          or date::text ilike '%${search}%'
-          or reference ilike '%${search}%'
-          or reference_person ilike '%${search}%'
-          or brands ilike '%${search}%'
-          or display_names ilike '%${search}%'
-          or platforms ilike '%${search}%'
-          or other ilike '%${search}%'
-          or mobile::text ilike '%${search}%'
-          or address ilike '%${search}%'
-          or due_limit ilike '%${search}%'
-          or payment ilike '%${search}%'
-          or cdf_total_due::text ilike '%${search}%'
-          or balance ilike '%${search}%'
-          or tier ilike '%${search}%'
+        (email like '%${search}%'
+          or name like '%${search}%'
+          or company like '%${search}%'
+          or date::text like '%${search}%'
+          or reference like '%${search}%'
+          or reference_person like '%${search}%'
+          or brands like '%${search}%'
+          or display_names like '%${search}%'
+          or platforms like '%${search}%'
+          or other like '%${search}%'
+          or mobile::text like '%${search}%'
+          or address like '%${search}%'
+          or due_limit::text like '%${search}%'
+          or payment::text like '%${search}%'
+          or cdf_total_due::text like '%${search}%'
+          or balance::text like '%${search}%'
+          or tier_code like '%${search}%'
         )`;
     }
     searchQuery += ` and c.is_active = ${active}  `;

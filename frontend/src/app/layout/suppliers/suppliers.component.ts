@@ -4,6 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 import { ISuppliersData } from 'src/app/models/suppliers';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
@@ -30,14 +31,20 @@ export class SuppliersComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
     totalRows: number;
+
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
         orderBy: 'id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        fromDate: '',
+        toDate: ''
     }
+
+    fromDate: string;
+    toDate: string;
 
     constructor(
         public dialog: MatDialog,
@@ -62,6 +69,12 @@ export class SuppliersComponent implements OnInit {
 
     getSuppliers() {
         this.loader = true;
+        if (this.fromDate) {
+            this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
         this.suppliersService.getSuppliers(this.tableParams).subscribe(
             (newSuppliers: any[]) => {
                 this.dataSource = new MatTableDataSource<ISuppliersData>(newSuppliers);
@@ -149,5 +162,13 @@ export class SuppliersComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+    clearSearch() {
+        this.fromDate = '';
+        this.toDate = '';
+        this.tableParams.search = '';
+        this.tableParams.fromDate = '';
+        this.tableParams.toDate = '';
+        this.getSuppliers();
     }
 }

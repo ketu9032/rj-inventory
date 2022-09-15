@@ -4,9 +4,30 @@ const { pool } = require('../db');
 
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active } =
-      req.query;
+    const {
+      orderBy,
+      direction,
+      pageSize,
+      pageNumber,
+      search,
+      active,
+      fromDate,
+      toDate,
+      selectSupplierId,
+      userId
+    } = req.query;
     let searchQuery = 'where true';
+
+    if (fromDate && toDate) {
+      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
+    }
+    if (userId) {
+      searchQuery += ` and p.user_id = ${+userId} `;
+    }
+    if (selectSupplierId) {
+      searchQuery += ` and suppliers_id = ${+selectSupplierId} `;
+    }
+
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
       searchQuery += ` and
@@ -15,7 +36,7 @@ exports.findAll = async (req, res) => {
           or p.date::text ilike '%${search}%'
           or bill_no::text ilike '%${search}%'
           or users.user_name ilike '%${search}%'
-          or tier ilike '%${search}%'
+
           or remarks ilike '%${search}%'
           or payment::text ilike '%${search}%'
           or COALESCE(past_due,0)::text ilike '%${search}%'
@@ -24,12 +45,12 @@ exports.findAll = async (req, res) => {
         )`;
     }
     searchQuery += ` and s.is_active = ${active}`;
-   const query = `  SELECT
+    const query = `  SELECT
     Count(p.id) OVER() AS total,
       p.id,
       p.no,
       token,
-      date,
+      p.date,
       suppliers_id,
       suppliers.company as suppliers_company,
       amount,
@@ -56,7 +77,7 @@ exports.findAll = async (req, res) => {
        p.id,
       p.no,
       token,
-      date,
+      p.date,
       suppliers_id,
       suppliers.company,
       amount,
@@ -69,7 +90,7 @@ exports.findAll = async (req, res) => {
       users.user_name,
       users.id
       -- ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
-      `
+      `;
     const response = await pool.query(query);
     // sum(COALESCE(purchase_details.qty,0) * COALESCE(purchase_details.selling_price,0)) + COALESCE(past_due,0) as total_amount,
     // sum(COALESCE(purchase_details.qty,0) * COALESCE(purchase_details.selling_price,0)) as amount,
@@ -106,16 +127,15 @@ exports.add = async (req, res) => {
   try {
     const loggedInUserId = res.locals.tokenData.id;
     const {
-
       user_id,
       past_due,
       remarks,
       sales,
       payment,
       suppliers_id,
-      other_payment,
+      other_payment
     } = req.body;
-     const insertPurchaseQuery = `
+    const insertPurchaseQuery = `
     INSERT INTO purchase (
       date,  past_due, user_id,
       remarks, payment, suppliers_id, other_payment,
@@ -169,13 +189,13 @@ exports.update = async (req, res) => {
       other_payment,
       sales
     } = req.body;
-    const getOldPaymentQuery = `select payment from purchase where id = ${id}`
+    const getOldPaymentQuery = `select payment from purchase where id = ${id}`;
     const paymentResponse = await pool.query(getOldPaymentQuery);
 
-    const getOldPurchasePriceQuery = `SELECT qty*selling_price  AS total_price FROM purchase_details where purchase_id = ${id}`
+    const getOldPurchasePriceQuery = `SELECT qty*selling_price  AS total_price FROM purchase_details where purchase_id = ${id}`;
     const responsePurchasePrice = await pool.query(getOldPurchasePriceQuery);
 
-      const updatePurchaseQuery =  `UPDATE
+    const updatePurchaseQuery = `UPDATE
       purchase
     SET
       date = now(),
@@ -185,19 +205,19 @@ exports.update = async (req, res) => {
       suppliers_id = ${suppliers_id},
       other_payment = ${other_payment}
     where
-      id = ${id}`
+      id = ${id}`;
     await pool.query(updatePurchaseQuery);
-        await this.updateValue(
-          suppliers_id,
-          payment,
-          other_payment,
-          sales,
-          id,
-          loggedInUserId,
-          true,
-          paymentResponse,
-          responsePurchasePrice
-        );
+    await this.updateValue(
+      suppliers_id,
+      payment,
+      other_payment,
+      sales,
+      id,
+      loggedInUserId,
+      true,
+      paymentResponse,
+      responsePurchasePrice
+    );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -295,7 +315,7 @@ exports.updateValue = async (
       await pool.query(query2);
       existingItemsCost = item.qty * item.selling_price + existingItemsCost;
     }
-const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`;
+    const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`;
     await pool.query(query3);
 
     for (let index = 0; index < purchaseItemDetails.length; index++) {
@@ -318,7 +338,7 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
         where
       id = ${element.item_id}
 `;
-    await pool.query(query5);
+      await pool.query(query5);
       itemsCost = +element.selling_price * +element.qty + itemsCost;
     }
 
@@ -341,24 +361,21 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
           where id = ${purchaseId}`;
         await pool.query(query);
 
-        let query8 = `update users set balance = balance + ${paymentResponse.rows[0].payment} - ${payment}  where id = ${loggedInUserId} `
+        let query8 = `update users set balance = balance + ${paymentResponse.rows[0].payment} - ${payment}  where id = ${loggedInUserId} `;
         await pool.query(query8);
 
-       let query6 = ` update suppliers set
+        let query6 = ` update suppliers set
           purchase_price = purchase_price - ${responsePurchasePrice.rows[0].total_price}  + ${itemsCost},
           purchase_payment = purchase_payment - ${paymentResponse.rows[0].payment} +  ${payment},
-          suppliers_total_due = (purchase_price - ${responsePurchasePrice.rows[0].total_price}  + ${itemsCost}) - (purchase_payment - ${paymentResponse.rows[0].payment} + ${payment}) where id = ${supplierId} `
-          console.log(query6);
-       await pool.query(query6);
-
+          suppliers_total_due = (purchase_price - ${responsePurchasePrice.rows[0].total_price}  + ${itemsCost}) - (purchase_payment - ${paymentResponse.rows[0].payment} + ${payment}) where id = ${supplierId} `;
+        console.log(query6);
+        await pool.query(query6);
       }
-
-    }
-    else {
+    } else {
       let query10 = `update purchase set past_due = (select suppliers_total_due from suppliers where id = ${supplierId} ) where id = ${purchaseId}`;
       await pool.query(query10);
 
-      let query8 = `update users set balance = balance  - ${payment}  where id = ${loggedInUserId} `
+      let query8 = `update users set balance = balance  - ${payment}  where id = ${loggedInUserId} `;
       await pool.query(query8);
 
       let query6 = ` update suppliers set
@@ -366,14 +383,9 @@ const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`
       purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment},
       suppliers_total_due = suppliers_total_due +  (COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(purchase_payment,0) - ${existingPayment} + ${payment})
         where id = ${supplierId} returning suppliers_total_due`;
-        console.log(query6);
+      console.log(query6);
       await pool.query(query6);
-
     }
-
-
-
-
   } catch (error) {
     throw new Error(error.message || MESSAGES.COMMON.ERROR);
   }

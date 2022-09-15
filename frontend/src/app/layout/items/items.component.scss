@@ -13,7 +13,7 @@ table {
 }
 
 .margin {
-    margin: 0 7px 0 7px;
+    margin: 0 3px 0 3px;
 }
 
 .field-width {
@@ -22,7 +22,7 @@ table {
 }
 
 .btn {
-    font-size: 13px;
+    font-size: 12px;
     height: 33px;
 }
 
@@ -54,4 +54,10 @@ th {
 td {
     color: rgb(73 70 70 / 87%);
     font-size: 14px;
+}
+.selectDropDownLoader {
+    position: absolute;
+    top: 2px;
+    float: right;
+    right: 20px;
 }

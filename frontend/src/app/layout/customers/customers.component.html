@@ -2,12 +2,26 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
+            <!-- Select date range -->
+            <mat-form-field class="field-width margin">
+                <mat-label>Select date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                    <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+            <!-- search  -->
             <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getCdf()">
             </mat-form-field>
             <button color="primary" class="margin btn" mat-raised-button (click)="getCdf()">
                 Search
+            </button>
+            <button color="primary" class="margin btn" mat-raised-button (click)="clearSearch()">
+                Clear Search
             </button>
             <button color="primary" *ngIf="false" mat-raised-button (click)="onAddNewCustomers()">
                 Add Customers

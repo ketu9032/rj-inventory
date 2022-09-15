@@ -4,6 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 import { ISalesQuotationData } from 'src/app/models/sales-quotation';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
@@ -41,7 +42,7 @@ export class SalesQuotationComponent implements OnInit {
     loader: boolean = false;
     selectTireLoader: boolean = false;
     totalRows: number;
-    tireName : string;
+    tireName: string;
     isShow = true;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
@@ -49,9 +50,13 @@ export class SalesQuotationComponent implements OnInit {
         orderBy: 'id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        fromDate: '',
+        toDate: ''
     }
     tires = [];
+    fromDate: string;
+    toDate: string;
     constructor(
         public dialog: MatDialog,
         private salesQuotationService: salesQuotationService,
@@ -71,96 +76,102 @@ export class SalesQuotationComponent implements OnInit {
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
-    toggleCreateButton(){
-        if(this.tireName === '' ){
+    toggleCreateButton() {
+        if (this.tireName === '') {
             this.isShow = true
-        }else {
+        } else {
             this.isShow = false
         }
     }
     getSalesQuotation() {
-      this.loader = true;
-      this.salesQuotationService.getSalesQuotation(this.tableParams).subscribe(
-        (newCustomers: any[]) => {
-          this.dataSource = new MatTableDataSource<ISalesQuotationData>(newCustomers);
-          if (newCustomers.length > 0) {
-            this.totalRows = newCustomers[0].total;
-          }
-          setTimeout(() => {
-            this.paginator.pageIndex = this.tableParams.pageNumber - 1;
-            this.paginator.length = +this.totalRows;
-          });
-          this.loader = false;
-        },
-        (error) => {
-          this.loader = false;
-          this.snackBar.open(error.error.message || error.message, 'Ok', {
-            duration: 3000
-          });
-        },
-        () => { }
-      );
+        this.loader = true;
+        if (this.fromDate) {
+            this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
+        this.salesQuotationService.getSalesQuotation(this.tableParams).subscribe(
+            (newCustomers: any[]) => {
+                this.dataSource = new MatTableDataSource<ISalesQuotationData>(newCustomers);
+                if (newCustomers.length > 0) {
+                    this.totalRows = newCustomers[0].total;
+                }
+                setTimeout(() => {
+                    this.paginator.pageIndex = this.tableParams.pageNumber - 1;
+                    this.paginator.length = +this.totalRows;
+                });
+                this.loader = false;
+            },
+            (error) => {
+                this.loader = false;
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
     }
-    onAddNewCreateQuotation(): void{
-      this.dialog
-        .open(CreateQuotationComponent, {
-            width: '1000px',
-            height: '700px',
-            data:{
+    onAddNewCreateQuotation(): void {
+        this.dialog
+            .open(CreateQuotationComponent, {
+                width: '1000px',
+                height: '700px',
+                data: {
                     tier: this.tireName
-            }
-        })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result) {
-            this.getSalesQuotation();
-          }
-        });
+                }
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getSalesQuotation();
+                }
+            });
     }
     onEditNewCustomers(element) {
-      this.dialog
-        .open(CreateQuotationComponent, {
-            width: '1000px',
-            height: '700px',
-            data: element
-        })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result) {
-            this.getSalesQuotation();
-          }
-        });
-    }
-    onSelectCustomers(element){
         this.dialog
-        .open(MoveSalesComponent, {
-            width: '400px',
-            height: 'auto',
-            data: element
-        })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result) {
-            this.getSalesQuotation();
-          }
-        });
+            .open(CreateQuotationComponent, {
+                width: '1000px',
+                height: '700px',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getSalesQuotation();
+                }
+            });
+    }
+    onSelectCustomers(element) {
+        this.dialog
+            .open(MoveSalesComponent, {
+                width: '400px',
+                height: 'auto',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getSalesQuotation();
+                }
+            });
     }
     confirmDialog(id: string): void {
-      this.dialog
-        .open(DeleteQuotationComponent, {
-          maxWidth: '400px',
-          data: id
-        })
-        .afterClosed()
-        .subscribe(() => {
-            this.getSalesQuotation();
+        this.dialog
+            .open(DeleteQuotationComponent, {
+                maxWidth: '400px',
+                data: id
+            })
+            .afterClosed()
+            .subscribe(() => {
+                this.getSalesQuotation();
 
-        });
+            });
     }
     pageChanged(event: PageEvent) {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
-         this.getSalesQuotation();
+        this.getSalesQuotation();
     }
     toggleType() {
         this.tableParams.active = !this.tableParams.active;
@@ -189,16 +200,24 @@ export class SalesQuotationComponent implements OnInit {
     }
     print(element) {
         this.dialog
-        .open(PrintComponent, {
-            width: '1000px',
-            height: 'auto',
-            data: element
-        })
-        .afterClosed()
-        .subscribe((result) => {
-          if (result) {
-            this.getSalesQuotation();
-          }
-        });
-     }
+            .open(PrintComponent, {
+                width: '1000px',
+                height: 'auto',
+                data: element
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                    this.getSalesQuotation();
+                }
+            });
+    }
+    clearSearch() {
+        this.fromDate = '';
+        this.toDate = '';
+        this.tableParams.search = '';
+        this.tableParams.fromDate = '';
+        this.tableParams.toDate = '';
+        this.getSalesQuotation();
+    }
 }

@@ -4,6 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IPurchaseData } from 'src/app/models/purchase';
 import { IMatTableParams } from 'src/app/models/table';
@@ -42,29 +43,33 @@ export class PurchaseComponent implements OnInit {
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
-    selectCustomerLoader: boolean = false;
+    selectUserLoader: boolean = false;
     selectSupplierLoader: boolean = false;
     isShowAddPurchase: boolean = true;
     totalRows: number;
     supplierName: string;
-    customers = [];
     user: any;
     payment: number = 0;
-    selectSupplierId: number;
+    selectSupplierId?: number;
+
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
         orderBy: 'id',
         direction: "desc",
         search: '',
-        active: true
+        active: true,
+        fromDate: '',
+        toDate: '',
+        userId: '',
+        selectSupplierId: ''
     }
-    customer;
     suppliers;
     fromDate: string;
     toDate: string;
     userData = [];
-    userId? : number;
+    userId?: number;
+
 
     loggedInUsersData: any;
     constructor(
@@ -76,8 +81,8 @@ export class PurchaseComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit(): void {
-       this.loggedInUsersData = this.authService.getUserData();
-       this.getUserDropDown()
+        this.loggedInUsersData = this.authService.getUserData();
+        this.getUserDropDown()
         this.getSuppliersDropDown()
         this.getPurchase();
     }
@@ -92,6 +97,19 @@ export class PurchaseComponent implements OnInit {
     }
     getPurchase() {
         this.loader = true;
+        if (this.fromDate) {
+            this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
+        if (this.selectSupplierId && +this.selectSupplierId !== 0) {
+            this.tableParams.selectSupplierId = this.selectSupplierId;
+        }
+        if (this.userId && +this.userId !== 0) {
+            this.tableParams.userId = this.userId;
+        }
+
         this.purchaseService.getPurchase(this.tableParams).subscribe(
             (newPurchase: any[]) => {
                 this.dataSource = new MatTableDataSource<IPurchaseData>(newPurchase);
@@ -232,11 +250,13 @@ export class PurchaseComponent implements OnInit {
     }
 
     getUserDropDown() {
+        this.selectUserLoader = true;
         this.userService
             .getUserDropDown()
             .subscribe(
                 (response) => {
-                    this.userData = response
+                    this.userData = response;
+                    this.selectUserLoader = false;
                 },
                 (error) => {
                     this.snackBar.open(
@@ -248,5 +268,18 @@ export class PurchaseComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+
+    clearSearch() {
+        this.fromDate = '';
+        this.toDate = '';
+        this.selectSupplierId = null;
+        this.userId = null;
+        this.tableParams.search = '';
+        this.tableParams.fromDate = '';
+        this.tableParams.toDate = '';
+        this.tableParams.selectSupplierId = '';
+        this.tableParams.userId = '';
+        this.getPurchase();
     }
 }

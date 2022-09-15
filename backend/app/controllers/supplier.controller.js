@@ -5,30 +5,38 @@ const { pool } = require('../db');
 
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active } =
-      req.query;
+    const {
+      orderBy,
+      direction,
+      pageSize,
+      pageNumber,
+      search,
+      active,
+      fromDate,
+      toDate
+    } = req.query;
     const offset = pageSize * pageNumber - pageSize;
     let searchQuery = 'where true';
+
+    if (fromDate && toDate) {
+      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
+    }
     if (search) {
       searchQuery += ` and
-        (balance description '%${search}%'
-          or company ilike '%${search}%'
-          or purchase_price ilike '%${search}%'
-          or purchase_payment ilike '%${search}%'
-          or due_limit ilike '%${search}%'
-          or suppliers_total_due ilike '%${search}%'
+         (
+           company like '%${search}%'
+          or purchase_price::text like '%${search}%'
+          or purchase_payment::text like '%${search}%'
+          or due_limit::text like '%${search}%'
+          or suppliers_total_due::text like '%${search}%'
+          or date::text like '%${search}%'
 
         )`;
     }
-
     searchQuery += ` and is_active = ${active}`;
     const response = await pool.query(
       `select count(id) over() as total, id, company,due_limit,balance, other,
-      purchase_price,
-      purchase_payment,
-      suppliers_total_due
-
-
+      purchase_price, purchase_payment, suppliers_total_due, date
       from suppliers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
 
@@ -72,8 +80,8 @@ exports.add = async (req, res) => {
     }
     await pool.query(
       `INSERT INTO suppliers (company, due_limit,
-        purchase_price,  suppliers_total_due, other)
-      VALUES('${company}', '${dueLimit}', '${balance}', '${balance}', '${other}');
+        purchase_price,  suppliers_total_due, other, date, purchase_payment)
+      VALUES('${company}', ${dueLimit}, ${balance}, ${balance}, '${other}', now(), 0);
       `
     );
 
@@ -96,7 +104,7 @@ exports.update = async (req, res) => {
       return;
     }
     await pool.query(
-      `UPDATE suppliers SET company='${company}', due_limit='${dueLimit}' , balance='${balance}', other='${other}' where id = ${id};
+      `UPDATE suppliers SET company='${company}', due_limit=${dueLimit}, balance=${balance}, other='${other}', date=now() where id = ${id};
        `
     );
 
@@ -157,6 +165,23 @@ exports.getSuppliersById = async (req, res) => {
     // });
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+exports.onCheckSupplierCompany = async (req, res) => {
+  try {
+    const { company } = req.body;
+    const response =
+      await pool.query(`select id from suppliers where lower(company) = trim(lower('${company}'))
+       `);
+    if (response.rowCount > 0) {
+      return res.status(200).send(false);
+    }
+    return res.status(STATUS_CODE.SUCCESS).send(true);
+  } catch (error) {
+    return res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }

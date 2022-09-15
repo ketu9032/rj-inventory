@@ -13,11 +13,11 @@
                 <mat-date-range-picker #picker></mat-date-range-picker>
             </mat-form-field>
 
+            <!-- All user -->
             <ng-container *ngIf="loggedInUsersData.role !== 'Employees'">
-                <!-- All user -->
                 <mat-form-field class="field-width margin">
                     <mat-label>All User</mat-label>
-                    <mat-select [(ngModel)]="userId">
+                    <mat-select [(ngModel)]="userId" (selectionChange)="getExpense()">
                         <mat-option value="0">--Select--</mat-option>
                         <mat-option *ngFor="let user of userData" [value]="user.id">
                             {{user.user_name}}
@@ -28,7 +28,7 @@
             <!-- Category start -->
             <mat-form-field class="field-width margin">
                 <mat-label>Category</mat-label>
-                <mat-select [(ngModel)]="categoryId">
+                <mat-select [(ngModel)]="categoryId" (selectionChange)="getExpense()">
                     <mat-option value="0">--Select--</mat-option>
                     <mat-option *ngFor="let category of categories" [value]="category.id">
                         {{category.code}}
@@ -39,7 +39,7 @@
             <!-- cash  -->
             <mat-form-field class="field-width margin">
                 <mat-label>All Cash</mat-label>
-                <mat-select [(ngModel)]="isCashIn">
+                <mat-select [(ngModel)]="isCashIn" (selectionChange)="getExpense()">
                     <mat-option>--Select--</mat-option>
                     <mat-option *ngFor="let cash of cashes" [value]="cash.value">
                         {{cash.text}}

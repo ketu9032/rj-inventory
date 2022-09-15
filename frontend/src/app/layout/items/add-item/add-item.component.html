@@ -13,9 +13,12 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Item Code</mat-label>
-                    <input matInput formControlName="item_code" required />
+                    <input matInput formControlName="item_code" (keyup)="onCheckItemCode()" required />
                 </mat-form-field>
                 <div>
+                    <ng-container *ngIf="!isItemCodeExist">
+                        <span class="error">This item code is exist, Please enter another item code.</span>
+                    </ng-container>
                     <ng-container *ngIf="
             formGroup.controls.item_code.touched &&
             !formGroup.controls.item_code.value

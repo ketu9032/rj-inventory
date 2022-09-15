@@ -2,6 +2,40 @@
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
     <div class="header">
         <div>
+            <!-- Select date range -->
+            <mat-form-field class="field-width margin">
+                <mat-label>Select date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                    <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+            <!-- category start -->
+            <mat-form-field class="margin field-width">
+                <mat-label>All Category</mat-label>
+                <mat-select [(ngModel)]="categoryId" name="category" (selectionChange)="getItems()">
+                    <mat-option value="0">--Select--</mat-option>
+                    <mat-option *ngFor="let category of categories" [value]="category.id">
+                        {{category.code}}
+                    </mat-option>
+                </mat-select>
+                <mat-spinner class="selectDropDownLoader" *ngIf="selectCategoryLoader" diameter="20"></mat-spinner>
+            </mat-form-field>
+
+            <!-- All supplier -->
+            <mat-form-field class="margin field-width">
+                <mat-label>All Suppliers</mat-label>
+                <mat-select name="supplier" [(ngModel)]="supplierId" (selectionChange)="getItems()">
+                    <mat-option value="0">--Select--</mat-option>
+                    <mat-option *ngFor="let supplier of suppliers" [value]="supplier.id">
+                        {{supplier.company | uppercase}}
+                    </mat-option>
+                </mat-select>
+                <mat-spinner class="selectDropDownLoader" *ngIf="selectSupplierLoader" diameter="20"></mat-spinner>
+            </mat-form-field>
+            <!-- search -->
             <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
                 <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getItems()">
@@ -9,7 +43,9 @@
             <button color="primary" class="margin btn" mat-raised-button (click)="getItems()">
                 Search
             </button>
-
+            <button color="primary" class="margin btn" mat-raised-button (click)="clearSearch()">
+                Clear Search
+            </button>
             <button color="primary" class="margin btn" mat-raised-button (click)="onAddNewItem()">
                 Add Item
             </button>

@@ -3,10 +3,21 @@ const { STATUS_CODE } = require('../constant/response-status');
 const { pool } = require('../db');
 exports.findAll = async (req, res) => {
   try {
-    const { orderBy, direction, pageSize, pageNumber, search, active } =
-      req.query;
+    const {
+      orderBy,
+      direction,
+      pageSize,
+      pageNumber,
+      search,
+      active,
+      fromDate,
+      toDate
+    } = req.query;
     let searchQuery = 'where true';
     const offset = pageSize * pageNumber - pageSize;
+    if (fromDate && toDate) {
+      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
+    }
     if (search) {
       searchQuery += ` and
         (

@@ -46,6 +46,7 @@ export class AddItemComponent implements OnInit {
     }
     supplierRate: string = "";
     supplierQty: string = "";
+    isItemCodeExist: boolean = true;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: IItemData,
         public dialog: MatDialog,
@@ -240,6 +241,13 @@ export class AddItemComponent implements OnInit {
             () => { }
         );
     }
-
+    onCheckItemCode() {
+        this.itemsService
+            .onCheckItemCode({ itemCode: this.formGroup.controls.item_code.value })
+            .subscribe(
+                (response: boolean) => {
+                    this.isItemCodeExist = response
+                })
+    }
 
 }

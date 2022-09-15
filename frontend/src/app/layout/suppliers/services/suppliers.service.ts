@@ -1,31 +1,35 @@
 import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
-import { ISuppliersActiveParams, ISuppliersParams } from 'src/app/models/suppliers';
+import { ISupplierCompany, ISuppliersActiveParams, ISuppliersParams } from 'src/app/models/suppliers';
 import { IMatTableParams } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class SuppliersService {
-  private url = 'api/suppliers';
-  private suppliersChangeStatusURL = 'api/suppliers/changeStatus';
+    private url = 'api/suppliers';
+    private suppliersChangeStatusURL = 'api/suppliers/changeStatus';
+    private onCheckSupplierCompanyURL = 'api/suppliers/onCheckSupplierCompany';
 
-  constructor(private restService: RestService, private commonService: CommonService) {}
+    constructor(private restService: RestService, private commonService: CommonService) { }
 
-  public getSuppliers(tablePrams: IMatTableParams) {
-    const queryString = this.commonService.toQueryString(tablePrams);
-    return this.restService.get<any>(`${this.url}${queryString}`);
-  }
-  public addSuppliers(suppliers: ISuppliersParams) {
-    return this.restService.post(`${this.url}`, suppliers);
-  }
-  public editSuppliers(suppliers: ISuppliersParams) {
-    return this.restService.put(`${this.url}`, suppliers);
-  }
-  public removeSuppliers(id: string) {
-    return this.restService.delete(`${this.url}?id=${id}`);
-  }
-  public changeStatus(suppliers: ISuppliersActiveParams) {
-    return this.restService.put(`${this.suppliersChangeStatusURL}`, suppliers);
-  }
+    public getSuppliers(tablePrams: IMatTableParams) {
+        const queryString = this.commonService.toQueryString(tablePrams);
+        return this.restService.get<any>(`${this.url}${queryString}`);
+    }
+    public addSuppliers(suppliers: ISuppliersParams) {
+        return this.restService.post(`${this.url}`, suppliers);
+    }
+    public editSuppliers(suppliers: ISuppliersParams) {
+        return this.restService.put(`${this.url}`, suppliers);
+    }
+    public removeSuppliers(id: string) {
+        return this.restService.delete(`${this.url}?id=${id}`);
+    }
+    public changeStatus(suppliers: ISuppliersActiveParams) {
+        return this.restService.put(`${this.suppliersChangeStatusURL}`, suppliers);
+    }
 
+    public onCheckSupplierCompany(supplierCompany: ISupplierCompany) {
+        return this.restService.put(`${this.onCheckSupplierCompanyURL}`, supplierCompany);
+    }
 }
