@@ -99,9 +99,14 @@ export class TransferComponent implements OnInit {
         this.totalRows = 0;
         if (this.fromUserId && +this.fromUserId !== 0 ) {
             this.tableParams.fromUserId = this.fromUserId;
+        } else {
+            this.tableParams.fromUserId = ''
         }
+
         if (this.toUserId && +this.toUserId !== 0 ) {
             this.tableParams.toUserId = this.toUserId;
+        } else {
+            this.tableParams.toUserId = ''
         }
         if (this.fromDate) {
             this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');

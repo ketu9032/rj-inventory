@@ -119,7 +119,7 @@
         <ng-container matColumnDef="total">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
             <td mat-cell *matCellDef="let sales">
-                {{ sales.qty *  sales.selling_price | currency: 'INR'}}
+                {{ sales.qty * sales.selling_price | currency: 'INR'}}
             </td>
         </ng-container>
         <ng-container matColumnDef="action">
@@ -185,7 +185,7 @@
                     <textarea matInput class="padding" id="" cdkAutosizeMinRows="8" cdkAutosizeMaxRows="8"
                         placeholder="Enter Remarks..." formControlName="remarks"></textarea>
                 </mat-form-field>
-                v
+
             </div>
             <div class="payment">
                 <div class="float">

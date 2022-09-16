@@ -42,8 +42,8 @@ export class SalesQuotationComponent implements OnInit {
     loader: boolean = false;
     selectTireLoader: boolean = false;
     totalRows: number;
-    tireName: string;
-    isShow = true;
+    tireId?: number;
+    isShow:boolean = false;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -52,7 +52,9 @@ export class SalesQuotationComponent implements OnInit {
         search: '',
         active: true,
         fromDate: '',
-        toDate: ''
+        toDate: '',
+        tireId: ''
+
     }
     tires = [];
     fromDate: string;
@@ -77,7 +79,7 @@ export class SalesQuotationComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
     }
     toggleCreateButton() {
-        if (this.tireName === '') {
+        if (this.tireId ) {
             this.isShow = true
         } else {
             this.isShow = false
@@ -91,6 +93,15 @@ export class SalesQuotationComponent implements OnInit {
         if (this.toDate) {
             this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
         }
+        if (this.tireId && this.tireId !== 0 ) {
+            this.tableParams.tireId = this.tireId;
+        } else {
+            this.tableParams.tireId = '';
+
+        }
+    console.log(this.tableParams.tireId);
+
+
         this.salesQuotationService.getSalesQuotation(this.tableParams).subscribe(
             (newCustomers: any[]) => {
                 this.dataSource = new MatTableDataSource<ISalesQuotationData>(newCustomers);
@@ -118,7 +129,7 @@ export class SalesQuotationComponent implements OnInit {
                 width: '1000px',
                 height: '700px',
                 data: {
-                    tier: this.tireName
+                    tier_id: this.tireId
                 }
             })
             .afterClosed()
@@ -215,9 +226,11 @@ export class SalesQuotationComponent implements OnInit {
     clearSearch() {
         this.fromDate = '';
         this.toDate = '';
+        this.tireId = null;
         this.tableParams.search = '';
         this.tableParams.fromDate = '';
         this.tableParams.toDate = '';
+        this.tableParams.tireId = '';
         this.getSalesQuotation();
     }
 }

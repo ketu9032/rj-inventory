@@ -108,10 +108,16 @@ export class ExpenseComponent implements OnInit {
         this.loader = true;
         if (this.userId && +this.userId !== 0) {
             this.tableParams.userId = this.userId;
+        } else {
+            this.tableParams.userId = '';
         }
+
         if (this.categoryId && +this.categoryId !== 0) {
             this.tableParams.categoryId = this.categoryId;
+        }  else {
+            this.tableParams.categoryId = '';
         }
+
         if (this.fromDate) {
             this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
         }

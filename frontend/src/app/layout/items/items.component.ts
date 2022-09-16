@@ -87,10 +87,15 @@ export class ItemsComponent implements OnInit {
         }
         if (this.categoryId && +this.categoryId !== 0) {
             this.tableParams.categoryId = this.categoryId;
+        } else {
+            this.tableParams.categoryId = '';
         }
         if (this.supplierId && +this.supplierId !== 0) {
             this.tableParams.supplierId = this.supplierId;
+        } else {
+            this.tableParams.supplierId = '';
         }
+
         this.itemsService.getItems(this.tableParams).subscribe(
             (newItems: any[]) => {
                 this.dataSource = new MatTableDataSource<ICustomersData>(newItems);

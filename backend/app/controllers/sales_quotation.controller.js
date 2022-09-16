@@ -11,12 +11,17 @@ exports.findAll = async (req, res) => {
       search,
       active,
       fromDate,
-      toDate
+      toDate,
+      tireId
+
     } = req.query;
     let searchQuery = 'where true';
     const offset = pageSize * pageNumber - pageSize;
     if (fromDate && toDate) {
       searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
+    }
+    if (tireId) {
+      searchQuery += ` and tier_id = '${tireId}' `;
     }
     if (search) {
       searchQuery += ` and
@@ -30,7 +35,7 @@ exports.findAll = async (req, res) => {
           or shipping::text ilike '%${search}%'
           or gst::text ilike '%${search}%'
           or user_name ilike '%${search}%'
-          or tier ilike '%${search}%'
+          or tier_id ilike '%${search}%'
           or remarks ilike '%${search}%'
         )`;
     }
@@ -46,11 +51,16 @@ exports.findAll = async (req, res) => {
       total_due,
       shipping,
       gst,
-      tier,
       user_name,
-      remarks
+      remarks,
+      tier_id,
+      tiers.code as tier_code
       FROM sales_quotation s
+      full JOIN tiers as tiers
+       on tiers.id = s.tier_id
+
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+   console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -80,15 +90,14 @@ exports.delete = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const {
-      date,
-      invoice_no,
+
+      tier_id,
       qty,
       amount,
       total_due,
       shipping,
       gst,
       user_name,
-      tier,
       remarks,
       sales
     } = req.body;
@@ -110,33 +119,35 @@ exports.add = async (req, res) => {
     // }
     const insertSalesQuotationQuery = `INSERT INTO sales_quotation
     (
-       date,
-       invoice_no,
-       qty,
-       amount,
-       total_due,
-       shipping,
-       gst,
-       user_name,
-       tier,
-       remarks
+        date,
+        tier_id,
+        qty,
+        amount,
+        total_due,
+        shipping,
+        gst,
+        user_name,
+        remarks
      )
-    VALUES('${date}', '${invoice_no}', '${qty}', '${amount}', '${total_due}', '${shipping}','${gst}','${user_name}', '${tier}', '${remarks}') returning id;`;
+    VALUES(now(), ${tier_id}, ${qty}, ${amount}, ${total_due}, ${shipping},${gst},'${user_name}', '${remarks}') returning id;`;
+
+    console.log(insertSalesQuotationQuery);
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesQuotationId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
       const element = sales[index];
       const insertSalesQuotationDetailsQuery = `INSERT INTO sales_quotation_details
-      (item_code,
+      (
+        item_id,
         qty,
-        available,
         selling_price,
-        total,
         sales_quotation_id
-        )
-        VALUES('${element.item_code}', '${element.qty}', '${element.available}', '${element.selling_price}', '${element.total}',  '${salesQuotationId}') ;
+      )
+        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price}, ${salesQuotationId}) ;
         `;
+      console.log(insertSalesQuotationDetailsQuery);
       await pool.query(insertSalesQuotationDetailsQuery);
+
     }
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -157,7 +168,7 @@ exports.update = async (req, res) => {
       shipping,
       gst,
       user_name,
-      tier,
+      tier_id,
       remarks
     } = req.body;
     // if (
@@ -177,7 +188,7 @@ exports.update = async (req, res) => {
     //   return;
     // }
     const updateSalesQuotationQuery = `UPDATE sales_quotation
-    SET date='${date}', invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}',shipping='${shipping}',gst='${gst}', user_name='${user_name}', tier='${tier}', remarks='${remarks}' where id = ${id};`;
+    SET date='${date}', invoice_no='${invoice_no}', qty='${qty}', amount='${amount}', total_due='${total_due}',shipping='${shipping}',gst='${gst}', user_name='${user_name}', tier_id='${tier_id}', remarks='${remarks}' where id = ${id};`;
     await pool.query(updateSalesQuotationQuery);
     //     const { updateRows } = await pool.query(updateSalesQuotationQuery);
     //     const {updateSalesQuotationId} = updateRows.length;
