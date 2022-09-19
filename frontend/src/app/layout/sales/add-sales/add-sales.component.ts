@@ -251,7 +251,7 @@ export class AddSalesComponent implements OnInit {
     }
     fillSellingPrice(itemId: number) {
         const item = this.items.find(x => x.id === itemId)
-        this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
+        this.availableItemById = (+item.int_qty + +item.item_purchased - +item.item_sold);
         this.formSupplier.patchValue({
             item_id: item.id,
             selling_price: item.silver

@@ -1,3 +1,4 @@
+import { throwDialogContentAlreadyAttachedError } from '@angular/cdk/dialog';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -7,11 +8,13 @@ import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ISalesData } from 'src/app/models/sales';
+import { ISalesBillData } from 'src/app/models/sales_bill';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { UserService } from '../user/services/user.service';
 import { AddSalesComponent } from './add-sales/add-sales.component';
 import { PrintComponent } from './print/print.component';
+import { SalesBillService } from './services/sales-bill.service';
 import { SalesService } from './services/sales.service';
 @Component({
     selector: 'app-sales',
@@ -61,6 +64,32 @@ export class SalesComponent implements OnInit {
     fromDate: string;
     toDate: string;
     userId?: number;
+    //  userId: number;
+    sr: number;
+    token: number;
+    qty: number;
+    item: string;
+    price: number;
+    amount: number;
+    totalQty: number = 0;
+    total: number = 0;
+    lastDue: number = 0;
+    grandDueTotal: number;
+    payment: number;
+    other_payment: number;
+    totalDue: number;
+    remarks: string;
+    userName: string;
+    item_code: string;
+    customer: string
+    tier: string; selling_price: number;
+    salesId: number;
+    date = new Date();
+
+isPrintHide:boolean = false;
+    salesItemDataSource: any = [];
+    saleItems = [];
+    salesData = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     constructor(
@@ -68,7 +97,8 @@ export class SalesComponent implements OnInit {
         private salesService: SalesService,
         private snackBar: MatSnackBar,
         private authService: AuthService,
-        private userService: UserService
+        private userService: UserService,
+        private salesBillService: SalesBillService,
     ) { }
     ngOnInit(): void {
         this.currentDate = moment().format('YYYY-MM-DD');
@@ -76,7 +106,6 @@ export class SalesComponent implements OnInit {
         this.getCustomerDropDown();
         this.getUserDropDown();
         this.getSales();
-
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
@@ -216,7 +245,6 @@ export class SalesComponent implements OnInit {
                 () => { }
             );
     }
-
     getUserDropDown() {
         this.selectUserLoader = true;
         this.userService
@@ -237,21 +265,6 @@ export class SalesComponent implements OnInit {
                 () => { }
             );
     }
-
-    print(element) {
-        this.dialog
-            .open(PrintComponent, {
-                width: '1000px',
-                height: 'auto',
-                data: element
-            })
-            .afterClosed()
-            .subscribe((result) => {
-                if (result) {
-                    this.getSales();
-                }
-            });
-    }
     clearSearch() {
         this.fromDate = '';
         this.toDate = '';
@@ -261,5 +274,51 @@ export class SalesComponent implements OnInit {
         this.tableParams.fromDate = '';
         this.tableParams.toDate = '';
         this.getSales();
+    }
+    getPrintData(id: number) {
+        this.salesId = id;
+        this.salesPrint();
+    }
+    print() {
+        this.isPrintHide = true;
+        let prtContent = document.getElementById("print");
+        let WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+        WinPrint.document.write(prtContent.innerHTML);
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        window.open();
+    }
+
+    salesPrint() {
+        this.saleItems = [];
+        this.loader = true;
+        this.totalQty = 0
+        this.total = 0;
+        this.salesService.salesPrint(this.salesId).subscribe(
+            (response) => {
+                this.saleItems = response;
+                this.token = this.saleItems[0].token;
+                this.customer = this.saleItems[0].customer;
+                this.payment = this.saleItems[0].payment;
+                this.other_payment = this.saleItems[0].other_payment
+                this.userName = this.saleItems[0].user_name;
+                this.tier = this.saleItems[0].tier;
+                this.remarks = this.saleItems[0].remarks;
+                this.lastDue = this.saleItems[0].past_due;
+                this.saleItems.forEach(saleItem => {
+                    this.totalQty = +this.totalQty + +saleItem.sales_bill_qty;
+                    this.total = +this.total + (+saleItem.sales_bill_qty * +saleItem.sales_bill_selling_price);
+                })
+this.print();
+
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
     }
 }

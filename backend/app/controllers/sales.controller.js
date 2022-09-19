@@ -286,10 +286,14 @@ exports.getSalesById = async (req, res) => {
           cdf.company as customer,
           cdf.due_limit as due_limit,
           other_payment,
+          token,
+          users.user_name as user_name,
           s.past_due as past_due
         FROM sales s
         join cdf as cdf
         on cdf.id = s.customer_id
+        join users as users
+        on users.id = s.user_id
         where s.is_active = true and s.id = ${salesId}`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -389,6 +393,55 @@ exports.isCustomerIdInSales = async (req, res) => {
   try {
     const { customerID } = req.query;
     const query = `select count(id) from sales where customer_id = ${customerID}`;
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+exports.salesPrint = async (req, res) => {
+  try {
+    const { salesId } = req.query;
+    const query = `   SELECT
+    categories.name as category_name,
+     categories.id as categories_id,
+        s.id,
+        s.date,
+        bill_no,
+        tier,
+        user_id,
+        remarks,
+        s.payment,
+        customer_id,
+        cdf.company as customer,
+        cdf.due_limit as due_limit,
+        other_payment,
+        token,
+        users.user_name as user_name,
+        s.past_due as past_due,
+        sales_bill.item_id as sales_item_id,
+        sales_bill.qty as sales_bill_qty,
+        sales_bill.selling_price as sales_bill_selling_price,
+        item.item_code as item_item_code
+
+
+      FROM sales s
+      join cdf as cdf
+      on cdf.id = s.customer_id
+      join users as users
+      on users.id = s.user_id
+  join sales_bill
+  on sales_bill.sales_id = s.id
+  join item
+  on sales_bill.item_id = item.id
+  join categories
+  on categories.id = item.category_id
+      where s.is_active = true and s.id = ${salesId}
+  order by categories.name asc `;
+    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

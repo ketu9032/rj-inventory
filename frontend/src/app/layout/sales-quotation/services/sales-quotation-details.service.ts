@@ -27,6 +27,9 @@ export class salesQuotationDetailsService {
         return this.restService.delete(`${this.salesQuotationDetailsURL}?id=${id}`);
     }
 
+    public getItemsBySalesQuotationId(salesQuotationId: number) {
+        return this.restService.get<any>(`${this.salesQuotationDetailsURL}?salesQuotationId=${salesQuotationId}`);
+    }
 }
 
 

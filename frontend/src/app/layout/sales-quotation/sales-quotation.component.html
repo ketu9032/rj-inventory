@@ -131,7 +131,7 @@
                             <mat-icon aria-label="" class="green">device_hub</mat-icon>
                         </button>
                         <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button"
-                            (click)="print(element)">
+                            (click)="getPrintData(element.id)">
                             <mat-icon aria-label="PRINT" color="primary">print</mat-icon>
                         </button>
                     </td>
@@ -145,3 +145,84 @@
             </mat-paginator>
         </div>
     </div>
+    <!-- print start -->
+<div style="display: none;">
+    <div id="print">
+        <div style="display: flex; justify-content: space-around;">
+            <span style="border: 1px solid black; padding:0 5px 0 0 ;
+                         font-size: 14pxs; width: 1230px; margin: 0 5px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <b>{{customer | uppercase}} </b><br />
+
+                    </div>
+
+                    <div>
+                        <b style="float: right;">No #:- {{token}} </b> <br>
+                        {{currentDate }}
+                    </div>
+                </div>
+
+
+                <div style="display: flex; font-weight: bold; border-top: 1px solid black">
+                    <div style="margin-right: 16px">No.</div>
+                    <div style="margin-right: 32px">Item </div>
+                    <div style="margin-right: 26px">Qty</div>
+                    <div style="margin-right: 21px">Price </div>
+                    <div style="margin: 0 0  0 auto">Amount </div>
+                </div>
+                <ng-container *ngFor="let item of saleItems; let i = index">
+                    <div a-for style="display: flex; border-top: 1px solid black;">
+                        <div style="  width:30px; margin: 0 8px 0 0;">{{i + 99 }}</div>
+                        <div style="  width:55px; margin: 0 8px 0 0;">{{item.item_code}}</div>
+                        <div style="  width:45px; margin: 0 8px 0 0;">{{item.qty}}</div>
+                        <div style="  width:42px; margin: 0 8px 0 0;">{{item.selling_price}}</div>
+                        <div style="margin-left:auto;">{{+item.qty * +item.selling_price | currency: 'INR'}}</div>
+                    </div>
+
+
+                    <div a-for style="display: flex; border-top: 1px solid black;">
+                        <div style="    margin-right: 20px;">{{i + 998 }}</div>
+                        <div style="    margin-right: 5px;">{{item.item_code}}</div>
+                        <input style="    margin-right: 15px;" type="checkbox">
+                        <div style="    margin-right: 17px;">{{item.qty}}</div>
+                        <input style="    margin-right: 17px;" type="checkbox">
+                        <div style="    margin: 8px;">{{item.selling_price}}</div>
+                        <div style="margin-left: 14px;">{{+item.qty * +item.selling_price | currency: 'INR'}}</div>
+                    </div>
+                </ng-container> -->
+                <div style="border-top: 1px solid black;"></div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div><b>Total Qty: {{totalQty}}</b></div>
+                    <br>
+                    <div>
+                        <div>
+                            <b>Total: {{total | currency: 'INR'}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div style="float: right;">
+                    LB Due {{lastDue | currency: 'INR'}}
+                </div>
+                <br>
+                <div style="border-top: 2px solid black;"></div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <div><b> SP:</b> ___________ </div>
+                        <div><b> Verifier:</b> ___________ </div>
+                    </div>
+                    <div>
+                        <div style="float: right; "><b> Grand Total : {{grandDueTotal | currency: 'INR'}}</b></div><br>
+                        <div style="float: right;">Shipping: {{shipping | currency: 'INR'}}</div><br>
+                        <div style="float: right;">GST: {{gst | currency: 'INR'}}</div><br>
+                    </div>
+                </div>
+                <div style="border-top: 2px solid black;">
+                    <div style="float: right;">
+                        <b> Total Due: {{totalDue | currency: 'INR'}}</b>
+                    </div>
+                </div>
+            </span>
+        </div>
+    </div>
+</div>

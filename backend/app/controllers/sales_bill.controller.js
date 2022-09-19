@@ -18,7 +18,8 @@ exports.findAll = async (req, res) => {
       FROM sales_bill
       join item as item
       on item.id = sales_bill.item_id
-      where sales_id = ${salesId}`;
+
+      where sales_id = ${salesId} `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

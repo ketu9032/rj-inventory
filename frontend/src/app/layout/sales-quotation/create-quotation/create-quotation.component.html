@@ -124,7 +124,8 @@
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let element">
                 <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
-                    (click)="salesDetailsFillForm(element)">
+                    (click)="getItemsBySalesQuotationId(element)">
+                    <!-- getItemsBySalesQuotationId -->
                     <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
                 <button mat-icon-button matTooltip="Click to Delete" color="warn"

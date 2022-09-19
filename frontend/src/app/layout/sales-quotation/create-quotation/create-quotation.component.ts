@@ -90,7 +90,7 @@ export class CreateQuotationComponent implements OnInit {
         private tiersService: TiersService,
         private salesQuotationService: salesQuotationService,
         private salesQuotationDetailsService: salesQuotationDetailsService,
-        private salesBillService: SalesBillService,
+
         public authService: AuthService,
     ) { }
     ngOnInit() {
@@ -100,8 +100,8 @@ export class CreateQuotationComponent implements OnInit {
         this.initializeSalesBillForm()
         this.getItemDropDown();
         if (this.data.id) {
-            this.fillForm();
-            this.getSalesQuotationDetails();
+            this.getItemsBySalesQuotationId();
+            this.calculate();
         }
     }
 
@@ -167,13 +167,13 @@ export class CreateQuotationComponent implements OnInit {
             .editSalesQuotation({
                 id: this.data.id,
                 qty: this.totalQty,
-                amount: this.shippingPayment,
-                total_due: this.totalDue,
-                shipping: this.shippingPayment,
-                gst: this.gst,
+                amount: this.grandDueTotal,
+                total_due:  this.grandDueTotal,
+                shipping: this.formBill.value.shipping,
+                gst:this.formBill.value.gst,
                 user_name: this.users.user_name,
                 tier_id: this.data.tier_id,
-                remarks: this.remarks,
+                remarks: this.formBill.value.remarks,
                 sales: this.saleItems
             })
             .subscribe(
@@ -244,9 +244,9 @@ export class CreateQuotationComponent implements OnInit {
             this.users.user_name = this.data.user_name,
             this.remarks = this.data.remarks
     }
-    getItemsBySalesId() {
+    getItemsBySalesQuotationId() {
         this.salesDataSource = [];
-        this.salesBillService.getItemsBySalesId(this.data.id).subscribe(
+        this.salesQuotationDetailsService.getItemsBySalesQuotationId(this.data.id).subscribe(
             (response) => {
                 this.saleItems.push(...response)
                 this.calculate();
@@ -347,26 +347,7 @@ export class CreateQuotationComponent implements OnInit {
         }
         return 0;
     }
-    getSalesQuotationDetails() {
-        this.salesDataSource = [];
-        this.sales = []
-        this.tableParams.salesQuotationId = this.data.id;
-        this.salesQuotationDetailsService.getSalesQuotationDetail(this.tableParams).subscribe(
-            (newSalesDetails: any[]) => {
-                this.sales.push(...newSalesDetails);
-                this.salesDataSource = new MatTableDataSource<ISalesQuotationDetailsData>(newSalesDetails);
-                if (newSalesDetails.length > 0) {
-                    this.totalRows = newSalesDetails[0].total;
-                }
-            },
-            (error) => {
-                this.snackBar.open(error.error.message || error.message, 'Ok', {
-                    duration: 3000
-                });
-            },
-            () => { }
-        );
-    }
+
 
     hideShowGst() {
         if (this.isShippingChecked === false) {
