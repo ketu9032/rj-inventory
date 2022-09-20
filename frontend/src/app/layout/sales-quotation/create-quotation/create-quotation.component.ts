@@ -6,14 +6,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IItemSupplierData } from 'src/app/models/item_supplier';
 import { ISalesQuotationData } from 'src/app/models/sales-quotation';
-import { ISalesQuotationDetailsData } from 'src/app/models/sales-quotation-details';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE } from 'src/app/shared/global/table-config';
-import { ItemsSuppliersService } from '../../items/services/items-supplier.service';
 import { salesQuotationService } from '../services/sales-quotation.service';
 import { salesQuotationDetailsService } from '../services/sales-quotation-details.service';
-import { getLocaleFirstDayOfWeek } from '@angular/common';
-import { SalesBillService } from '../../sales/services/sales-bill.service';
 import { TiersService } from '../../customers/services/tiers.service';
 @Component({
     selector: 'app-create-quotation',
@@ -76,10 +72,11 @@ export class CreateQuotationComponent implements OnInit {
     remarks: string = "";
     invoiceNo: number = 0;
     currentDate = new Date();
-    isShippingChecked:boolean = false;
+    isShippingChecked: boolean = false;
     availableItemById = 0;
     isEditSalesItem = false;
     saleItems = [];
+    loggedInUser: any;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISalesQuotationData,
         public dialog: MatDialog,
@@ -90,12 +87,11 @@ export class CreateQuotationComponent implements OnInit {
         private tiersService: TiersService,
         private salesQuotationService: salesQuotationService,
         private salesQuotationDetailsService: salesQuotationDetailsService,
-
         public authService: AuthService,
     ) { }
     ngOnInit() {
         this.getTierDropDown()
-        this.users = this.authService.getUserData();
+        this.loggedInUser = this.authService.getUserData();
         this.initializeSupplierForm();
         this.initializeSalesBillForm()
         this.getItemDropDown();
@@ -104,7 +100,6 @@ export class CreateQuotationComponent implements OnInit {
             this.calculate();
         }
     }
-
     initializeSupplierForm(): void {
         this.formSupplier = this.formBuilder.group({
             item_id: [''],
@@ -116,7 +111,7 @@ export class CreateQuotationComponent implements OnInit {
         this.formBill = this.formBuilder.group({
             shipping: [0],
             gst: [0],
-            remarks: [' ']
+            remarks: ['', Validators.required]
         });
     }
     saveSalesQuotation(): void {
@@ -129,14 +124,11 @@ export class CreateQuotationComponent implements OnInit {
         this.isShowLoader = true;
         this.salesQuotationService
             .addSalesQuotation({
-
                 tier_id: this.data.tier_id,
                 qty: this.totalQty,
-                amount: this.grandDueTotal,
-                total_due: this.grandDueTotal,
                 shipping: this.formBill.value.shipping,
                 gst: this.formBill.value.gst,
-                user_name: this.users.user_name,
+                user_id: this.loggedInUser.id,
                 remarks: this.formBill.value.remarks,
                 sales: this.saleItems
             })
@@ -161,17 +153,14 @@ export class CreateQuotationComponent implements OnInit {
             );
     }
     updateSalesQuotation(): void {
-
         this.isShowLoader = true;
         this.salesQuotationService
             .editSalesQuotation({
                 id: this.data.id,
                 qty: this.totalQty,
-                amount: this.grandDueTotal,
-                total_due:  this.grandDueTotal,
                 shipping: this.formBill.value.shipping,
-                gst:this.formBill.value.gst,
-                user_name: this.users.user_name,
+                gst: this.formBill.value.gst,
+                user_id: this.loggedInUser.id,
                 tier_id: this.data.tier_id,
                 remarks: this.formBill.value.remarks,
                 sales: this.saleItems
@@ -235,13 +224,9 @@ export class CreateQuotationComponent implements OnInit {
         this.clearSalesDetailsForm();
     }
     fillForm() {
-            this.totalPrice = this.data.amount,
-            this.Qty = this.data.qty,
-            this.grandDueTotal = this.data.amount,
-            this.totalDue = this.data.total_due,
-            this.shippingPayment = this.data.shipping,
+        this.shippingPayment = this.data.shipping,
             this.gst = this.data.gst,
-            this.users.user_name = this.data.user_name,
+            this.users.id = this.data.id,
             this.remarks = this.data.remarks
     }
     getItemsBySalesQuotationId() {
@@ -280,7 +265,6 @@ export class CreateQuotationComponent implements OnInit {
                 () => { }
             );
     }
-
     fillSellingPrice(itemId: number) {
         const item = this.items.find(x => x.id === itemId)
         this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
@@ -300,14 +284,12 @@ export class CreateQuotationComponent implements OnInit {
         });
         this.fillSellingPrice(itemId)
     }
-
     removeSalesQuotationDetails(itemId: number): void {
         const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
         this.saleItems = filteredItems;
         this.calculate();
         this.salesDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
     }
-
     clearSalesDetailsForm(): void {
         this.formSupplier.patchValue({
             item_id: '',
@@ -338,17 +320,12 @@ export class CreateQuotationComponent implements OnInit {
     //         () => { }
     //     );
     // }
-
-
-
     getItemWiseTotal() {
         if (this.formSupplier.value.qty !== '') {
             return (+this.formSupplier.value.qty * +this.formSupplier.value.selling_price)
         }
         return 0;
     }
-
-
     hideShowGst() {
         if (this.isShippingChecked === false) {
             this.isShippingChecked = true
@@ -356,7 +333,6 @@ export class CreateQuotationComponent implements OnInit {
             this.isShippingChecked = false;
         }
     }
-
     calculate() {
         this.totalQty = 0
         this.total = 0;
@@ -365,8 +341,7 @@ export class CreateQuotationComponent implements OnInit {
             this.total = +this.total + (+saleItem.qty * +saleItem.selling_price);
         });
         this.grandDueTotal = (+this.total + +this.lastBillDue);
-        this.totalDue = +this.grandDueTotal;
-
+        this.totalDue = +this.grandDueTotal + +this.formBill.value.shipping + +this.formBill.value.gst;
     }
     getTierDropDown() {
         this.tiersService

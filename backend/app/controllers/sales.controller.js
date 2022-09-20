@@ -80,7 +80,6 @@ exports.findAll = async (req, res) => {
           COALESCE(past_due,0)
     -- ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
       `;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -434,7 +433,6 @@ exports.salesPrint = async (req, res) => {
   on categories.id = item.category_id
       where s.is_active = true and s.id = ${salesId}
   order by categories.name asc `;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

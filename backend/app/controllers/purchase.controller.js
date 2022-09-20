@@ -368,7 +368,6 @@ exports.updateValue = async (
           purchase_price = purchase_price - ${responsePurchasePrice.rows[0].total_price}  + ${itemsCost},
           purchase_payment = purchase_payment - ${paymentResponse.rows[0].payment} +  ${payment},
           suppliers_total_due = (purchase_price - ${responsePurchasePrice.rows[0].total_price}  + ${itemsCost}) - (purchase_payment - ${paymentResponse.rows[0].payment} + ${payment}) where id = ${supplierId} `;
-        console.log(query6);
         await pool.query(query6);
       }
     } else {
@@ -383,7 +382,6 @@ exports.updateValue = async (
       purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment},
       suppliers_total_due = suppliers_total_due +  (COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(purchase_payment,0) - ${existingPayment} + ${payment})
         where id = ${supplierId} returning suppliers_total_due`;
-      console.log(query6);
       await pool.query(query6);
     }
   } catch (error) {
@@ -428,7 +426,6 @@ exports.purchasePrint = async (req, res) => {
        on categories.id = item.category_id
        where p.is_active = true and p.id = ${ purchaseId }
        order by categories.name asc ; `;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

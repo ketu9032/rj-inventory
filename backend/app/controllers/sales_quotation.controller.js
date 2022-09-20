@@ -28,7 +28,7 @@ exports.findAll = async (req, res) => {
         (
            sr::text ilike '%${search}%'
           or s.date::text ilike '%${search}%'
-          or invoice_no::text ilike '%${search}%'
+
           or qty::text ilike '%${search}%'
           or amount::text ilike '%${search}%'
           or total_due::text ilike '%${search}%'
@@ -42,27 +42,53 @@ exports.findAll = async (req, res) => {
     searchQuery += ` and s.is_active = ${active}`;
     const query = `  SELECT
       Count(s.id) OVER() AS total,
-      s.id,
-      sr,
-      s.date,
-      invoice_no,
-      qty,
-      amount,
-      total_due,
-      shipping,
-      gst,
+        s.id,
+        sr,
+        s.date,
+s.qty,
+        shipping,
+        gst,
+        user_id,
+        users.user_name as user_name,
+        remarks,
+        tier_id,
+        tiers.code as tier_code,
 
-     user_name,
-      remarks,
-      tier_id,
-      tiers.code as tier_code
+        sum(COALESCE(sqd.qty,0) * COALESCE(sqd.selling_price,0))  as amount,
+
+        sum(COALESCE(sqd.qty,0) * COALESCE(sqd.selling_price,0)) + COALESCE(shipping,0) + COALESCE(gst,0) as total_due
+
       FROM sales_quotation s
-      full JOIN tiers as tiers
-       on tiers.id = s.tier_id
+       join sales_quotation_details as sqd
+       on  sqd.sales_quotation_id = s.id
+       JOIN tiers as tiers
+        on tiers.id = s.tier_id
+      join users as users
+        on users.id = s.user_id
+
+        group by
+         s.id,
+         s.date,
+         sr,
+s.qty,
+
+         shipping,
+         gst,
+         users.user_name,
+         remarks,
+         s.date,
+
+         shipping,
+         gst,
+         user_id,
+         users.user_name,
+         remarks,
+         tier_id,
+         tiers.code
 
 
-     ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
-   console.log(query);
+       --  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
+   `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -95,11 +121,9 @@ exports.add = async (req, res) => {
 
       tier_id,
       qty,
-      amount,
-      total_due,
       shipping,
       gst,
-      user_name,
+      user_id,
       remarks,
       sales
     } = req.body;
@@ -123,17 +147,14 @@ exports.add = async (req, res) => {
     (
         date,
         tier_id,
-        qty,
-        amount,
-        total_due,
         shipping,
+        qty,
         gst,
-        user_name,
+        user_id,
         remarks
      )
-    VALUES(now(), ${tier_id}, ${qty}, ${amount}, ${total_due}, ${shipping},${gst},'${user_name}', '${remarks}') returning id;`;
+    VALUES(now(), ${tier_id}, ${shipping}, ${qty},${gst},'${user_id}', '${remarks}') returning id;`;
 
-    console.log(insertSalesQuotationQuery);
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesQuotationId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
@@ -147,7 +168,6 @@ exports.add = async (req, res) => {
       )
         VALUES(${element.item_id}, ${element.qty},  ${element.selling_price}, ${salesQuotationId}) ;
         `;
-      console.log(insertSalesQuotationDetailsQuery);
       await pool.query(insertSalesQuotationDetailsQuery);
 
     }
@@ -167,7 +187,7 @@ exports.update = async (req, res) => {
       total_due,
       shipping,
       gst,
-      user_name,
+
       tier_id,
       remarks,
       sales
@@ -190,7 +210,6 @@ exports.update = async (req, res) => {
     // }
     const updateSalesQuotationQuery = `UPDATE sales_quotation
     SET date= now(), qty=${qty}, amount=${amount}, total_due=${total_due},shipping=${shipping},gst=${gst}, tier_id=${tier_id}, remarks='${remarks}' where id = ${id};`;
-    console.log(updateSalesQuotationQuery);
     await pool.query(updateSalesQuotationQuery);
     //
         // const { updateRows } = await pool.query(updateSalesQuotationQuery);
@@ -265,7 +284,6 @@ exports.salesQuotationPrint = async (req, res) => {
     	 on categories.id = item.category_id
          where s.is_active = true and s.id = ${ salesQuotationId }
   order by categories.name asc `;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

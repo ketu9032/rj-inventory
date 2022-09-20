@@ -56,7 +56,6 @@ export class UserComponent implements OnInit {
 
     ngOnInit(): void {
         const loggedInUser = this.authService.getUserData()
-        console.log(loggedInUser);
         this.isLoggedInUserIsOwner = loggedInUser.role.toLowerCase() === 'owner' ? true : false;
         this.getUser();
     }

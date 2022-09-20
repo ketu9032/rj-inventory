@@ -313,7 +313,6 @@ export class PurchaseComponent implements OnInit {
 
                     this.loader = false;
                     this.purchaseItems = response;
-                    console.log(this.purchaseItems);
                     this.token = this.purchaseItems[0].token;
                     this.suppliers_company = this.purchaseItems[0].suppliers_company;
                     this.date = this.purchaseItems[0].date;

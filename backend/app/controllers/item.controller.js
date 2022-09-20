@@ -69,7 +69,6 @@ exports.findAll = async (req, res) => {
      INNER JOIN categories as c  ON c.id = i.category_id
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
 
-    console.log(query);
     const response = await pool.query(query);
 
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -225,7 +224,6 @@ exports.update = async (req, res) => {
     date = now()
   where
     id = ${id}`;
-    console.log(updateItemQuery);
     const updateRows = await pool.query(updateItemQuery);
     for (let index = 0; index < suppliers.length; index++) {
       const element = suppliers[index];
@@ -237,7 +235,6 @@ exports.update = async (req, res) => {
       )
       VALUES(${element.suppliers_id}, ${element.item_supplier_rate},${id}) ;
       `;
-      console.log(updateSupplierQuery);
       await pool.query(updateSupplierQuery);
     }
 

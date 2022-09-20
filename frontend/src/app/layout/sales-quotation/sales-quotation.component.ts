@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ISalesQuotationData } from 'src/app/models/sales-quotation';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
@@ -43,6 +44,7 @@ export class SalesQuotationComponent implements OnInit {
     totalRows: number;
     tireId?: number;
     isShow:boolean = false;
+    loggedInUsersData: any;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -76,8 +78,10 @@ export class SalesQuotationComponent implements OnInit {
         private salesQuotationService: salesQuotationService,
         private tiersService: TiersService,
         public snackBar: MatSnackBar,
+        private authService: AuthService,
     ) { }
     ngOnInit(): void {
+        this.loggedInUsersData = this.authService.getUserData();
         this.getTierDropDown()
         this.getSalesQuotation();
     }
@@ -260,7 +264,6 @@ export class SalesQuotationComponent implements OnInit {
                     this.shipping = this.salesQuotationItems[0].shipping;
                     this.gst = this.salesQuotationItems[0].gst;
                     this.remarks = this.salesQuotationItems[0].remarks;
-                    this.lastDue = this.salesQuotationItems[0].past_due;
                     this.salesQuotationItems.forEach(salesQuotationItems => {
                         this.totalQty = +this.totalQty + +salesQuotationItems.sales_quotation_details_qty;
                         this.total = +this.total + (+salesQuotationItems.sales_quotation_details_qty * +salesQuotationItems.sales_quotation_details_selling_price);
