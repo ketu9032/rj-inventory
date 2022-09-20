@@ -6,6 +6,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { ISalesQuotationData } from 'src/app/models/sales-quotation';
+import { ISalesQuotationDetailsData } from 'src/app/models/sales-quotation-details';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { TiersService } from '../customers/services/tiers.service';
@@ -13,6 +14,7 @@ import { CreateQuotationComponent } from './create-quotation/create-quotation.co
 import { DeleteQuotationComponent } from './delete-quotation/delete-quotation.component';
 import { MoveSalesComponent } from './move-sales/move-sales.component';
 import { PrintComponent } from './print/print.component';
+import { salesQuotationDetailsService } from './services/sales-quotation-details.service';
 import { salesQuotationService } from './services/sales-quotation.service';
 @Component({
     selector: 'app-sales-quotation',
@@ -42,8 +44,8 @@ export class SalesQuotationComponent implements OnInit {
     loader: boolean = false;
     selectTireLoader: boolean = false;
     totalRows: number;
-    tireName: string;
-    isShow = true;
+    tireId?: number;
+    isShow:boolean = false;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -52,16 +54,34 @@ export class SalesQuotationComponent implements OnInit {
         search: '',
         active: true,
         fromDate: '',
-        toDate: ''
+        toDate: '',
+        tireId: ''
+
     }
     tires = [];
     fromDate: string;
     toDate: string;
+    customer: string;
+    token: number;
+    currentDate = new Date();
+    totalQty:  number;
+    total: number;
+    lastDue: number;
+    grandDueTotal: number;
+    shipping: number;
+    gst: number;
+    totalDue: number;
+    salesId: number;
+    salesDataSource: any = [];
+    salesData= [];
+    saleItems = [];
+
     constructor(
         public dialog: MatDialog,
         private salesQuotationService: salesQuotationService,
         private tiersService: TiersService,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        private salesQuotationDetailsService: salesQuotationDetailsService
     ) { }
     ngOnInit(): void {
         this.getTierDropDown()
@@ -77,7 +97,7 @@ export class SalesQuotationComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
     }
     toggleCreateButton() {
-        if (this.tireName === '') {
+        if (this.tireId ) {
             this.isShow = true
         } else {
             this.isShow = false
@@ -91,6 +111,15 @@ export class SalesQuotationComponent implements OnInit {
         if (this.toDate) {
             this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
         }
+        if (this.tireId && this.tireId !== 0 ) {
+            this.tableParams.tireId = this.tireId;
+        } else {
+            this.tableParams.tireId = '';
+
+        }
+    console.log(this.tableParams.tireId);
+
+
         this.salesQuotationService.getSalesQuotation(this.tableParams).subscribe(
             (newCustomers: any[]) => {
                 this.dataSource = new MatTableDataSource<ISalesQuotationData>(newCustomers);
@@ -118,7 +147,7 @@ export class SalesQuotationComponent implements OnInit {
                 width: '1000px',
                 height: '700px',
                 data: {
-                    tier: this.tireName
+                    tier_id: this.tireId
                 }
             })
             .afterClosed()
@@ -198,26 +227,47 @@ export class SalesQuotationComponent implements OnInit {
                 () => { }
             );
     }
-    print(element) {
-        this.dialog
-            .open(PrintComponent, {
-                width: '1000px',
-                height: 'auto',
-                data: element
-            })
-            .afterClosed()
-            .subscribe((result) => {
-                if (result) {
-                    this.getSalesQuotation();
-                }
-            });
-    }
+
     clearSearch() {
         this.fromDate = '';
         this.toDate = '';
+        this.tireId = null;
         this.tableParams.search = '';
         this.tableParams.fromDate = '';
         this.tableParams.toDate = '';
+        this.tableParams.tireId = '';
         this.getSalesQuotation();
     }
+    getPrintData(id: number ) {
+        this.salesId = id;
+        //   this.getSalesQuotationDetails();
+  }
+    print() {
+        let prtContent = document.getElementById("print");
+        let WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+        WinPrint.document.write(prtContent.innerHTML);
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        window.open();
+        this.salesId = null;
+    }
+    // getSalesQuotationDetails() {
+    //     this.saleItems = [];
+    //     this.salesQuotationDetailsService.getSalesQuotationDetail(this.salesId).subscribe(
+    //         (newSalesDetails: any[]) => {
+    //             this.saleItems.push(...newSalesDetails);
+    //             this.salesDataSource = new MatTableDataSource<ISalesQuotationDetailsData>(newSalesDetails);
+    //             if (newSalesDetails.length > 0) {
+    //                 this.totalRows = newSalesDetails[0].total;
+    //             }
+    //         },
+    //         (error) => {
+    //             this.snackBar.open(error.error.message || error.message, 'Ok', {
+    //                 duration: 3000
+    //             });
+    //         },
+    //         () => { }
+    //     );
+    // }
 }

@@ -64,80 +64,66 @@
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="id"
             matSortDirection="desc">
-
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>No</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.id}}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="token">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>T</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.token}}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="sales_date">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.date | date: 'MMM d, y, h:mm:ss' }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="customer_name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.customer_name | uppercase }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
                 <td mat-cell *matCellDef="let element">{{ element.amount | currency: 'INR' }}</td>
             </ng-container>
-
             <ng-container matColumnDef="past_due">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>PD</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.past_due | currency: 'INR' }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="total_amount">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.total_amount | currency: 'INR'}}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="payment">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment</th>
                 <td mat-cell *matCellDef="let element">
                     {{element?.payment| currency: 'INR' }}
                 </td>
             </ng-container>
-
-
             <ng-container matColumnDef="total_due">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>TD</th>
                 <td mat-cell *matCellDef="let element">{{ element?.total_due | currency: 'INR'}}</td>
             </ng-container>
-
             <ng-container matColumnDef="other_payment">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>OP</th>
                 <td mat-cell *matCellDef="let element">
                     {{element?.other_payment| currency: 'INR' }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="user_name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
                 <td mat-cell *matCellDef="let element">{{ element.user_name | uppercase }}</td>
             </ng-container>
-
-
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let element">
@@ -154,7 +140,6 @@
                             </mat-icon>
                         </button>
                     </ng-container>
-
                     <ng-container
                         *ngIf="element.qty < 0  && loggedInUsersData.role !== 'Employees' && loggedInUsersData.user_name !== element.user_name ">
                         <button mat-icon-button matTooltip="Click to thumb" color="primary" type="button"
@@ -164,25 +149,157 @@
                     </ng-container>
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="print">
                 <th mat-header-cell *matHeaderCellDef>Print</th>
                 <td mat-cell *matCellDef="let element">
                     <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button"
-                        (click)="print(element)">
+                        (click)="getPrintData(element.id)">
                         <mat-icon aria-label="print" color="primary">print</mat-icon>
                     </button>
                 </td>
             </ng-container>
-
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let element; columns: displayedColumns"
                 [class]="element.qty < 0  ? 'red' : 'white'">
             </tr>
         </table>
-
         <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons
             (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
         </mat-paginator>
+    </div>
+</div>
+<!-- print start -->
+<div style="display: none;">
+    <div id="print">
+        <div style="display: flex; justify-content: space-around;">
+            <span style="border: 1px solid black; padding:0 5px 0 0 ;
+                         font-size: 14pxs; width: 1230px; margin: 0 5px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <b>{{customer | uppercase}} </b><br />
+                        {{ tier | uppercase}}
+                    </div>
+                    <div>
+                        <b style="float: right;">No #:- {{token}} </b> <br>
+                        {{currentDate| date: 'd-MM '}} &nbsp; <b>{{ userName | uppercase}}</b>
+                    </div>
+                </div>
+                <div style="display: flex; font-weight: bold; border-top: 1px solid black">
+                    <div style="margin-right: 16px">No.</div>
+                    <div style="margin-right: 32px">Item </div>
+                    <div style="margin-right: 13px">#</div>
+                    <div style="margin-right: 26px">Qty</div>
+                    <div style="margin-right: 11px">#</div>
+                    <div style="margin-right: 21px">Price </div>
+                    <div style="margin: 0 0  0 auto">Amount </div>
+                </div>
+                <ng-container *ngFor="let item of saleItems; let i = index">
+                    <div *ngIf="+item.row_number_by_category_id === 1 && i !== 0"
+                        style="display: flex; border-top: 1px solid black;"></div>
+                    <div a-for style="display: flex; border-top: 1px solid black;">
+                        <div style="  width:30px; margin: 0 8px 0 0;">{{i +1 }}</div>
+                        <div style="width:55px; margin: 0 8px 0 0;">{{ item.item_item_code}}</div>
+                        <input style="width: 12px;   margin: 0 8px 0 0;" type="checkbox">
+                        <div style="width:45px; margin: 0 8px 0 0;">{{item.sales_bill_qty
+                            }}</div>
+                        <input style="width: 12px;  margin: 0 8px 0 0;" type="checkbox">
+                        <div style="  width:42px; margin: 0 8px 0 0">{{item.sales_bill_selling_price
+                            }}</div>
+                        <div style="margin-left:auto;">{{+item.sales_bill_qty
+                            * +item.sales_bill_selling_price
+                            | currency: 'INR'}}</div>
+                    </div>
+                </ng-container>
+                <div style="border-top: 1px solid black;"></div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div><b>Total Qty: {{totalQty}}</b></div>
+                    <br>
+                    <div>
+                        <div>
+                            <b>Total: {{total | currency: 'INR'}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div style="float: right;">
+                    LB Due {{lastDue | currency: 'INR'}}
+                </div>
+                <br>
+                <div style="border-top: 2px solid black;"></div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <div><b> SP:</b> ___________ </div>
+                        <div><b> Verifier:</b> ___________ </div>
+                    </div>
+                    <div>
+                        <div style="float: right; "><b> Grand Total :{{+total + +lastDue | currency: 'INR'}}</b></div>
+                        <br>
+                        <div style="float: right;">Payment: {{payment | currency: 'INR'}}</div><br>
+                        <div style="float: right;">Other Payment: {{other_payment | currency: 'INR'}}</div><br>
+                    </div>
+                </div>
+                <div style="border-top: 2px solid black;">
+                    <div style="float: right;">
+                        <b> Total Due: {{+total + +lastDue - +payment | currency: 'INR'}}</b>
+                    </div><br>
+                    <div>
+                        <b>Remarks:</b>{{remarks}}
+                    </div>
+                </div>
+            </span>
+            <span style="border: 1px solid black; padding: 5px; font-size: 14pxs; width: 1230px; margin: 0 0 0 5px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <b>{{customer | uppercase}} </b><br />
+                        {{tier | uppercase}}
+                    </div>
+                    <div>
+                        <b style="float: right;">No #:- {{token}} </b> <br>
+                        {{currentDate | date: 'd-MM '}} &nbsp; <b>{{userName | uppercase}}</b>
+                    </div>
+                </div>
+                <div style="display: flex; font-weight: bold; border-top: 1px solid black">
+                    <div style="margin-right: 16px">No.</div>
+                    <div style="margin-right: 32px">Item </div>
+                    <div style="margin-right: 27px">Qty</div>
+                    <div style="margin-right: 31px">Price </div>
+                    <div style="margin: 0 0 0 auto;">Amount </div>
+                </div>
+                <ng-container *ngFor="let item of saleItems; let i = index">
+                    <div *ngIf="+item.row_number_by_category_id === 1 && i !== 0"
+                        style="display: flex; border-top: 1px solid black;"></div>
+                    <div a-for style="display: flex; border-top: 1px solid black;">
+                        <div style="width:30px; margin: 0 8px 0 0;   ">{{1 }}</div>
+                        <div style="  width:55px; margin: 0 8px 0 0;">{{item.item_item_code}}</div>
+                        <div style="  width:45px; margin: 0 8px 0 0;">{{item.sales_bill_qty}}</div>
+                        <div style=" width:42px; margin: 0 8px 0 0;">{{item.sales_bill_selling_price}}</div>
+                        <div style="margin-left:  auto">{{+item.sales_bill_qty * +item.sales_bill_selling_price |
+                            currency: 'INR'}}</div>
+                    </div>
+                </ng-container>
+                <div style="border-top: 1px solid black;"></div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div><b>Total Qty: {{totalQty}}</b></div>
+                    <br>
+                    <div>
+                        <div>
+                            <b>Total: {{total | currency: 'INR'}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div style="float: right;">
+                    LB Due {{lastDue | currency: 'INR'}}
+                </div>
+                <br>
+                <div style="border-top: 2px solid black;"></div>
+                <div style="float: right; "><b> Grand Total : {{+total + +lastDue | currency: 'INR'}}</b></div><br>
+                <div style="float: right;">Payment: {{payment | currency: 'INR'}}</div><br>
+                <div style="float: right;">Other Payment: {{other_payment | currency: 'INR'}}</div><br>
+                <div style="border-top: 2px solid black;">
+                    <div style="float: right;">
+                        <b> Total Due: {{+total + +lastDue - +payment | currency: 'INR'}}</b>
+                    </div><br>
+                </div>
+            </span>
+        </div>
     </div>
 </div>

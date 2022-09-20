@@ -14,9 +14,7 @@ exports.findAll = async (req, res) => {
       toDate,
       userId
     } = req.query;
-
     let searchQuery = 'where true';
-
     if (fromDate && toDate) {
       searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
     }
@@ -286,10 +284,14 @@ exports.getSalesById = async (req, res) => {
           cdf.company as customer,
           cdf.due_limit as due_limit,
           other_payment,
+          token,
+          users.user_name as user_name,
           s.past_due as past_due
         FROM sales s
         join cdf as cdf
         on cdf.id = s.customer_id
+        join users as users
+        on users.id = s.user_id
         where s.is_active = true and s.id = ${salesId}`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -313,7 +315,6 @@ exports.updateValue = async (
     let existingItemsCost = 0;
     const query1 = `select qty, selling_price, item_id from sales_bill where sales_id = ${salesId}`;
     const existingItemResponse = await pool.query(query1);
-
     const existingItems = existingItemResponse.rows;
     for (let index = 0; index < existingItems.length; index++) {
       const item = existingItems[index];
@@ -324,7 +325,6 @@ exports.updateValue = async (
     }
     const query3 = `delete from sales_bill where sales_id = ${salesId};`;
     await pool.query(query3);
-
     for (let index = 0; index < salesItemDetails.length; index++) {
       const element = salesItemDetails[index];
       const query4 = `INSERT INTO sales_bill
@@ -376,7 +376,6 @@ exports.updateValue = async (
         cdf_total_due = (COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(payment,0) - ${existingPayment} + ${payment})
       where id = ${customerId} returning cdf_total_due`;
     await pool.query(query6);
-
     let query8 = `update users set balance = balance - ${existingPayment} - ${existingOtherPayment} + ${+payment}  + ${
       +otherPayment ? otherPayment : 0
     }  where id = ${loggedInUserId}`;
@@ -389,6 +388,53 @@ exports.isCustomerIdInSales = async (req, res) => {
   try {
     const { customerID } = req.query;
     const query = `select count(id) from sales where customer_id = ${customerID}`;
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+exports.salesPrint = async (req, res) => {
+  try {
+    const { salesId } = req.query;
+    const query = `   SELECT
+    categories.name as category_name,
+     categories.id as categories_id,
+        s.id,
+        row_number() OVER (PARTITION BY categories.id order by categories.id desc) as row_number_by_category_id,
+        s.date,
+        bill_no,
+        tier,
+        user_id,
+        remarks,
+        s.payment,
+        customer_id,
+        cdf.company as customer,
+        cdf.due_limit as due_limit,
+        other_payment,
+        token,
+        users.user_name as user_name,
+        s.past_due as past_due,
+        sales_bill.item_id as sales_item_id,
+        sales_bill.qty as sales_bill_qty,
+        sales_bill.selling_price as sales_bill_selling_price,
+        item.item_code as item_item_code
+      FROM sales s
+      join cdf as cdf
+      on cdf.id = s.customer_id
+      join users as users
+      on users.id = s.user_id
+  join sales_bill
+  on sales_bill.sales_id = s.id
+  join item
+  on sales_bill.item_id = item.id
+  join categories
+  on categories.id = item.category_id
+      where s.is_active = true and s.id = ${salesId}
+  order by categories.name asc `;
+    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

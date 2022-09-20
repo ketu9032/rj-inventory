@@ -14,6 +14,7 @@ export class SalesService {
   private updateValueURL = 'api/sales/updateValue';
   private isCustomerIdInSalesURL = 'api/sales/isCustomerIdInSales';
   private getCustomerByIdURL = 'api/cdf/getCustomerById';
+  private getSalesPrintURL= 'api/sales/salesPrint';
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
@@ -22,35 +23,38 @@ export class SalesService {
     return this.restService.get<any>(`${this.salesURL}${queryString}`);
   }
   public addSales(sales: ISalesParams) {
-    return this.restService.post(`${this.salesURL}`, sales);
+      return this.restService.post(`${this.salesURL}`, sales);
   }
   public editSales(sales: ISalesParams) {
     return this.restService.put(`${this.salesURL}`, sales);
   }
   public removeItems(id: string) {
-    return this.restService.delete(`${this.salesURL}?id=${id}`);
-  }
+      return this.restService.delete(`${this.salesURL}?id=${id}`);
+    }
   public changeStatus(sales: ISalesActiveParams) {
     return this.restService.put(`${this.salesChangeStatusURl}`, sales);
-  }
-  public getCustomerDropDown() {
+}
+public getCustomerDropDown() {
     return this.restService.get<any>(`${this.getCdfToCustomerDropDownURL}`);
-  }
-  public getItemDropDown() {
+}
+public getItemDropDown() {
     return this.restService.get<any>(`${this.getItemDropDownURL}`);
-  }
-  public getSalesById(salesId: number) {
+}
+public getSalesById(salesId: number) {
     return this.restService.get<any>(`${this.getSalesByIdURL}?salesId=${salesId}`);
-  }
+}
 
-  public updateValue(sales: ICdfUpdateParams) {
-      return this.restService.put(`${this.updateValueURL}`,sales);
-    }
-    public isCustomerIdInSales(customerID: number) {
-      return this.restService.get<any>(`${this.isCustomerIdInSalesURL}?customerID=${customerID}`);
-    }
-    public getCustomerById(customerId: number) {
-        return this.restService.get<any>(`${this.getCustomerByIdURL}?customerId=${customerId}`);
+public updateValue(sales: ICdfUpdateParams) {
+    return this.restService.put(`${this.updateValueURL}`,sales);
+}
+public isCustomerIdInSales(customerID: number) {
+    return this.restService.get<any>(`${this.isCustomerIdInSalesURL}?customerID=${customerID}`);
+}
+public getCustomerById(customerId: number) {
+    return this.restService.get<any>(`${this.getCustomerByIdURL}?customerId=${customerId}`);
     }
 
+    public salesPrint(salesId: number) {
+   return this.restService.get<any>(`${this.getSalesPrintURL}?salesId=${salesId}`);
+    }
 }

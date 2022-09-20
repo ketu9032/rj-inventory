@@ -13,6 +13,8 @@ import { ItemsSuppliersService } from '../../items/services/items-supplier.servi
 import { salesQuotationService } from '../services/sales-quotation.service';
 import { salesQuotationDetailsService } from '../services/sales-quotation-details.service';
 import { getLocaleFirstDayOfWeek } from '@angular/common';
+import { SalesBillService } from '../../sales/services/sales-bill.service';
+import { TiersService } from '../../customers/services/tiers.service';
 @Component({
     selector: 'app-create-quotation',
     templateUrl: './create-quotation.component.html',
@@ -27,7 +29,6 @@ export class CreateQuotationComponent implements OnInit {
         'action',
     ];
     formSupplier: FormGroup;
-    formGroup: FormGroup;
     formBill: FormGroup;
     selectedRole: string
     tires = []
@@ -56,7 +57,7 @@ export class CreateQuotationComponent implements OnInit {
     supplierRate: string = "";
     supplierQty: string = "";
     totalQty: number;
-    lastBillNo: number;
+    lastBillNo: number = 0;
     countQty = [];
     Qty: number;
     countTotal = [];
@@ -71,11 +72,14 @@ export class CreateQuotationComponent implements OnInit {
     total: number;
     users;
     user_name: string;
-    tier: string;
+    tier;
     remarks: string = "";
     invoiceNo: number = 0;
     currentDate = new Date();
-    isShippingChecked = false;
+    isShippingChecked:boolean = false;
+    availableItemById = 0;
+    isEditSalesItem = false;
+    saleItems = [];
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ISalesQuotationData,
         public dialog: MatDialog,
@@ -83,75 +87,58 @@ export class CreateQuotationComponent implements OnInit {
         private formBuilder: FormBuilder,
         private _formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
-        private itemsSuppliersService: ItemsSuppliersService,
+        private tiersService: TiersService,
         private salesQuotationService: salesQuotationService,
         private salesQuotationDetailsService: salesQuotationDetailsService,
+
         public authService: AuthService,
     ) { }
     ngOnInit() {
-        this.tier = this.data.tier;
+        this.getTierDropDown()
         this.users = this.authService.getUserData();
-        this.initializeForm();
         this.initializeSupplierForm();
         this.initializeSalesBillForm()
         this.getItemDropDown();
         if (this.data.id) {
-            this.fillForm();
-            this.getSalesQuotationDetails();
+            this.getItemsBySalesQuotationId();
+            this.calculate();
         }
     }
-    initializeForm(): void {
-        this.formGroup = this.formBuilder.group({
-            tier: ['', Validators.required],
-            date: ['', Validators.required],
-            invoice_no: ['', Validators.required],
-        });
-    }
+
     initializeSupplierForm(): void {
         this.formSupplier = this.formBuilder.group({
-            item_code: ['', Validators.required],
-            qty: ['', Validators.required],
-            available: ['', Validators.required],
-            total: ['', Validators.required],
-            selling_price: ['', Validators.required],
+            item_id: [''],
+            qty: [''],
+            selling_price: [''],
         });
     }
     initializeSalesBillForm(): void {
         this.formBill = this.formBuilder.group({
-            remarks: ['', Validators.required]
+            shipping: [0],
+            gst: [0],
+            remarks: [' ']
         });
     }
     saveSalesQuotation(): void {
-
         if (this.shippingPayment === undefined) {
             this.shippingPayment = 0;
         }
         if (this.gst === undefined) {
             this.gst = 0;
         }
-        const { tier,
-            date,
-            invoice_no,
-        } = this.formGroup.value;
-        this.Qty;
-        this.grandDueTotal;
-        this.totalDue
-        this.user_name;
-        this.remarks;
         this.isShowLoader = true;
         this.salesQuotationService
             .addSalesQuotation({
-                date,
-                invoice_no,
-                tier,
-                qty: this.Qty,
+
+                tier_id: this.data.tier_id,
+                qty: this.totalQty,
                 amount: this.grandDueTotal,
                 total_due: this.grandDueTotal,
-                shipping: this.shippingPayment,
-                gst: this.gst,
+                shipping: this.formBill.value.shipping,
+                gst: this.formBill.value.gst,
                 user_name: this.users.user_name,
-                remarks: this.remarks,
-                sales: this.sales
+                remarks: this.formBill.value.remarks,
+                sales: this.saleItems
             })
             .subscribe(
                 (response) => {
@@ -174,25 +161,20 @@ export class CreateQuotationComponent implements OnInit {
             );
     }
     updateSalesQuotation(): void {
-        const {
-            date,
-            invoice_no,
-        } = this.formGroup.value;
+
         this.isShowLoader = true;
         this.salesQuotationService
             .editSalesQuotation({
                 id: this.data.id,
-                date,
-                invoice_no,
-                qty: this.Qty,
-                amount: this.shippingPayment,
-                total_due: this.totalDue,
-                shipping: this.shippingPayment,
-                gst: this.gst,
+                qty: this.totalQty,
+                amount: this.grandDueTotal,
+                total_due:  this.grandDueTotal,
+                shipping: this.formBill.value.shipping,
+                gst:this.formBill.value.gst,
                 user_name: this.users.user_name,
-                tier: this.tier,
-                remarks: this.remarks,
-                sales: this.sales
+                tier_id: this.data.tier_id,
+                remarks: this.formBill.value.remarks,
+                sales: this.saleItems
             })
             .subscribe(
                 (response) => {
@@ -223,36 +205,37 @@ export class CreateQuotationComponent implements OnInit {
     }
     addSalesQuotationDetails() {
         const {
-            item_code,
+            item_id,
             qty,
-            available,
             selling_price,
-            total
-        } = this.formSupplier.value
-        const itemCode = this.suppliersCompany.find(x => +x.id === +item_code);
-        const sale = {
-            item_code,
-            qty,
-            available,
-            selling_price,
-            total
+        } = this.formSupplier.value;
+        const item = this.items.find(x => x.id === item_id);
+        const salesItem = this.saleItems.find(x => +x.item_id === +item_id);
+        if (salesItem) {
+            salesItem.qty = +salesItem.qty + +qty;
+            salesItem.total = +salesItem.total + (+salesItem.qty * +salesItem.selling_price);
+        } else {
+            this.saleItems.push({
+                item_code: item.item_code,
+                item_id,
+                qty,
+                selling_price,
+            });
         }
-        this.sales.push(sale)
-        this.salesDataSource = new MatTableDataSource<IItemSupplierData>(this.sales);
+        if (qty <= 0) {
+            this.formBill.get("remarks").setValidators(Validators.required);
+            setTimeout(() => {
+                this.formBill.get("remarks").updateValueAndValidity()
+            })
+        }
+        this.isEditSalesItem = false;
+        this.salesDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+        this.availableItemById = 0;
+        this.calculate();
         this.clearSalesDetailsForm();
     }
     fillForm() {
-        const {
-            tier,
-            date,
-            invoice_no,
-        } = this.data;
-        this.formGroup.patchValue({
-            tier,
-            date,
-            invoice_no,
-        });
-        this.totalPrice = this.data.amount,
+            this.totalPrice = this.data.amount,
             this.Qty = this.data.qty,
             this.grandDueTotal = this.data.amount,
             this.totalDue = this.data.total_due,
@@ -261,48 +244,13 @@ export class CreateQuotationComponent implements OnInit {
             this.users.user_name = this.data.user_name,
             this.remarks = this.data.remarks
     }
-    salesDetailsFillForm(element) {
-        // const itemSupplierRate = this.sales.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;
-        // this.formSupplier.patchValue({
-        //     salesQuotationId: this.data.id, item_supplier_rate: itemSupplierRate
-        // });
-        const {
-            item_code,
-            qty,
-            available,
-            selling_price,
-            total
-        } = element;
-        this.formSupplier.patchValue({
-            item_code,
-            qty,
-            available,
-            selling_price,
-            total
-        });
-    }
-
-    clearSalesDetailsForm(): void {
-        this.formSupplier.patchValue({
-            item_code: '',
-            qty: '',
-            available: '',
-            selling_price: ' ',
-            total: ''
-        });
-    }
-
-    getSalesQuotationDetails() {
+    getItemsBySalesQuotationId() {
         this.salesDataSource = [];
-        this.sales = []
-        this.tableParams.salesQuotationId = this.data.id;
-        this.salesQuotationDetailsService.getSalesQuotationDetail(this.tableParams).subscribe(
-            (newSalesDetails: any[]) => {
-                this.sales.push(...newSalesDetails);
-                this.salesDataSource = new MatTableDataSource<ISalesQuotationDetailsData>(newSalesDetails);
-                if (newSalesDetails.length > 0) {
-                    this.totalRows = newSalesDetails[0].total;
-                }
+        this.salesQuotationDetailsService.getItemsBySalesQuotationId(this.data.id).subscribe(
+            (response) => {
+                this.saleItems.push(...response)
+                this.calculate();
+                this.salesDataSource = new MatTableDataSource<IItemSupplierData>(response);
             },
             (error) => {
                 this.snackBar.open(error.error.message || error.message, 'Ok', {
@@ -311,14 +259,6 @@ export class CreateQuotationComponent implements OnInit {
             },
             () => { }
         );
-    }
-    count() {
-        if (this.formSupplier.value.qty !== '') {
-            this.total = (this.formSupplier.value.qty * this.formSupplier.value.selling_price)
-            this.formSupplier.patchValue({
-                total: this.total
-            })
-        }
     }
     getItemDropDown() {
         this.selectItemLoader = true;
@@ -340,44 +280,111 @@ export class CreateQuotationComponent implements OnInit {
                 () => { }
             );
     }
-    add() {
-        this.countQty.push(this.formSupplier.value.qty)
-        this.Qty = this.countQty.reduce((acc, cur) => acc + cur, 0);
-        this.countTotal.push(this.total)
-        this.totalPrice = this.countTotal.reduce((acc, cur) => acc + Number(cur), 0)
-        this.grandDueTotal = (+this.totalPrice + +this.lastBillDue)
-    }
-    totalShippingDueCount() {
-        this.totalDue = (+this.grandDueTotal + +this.shippingPay)
 
-    }
-    totalGstDueCount() {
-        if (this.gst != 0) {
-            this.totalDue = (+this.totalDue + +this.gst)
-
-        }
-
-    }
-    fillSellingPrice(item) {
+    fillSellingPrice(itemId: number) {
+        const item = this.items.find(x => x.id === itemId)
+        this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
         this.formSupplier.patchValue({
-            item_code: item.item_code,
-            available: item.int_qty,
+            item_id: item.id,
             selling_price: item.silver
         });
     }
-    fillDueAndDueLimit(customer) {
-        this.lastBillDue = customer.balance,
-            this.dueLimit = customer.due_limit
+    supplierFillForm(itemId: number) {
+        this.isEditSalesItem = true;
+        const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
+        const { item_id, qty, selling_price, } = filteredItem;
+        this.formSupplier.patchValue({
+            item_id,
+            qty,
+            selling_price,
+        });
+        this.fillSellingPrice(itemId)
     }
-    removeSalesQuotationDetails(element): void {
-        this.salesQuotationDetailsService.removeSalesQuotationDetail(element.id).subscribe(
-            (response) => {
-                this.getSalesQuotationDetails();
-            },
-            () => { }
-        );
+
+    removeSalesQuotationDetails(itemId: number): void {
+        const filteredItems = this.saleItems.filter(x => +x.item_id !== itemId);
+        this.saleItems = filteredItems;
+        this.calculate();
+        this.salesDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
     }
-    showGst() {
-        this.isShippingChecked = true
+
+    clearSalesDetailsForm(): void {
+        this.formSupplier.patchValue({
+            item_id: '',
+            qty: '',
+            selling_price: '',
+        });
+    }
+    // getSalesById() {
+    //     this.salesService.getSalesById(this.data.id).subscribe(
+    //         (response) => {
+    //             this.salesData = response[0]
+    //             this.lastBillNo = this.salesData.bill_no;
+    //             this.formBill.value.remarks = this.salesData.remarks;
+    //             if (this.salesData.other_payment) {
+    //                 this.isShowOtherPayment = true;
+    //             }
+    //             this.formBill.patchValue({
+    //                 payment: this.salesData.payment,
+    //                 otherPayment: this.salesData.other_payment
+    //             });
+    //             this.calculate();
+    //         },
+    //         (error) => {
+    //             this.snackBar.open(error.error.message || error.message, 'Ok', {
+    //                 duration: 3000
+    //             });
+    //         },
+    //         () => { }
+    //     );
+    // }
+
+
+
+    getItemWiseTotal() {
+        if (this.formSupplier.value.qty !== '') {
+            return (+this.formSupplier.value.qty * +this.formSupplier.value.selling_price)
+        }
+        return 0;
+    }
+
+
+    hideShowGst() {
+        if (this.isShippingChecked === false) {
+            this.isShippingChecked = true
+        } else {
+            this.isShippingChecked = false;
+        }
+    }
+
+    calculate() {
+        this.totalQty = 0
+        this.total = 0;
+        this.saleItems.forEach(saleItem => {
+            this.totalQty = +this.totalQty + +saleItem.qty;
+            this.total = +this.total + (+saleItem.qty * +saleItem.selling_price);
+        });
+        this.grandDueTotal = (+this.total + +this.lastBillDue);
+        this.totalDue = +this.grandDueTotal;
+
+    }
+    getTierDropDown() {
+        this.tiersService
+            .getTierDropDown()
+            .subscribe(
+                (response) => {
+                    this.tires = response.find(x => +x.id === +this.data.tier_id);
+                    this.tier = this.tires
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
     }
 }
