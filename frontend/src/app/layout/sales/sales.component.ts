@@ -286,7 +286,7 @@ export class SalesComponent implements OnInit {
         WinPrint.print();
         window.open();
     }
-    async salesPrint(): Promise<any> {
+     salesPrint() {
         this.saleItems = [];
         this.loader = true;
         this.totalQty = 0

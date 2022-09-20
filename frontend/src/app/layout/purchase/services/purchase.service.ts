@@ -13,6 +13,7 @@ export class PurchaseService {
     private isSupplierIdInPurchaseURL = 'api/sales/isSupplierIdInPurchase';
     private getPurchaseByIdURL = 'api/purchase/getPurchaseById'
     private getSupplierByIdURL = 'api/suppliers/getSuppliersById';
+    private getPurchasePrintURL= 'api/purchase/purchasePrint';
 
     constructor(private restService: RestService, private commonService: CommonService) { }
 
@@ -49,4 +50,8 @@ export class PurchaseService {
     public getSupplierById(supplierId: number) {
         return this.restService.get<any>(`${this.getSupplierByIdURL}?supplierId=${supplierId}`);
     }
+
+    public purchasePrint(purchaseId: number) {
+        return this.restService.get<any>(`${this.getPurchasePrintURL}?purchaseId=${purchaseId}`);
+         }
 }

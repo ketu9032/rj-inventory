@@ -12,7 +12,6 @@
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-date-range-picker #picker></mat-date-range-picker>
             </mat-form-field>
-
             <!-- All supplier -->
             <mat-form-field class="margin field-width">
                 <mat-label>All Suppliers</mat-label>
@@ -142,7 +141,7 @@
                 <th mat-header-cell *matHeaderCellDef>Print</th>
                 <td mat-cell *matCellDef="let element">
                     <button mat-icon-button matTooltip="Click to PRINT" color="primary" type="button"
-                        (click)="print(element)">
+                        (click)="getPrintData(element.id)">
                         <mat-icon aria-label="PRINT" color="primary">print</mat-icon>
                     </button>
                 </td>
@@ -153,5 +152,128 @@
         <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons
             (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
         </mat-paginator>
+    </div>
+</div>
+<!-- print start -->
+<div style="display: none;">
+    <div id="print">
+        <div style="display: flex; justify-content: space-around;">
+            <span style="border: 1px solid black; padding: 5px; font-size: 14pxs; width: 1230px; margin: 0 0 0 5px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <b>{{suppliers_company| uppercase}} </b>
+                    </div>
+                    <div>
+                        <b style="float: right;">No #:- {{token}} </b> <br>
+                        {{date | date: 'd-MM '}} &nbsp; <b>{{userName | uppercase}}</b>
+                    </div>
+                </div>
+                <div style="display: flex; font-weight: bold; border-top: 1px solid black">
+                    <div style="margin-right: 16px">No.</div>
+                    <div style="margin-right: 32px">Item </div>
+                    <div style="margin-right: 27px">Qty</div>
+                    <div style="margin-right: 31px">Price </div>
+                    <div style="margin: 0 0 0 auto;">Amount </div>
+                </div>
+                <ng-container *ngFor="let item of purchaseItems; let i = index">
+                    <div *ngIf="+item.row_number_by_category_id === 1 && i !== 0"
+                        style="display: flex; border-top: 1.5px solid black;"></div>
+                    <div a-for style="display: flex; border-top: 1px solid black;">
+                        <div style="width:30px; margin: 0 8px 0 0;   ">{{ i + 1 }}</div>
+                        <div style="  width:55px; margin: 0 8px 0 0;">{{item.item_item_code}}</div>
+                        <div style="  width:45px; margin: 0 8px 0 0;">{{item.purchase_details_qty
+                            }}</div>
+                        <div style=" width:42px; margin: 0 8px 0 0;">{{item.purchase_details_selling_price
+                            }}</div>
+                        <div style="margin-left:  auto">{{+item.purchase_details_qty
+                            * +item.purchase_details_selling_price
+                            |
+                            currency: 'INR'}}</div>
+                    </div>
+                </ng-container>
+                <div style="border-top: 1px solid black;"></div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div><b>Total Qty: {{totalQty}}</b></div>
+                    <br>
+                    <div>
+                        <b>Total: {{total | currency: 'INR'}}</b>
+                    </div>
+                </div>
+                <div style="float: right;">
+                    LB Due: {{lastDue | currency: 'INR'}}
+                </div>
+                <br>
+                <div style="border-top: 2px solid black;"></div>
+                <div style="float: right; "><b> Grand Total : {{+total + +lastDue | currency: 'INR'}}</b></div><br>
+                <div style="float: right;">Payment: {{payment | currency: 'INR'}}</div><br>
+                <div style="float: right;">Other Payment: {{other_payment | currency: 'INR'}}</div><br>
+                <div style="border-top: 2px solid black;">
+                    <div style="float: right;">
+                        <b> Total Due: {{+total + +lastDue - +payment | currency: 'INR'}}</b>
+                    </div><br>
+                    <div>
+                        <b>Remarks: </b>{{remarks}}
+                    </div>
+                </div>
+            </span>
+            <span style="border: 1px solid black; padding: 5px; font-size: 14pxs; width: 1230px; margin: 0 0 0 5px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <b>{{suppliers_company| uppercase}} </b>
+                    </div>
+                    <div>
+                        <b style="float: right;">No #:- {{token}} </b> <br>
+                        {{date | date: 'd-MM '}} &nbsp; <b>{{userName | uppercase}}</b>
+                    </div>
+                </div>
+                <div style="display: flex; font-weight: bold; border-top: 1px solid black">
+                    <div style="margin-right: 16px">No.</div>
+                    <div style="margin-right: 32px">Item </div>
+                    <div style="margin-right: 27px">Qty</div>
+                    <div style="margin-right: 31px">Price </div>
+                    <div style="margin: 0 0 0 auto;">Amount </div>
+                </div>
+                <ng-container *ngFor="let item of purchaseItems; let i = index">
+                    <div *ngIf="+item.row_number_by_category_id === 1 && i !== 0"
+                        style="display: flex; border-top: 1.5px solid black;"></div>
+                    <div a-for style="display: flex; border-top: 1px solid black;">
+                        <div style="width:30px; margin: 0 8px 0 0;   ">{{ i + 1 }}</div>
+                        <div style="  width:55px; margin: 0 8px 0 0;">{{item.item_item_code}}</div>
+                        <div style="  width:45px; margin: 0 8px 0 0;">{{item.purchase_details_qty
+                            }}</div>
+                        <div style=" width:42px; margin: 0 8px 0 0;">{{item.purchase_details_selling_price
+                            }}</div>
+                        <div style="margin-left:  auto">{{+item.purchase_details_qty
+                            * +item.purchase_details_selling_price
+                            |
+                            currency: 'INR'}}</div>
+                    </div>
+                </ng-container>
+                <div style="border-top: 1px solid black;"></div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div><b>Total Qty: {{totalQty}}</b></div>
+                    <br>
+                    <div>
+                        <b>Total: {{total | currency: 'INR'}}</b>
+                    </div>
+                </div>
+                <div style="float: right;">
+                    LB Due: {{lastDue | currency: 'INR'}}
+                </div>
+                <br>
+                <div style="border-top: 2px solid black;"></div>
+                <div style="float: right; "><b> Grand Total : {{+total + +lastDue | currency: 'INR'}}</b></div><br>
+                <div style="float: right;">Payment: {{payment | currency: 'INR'}}</div><br>
+                <div style="float: right;">Other Payment: {{other_payment | currency: 'INR'}}</div><br>
+                <div style="border-top: 2px solid black;">
+                    <div style="float: right;">
+                        <b> Total Due: {{+total + +lastDue - +payment | currency: 'INR'}}</b>
+                    </div><br>
+                    <div>
+                        <b>Remarks: </b>{{remarks}}
+                    </div>
+                </div>
+            </span>
+        </div>
     </div>
 </div>
