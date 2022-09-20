@@ -14,9 +14,7 @@ exports.findAll = async (req, res) => {
       toDate,
       userId
     } = req.query;
-
     let searchQuery = 'where true';
-
     if (fromDate && toDate) {
       searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
     }
@@ -317,7 +315,6 @@ exports.updateValue = async (
     let existingItemsCost = 0;
     const query1 = `select qty, selling_price, item_id from sales_bill where sales_id = ${salesId}`;
     const existingItemResponse = await pool.query(query1);
-
     const existingItems = existingItemResponse.rows;
     for (let index = 0; index < existingItems.length; index++) {
       const item = existingItems[index];
@@ -328,7 +325,6 @@ exports.updateValue = async (
     }
     const query3 = `delete from sales_bill where sales_id = ${salesId};`;
     await pool.query(query3);
-
     for (let index = 0; index < salesItemDetails.length; index++) {
       const element = salesItemDetails[index];
       const query4 = `INSERT INTO sales_bill
@@ -380,7 +376,6 @@ exports.updateValue = async (
         cdf_total_due = (COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(payment,0) - ${existingPayment} + ${payment})
       where id = ${customerId} returning cdf_total_due`;
     await pool.query(query6);
-
     let query8 = `update users set balance = balance - ${existingPayment} - ${existingOtherPayment} + ${+payment}  + ${
       +otherPayment ? otherPayment : 0
     }  where id = ${loggedInUserId}`;
@@ -401,7 +396,6 @@ exports.isCustomerIdInSales = async (req, res) => {
     });
   }
 };
-
 exports.salesPrint = async (req, res) => {
   try {
     const { salesId } = req.query;
@@ -409,6 +403,7 @@ exports.salesPrint = async (req, res) => {
     categories.name as category_name,
      categories.id as categories_id,
         s.id,
+        row_number() OVER (PARTITION BY categories.id order by categories.id desc) as row_number_by_category_id,
         s.date,
         bill_no,
         tier,
@@ -426,8 +421,6 @@ exports.salesPrint = async (req, res) => {
         sales_bill.qty as sales_bill_qty,
         sales_bill.selling_price as sales_bill_selling_price,
         item.item_code as item_item_code
-
-
       FROM sales s
       join cdf as cdf
       on cdf.id = s.customer_id

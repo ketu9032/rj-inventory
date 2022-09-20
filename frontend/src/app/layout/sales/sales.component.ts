@@ -8,12 +8,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ISalesData } from 'src/app/models/sales';
-import { ISalesBillData } from 'src/app/models/sales_bill';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { UserService } from '../user/services/user.service';
 import { AddSalesComponent } from './add-sales/add-sales.component';
-import { PrintComponent } from './print/print.component';
 import { SalesBillService } from './services/sales-bill.service';
 import { SalesService } from './services/sales.service';
 @Component({
@@ -85,8 +83,7 @@ export class SalesComponent implements OnInit {
     tier: string; selling_price: number;
     salesId: number;
     date = new Date();
-
-isPrintHide:boolean = false;
+    isPrintHide: boolean = false;
     salesItemDataSource: any = [];
     saleItems = [];
     salesData = [];
@@ -289,36 +286,38 @@ isPrintHide:boolean = false;
         WinPrint.print();
         window.open();
     }
-
-    salesPrint() {
+    async salesPrint(): Promise<any> {
         this.saleItems = [];
         this.loader = true;
         this.totalQty = 0
         this.total = 0;
-        this.salesService.salesPrint(this.salesId).subscribe(
-            (response) => {
-                this.saleItems = response;
-                this.token = this.saleItems[0].token;
-                this.customer = this.saleItems[0].customer;
-                this.payment = this.saleItems[0].payment;
-                this.other_payment = this.saleItems[0].other_payment
-                this.userName = this.saleItems[0].user_name;
-                this.tier = this.saleItems[0].tier;
-                this.remarks = this.saleItems[0].remarks;
-                this.lastDue = this.saleItems[0].past_due;
-                this.saleItems.forEach(saleItem => {
-                    this.totalQty = +this.totalQty + +saleItem.sales_bill_qty;
-                    this.total = +this.total + (+saleItem.sales_bill_qty * +saleItem.sales_bill_selling_price);
-                })
-this.print();
-
-            },
-            (error) => {
-                this.snackBar.open(error.error.message || error.message, 'Ok', {
-                    duration: 3000
-                });
-            },
-            () => { }
-        );
+        this.salesService.salesPrint(this.salesId)
+            .subscribe(
+                (response) => {
+                    this.loader = false;
+                    this.saleItems = response;
+                    this.token = this.saleItems[0].token;
+                    this.customer = this.saleItems[0].customer;
+                    this.payment = this.saleItems[0].payment;
+                    this.other_payment = this.saleItems[0].other_payment
+                    this.userName = this.saleItems[0].user_name;
+                    this.tier = this.saleItems[0].tier;
+                    this.remarks = this.saleItems[0].remarks;
+                    this.lastDue = this.saleItems[0].past_due;
+                    this.saleItems.forEach(saleItem => {
+                        this.totalQty = +this.totalQty + +saleItem.sales_bill_qty;
+                        this.total = +this.total + (+saleItem.sales_bill_qty * +saleItem.sales_bill_selling_price);
+                    })
+                    setTimeout(() => {
+                        this.print();
+                    }, 0);
+                },
+                (error) => {
+                    this.snackBar.open(error.error.message || error.message, 'Ok', {
+                        duration: 3000
+                    });
+                },
+                () => { }
+            );
     }
 }
