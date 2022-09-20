@@ -145,84 +145,69 @@
             </mat-paginator>
         </div>
     </div>
-    <!-- print start -->
+
+<!-- print start -->
 <div style="display: none;">
     <div id="print">
         <div style="display: flex; justify-content: space-around;">
-            <span style="border: 1px solid black; padding:0 5px 0 0 ;
-                         font-size: 14pxs; width: 1230px; margin: 0 5px;">
+            <span style="border: 1px solid black; padding: 5px; font-size: 14pxs; width: 1230px; margin: 0 0 0 5px;">
                 <div style="display: flex; justify-content: space-between;">
                     <div>
-                        <b>{{customer | uppercase}} </b><br />
-
+                        <b>{{remarks| uppercase}} </b>
                     </div>
-
                     <div>
-                        <b style="float: right;">No #:- {{token}} </b> <br>
-                        {{currentDate }}
+                        <b style="float: right;">No #:- {{sr}} </b> <br>
+                        {{date | date: 'MMM d, y, h:mm:ss a' }}
                     </div>
                 </div>
-
-
                 <div style="display: flex; font-weight: bold; border-top: 1px solid black">
                     <div style="margin-right: 16px">No.</div>
                     <div style="margin-right: 32px">Item </div>
-                    <div style="margin-right: 26px">Qty</div>
-                    <div style="margin-right: 21px">Price </div>
-                    <div style="margin: 0 0  0 auto">Amount </div>
+                    <div style="margin-right: 27px">Qty</div>
+                    <div style="margin-right: 31px">Price </div>
+                    <div style="margin: 0 0 0 auto;">Amount </div>
                 </div>
-                <ng-container *ngFor="let item of saleItems; let i = index">
+                <ng-container *ngFor="let item of salesQuotationItems; let i = index">
+                    <div *ngIf="+item.row_number_by_category_id === 1 && i !== 0"
+                        style="display: flex; border-top: 1px solid black;"></div>
                     <div a-for style="display: flex; border-top: 1px solid black;">
-                        <div style="  width:30px; margin: 0 8px 0 0;">{{i + 99 }}</div>
-                        <div style="  width:55px; margin: 0 8px 0 0;">{{item.item_code}}</div>
-                        <div style="  width:45px; margin: 0 8px 0 0;">{{item.qty}}</div>
-                        <div style="  width:42px; margin: 0 8px 0 0;">{{item.selling_price}}</div>
-                        <div style="margin-left:auto;">{{+item.qty * +item.selling_price | currency: 'INR'}}</div>
+                        <div style="width:30px; margin: 0 8px 0 0;   ">{{ i + 1 }}</div>
+                        <div style="  width:55px; margin: 0 8px 0 0;">{{item.item_item_code}}</div>
+                        <div style="  width:45px; margin: 0 8px 0 0;">{{item.sales_quotation_details_qty
+                            }}</div>
+                        <div style=" width:42px; margin: 0 8px 0 0;">{{item.sales_quotation_details_selling_price
+                            }}</div>
+                        <div style="margin-left:  auto">{{+item.sales_quotation_details_qty
+                            * +item.sales_quotation_details_selling_price
+                            |
+                            currency: 'INR'}}</div>
                     </div>
-
-
-                    <div a-for style="display: flex; border-top: 1px solid black;">
-                        <div style="    margin-right: 20px;">{{i + 998 }}</div>
-                        <div style="    margin-right: 5px;">{{item.item_code}}</div>
-                        <input style="    margin-right: 15px;" type="checkbox">
-                        <div style="    margin-right: 17px;">{{item.qty}}</div>
-                        <input style="    margin-right: 17px;" type="checkbox">
-                        <div style="    margin: 8px;">{{item.selling_price}}</div>
-                        <div style="margin-left: 14px;">{{+item.qty * +item.selling_price | currency: 'INR'}}</div>
-                    </div>
-                </ng-container> -->
+                </ng-container>
                 <div style="border-top: 1px solid black;"></div>
                 <div style="display: flex; justify-content: space-between;">
                     <div><b>Total Qty: {{totalQty}}</b></div>
                     <br>
                     <div>
-                        <div>
-                            <b>Total: {{total | currency: 'INR'}}</b>
-                        </div>
+                        <b>Total: {{total | currency: 'INR'}}</b>
                     </div>
                 </div>
                 <div style="float: right;">
-                    LB Due {{lastDue | currency: 'INR'}}
+                    LB Due: {{lastDue | currency: 'INR'}}
                 </div>
                 <br>
                 <div style="border-top: 2px solid black;"></div>
-                <div style="display: flex; justify-content: space-between;">
-                    <div>
-                        <div><b> SP:</b> ___________ </div>
-                        <div><b> Verifier:</b> ___________ </div>
-                    </div>
-                    <div>
-                        <div style="float: right; "><b> Grand Total : {{grandDueTotal | currency: 'INR'}}</b></div><br>
-                        <div style="float: right;">Shipping: {{shipping | currency: 'INR'}}</div><br>
-                        <div style="float: right;">GST: {{gst | currency: 'INR'}}</div><br>
-                    </div>
-                </div>
+                <div style="float: right; "><b> Grand Total : {{+total + +lastDue | currency: 'INR'}}</b></div><br>
+                <div style="float: right;">Shipping: {{shipping | currency: 'INR'}}</div><br>
+                <div style="float: right;">GST: {{gst | currency: 'INR'}}</div><br>
                 <div style="border-top: 2px solid black;">
                     <div style="float: right;">
-                        <b> Total Due: {{totalDue | currency: 'INR'}}</b>
+                        <b> Total Due: {{(+total + +lastDue) + (+shipping === 0 ? +0  : +shipping) + (gst === 0 ? +0 : +gst) | currency: 'INR'}}</b>
                     </div>
+
+
                 </div>
             </span>
+
         </div>
     </div>
 </div>

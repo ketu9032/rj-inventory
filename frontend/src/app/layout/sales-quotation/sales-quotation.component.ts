@@ -6,15 +6,12 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { ISalesQuotationData } from 'src/app/models/sales-quotation';
-import { ISalesQuotationDetailsData } from 'src/app/models/sales-quotation-details';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { TiersService } from '../customers/services/tiers.service';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
 import { DeleteQuotationComponent } from './delete-quotation/delete-quotation.component';
 import { MoveSalesComponent } from './move-sales/move-sales.component';
-import { PrintComponent } from './print/print.component';
-import { salesQuotationDetailsService } from './services/sales-quotation-details.service';
 import { salesQuotationService } from './services/sales-quotation.service';
 @Component({
     selector: 'app-sales-quotation',
@@ -61,27 +58,24 @@ export class SalesQuotationComponent implements OnInit {
     tires = [];
     fromDate: string;
     toDate: string;
-    customer: string;
-    token: number;
-    currentDate = new Date();
-    totalQty:  number;
-    total: number;
-    lastDue: number;
+    sr: number;
+    totalQty: number = 0;
+    total: number = 0;
+    lastDue: number = 0;
     grandDueTotal: number;
     shipping: number;
     gst: number;
     totalDue: number;
-    salesId: number;
-    salesDataSource: any = [];
-    salesData= [];
-    saleItems = [];
+    remarks: string;
+    salesQuotationId: number;
+    salesQuotationItems = [];
+    date: string;
 
     constructor(
         public dialog: MatDialog,
         private salesQuotationService: salesQuotationService,
         private tiersService: TiersService,
         public snackBar: MatSnackBar,
-        private salesQuotationDetailsService: salesQuotationDetailsService
     ) { }
     ngOnInit(): void {
         this.getTierDropDown()
@@ -117,7 +111,7 @@ export class SalesQuotationComponent implements OnInit {
             this.tableParams.tireId = '';
 
         }
-    console.log(this.tableParams.tireId);
+
 
 
         this.salesQuotationService.getSalesQuotation(this.tableParams).subscribe(
@@ -239,8 +233,8 @@ export class SalesQuotationComponent implements OnInit {
         this.getSalesQuotation();
     }
     getPrintData(id: number ) {
-        this.salesId = id;
-        //   this.getSalesQuotationDetails();
+        this.salesQuotationId = id;
+        this.salesQuotationPrint();
   }
     print() {
         let prtContent = document.getElementById("print");
@@ -250,24 +244,38 @@ export class SalesQuotationComponent implements OnInit {
         WinPrint.focus();
         WinPrint.print();
         window.open();
-        this.salesId = null;
     }
-    // getSalesQuotationDetails() {
-    //     this.saleItems = [];
-    //     this.salesQuotationDetailsService.getSalesQuotationDetail(this.salesId).subscribe(
-    //         (newSalesDetails: any[]) => {
-    //             this.saleItems.push(...newSalesDetails);
-    //             this.salesDataSource = new MatTableDataSource<ISalesQuotationDetailsData>(newSalesDetails);
-    //             if (newSalesDetails.length > 0) {
-    //                 this.totalRows = newSalesDetails[0].total;
-    //             }
-    //         },
-    //         (error) => {
-    //             this.snackBar.open(error.error.message || error.message, 'Ok', {
-    //                 duration: 3000
-    //             });
-    //         },
-    //         () => { }
-    //     );
-    // }
+    salesQuotationPrint() {
+        this.salesQuotationItems = [];
+        this.loader = true;
+        this.totalQty = 0
+        this.total = 0;
+        this.salesQuotationService.salesQuotationPrint(this.salesQuotationId)
+            .subscribe(
+                (response) => {
+                    this.loader = false;
+                    this.salesQuotationItems = response;
+                    this.sr = this.salesQuotationItems[0].sr;
+                    this.date = this.salesQuotationItems[0].date;
+                    this.shipping = this.salesQuotationItems[0].shipping;
+                    this.gst = this.salesQuotationItems[0].gst;
+                    this.remarks = this.salesQuotationItems[0].remarks;
+                    this.lastDue = this.salesQuotationItems[0].past_due;
+                    this.salesQuotationItems.forEach(salesQuotationItems => {
+                        this.totalQty = +this.totalQty + +salesQuotationItems.sales_quotation_details_qty;
+                        this.total = +this.total + (+salesQuotationItems.sales_quotation_details_qty * +salesQuotationItems.sales_quotation_details_selling_price);
+                    })
+                    setTimeout(() => {
+                        this.print();
+                    }, 0);
+                },
+                (error) => {
+                    this.snackBar.open(error.error.message || error.message, 'Ok', {
+                        duration: 3000
+                    });
+                },
+                () => { }
+            );
+    }
+
 }

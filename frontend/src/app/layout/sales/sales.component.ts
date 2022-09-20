@@ -80,7 +80,8 @@ export class SalesComponent implements OnInit {
     userName: string;
     item_code: string;
     customer: string
-    tier: string; selling_price: number;
+    tier: string;
+     selling_price: number;
     salesId: number;
     date = new Date();
     isPrintHide: boolean = false;

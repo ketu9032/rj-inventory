@@ -11,10 +11,9 @@ import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { AddPurchaseComponent } from './add-purchase/add-purchase.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { PrintComponent } from './print/print.component';
 
 @NgModule({
-    declarations: [PurchaseComponent, AddPurchaseComponent, PrintComponent],
+    declarations: [PurchaseComponent, AddPurchaseComponent],
     imports: [
         CommonModule,
         PurchaseRoutingModule,
