@@ -47,7 +47,7 @@
             <ng-container matColumnDef="company">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Company</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.company }}
+                    {{ element.company | uppercase}}
                 </td>
             </ng-container>
             <ng-container matColumnDef="purchase_price">

@@ -183,9 +183,7 @@
                         <div style=" width:42px; margin: 0 8px 0 0;">{{item.sales_quotation_details_selling_price
                             }}</div>
                         <div style="margin-left:  auto">{{+item.sales_quotation_details_qty
-                            * +item.sales_quotation_details_selling_price
-                            |
-                            currency: 'INR'}}</div>
+                            * +item.sales_quotation_details_selling_price | currency: 'INR'}}</div>
                     </div>
                 </ng-container>
                 <div style="border-top: 1px solid black;"></div>
@@ -196,23 +194,16 @@
                         <b>Total: {{total | currency: 'INR'}}</b>
                     </div>
                 </div>
-                <div style="float: right;">
-                    LB Due: {{lastDue | currency: 'INR'}}
-                </div>
-                <br>
                 <div style="border-top: 2px solid black;"></div>
-                <div style="float: right; "><b> Grand Total : {{+total + +lastDue | currency: 'INR'}}</b></div><br>
+                <div style="float: right; "><b> Grand Total : {{total | currency: 'INR'}}</b></div><br>
                 <div style="float: right;">Shipping: {{shipping | currency: 'INR'}}</div><br>
                 <div style="float: right;">GST: {{gst | currency: 'INR'}}</div><br>
                 <div style="border-top: 2px solid black;">
                     <div style="float: right;">
-                        <b> Total Due: {{(+total + +lastDue) + (+shipping === 0 ? +0  : +shipping) + (gst === 0 ? +0 : +gst) | currency: 'INR'}}</b>
+                        <b> Total Due: {{+total + (+shipping === 0 ? +0  : +shipping) + (gst === 0 ? +0 : +gst) | currency: 'INR'}}</b>
                     </div>
-
-
                 </div>
             </span>
-
         </div>
     </div>
 </div>

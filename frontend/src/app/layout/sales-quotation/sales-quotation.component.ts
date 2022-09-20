@@ -264,7 +264,6 @@ export class SalesQuotationComponent implements OnInit {
                     this.shipping = this.salesQuotationItems[0].shipping;
                     this.gst = this.salesQuotationItems[0].gst;
                     this.remarks = this.salesQuotationItems[0].remarks;
-                    this.lastDue = this.salesQuotationItems[0].past_due;
                     this.salesQuotationItems.forEach(salesQuotationItems => {
                         this.totalQty = +this.totalQty + +salesQuotationItems.sales_quotation_details_qty;
                         this.total = +this.total + (+salesQuotationItems.sales_quotation_details_qty * +salesQuotationItems.sales_quotation_details_selling_price);

@@ -31,7 +31,7 @@
         <ng-container matColumnDef="code">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
             <td mat-cell *matCellDef="let element">
-                {{ element.code }}
+                {{ element.code | uppercase }}
             </td>
         </ng-container>
         <ng-container matColumnDef="action">

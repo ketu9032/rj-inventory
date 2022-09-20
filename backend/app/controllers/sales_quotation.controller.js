@@ -28,7 +28,7 @@ exports.findAll = async (req, res) => {
         (
            sr::text ilike '%${search}%'
           or s.date::text ilike '%${search}%'
-          or invoice_no::text ilike '%${search}%'
+
           or qty::text ilike '%${search}%'
           or amount::text ilike '%${search}%'
           or total_due::text ilike '%${search}%'
@@ -42,23 +42,25 @@ exports.findAll = async (req, res) => {
     searchQuery += ` and s.is_active = ${active}`;
     const query = `  SELECT
       Count(s.id) OVER() AS total,
-      s.id,
-      sr,
-      s.date,
-      invoice_no,
-      qty,
-      amount,
-      total_due,
-      shipping,
-      gst,
+        s.id,
+        sr,
+        s.date,
 
-     user_name,
-      remarks,
-      tier_id,
-      tiers.code as tier_code
+        qty,
+        amount,
+        total_due,
+        shipping,
+        gst,
+        user_id,
+        users.user_name as user_name,
+        remarks,
+        tier_id,
+        tiers.code as tier_code
       FROM sales_quotation s
       full JOIN tiers as tiers
-       on tiers.id = s.tier_id
+        on tiers.id = s.tier_id
+      full join users as users
+        on users.id = s.user_id
 
 
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
