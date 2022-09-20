@@ -116,7 +116,7 @@ export class CreateQuotationComponent implements OnInit {
         this.formBill = this.formBuilder.group({
             shipping: [0],
             gst: [0],
-            remarks: [' ']
+            remarks: ['', Validators.required]
         });
     }
     saveSalesQuotation(): void {
