@@ -62,7 +62,6 @@ exports.findAll = async (req, res) => {
 
 
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
-   console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -133,7 +132,6 @@ exports.add = async (req, res) => {
      )
     VALUES(now(), ${tier_id}, ${qty}, ${amount}, ${total_due}, ${shipping},${gst},'${user_name}', '${remarks}') returning id;`;
 
-    console.log(insertSalesQuotationQuery);
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesQuotationId = rows[0].id;
     for (let index = 0; index < sales.length; index++) {
@@ -147,7 +145,6 @@ exports.add = async (req, res) => {
       )
         VALUES(${element.item_id}, ${element.qty},  ${element.selling_price}, ${salesQuotationId}) ;
         `;
-      console.log(insertSalesQuotationDetailsQuery);
       await pool.query(insertSalesQuotationDetailsQuery);
 
     }
@@ -190,7 +187,6 @@ exports.update = async (req, res) => {
     // }
     const updateSalesQuotationQuery = `UPDATE sales_quotation
     SET date= now(), qty=${qty}, amount=${amount}, total_due=${total_due},shipping=${shipping},gst=${gst}, tier_id=${tier_id}, remarks='${remarks}' where id = ${id};`;
-    console.log(updateSalesQuotationQuery);
     await pool.query(updateSalesQuotationQuery);
     //
         // const { updateRows } = await pool.query(updateSalesQuotationQuery);
@@ -265,7 +261,6 @@ exports.salesQuotationPrint = async (req, res) => {
     	 on categories.id = item.category_id
          where s.is_active = true and s.id = ${ salesQuotationId }
   order by categories.name asc `;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

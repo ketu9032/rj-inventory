@@ -173,11 +173,6 @@ export class AddItemComponent implements OnInit {
         });
     }
     itemSupplierDelete(id: number) {
-        console.log(this.suppliers);
-
-
-
-
     }
     supplierFillForm(suppliersId) {
         const itemSupplierRate = this.suppliers.find(x => +x.suppliers_id === +suppliersId).item_supplier_rate;

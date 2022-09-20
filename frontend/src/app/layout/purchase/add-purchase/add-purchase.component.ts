@@ -96,14 +96,12 @@ export class AddPurchaseComponent implements OnInit {
         public authService: AuthService
     ) { }
     ngOnInit() {
-        console.log(this.data.pastDue);
-
         this.loggedInUser = this.authService.getUserData();
         this.getSuppliersDropDown();
         this.initializeSupplierForm();
         this.initializeSalesBillForm();
         this.getItemDropDown();
-        // this.getSupplierById();
+         // this.getSupplierById();
         if (this.data.purchaseId) {
             this.getItemByPurchaseId()
             this.getPurchaseById();
