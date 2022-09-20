@@ -9,11 +9,9 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { IPurchaseData } from 'src/app/models/purchase';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { ItemsService } from '../items/services/items.service';
 import { SalesService } from '../sales/services/sales.service';
 import { UserService } from '../user/services/user.service';
 import { AddPurchaseComponent } from './add-purchase/add-purchase.component';
-import { PrintComponent } from './print/print.component';
 import { PurchaseService } from './services/purchase.service';
 
 @Component({
@@ -69,6 +67,27 @@ export class PurchaseComponent implements OnInit {
     toDate: string;
     userData = [];
     userId?: number;
+    sr: number;
+    token: number;
+    qty: number;
+    item: string;
+    price: number;
+    amount: number;
+    totalQty: number = 0;
+    total: number = 0;
+    lastDue: number = 0;
+    grandDueTotal: number;
+    other_payment: number;
+    totalDue: number;
+    remarks: string;
+    userName: string;
+    item_code: string;
+    suppliers_company: string
+    tier: string;
+    selling_price: number;
+    purchaseId: number;
+    purchaseItems = [];
+    date: string;
 
 
     loggedInUsersData: any;
@@ -212,20 +231,7 @@ export class PurchaseComponent implements OnInit {
         }
     }
 
-    print(element) {
-        this.dialog
-            .open(PrintComponent, {
-                width: '1000px',
-                height: 'auto',
-                data: element
-            })
-            .afterClosed()
-            .subscribe((result) => {
-                if (result) {
-                    this.getPurchase();
-                }
-            });
-    }
+
 
 
     getSuppliersDropDown() {
@@ -281,5 +287,56 @@ export class PurchaseComponent implements OnInit {
         this.tableParams.selectSupplierId = '';
         this.tableParams.userId = '';
         this.getPurchase();
+    }
+
+    getPrintData(id: number) {
+        this.purchaseId = id;
+        this.purchasePrint();
+    }
+    print() {
+        let prtContent = document.getElementById("print");
+        let WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+        WinPrint.document.write(prtContent.innerHTML);
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        window.open();
+    }
+    purchasePrint() {
+        this.purchaseItems = [];
+        this.loader = true;
+        this.totalQty = 0
+        this.total = 0;
+        this.purchaseService.purchasePrint(this.purchaseId)
+            .subscribe(
+                (response) => {
+
+                    this.loader = false;
+                    this.purchaseItems = response;
+                    console.log(this.purchaseItems);
+                    this.token = this.purchaseItems[0].token;
+                    this.suppliers_company = this.purchaseItems[0].suppliers_company;
+                    this.date = this.purchaseItems[0].date;
+                    this.payment = this.purchaseItems[0].payment;
+                    this.other_payment = this.purchaseItems[0].other_payment
+                    this.userName = this.purchaseItems[0].user_name;
+                    this.tier = this.purchaseItems[0].tier;
+                    this.remarks = this.purchaseItems[0].remarks;
+                    this.lastDue = this.purchaseItems[0].past_due;
+                    this.purchaseItems.forEach(purchaseItems => {
+                        this.totalQty = +this.totalQty + +purchaseItems.purchase_details_qty;
+                        this.total = +this.total + (+purchaseItems.purchase_details_qty * +purchaseItems.purchase_details_selling_price);
+                    })
+                    setTimeout(() => {
+                        this.print();
+                    }, 0);
+                },
+                (error) => {
+                    this.snackBar.open(error.error.message || error.message, 'Ok', {
+                        duration: 3000
+                    });
+                },
+                () => { }
+            );
     }
 }

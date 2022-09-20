@@ -51,13 +51,15 @@ exports.findAll = async (req, res) => {
       total_due,
       shipping,
       gst,
-      user_name,
+
+     user_name,
       remarks,
       tier_id,
       tiers.code as tier_code
       FROM sales_quotation s
       full JOIN tiers as tiers
        on tiers.id = s.tier_id
+
 
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
    console.log(query);
@@ -227,6 +229,45 @@ exports.changeStatus = async (req, res) => {
     await pool.query(`UPDATE sales_quotation
       SET is_active = ${status} where "id" = '${id}'`);
     res.status(STATUS_CODE.SUCCESS).send();
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+
+exports.salesQuotationPrint = async (req, res) => {
+  try {
+    const { salesQuotationId } = req.query;
+    const query = `  SELECT
+    categories.name as category_name,
+     categories.id as categories_id,
+        s.id,
+        row_number() OVER (PARTITION BY categories.id order by categories.id desc) as row_number_by_category_id,
+        s.date,
+        s.sr,
+        user_id,
+        remarks,
+ 	      shipping,
+	    	gst,
+        s.total_due as past_due,
+        sales_quotation_details.item_id as sales_quotation_details_item_id,
+        sales_quotation_details.qty as sales_quotation_details_qty,
+        sales_quotation_details.selling_price as sales_quotation_details_selling_price,
+        item.item_code as item_item_code
+       FROM sales_quotation s
+     join sales_quotation_details
+    	 on sales_quotation_details.sales_quotation_id = s.id
+     join item
+   	   on sales_quotation_details.item_id = item.id
+     join categories
+    	 on categories.id = item.category_id
+         where s.is_active = true and s.id = ${ salesQuotationId }
+  order by categories.name asc `;
+    console.log(query);
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR

@@ -146,6 +146,8 @@ router.get('/api/sales_quotation', sales_quotation.findAll);
 router.post('/api/sales_quotation', sales_quotation.add);
 router.put('/api/sales_quotation', sales_quotation.update);
 router.put('/api/sales_quotation/changeStatus', sales_quotation.changeStatus);
+router.get('/api/sales_quotation/salesQuotationPrint', sales_quotation.salesQuotationPrint);
+
 
 router.delete('/api/sales_quotation_detail', sales_quotation_detail.delete);
 router.get('/api/sales_quotation_detail', sales_quotation_detail.findAll);
@@ -158,10 +160,8 @@ router.post('/api/purchase', purchase.add);
 router.put('/api/purchase', purchase.update);
 router.put('/api/purchase/changeStatus', purchase.changeStatus);
 router.get('/api/purchase/getPurchaseById', purchase.getPurchaseById);
-router.get(
-  '/api/purchase/isSupplierIdInPurchase',
-  purchase.isSupplierIdInPurchase
-);
+router.get('/api/purchase/isSupplierIdInPurchase', purchase.isSupplierIdInPurchase);
+router.get('/api/purchase/purchasePrint', purchase.purchasePrint);
 
 router.delete('/api/purchase_details', purchase_details.delete);
 router.get('/api/purchase_details', purchase_details.findAll);

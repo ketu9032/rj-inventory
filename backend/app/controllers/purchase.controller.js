@@ -390,3 +390,50 @@ exports.updateValue = async (
     throw new Error(error.message || MESSAGES.COMMON.ERROR);
   }
 };
+
+exports.purchasePrint = async (req, res) => {
+  try {
+    const { purchaseId } = req.query;
+    const query = `  SELECT
+    categories.name as category_name,
+     categories.id as categories_id,
+        p.id,
+        row_number() OVER (PARTITION BY categories.id order by categories.id desc) as row_number_by_category_id,
+        p.date,
+        bill_no,
+        user_id,
+        remarks,
+        p.payment,
+        suppliers_id,
+        suppliers.company as suppliers_company,
+        other_payment,
+        token,
+		    user_id,
+        users.user_name as user_name,
+        p.past_due as past_due,
+        purchase_details.item_id as purchase_item_id,
+        purchase_details.qty as purchase_details_qty,
+        purchase_details.selling_price as purchase_details_selling_price,
+        item.item_code as item_item_code
+       FROM purchase p
+     join suppliers as suppliers
+      on suppliers.id = P.suppliers_id
+     join users as users
+      on users.id = p.user_id
+     join purchase_details
+       on purchase_details.purchase_id = p.id
+     join item
+       on purchase_details.item_id = item.id
+     join categories
+       on categories.id = item.category_id
+       where p.is_active = true and p.id = ${ purchaseId }
+       order by categories.name asc ; `;
+    console.log(query);
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};

@@ -80,7 +80,8 @@ export class SalesComponent implements OnInit {
     userName: string;
     item_code: string;
     customer: string
-    tier: string; selling_price: number;
+    tier: string;
+     selling_price: number;
     salesId: number;
     date = new Date();
     isPrintHide: boolean = false;
@@ -286,7 +287,7 @@ export class SalesComponent implements OnInit {
         WinPrint.print();
         window.open();
     }
-    async salesPrint(): Promise<any> {
+     salesPrint() {
         this.saleItems = [];
         this.loader = true;
         this.totalQty = 0
