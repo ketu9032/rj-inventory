@@ -45,25 +45,50 @@ exports.findAll = async (req, res) => {
         s.id,
         sr,
         s.date,
-
-        qty,
-        amount,
-        total_due,
+s.qty,
         shipping,
         gst,
         user_id,
         users.user_name as user_name,
         remarks,
         tier_id,
-        tiers.code as tier_code
+        tiers.code as tier_code,
+
+        sum(COALESCE(sqd.qty,0) * COALESCE(sqd.selling_price,0))  as amount,
+
+        sum(COALESCE(sqd.qty,0) * COALESCE(sqd.selling_price,0)) + COALESCE(shipping,0) + COALESCE(gst,0) as total_due
+
       FROM sales_quotation s
-      full JOIN tiers as tiers
+       join sales_quotation_details as sqd
+       on  sqd.sales_quotation_id = s.id
+       JOIN tiers as tiers
         on tiers.id = s.tier_id
-      full join users as users
+      join users as users
         on users.id = s.user_id
 
+        group by
+         s.id,
+         s.date,
+         sr,
+s.qty,
 
-     ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+         shipping,
+         gst,
+         users.user_name,
+         remarks,
+         s.date,
+
+         shipping,
+         gst,
+         user_id,
+         users.user_name,
+         remarks,
+         tier_id,
+         tiers.code
+
+
+       --  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
+   `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -96,11 +121,9 @@ exports.add = async (req, res) => {
 
       tier_id,
       qty,
-      amount,
-      total_due,
       shipping,
       gst,
-      user_name,
+      user_id,
       remarks,
       sales
     } = req.body;
@@ -124,15 +147,13 @@ exports.add = async (req, res) => {
     (
         date,
         tier_id,
-        qty,
-        amount,
-        total_due,
         shipping,
+        qty,
         gst,
-        user_name,
+        user_id,
         remarks
      )
-    VALUES(now(), ${tier_id}, ${qty}, ${amount}, ${total_due}, ${shipping},${gst},'${user_name}', '${remarks}') returning id;`;
+    VALUES(now(), ${tier_id}, ${shipping}, ${qty},${gst},'${user_id}', '${remarks}') returning id;`;
 
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesQuotationId = rows[0].id;
@@ -166,7 +187,7 @@ exports.update = async (req, res) => {
       total_due,
       shipping,
       gst,
-      user_name,
+
       tier_id,
       remarks,
       sales

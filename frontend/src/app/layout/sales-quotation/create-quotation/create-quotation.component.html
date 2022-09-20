@@ -150,25 +150,13 @@
                         <input matInput disable matTooltip="Not Editable" readonly [value]="totalQty" />
                     </mat-form-field>
                 </div>
-                <div class="width">
-                    <mat-form-field>
-                        <mat-label>Last Bill No</mat-label>
-                        <input matInput disable [value]="lastBillNo" readonly />
-                    </mat-form-field>
-                </div>
+
             </span>
             <span class="totalAndBill_content-2">
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Total (₹)</mat-label>
                         <input matInput disable matTooltip="Not Editable" readonly [value]="total | currency: 'INR'" />
-                    </mat-form-field>
-                </div>
-                <div class="width">
-                    <mat-form-field>
-                        <mat-label>Last Bill Due (₹)</mat-label>
-                        <input matInput disable matTooltip="Not Editable" readonly
-                            [value]="lastBillDue   | currency: 'INR'" />
                     </mat-form-field>
                 </div>
             </span>
@@ -212,7 +200,7 @@
                         <ng-container *ngIf="isShippingChecked">
                             <mat-form-field>
                                 <mat-label>GST (₹) </mat-label>
-                                <input matInput disable formControlName="gst" />
+                                <input matInput disable formControlName="gst" (keyup)="calculate()" />
                             </mat-form-field>
                         </ng-container>
                     </div>

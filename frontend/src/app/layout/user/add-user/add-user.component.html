@@ -89,9 +89,12 @@
             <br>
             <ng-container *ngFor="let permission of (permissions | keyvalue)">
                 <span class="permission">
-                    <mat-checkbox [disabled]="!isLoggedInUserIsOwner" (click)="onPermissionChange(permission.key)"
+                    <!-- <mat-card style="width: 100px; display: block;"> -->
+
+                        <mat-checkbox [disabled]="!isLoggedInUserIsOwner" (click)="onPermissionChange(permission.key)"
                         [checked]="permission.value">{{permission.key}}</mat-checkbox>
-                </span>
+                    <!-- </mat-card> -->
+                    </span>
             </ng-container>
         </div>
         <br>
