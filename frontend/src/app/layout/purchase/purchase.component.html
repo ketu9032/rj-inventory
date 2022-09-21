@@ -43,6 +43,10 @@
             <button color="primary" class="margin btn" mat-raised-button (click)="getPurchase()">
                 Search
             </button>
+            <!-- clear button -->
+            <button color="primary" class="margin btn" mat-raised-button (click)="clearSearch()">
+                Clear Search
+            </button>
             <!-- add new purchase button -->
             <button color="primary" class="margin btn" mat-raised-button *ngIf="!isShowAddPurchase"
                 (click)="onAddNewPurchase()">

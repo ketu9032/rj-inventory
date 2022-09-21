@@ -12,14 +12,18 @@ exports.findAll = async (req, res) => {
       active,
       fromDate,
       toDate,
-      userId
+      userId,
+      selectedCustomerId
     } = req.query;
-    let searchQuery = 'where true';
+    let searchQuery = 'HAVING  true';
     if (fromDate && toDate) {
       searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
     }
     if (userId) {
-      searchQuery += ` and expense.user_id = ${+userId} `;
+      searchQuery += ` and s.user_id = ${+userId} `;
+    }
+    if (selectedCustomerId) {
+      searchQuery += ` and s.customer_id = ${+selectedCustomerId} `;
     }
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
@@ -65,7 +69,7 @@ exports.findAll = async (req, res) => {
       left join sales_bill
       on sales_bill.sales_id = s.id
       group by
-        s.id,
+          s.id,
           s.date,
           bill_no,
           tier,
@@ -77,9 +81,12 @@ exports.findAll = async (req, res) => {
           cdf.due_limit ,
           other_payment,
           token,
-          COALESCE(past_due,0)
-    -- ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
+          COALESCE(past_due,0),
+          s.is_active,
+          s.user_id
+     ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
       `;
+      console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

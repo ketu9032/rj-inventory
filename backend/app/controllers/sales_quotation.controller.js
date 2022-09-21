@@ -15,7 +15,7 @@ exports.findAll = async (req, res) => {
       tireId
 
     } = req.query;
-    let searchQuery = 'where true';
+    let searchQuery = 'having true';
     const offset = pageSize * pageNumber - pageSize;
     if (fromDate && toDate) {
       searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
@@ -45,7 +45,7 @@ exports.findAll = async (req, res) => {
         s.id,
         sr,
         s.date,
-s.qty,
+        s.qty,
         shipping,
         gst,
         user_id,
@@ -53,11 +53,8 @@ s.qty,
         remarks,
         tier_id,
         tiers.code as tier_code,
-
         sum(COALESCE(sqd.qty,0) * COALESCE(sqd.selling_price,0))  as amount,
-
         sum(COALESCE(sqd.qty,0) * COALESCE(sqd.selling_price,0)) + COALESCE(shipping,0) + COALESCE(gst,0) as total_due
-
       FROM sales_quotation s
        join sales_quotation_details as sqd
        on  sqd.sales_quotation_id = s.id
@@ -65,30 +62,22 @@ s.qty,
         on tiers.id = s.tier_id
       join users as users
         on users.id = s.user_id
-
         group by
          s.id,
          s.date,
          sr,
-s.qty,
-
+         s.qty,
          shipping,
          gst,
          users.user_name,
          remarks,
-         s.date,
-
-         shipping,
-         gst,
          user_id,
-         users.user_name,
-         remarks,
          tier_id,
-         tiers.code
-
-
-       --  ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
+         tiers.code,
+         s.is_active
+    ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
    `;
+   console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
