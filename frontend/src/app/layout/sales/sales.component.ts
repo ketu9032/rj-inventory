@@ -27,7 +27,7 @@ export class SalesComponent implements OnInit {
     selectCustomerLoader: boolean = false;
     selectUserLoader: boolean = false;
     isShowAddSales: boolean = false;
-    selectedCustomerId: number;
+    selectedCustomerId?: number;
     currentDate: string;
     customers = [];
     dataSource: any = [];
@@ -57,7 +57,8 @@ export class SalesComponent implements OnInit {
         active: true,
         fromDate: '',
         toDate: '',
-        userId: ''
+        userId: '',
+        selectedCustomerId: ''
     };
     fromDate: string;
     toDate: string;
@@ -119,6 +120,10 @@ export class SalesComponent implements OnInit {
         if (this.userId && +this.userId !== 0) {
             this.tableParams.userId = this.userId;
         }
+        if (this.selectedCustomerId && +this.selectedCustomerId !== 0) {
+            this.tableParams.selectedCustomerId = this.selectedCustomerId;
+        }
+
         if (this.fromDate) {
             this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
         }
@@ -267,8 +272,10 @@ export class SalesComponent implements OnInit {
         this.fromDate = '';
         this.toDate = '';
         this.userId = null;
+        this.selectedCustomerId = null;
         this.tableParams.search = '';
         this.tableParams.userId = '';
+        this.tableParams.selectedCustomerId = '';
         this.tableParams.fromDate = '';
         this.tableParams.toDate = '';
         this.getSales();

@@ -16,7 +16,7 @@
             <ng-container *ngIf="loggedInUsersData.role !== 'Employees'">
                 <mat-form-field class="field-width margin">
                     <mat-label>All Users</mat-label>
-                    <mat-select [(ngModel)]="userId">
+                    <mat-select [(ngModel)]="userId" (selectionChange)="getSales()">
                         <mat-option value="0">--Select--</mat-option>
                         <mat-option *ngFor="let user of userData" [value]="user.id">
                             {{user.user_name}}
@@ -39,7 +39,7 @@
             <mat-form-field class="margin field-width">
                 <mat-label>Select Customer</mat-label>
                 <mat-select name="customer" [(ngModel)]="selectedCustomerId"
-                    (selectionChange)="toggleCreateAddSalesButton();">
+                    (selectionChange)="toggleCreateAddSalesButton(); getSales()">
                     <mat-option>All Customer</mat-option>
                     <mat-option *ngFor="let customer of customers" [value]="customer.id">
                         {{customer.company | uppercase}}

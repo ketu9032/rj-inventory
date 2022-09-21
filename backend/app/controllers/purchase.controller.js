@@ -16,7 +16,8 @@ exports.findAll = async (req, res) => {
       selectSupplierId,
       userId
     } = req.query;
-    let searchQuery = 'where true';
+    let searchQuery = 'having true';
+
 
     if (fromDate && toDate) {
       searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
@@ -36,7 +37,6 @@ exports.findAll = async (req, res) => {
           or p.date::text ilike '%${search}%'
           or bill_no::text ilike '%${search}%'
           or users.user_name ilike '%${search}%'
-
           or remarks ilike '%${search}%'
           or payment::text ilike '%${search}%'
           or COALESCE(past_due,0)::text ilike '%${search}%'
@@ -44,7 +44,7 @@ exports.findAll = async (req, res) => {
           or token::text ilike '%${search}%'
         )`;
     }
-    searchQuery += ` and s.is_active = ${active}`;
+    searchQuery += ` and p.is_active = ${active}`;
     const query = `  SELECT
     Count(p.id) OVER() AS total,
       p.id,
@@ -66,15 +66,15 @@ exports.findAll = async (req, res) => {
       users.id as user_id,
       users.user_name as user_name
 
-      FROM purchase p
-      join users as users
-       on users.id = p.user_id
-       join suppliers as suppliers
-        on suppliers.id = p.suppliers_id
-      left join purchase_details
-       on purchase_details.purchase_id = p.id
-       group by
-       p.id,
+    FROM purchase p
+    join users as users
+      on users.id = p.user_id
+    join suppliers as suppliers
+      on suppliers.id = p.suppliers_id
+    left join purchase_details
+      on purchase_details.purchase_id = p.id
+    group by
+      p.id,
       p.no,
       token,
       p.date,
@@ -88,8 +88,10 @@ exports.findAll = async (req, res) => {
       bill_no,
       past_due,
       users.user_name,
-      users.id
-      -- ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
+      users.id,
+      p.user_id,
+      p.is_active
+    ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
       `;
     const response = await pool.query(query);
     // sum(COALESCE(purchase_details.qty,0) * COALESCE(purchase_details.selling_price,0)) + COALESCE(past_due,0) as total_amount,
