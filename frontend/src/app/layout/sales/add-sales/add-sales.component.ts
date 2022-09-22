@@ -57,7 +57,8 @@ export class AddSalesComponent implements OnInit {
     }
     formSupplier: FormGroup;
     formBill: FormGroup;
-
+    isCheckOverQtyColor: boolean = false;
+    isShowRemarksError: boolean = false;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number, pastDue: number },
         public dialog: MatDialog,
@@ -88,6 +89,7 @@ export class AddSalesComponent implements OnInit {
             item_id: [''],
             qty: [''],
             selling_price: [''],
+            available_qty: ['']
         });
     }
     initializeSalesBillForm(): void {
@@ -167,6 +169,7 @@ export class AddSalesComponent implements OnInit {
             );
     }
     onSubmit() {
+
         if (this.data.salesId) {
             this.updateSales();
         } else {
@@ -192,12 +195,15 @@ export class AddSalesComponent implements OnInit {
                 selling_price,
             });
         }
+
         if (qty <= 0) {
+            this.isShowRemarksError = true;
             this.formBill.get("remarks").setValidators(Validators.required);
             setTimeout(() => {
                 this.formBill.get("remarks").updateValueAndValidity()
             })
         }
+
         this.isEditSalesItem = false;
         this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
         this.availableItemById = 0;
@@ -266,6 +272,7 @@ export class AddSalesComponent implements OnInit {
             qty,
             selling_price,
         });
+
         this.fillSellingPrice(itemId)
     }
     removeItem(itemId: number): void {
@@ -368,4 +375,26 @@ export class AddSalesComponent implements OnInit {
                 return true;
             }
         }
+        isCheckOverQty(){
+            if(this.formSupplier.value.qty > this.availableItemById){
+                this.isCheckOverQtyColor = true;
+            }else{
+
+                this.isCheckOverQtyColor = false;
+            }
+
+        }
+        // confirmDialog(id: string): void {
+        //     this.dialog
+        //         .open(DeleteCdfComponent, {
+        //             maxWidth: '500px',
+        //             data: id
+        //         })
+        //         .afterClosed()
+        //         .subscribe((result) => {
+        //             if (result && result.data === true) {
+        //                 this.getCdf();
+        //             }
+        //         });
+        // }
 }

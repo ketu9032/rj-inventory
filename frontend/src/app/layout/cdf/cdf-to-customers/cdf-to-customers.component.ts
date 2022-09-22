@@ -37,6 +37,7 @@ export class CdfToCustomersComponent implements OnInit {
         if (this.data && this.data.id) {
             this.fillForm();
         }
+
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
@@ -53,30 +54,17 @@ export class CdfToCustomersComponent implements OnInit {
     }
 
     cdfToCustomers(): void {
-        const { company, name, address, email, mobile,
-            cdfStatus, dueLimit, balance, other, tier: tierId } = this.formGroup.value;
+        const {  name, address,
+            dueLimit, balance,  tier: tierId } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .editCdfToCustomers({
                 id: this.data.id,
-                company,
                 name,
                 address,
-                email,
-                mobile,
                 dueLimit,
                 balance,
-                cdfStatus,
-                other,
-                tierId,
-                cdf_total_due: this.total_due,
-                date: '',
-                reference: '',
-                referencePerson: '',
-                brands: '',
-                displayNames: '',
-                platforms: '',
-                tier_code: this.tierName.code
+                tierId
             })
             .subscribe(
                 (response) => {
@@ -102,7 +90,6 @@ export class CdfToCustomersComponent implements OnInit {
         if (this.data && this.data.id) {
             this.cdfToCustomers();
         }
-
     }
     fillForm() {
         const { company: company, name: name, address: address, email: email, mobile: mobile, due_limit: dueLimit, balance: balance, other: other, tier_id: tierId } = this.data;

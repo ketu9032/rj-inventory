@@ -26,6 +26,7 @@ exports.findAll = async (req, res) => {
         (email like '%${search}%'
           or name like '%${search}%'
           or company like '%${search}%'
+          or int_balance like '%${search}%'
           or date::text like '%${search}%'
           or reference like '%${search}%'
           or reference_person like '%${search}%'
@@ -57,6 +58,7 @@ exports.findAll = async (req, res) => {
           reference,
           reference_person,
           brands,
+          int_balance,
           display_names,
           platforms,
           other,
@@ -257,17 +259,11 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
   try {
     const {
       id,
-      company,
       name,
       address,
-      email,
-      mobile,
       dueLimit,
-      cdf_total_due,
       balance,
-      other,
-      tierId,
-      tier_code
+      tierId
     } = req.body;
     // if (
     //   !company ||
@@ -288,11 +284,13 @@ exports.cdfTOCustomersUpdate = async (req, res) => {
     //     .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
     //   return;
     // }
-    await pool.query(
-      `UPDATE cdf
-      SET  company='${company}', name='${name}',  address='${address}',  email='${email}', cdf_total_due=${cdf_total_due}, mobile='${mobile}', cdf_status='active',  due_limit=${dueLimit}, balance=${balance}, other='${other}', tier_id='${tierId}', tier_code='${tier_code}' where id = ${id};
-       `
-    );
+
+    const query =  `UPDATE cdf
+    SET   name='${name}',  address='${address}', due_limit=${dueLimit},int_balance=${balance}, cdf_total_due=${balance}, cdf_status='active',  tier_id='${tierId}' where id = ${id}
+     `;
+
+     console.log(query);
+    await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({

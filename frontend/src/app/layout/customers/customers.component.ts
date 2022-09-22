@@ -6,12 +6,10 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { ICdfData } from 'src/app/models/cdf';
-import { ICustomersData } from 'src/app/models/customers';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { CdfService } from '../cdf/services/cdf.service';
 import { AddCustomersComponent } from './add-customers/add-customers.component';
-import { DeleteCustomersComponent } from './delete-customers/delete-customers.component';
 import { CustomersService } from './services/customers.service';
 import { TierComponent } from './tier/tier.component';
 @Component({
@@ -22,6 +20,7 @@ import { TierComponent } from './tier/tier.component';
 export class CustomersComponent implements OnInit {
     displayedColumns: string[] = [
         'company',
+        'int_balance',
         'balance',
         'payment',
         'due_limit',

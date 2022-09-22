@@ -75,10 +75,12 @@
                     <mat-form-field color="accent">
                         <mat-label>Business Started Date</mat-label>
                         <input matInput formControlName="date" aria-current="date" [max]="currentDate"
-                            [matDatepicker]="date" required>
+                            [matDatepicker]="date" [(ngModel)]="currentDate" required>
                         <mat-datepicker-toggle matSuffix [for]="date "></mat-datepicker-toggle>
                         <mat-datepicker #date></mat-datepicker>
                     </mat-form-field>
+
+
                     <div>
                         <ng-container *ngIf="
           formGroup.controls.date.touched &&
@@ -211,12 +213,6 @@
                         <input matInput formControlName="other" />
                     </mat-form-field>
                     <div>
-                        <ng-container *ngIf="
-          formGroup.controls.other.touched &&
-          !formGroup.controls.other.value
-        ">
-                            <span class="error">Comment is Required</span>
-                        </ng-container>
                     </div>
                 </div>
             </div>

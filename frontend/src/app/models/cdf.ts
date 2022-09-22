@@ -8,7 +8,7 @@ export interface ICdfParams {
     id?: number, email: string, name: string, company: string, date: string, reference: string, referencePerson: string, brands: string[], displayNames: string[], platforms: string[], other: string, mobile: number, address: string,
 }
 export interface ICdfToCustomersParams {
-    id?: number, email: string, name: string, company: string, date: string, reference: string, referencePerson: string, brands: string, displayNames: string, platforms: string, other: string, mobile: number, cdfStatus: string, address: string, dueLimit: string, balance: number, tierId: number, tier_code: string, cdf_total_due: number
+    id?: number,  name: string,  address: string, dueLimit: number,  tierId: number, balance: number;
 }
 export interface ICdfActiveParams {
     id: number, status: boolean

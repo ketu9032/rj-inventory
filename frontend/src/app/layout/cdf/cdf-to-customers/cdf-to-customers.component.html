@@ -1,5 +1,6 @@
 <div class="main-header">
-    <h1 mat-dialog-title><b> Add Customer</b> </h1>
+    <h1 mat-dialog-title><b>{{this.data.tier_id && this.data.balance && this.data.due_limit ? 'Edit Active Customer' :
+            'Unverified To Active' }}</b> </h1>
     <button mat-button mat-dialog-close>
         <mat-icon>close</mat-icon>
     </button>
@@ -15,15 +16,13 @@
                     <mat-label>Company</mat-label>
                     <input matInput formControlName="company" readonly matTooltip="NOT Editable" />
                 </mat-form-field>
-
             </div>
             <!-- name start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>First Name</mat-label>
-                    <input matInput formControlName="name" readonly matTooltip="NOT Editable" />
+                    <input matInput formControlName="name" />
                 </mat-form-field>
-
             </div>
         </div>
         <div class="box">
@@ -31,9 +30,8 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Address</mat-label>
-                    <textarea matInput formControlName="address" readonly matTooltip="NOT Editable"></textarea>
+                    <textarea matInput formControlName="address"></textarea>
                 </mat-form-field>
-
             </div>
             <!-- Email start -->
             <div class="block">
@@ -41,7 +39,6 @@
                     <mat-label>Email</mat-label>
                     <input matInput formControlName="email" required readonly matTooltip="NOT Editable" />
                 </mat-form-field>
-
             </div>
         </div>
         <div class="box">
@@ -51,13 +48,12 @@
                     <mat-label>Mobile Number</mat-label>
                     <input matInput formControlName="mobile" readonly matTooltip="NOT Editable" />
                 </mat-form-field>
-
             </div>
             <!--dueLimit start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>Due Limit</mat-label>
-                    <input type="number" matInput formControlName="dueLimit" required />
+                    <input type="tel" matInput formControlName="dueLimit" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -74,7 +70,9 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Initial Balance</mat-label>
-                    <input matInput formControlName="balance" type="number" required />
+                    <input *ngIf="this.data.balance" matInput formControlName="balance" type="tel" required readonly
+                        matTooltip="Not Editable" />
+                    <input *ngIf="!this.data.balance" matInput formControlName="balance" type="tel" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -121,7 +119,6 @@
             </div>
         </div>
         <div class="box">
-
             <!-- button start -->
             <div class="block">
                 <br>
@@ -129,7 +126,7 @@
                     <button mat-raised-button color="primary" [disabled]="!formGroup.valid || isShowLoader"
                         type="submit">
                         <span *ngIf="!isShowLoader">
-                            ADD
+                            {{this.data.tier_id && this.data.balance && this.data.due_limit ? 'Update' : 'Add' }}
                         </span>
                         <mat-spinner *ngIf="isShowLoader" class="inline-loader" diameter="20"></mat-spinner>
                     </button>

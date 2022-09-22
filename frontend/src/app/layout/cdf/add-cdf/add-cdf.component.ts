@@ -8,6 +8,7 @@ import { ICdfData } from 'src/app/models/cdf';
 import { CdfService } from '../services/cdf.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { LowerCasePipe } from '@angular/common';
+import * as moment from 'moment';
 @Component({
     selector: 'app-add-cdf',
     templateUrl: './add-cdf.component.html',
@@ -106,13 +107,13 @@ export class AddCdfComponent implements OnInit {
             brands: [' '],
             displayNames: [' '],
             platforms: [' '],
-            other: ['', Validators.required],
+            other: [' '],
             mobile: ['', Validators.required],
             address: ['', Validators.required],
         });
     }
     saveCdf(): void {
-        const { email, name, company, date, reference, referencePerson, displayNames, other, mobile, address } = this.formGroup.value;
+        const { email, name, company, date, reference, referencePerson,  other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .addCdf({
@@ -139,12 +140,12 @@ export class AddCdfComponent implements OnInit {
             );
     }
     updateCdf(): void {
-        const { email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address } = this.formGroup.value;
+        const { email, name, company, date, reference, referencePerson,  other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .editCdf({
                 id: this.data.id,
-                email, name, company, date, reference, referencePerson, brands, displayNames, platforms, other, mobile, address
+                email, name, company, date, reference, referencePerson, brands: this.brands, displayNames:this.displayNames, platforms: this.platforms, other, mobile, address
             })
             .subscribe(
                 (response) => {
