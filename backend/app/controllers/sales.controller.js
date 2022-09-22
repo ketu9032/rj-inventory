@@ -377,7 +377,7 @@ exports.updateValue = async (
       await pool.query(query10);
     }
     let query6 = ` update cdf set
-        balance =  COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost},
+        balance =  COALESCE(balance,0) + ${existingItemsCost}  + ${itemsCost},
         payment = COALESCE(payment,0) - ${existingPayment} + ${payment},
         cdf_total_due = (COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(payment,0) - ${existingPayment} + ${payment})
       where id = ${customerId} returning cdf_total_due`;

@@ -17,7 +17,7 @@
                 <mat-form-field class="field-width margin">
                     <mat-label>All Users</mat-label>
                     <mat-select [(ngModel)]="userId" (selectionChange)="getSales()">
-                        <mat-option value="0">--Select--</mat-option>
+                        <mat-option value=0>All Users</mat-option>
                         <mat-option *ngFor="let user of userData" [value]="user.id">
                             {{user.user_name}}
                         </mat-option>

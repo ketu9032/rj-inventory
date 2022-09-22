@@ -53,8 +53,12 @@
                     <b> {{ element.company | uppercase }} </b>
                 </td>
             </ng-container>
-            <ng-container matColumnDef="balance">
+           <ng-container matColumnDef="int_balance">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Initial Balance</th>
+                <td mat-cell *matCellDef="let element">{{ element.int_balance | currency: 'INR' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="balance">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
                 <td mat-cell *matCellDef="let element">{{ element.balance | currency: 'INR' }}</td>
             </ng-container>
             <ng-container matColumnDef="payment">
@@ -76,10 +80,12 @@
                         type="button" (click)="onEditNewCdf(element)">
                         <mat-icon aria-label="Edit">edit</mat-icon>
                     </button> -->
+                 <ng-container *ngIf="element.cdf_total_due === '0' ">
                     <button mat-icon-button matTooltip="{{tableParams.active? 'Click to de-active': 'Click to Active'}}"
                         color="{{tableParams.active? 'warn': 'primary'}}" (click)="changeStatus(element.id)">
                         <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}</mat-icon>
                     </button>
+                 </ng-container>
                 </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

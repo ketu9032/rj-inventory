@@ -33,7 +33,7 @@ export class CDFComponent implements OnInit {
         'action'
     ];
     cdfes = [{ value: 'Unverified' }, { value: 'Active' }, { value: 'Inactive' }]
-    customerStatus;
+    customerStatus = 'Unverified';
     isShowActionButton = true;
     check = false;
     dataChecking;

@@ -11,9 +11,11 @@
                 Search
             </button>
             <mat-form-field class="margin field-width">
-                <mat-label>Select CDF</mat-label>
-                <mat-select name="cdf" (selectionChange)="onCdfStatusChange($event)" [value]="'Unverified'"
-                    [(ngModel)]="customerStatus">
+                <mat-label >Select CDF</mat-label>
+                <mat-select name="cdf" (selectionChange)="onCdfStatusChange($event)"
+                    [(ngModel)]="customerStatus"
+
+                    >
                     <mat-option *ngFor="let cdf of cdfes" [value]="cdf.value" (click)="isHideActionButton()">
                         {{cdf.value}}
                     </mat-option>
@@ -121,9 +123,20 @@
                             <mat-icon>thumb_up</mat-icon>
                         </button>
                     </div>
-                    <div *ngIf="check" class="color">
-                        <mat-icon>check</mat-icon>
+                    <div *ngIf="check"  >
+                    <span>
+                        <button *ngIf="tableParams.active" mat-icon-button matTooltip="Click to Edit" color="primary"
+                        type="button" (click)="onEditCdfToCustomers(element)">
+                        <mat-icon aria-label="Edit">edit</mat-icon>
+                    </button>
+
+                </span>
+                <span class="color">
+
+                    <mat-icon>check</mat-icon>
+                </span>
                     </div>
+
                 </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
