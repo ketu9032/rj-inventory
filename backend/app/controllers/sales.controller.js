@@ -57,6 +57,7 @@ exports.findAll = async (req, res) => {
         cdf.due_limit as cdf_due_limit,
         other_payment as other_payment,
         token,
+        is_editable,
         COALESCE(past_due,0) as past_due,
         sum(COALESCE(sales_bill.qty,0) * COALESCE(sales_bill.selling_price,0)) + COALESCE(past_due,0) as total_amount,
         sum(COALESCE(sales_bill.qty,0) * COALESCE(sales_bill.selling_price,0)) as amount,
@@ -81,12 +82,12 @@ exports.findAll = async (req, res) => {
           cdf.due_limit ,
           other_payment,
           token,
+          is_editable,
           COALESCE(past_due,0),
           s.is_active,
           s.user_id
      ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
       `;
-      console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -117,6 +118,7 @@ exports.delete = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     const loggedInUserId = res.locals.tokenData.id;
+
     const {
       user_id,
       tier,
@@ -126,6 +128,8 @@ exports.add = async (req, res) => {
       customer_id,
       other_payment
     } = req.body;
+    const query = `update sales set  is_editable = false where customer_id =  ${customer_id} and user_id=${user_id} `
+    await pool.query(query);
     const insertSalesQuotationQuery = `INSERT INTO sales
     (
        date,
@@ -136,11 +140,14 @@ exports.add = async (req, res) => {
        payment,
        customer_id,
        other_payment,
-       token
+       token,
+       is_editable
      )
-    VALUES(now(), (select count(bill_no)+1 from sales  where customer_id = ${customer_id}), '${user_id}', '${tier}', '${remarks}', '${payment}', '${customer_id}', '${other_payment}', (select count(token)+1 from sales  where date::date = now()::date) ) returning id;`;
+    VALUES(now(), (select count(bill_no)+1 from sales  where customer_id = ${customer_id}), '${user_id}', '${tier}', '${remarks}', '${payment}', '${customer_id}', '${other_payment}', (select count(token)+1 from sales  where date::date = now()::date), true ) returning id;`;
     const { rows } = await pool.query(insertSalesQuotationQuery);
     const salesId = rows[0].id;
+
+
     await this.updateValue(
       customer_id,
       payment,
@@ -252,6 +259,7 @@ exports.update = async (req, res) => {
 };
 exports.changeStatus = async (req, res) => {
   try {
+    let itemsCost = 0;
     const { id, status } = req.body;
     if (!id) {
       res
@@ -259,9 +267,124 @@ exports.changeStatus = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    await pool.query(
-      `UPDATE sales SET is_active = ${status} where "id" = '${id}'`
-    );
+
+    const activeStatusQuery = `UPDATE sales SET is_active = ${status} where "id" = '${id}'`
+    await pool.query(activeStatusQuery);
+
+    const getSalesQuery = `select customer_id, user_id, payment, other_payment from sales where id =  ${id}`
+    const salesResponse = await pool.query(getSalesQuery);
+
+    const getSalesBillQuery = `select selling_price, qty, item_id from sales_bill where sales_id = ${id}`
+    const existingItemResponse = await pool.query(getSalesBillQuery);
+    const existingItems = existingItemResponse.rows;
+
+    if( status ===  false) {
+      const usersBalance = `update users set balance = balance - ${salesResponse.rows[0].payment} - ${salesResponse.rows[0].other_payment} where id = ${salesResponse.rows[0].user_id}`
+      console.log(usersBalance);
+      await pool.query(usersBalance);
+
+      for (let index = 0; index < existingItems.length; index++) {
+        const element = existingItems[index];
+        console.log(element);
+        const updateSalesBillQuery = `update item set
+         item_sold =  item_sold - ${element.qty}
+        where id =  ${element.item_id}`
+        console.log(updateSalesBillQuery);
+        await pool.query(updateSalesBillQuery);
+        itemsCost = +element.selling_price * +element.qty + itemsCost;
+       }
+
+       const customerQuery = `
+          update cdf set
+           balance = balance - ${itemsCost},
+           payment = payment - COALESCE(${salesResponse.rows[0].payment},0)
+          where
+           id = ${salesResponse.rows[0].customer_id}`
+
+        await pool.query(customerQuery);
+
+        const salesEditQuery1 = `update sales set
+           is_editable = false   where
+          id= ${id}`
+          console.log(salesEditQuery1);
+          await pool.query(salesEditQuery1)
+
+
+          const query2 = `
+          select
+            id
+          from
+          sales where
+           customer_id = ${salesResponse.rows[0].customer_id} and
+           user_id = ${salesResponse.rows[0].user_id} and
+           is_active = true
+          order by id desc limit 1 `
+          const response = await pool.query(query2);
+          const findSalesEditableId = response.rowCount > 0 ? response.rows[0].id: null;
+
+      if(findSalesEditableId){
+        const salesEditQuery2 = `update sales set
+           is_editable = true   where
+          id = ${findSalesEditableId}`
+          console.log(salesEditQuery2);
+
+          await pool.query(salesEditQuery2)
+      }
+
+    }
+    if( status ===  true) {
+      const usersBalance = `update users set balance = balance + ${salesResponse.rows[0].payment} + ${salesResponse.rows[0].other_payment} where id = ${salesResponse.rows[0].user_id}`
+      console.log(usersBalance);
+      await pool.query(usersBalance);
+
+      for (let index = 0; index < existingItems.length; index++) {
+        let element = existingItems[index];
+        const updateSalesBillQuery = `update item set
+          item_sold =  item_sold + ${+element.qty}
+          where id =  ${element.item_id}`
+          console.log(updateSalesBillQuery);
+        await pool.query(updateSalesBillQuery);
+        itemsCost = +element.selling_price * +element.qty + itemsCost;
+       }
+
+       const customerQuery = `
+          update cdf set
+               balance = balance + ${itemsCost},
+               payment = payment + ${salesResponse.rows[0].payment}
+           where
+               id = ${salesResponse.rows[0].customer_id}`
+          console.log(customerQuery);
+        await pool.query(customerQuery);
+
+        const salesEditQuery1 = `update sales set
+           is_editable = false   where
+          id= ${id}`
+          console.log(salesEditQuery1);
+          await pool.query(salesEditQuery1);
+
+
+          const query2 = `
+          select
+            id
+          from
+          sales where
+           customer_id = ${salesResponse.rows[0].customer_id} and
+           user_id = ${salesResponse.rows[0].user_id} and
+           is_active = true
+          order by id desc limit 1 `
+          const response = await pool.query(query2);
+          const findSalesEditableId = response.rowCount > 0 ? response.rows[0].id: null;
+
+          if(findSalesEditableId){
+            const salesEditQuery2 = `update sales set
+               is_editable = true   where
+              id = ${findSalesEditableId}`
+              console.log(salesEditQuery2);
+              await pool.query(salesEditQuery2)
+          }
+    }
+
+
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
