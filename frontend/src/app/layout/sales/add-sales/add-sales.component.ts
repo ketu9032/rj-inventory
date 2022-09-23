@@ -9,6 +9,7 @@ import { ISalesBillData } from 'src/app/models/sales_bill';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE } from 'src/app/shared/global/table-config';
 import { salesQuotationService } from '../../sales-quotation/services/sales-quotation.service';
+import { ConfirmBoxComponent } from './confirm-box/confirm-box.component';
 import { SalesBillService } from '../services/sales-bill.service';
 import { SalesService } from '../services/sales.service';
 @Component({
@@ -169,12 +170,17 @@ export class AddSalesComponent implements OnInit {
             );
     }
     onSubmit() {
+if(this.dueLimit < this.totalDue ) {
+    this.confirmDialog();
 
-        if (this.data.salesId) {
-            this.updateSales();
-        } else {
-            this.saveSales();
-        }
+}else{
+    if (this.data.salesId) {
+        this.updateSales();
+    } else {
+        this.saveSales();
+    }
+
+}
     }
     addSalesQuotation() {
         const {
@@ -384,17 +390,20 @@ export class AddSalesComponent implements OnInit {
             }
 
         }
-        // confirmDialog(id: string): void {
-        //     this.dialog
-        //         .open(DeleteCdfComponent, {
-        //             maxWidth: '500px',
-        //             data: id
-        //         })
-        //         .afterClosed()
-        //         .subscribe((result) => {
-        //             if (result && result.data === true) {
-        //                 this.getCdf();
-        //             }
-        //         });
-        // }
+        confirmDialog(): void {
+            this.dialog
+                .open(ConfirmBoxComponent, {
+                    maxWidth: '500px',
+                })
+                .afterClosed()
+                .subscribe((result) => {
+                    if (result && result.data === true) {
+                        if (this.data.salesId) {
+                            this.updateSales();
+                        } else {
+                            this.saveSales();
+                        }
+                    }
+                });
+        }
 }

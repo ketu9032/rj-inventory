@@ -12,6 +12,7 @@ import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { UserService } from '../user/services/user.service';
 import { AddSalesComponent } from './add-sales/add-sales.component';
+import { ConfirmBoxComponent } from './add-sales/confirm-box/confirm-box.component';
 import { SalesBillService } from './services/sales-bill.service';
 import { SalesService } from './services/sales.service';
 @Component({
@@ -268,6 +269,8 @@ export class SalesComponent implements OnInit {
                 () => { }
             );
     }
+
+
     clearSearch() {
         this.fromDate = '';
         this.toDate = '';
