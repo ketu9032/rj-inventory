@@ -15,7 +15,7 @@ exports.findAll = async (req, res) => {
       fromDate,
       toDate
     } = req.query;
-    let searchQuery = 'where true';
+    let searchQuery = 'having true';
     if (fromDate && toDate) {
       searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
     }
@@ -50,7 +50,7 @@ exports.findAll = async (req, res) => {
     const query = `
     SELECT
       Count(c.id) OVER() AS total,
-      c.id,
+           c.id,
           c.name,
           email,
           company,
@@ -65,7 +65,7 @@ exports.findAll = async (req, res) => {
           mobile,
           address,
           due_limit,
-          cdf_total_due,
+          sum(balance - payment) as cdf_total_due,
           payment,
           balance,
           tier_id as tier_id,
@@ -74,6 +74,29 @@ exports.findAll = async (req, res) => {
         cdf c
          full Join tiers t
         on t.id = c.tier_id
+     GROUP BY
+        c.id,
+        c.name,
+        email,
+        company,
+        date,
+        reference,
+        reference_person,
+        brands,
+        int_balance,
+        display_names,
+        platforms,
+        other,
+        mobile,
+        address,
+        due_limit,
+        payment,
+        balance,
+        tier_id,
+        t.code,
+        c.is_active,
+        c.cdf_status
+
           ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
