@@ -20,7 +20,7 @@
                 <mat-form-field class="field-width margin">
                     <mat-label>From User</mat-label>
                     <mat-select [(ngModel)]="fromUserId" (selectionChange)="getTransfer()">
-                        <mat-option value="0">--Select--</mat-option>
+                        <mat-option value="0">All User</mat-option>
                         <mat-option *ngFor="let user of users" [value]="user.id">
                             {{user.user_name}}
                         </mat-option>
@@ -31,7 +31,7 @@
                     <mat-label>To User </mat-label>
 
                     <mat-select [(ngModel)]="toUserId" (selectionChange)="getTransfer()">
-                        <mat-option value="0">--Select--</mat-option>
+                        <mat-option value="0">All User</mat-option>
                         <mat-option *ngFor="let user of users" [value]="user.id">
                             {{user.user_name}}
                         </mat-option>

@@ -223,11 +223,11 @@ export class PurchaseComponent implements OnInit {
 
     }
     toggleCreateAddPurchaseButton() {
-        this.isShowAddPurchase = false
+        this.isShowAddPurchase = false;
         if (!this.selectSupplierId) {
-            this.isShowAddPurchase = true
+            this.isShowAddPurchase = true;
         } else {
-            this.isShowAddPurchase = false
+            this.isShowAddPurchase = false;
         }
     }
 
@@ -279,8 +279,9 @@ export class PurchaseComponent implements OnInit {
     clearSearch() {
         this.fromDate = '';
         this.toDate = '';
-        this.selectSupplierId = null;
         this.userId = null;
+        this.selectSupplierId = null;
+        this.isShowAddPurchase = false;
         this.tableParams.search = '';
         this.tableParams.fromDate = '';
         this.tableParams.toDate = '';
