@@ -275,6 +275,7 @@ export class SalesComponent implements OnInit {
         this.fromDate = '';
         this.toDate = '';
         this.userId = null;
+        this.isShowAddSales = false;
         this.selectedCustomerId = null;
         this.tableParams.search = '';
         this.tableParams.userId = '';
