@@ -9,6 +9,7 @@ export class CustomersService {
   private url = 'api/customers';
   private activeCustomers = 'api/cdf/findAllCdfActive';
   private customersChangeStatusURl = 'api/customers/changeStatus';
+  private dateWiseSalesSearchURL= 'api/sales/dateWiseSalesSearch';
 
 
   constructor(private restService: RestService, private commonService: CommonService) {}
@@ -34,5 +35,8 @@ export class CustomersService {
     const queryString = this.commonService.toQueryString(tablePrams);
     return this.restService.get<any>(`${this.activeCustomers}${queryString}`);
   }
+  public dateWiseSalesSearch(startDate: string, endDate: string) {
+    return this.restService.get<any>(`${this.dateWiseSalesSearchURL}?startDate=${startDate}&endDate=${endDate}`);
+     }
 
 }

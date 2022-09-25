@@ -57,7 +57,7 @@ export class SalesComponent implements OnInit {
         search: '',
         active: true,
         fromDate: '',
-        toDate: '',
+        toDate: new Date(),
         userId: '',
         selectedCustomerId: ''
     };
@@ -332,4 +332,6 @@ export class SalesComponent implements OnInit {
                 () => { }
             );
     }
+
+
 }

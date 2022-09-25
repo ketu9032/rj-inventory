@@ -571,3 +571,48 @@ exports.salesPrint = async (req, res) => {
     });
   }
 };
+
+
+exports.dateWiseSalesSearch = async (req, res) =>{
+  try {
+    const {
+      startDate,
+      endDate
+
+    } = req.query;
+
+    const query = `
+      SELECT
+        s.id,
+        tier,
+        payment,
+        customer_id,
+        user_id, s.date,
+        sales_bill.qty as sales_bill_qty,
+        sales_bill.selling_price as sales_bill_selling_price,
+        sales_bill.qty * sales_bill.selling_price as amount
+    FROM public.sales s
+     join sales_bill as sales_bill
+     on sales_bill.sales_id = s.id
+       group by
+        s.id,
+        tier,
+        payment,
+        customer_id,
+        user_id,
+        s.date,
+        sales_bill.qty,
+        sales_bill.selling_price
+
+     having s.date::date between ${startDate}::date and ${endDate}::date
+    `
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+}
+
+

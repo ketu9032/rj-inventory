@@ -26,7 +26,7 @@ exports.findAll = async (req, res) => {
         (email like '%${search}%'
           or name like '%${search}%'
           or company like '%${search}%'
-          or int_balance like '%${search}%'
+          or int_balance::text like '%${search}%'
           or date::text like '%${search}%'
           or reference like '%${search}%'
           or reference_person like '%${search}%'
@@ -95,8 +95,9 @@ exports.findAll = async (req, res) => {
         tier_id,
         t.code,
         c.is_active,
-        c.cdf_status
-
+        c.cdf_status,
+        cdf_total_due,
+        c.tier_code
           ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

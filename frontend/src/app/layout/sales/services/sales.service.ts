@@ -16,6 +16,7 @@ export class SalesService {
   private getCustomerByIdURL = 'api/cdf/getCustomerById';
   private getSalesPrintURL= 'api/sales/salesPrint';
 
+
   constructor(private restService: RestService, private commonService: CommonService) {}
 
   public getSales(tablePrams: IMatTableParams) {
@@ -57,4 +58,5 @@ public getCustomerById(customerId: number) {
     public salesPrint(salesId: number) {
    return this.restService.get<any>(`${this.getSalesPrintURL}?salesId=${salesId}`);
     }
+
 }

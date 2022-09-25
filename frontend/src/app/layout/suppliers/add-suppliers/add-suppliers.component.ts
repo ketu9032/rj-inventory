@@ -11,6 +11,7 @@ import { SuppliersService } from '../services/suppliers.service';
     styleUrls: ['./add-suppliers.component.scss']
 })
 export class AddSuppliersComponent implements OnInit {
+[x: string]: any;
     formGroup: FormGroup;
     selectedRole: string;
     users = [];
