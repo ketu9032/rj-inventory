@@ -5,12 +5,15 @@
             <!-- Select date range -->
             <mat-form-field class="field-width margin">
                 <mat-label>Select date range</mat-label>
-                <mat-date-range-input [rangePicker]="picker">
-                    <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
-                    <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+                <mat-date-range-input [rangePicker]="picker"
+
+                 >
+                    <input matStartDate [(ngModel)]="fromDate" placeholder="Start date" >
+                    <input matEndDate [(ngModel)]="toDate" placeholder="End date" >
+                    <!-- <input matEndDate [(ngModel)]="toDate" placeholder="End date"(dateChange)="dateWiseSearch()" > -->
                 </mat-date-range-input>
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker #picker></mat-date-range-picker>
+                <mat-datepicker-toggle matSuffix [for]="picker" ></mat-datepicker-toggle>
+                <mat-date-range-picker #picker ></mat-date-range-picker>
             </mat-form-field>
             <!-- search  -->
             <mat-form-field class="field-width">

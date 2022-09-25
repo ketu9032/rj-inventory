@@ -176,4 +176,21 @@ export class CustomersComponent implements OnInit {
         this.tableParams.toDate = '';
         this.getCdf();
     }
+
+    dateWiseSearch (){
+        if (this.fromDate) {
+            this.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
+        }
+        if (this.toDate) {
+            this.toDate = moment(this.toDate).format('YYYY-MM-DD');
+        }
+        this.customersService.dateWiseSalesSearch(this.fromDate, this.toDate)
+        .subscribe(
+            (response) => {
+                console.log(response);
+
+
+            }
+        )
+    }
 }
