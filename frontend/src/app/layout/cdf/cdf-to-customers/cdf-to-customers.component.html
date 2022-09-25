@@ -70,8 +70,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Initial Balance</mat-label>
-                    <input *ngIf="this.data.balance" matInput formControlName="balance" type="tel" required readonly
-                        matTooltip="Not Editable" />
+                    <input *ngIf="this.data.balance" matInput formControlName="balance" type="tel"  readonly matTooltip="Not Editable" />
                     <input *ngIf="!this.data.balance" matInput formControlName="balance" type="tel" required />
                 </mat-form-field>
                 <div>

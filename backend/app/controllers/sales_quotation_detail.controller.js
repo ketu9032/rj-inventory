@@ -13,7 +13,7 @@ exports.findAll = async (req, res) => {
         item.item_code as item_code,
         item_id,
 
-        qty,
+        s.qty,
         available,
         selling_price,
         total,

@@ -11,7 +11,8 @@
         <!-- company start -->
         <mat-form-field>
             <mat-label>Company</mat-label>
-            <input matInput formControlName="company" (keyup)="onSupplierCompanyExistCheck()" />
+                <input *ngIf="this.data.company"  matInput formControlName="company" readonly     matTooltip="Not Editable"/>
+                <input *ngIf="!this.data.company" matInput  formControlName="company" (keyup)="onSupplierCompanyExistCheck()" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="!isSupplierCompanyExist">
@@ -40,7 +41,8 @@
         <!-- Balance start -->
         <mat-form-field>
             <mat-label>Balance</mat-label>
-            <input matInput formControlName="balance" type="number" required />
+            <input *ngIf="this.data.balance" matInput formControlName="balance" type="number" readonly matTooltip="Not Editable" />
+            <input  *ngIf="!this.data.balance" matInput formControlName="balance" type="number" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="

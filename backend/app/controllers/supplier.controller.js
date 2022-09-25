@@ -35,7 +35,7 @@ exports.findAll = async (req, res) => {
     }
     searchQuery += ` and is_active = ${active}`;
     const response = await pool.query(
-      `select count(id) over() as total, id, company,due_limit,balance, other,
+      `select count(id) over() as total, id, company,due_limit,balance, other,balance,
       purchase_price, purchase_payment, suppliers_total_due, date
       from suppliers ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`
     );
@@ -80,8 +80,8 @@ exports.add = async (req, res) => {
     }
     await pool.query(
       `INSERT INTO suppliers (company, due_limit,
-        purchase_price,  suppliers_total_due, other, date, purchase_payment)
-      VALUES('${company}', ${dueLimit}, ${balance}, ${balance}, '${other}', now(), 0);
+        purchase_price,  suppliers_total_due, balance,other, date, purchase_payment)
+      VALUES('${company}', ${dueLimit}, 0, ${balance}, ${balance}, '${other}', now(), 0);
       `
     );
 

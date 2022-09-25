@@ -52,7 +52,7 @@ exports.findAll = async (req, res) => {
     let searchQuery = 'where true';
     if (search) {
       searchQuery += ` and
-        (user_name like '%${search}%'
+        (user_name like lower('%${search}%')
           or mobile_number::text like '%${search}%'
           or balance::text like '%${search}%'
           or role like '%${search}%'
