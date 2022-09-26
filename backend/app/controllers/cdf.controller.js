@@ -16,9 +16,9 @@ exports.findAll = async (req, res) => {
       toDate
     } = req.query;
     let searchQuery = 'having true';
-    if (fromDate && toDate) {
-      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
-    }
+    // if (fromDate && toDate) {
+    //   searchQuery += ` and sales.date::date between  '${fromDate}'::date and '${toDate}'::date `;
+    // }
     //and is_deleted = false
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
@@ -27,7 +27,7 @@ exports.findAll = async (req, res) => {
           or name like '%${search}%'
           or company like '%${search}%'
           or int_balance::text like '%${search}%'
-          or date::text like '%${search}%'
+          or c.date::text like '%${search}%'
           or reference like '%${search}%'
           or reference_person like '%${search}%'
           or brands like '%${search}%'
@@ -49,37 +49,45 @@ exports.findAll = async (req, res) => {
     }
     const query = `
     SELECT
-      Count(c.id) OVER() AS total,
-           c.id,
-          c.name,
-          email,
-          company,
-          date,
-          reference,
-          reference_person,
-          brands,
-          int_balance,
-          display_names,
-          platforms,
-          other,
-          mobile,
-          address,
-          due_limit,
-          sum(balance - payment) as cdf_total_due,
-          payment,
+    Count(c.id) OVER() AS total,
+    c.id,
+    c.name,
+    email,
+    company,
+    c.date,
+    reference,
+    reference_person,
+    brands,
+    int_balance,
+    display_names,
+    platforms,
+    other,
+    mobile,
+    address,
+    due_limit,
+
+          sum(sales.payment) as payment,
+	        sum(qty * selling_price) as amount,
           balance,
           tier_id as tier_id,
           t.code as tier_code
+
     FROM
         cdf c
          full Join tiers t
-        on t.id = c.tier_id
+           on t.id = c.tier_id
+        left join (select date, customer_id, payment, id
+                   from sales
+                   where date between '${fromDate}' and '${toDate}' ) as sales
+           on sales.customer_id = c.id
+        left join sales_bill as sales_bill
+           on sales_bill.sales_id = sales.id
      GROUP BY
         c.id,
         c.name,
         email,
         company,
-        date,
+        c.date,
         reference,
         reference_person,
         brands,
@@ -90,15 +98,18 @@ exports.findAll = async (req, res) => {
         mobile,
         address,
         due_limit,
-        payment,
+        c.payment,
         balance,
         tier_id,
         t.code,
+
         c.is_active,
         c.cdf_status,
         cdf_total_due,
         c.tier_code
-          ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+
+        ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}`;
+        console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

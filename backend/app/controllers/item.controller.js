@@ -35,14 +35,11 @@ exports.findAll = async (req, res) => {
           or date::text like '%${search}%'
           or item_name::text like '%${search}%'
           or int_qty::text like '%${search}%'
-         or COALESCE(item_sold,0)::text like '%${search}%'
-          or COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0)::text like '%${search}%'
-           or (COALESCE(int_qty,0) +  COALESCE(item_purchased,0) -  COALESCE(item_sold,0))::text * silver::text like '%${search}%'
-           or COALESCE(item_purchased,0)::text like '%${search}%'
+          or COALESCE(item_sold,0)::text like '%${search}%'
+          or COALESCE(item_purchased,0)::text like '%${search}%'
           or silver::text like '%${search}%'
-          or category::text like '%${search}%'
-          or supplier_name::text like '%${search}%'
-          or supplier_rate::text like '%${search}%'
+
+
         )`;
     }
     searchQuery += ` and i.is_active = ${active}`;

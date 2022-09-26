@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -27,6 +28,10 @@ export class CustomersComponent implements OnInit {
         'tier_code',
         'action'
     ];
+    fromDate: string;
+    toDate: string;
+
+
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     public defaultPageSize = PAGE_SIZE;
@@ -41,11 +46,14 @@ export class CustomersComponent implements OnInit {
         direction: "desc",
         search: '',
         active: true,
-        toDate: '',
+        // fromDate: moment(this.currentDate.setDate(this.currentDate.getDate() - 30)).format('YYYY-MM-DD'),
+         fromDate: moment(new Date().setDate(new Date().getDate() - 30)).format('YYYY-MM-DD'),
+
+        toDate: moment(new Date()).format("YYYY-MM-DD") ,
         userId: ''
     }
-    fromDate: string;
-    toDate: string;
+
+
     constructor(
         public dialog: MatDialog,
         private customersService: CustomersService,
@@ -54,6 +62,8 @@ export class CustomersComponent implements OnInit {
     ) { }
     ngOnInit(): void {
         this.getCdf();
+
+
     }
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
@@ -64,6 +74,7 @@ export class CustomersComponent implements OnInit {
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
+
     getCdf() {
         this.loader = true;
         if (this.fromDate) {

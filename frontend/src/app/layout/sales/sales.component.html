@@ -40,7 +40,7 @@
                 <mat-label>Select Customer</mat-label>
                 <mat-select name="customer" [(ngModel)]="selectedCustomerId"
                     (selectionChange)="toggleCreateAddSalesButton(); getSales()">
-                    <mat-option value="0" >All Customer</mat-option>
+                    <mat-option value="0" (click)="clearSearch()" >All Customer</mat-option>
                     <mat-option *ngFor="let customer of customers" [value]="customer.id">
                         {{customer.company | uppercase}}
                     </mat-option>
