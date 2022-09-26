@@ -20,7 +20,7 @@ exports.findAll = async (req, res) => {
 
 
     if (fromDate && toDate) {
-      searchQuery += ` and date::date between  '${fromDate}'::date and '${toDate}'::date `;
+      searchQuery += ` and p.date::date between  '${fromDate}'::date and '${toDate}'::date `;
     }
     if (userId) {
       searchQuery += ` and p.user_id = ${+userId} `;

@@ -26,19 +26,20 @@ exports.findAll = async (req, res) => {
     if (search) {
       searchQuery += ` and
         (
-           sr::text ilike '%${search}%'
-          or s.date::text ilike '%${search}%'
+           sr::text like '%${search}%'
+          or s.date::text like '%${search}%'
 
-          or qty::text ilike '%${search}%'
-          or amount::text ilike '%${search}%'
-          or total_due::text ilike '%${search}%'
-          or shipping::text ilike '%${search}%'
-          or gst::text ilike '%${search}%'
-          or user_name ilike '%${search}%'
-          or tier_id ilike '%${search}%'
-          or remarks ilike '%${search}%'
-        )`;
-    }
+          or s.qty::text like '%${search}%'
+          or s.amount::text like '%${search}%'
+          or total_due::text like '%${search}%'
+          or shipping::text like '%${search}%'
+          or gst::text like '%${search}%'
+          or tier_id::text like '%${search}%'
+
+          or remarks like '%${search}%'
+          )`;
+        }
+        // or s.user_name ilike '%${search}%'
     searchQuery += ` and s.is_active = ${active}`;
     const query = `  SELECT
       Count(s.id) OVER() AS total,
@@ -74,6 +75,8 @@ exports.findAll = async (req, res) => {
          user_id,
          tier_id,
          tiers.code,
+          s.amount,
+          s.total_due,
          s.is_active
     ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
    `;

@@ -28,7 +28,7 @@
             <mat-form-field class="field-width margin">
                 <mat-label>All Users</mat-label>
                 <mat-select [(ngModel)]="userId" (selectionChange)="getPurchase()">
-                    <mat-option value="0">All Users</mat-option>
+                    <mat-option value="0" (click)="clearSearch()" >All Users</mat-option>
                     <mat-option *ngFor="let user of userData" [value]="user.id">
                         {{user.user_name}}
                     </mat-option>
