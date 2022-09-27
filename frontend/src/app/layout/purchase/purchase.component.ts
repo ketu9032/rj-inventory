@@ -45,8 +45,6 @@ export class PurchaseComponent implements OnInit {
     selectSupplierLoader: boolean = false;
     isShowAddPurchase: boolean = true;
     totalRows: number;
-    supplierName: string;
-    user: any;
     payment: number = 0;
     selectSupplierId?: number;
 
@@ -62,29 +60,21 @@ export class PurchaseComponent implements OnInit {
         userId: '',
         selectSupplierId: ''
     }
-    suppliers;
+    suppliers: any;
     fromDate: string;
     toDate: string;
     userData = [];
     userId?: number;
-    sr: number;
     token: number;
-    qty: number;
-    item: string;
-    price: number;
-    amount: number;
     totalQty: number = 0;
     total: number = 0;
     lastDue: number = 0;
     grandDueTotal: number;
     other_payment: number;
-    totalDue: number;
     remarks: string;
     userName: string;
-    item_code: string;
     suppliers_company: string
     tier: string;
-    selling_price: number;
     purchaseId: number;
     purchaseItems = [];
     date: string;
