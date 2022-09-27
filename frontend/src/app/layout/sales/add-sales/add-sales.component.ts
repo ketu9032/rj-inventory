@@ -12,6 +12,7 @@ import { salesQuotationService } from '../../sales-quotation/services/sales-quot
 import { ConfirmBoxComponent } from './confirm-box/confirm-box.component';
 import { SalesBillService } from '../services/sales-bill.service';
 import { SalesService } from '../services/sales.service';
+import { salesQuotationDetailsService } from '../../sales-quotation/services/sales-quotation-details.service';
 @Component({
     selector: 'app-add-sales',
     templateUrl: './add-sales.component.html',
@@ -61,18 +62,22 @@ export class AddSalesComponent implements OnInit {
     isCheckOverQtyColor: boolean = false;
     isShowRemarksError: boolean = false;
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number, pastDue: number },
+        @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number, pastDue: number,
+            salesQuotationId: number },
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddSalesComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
         private salesQuotationService: salesQuotationService,
         private salesService: SalesService,
+        private   salesQuotationDetailsService:  salesQuotationDetailsService,
         private salesBillService: SalesBillService,
         public authService: AuthService,
         private _formBuilder: FormBuilder
     ) { }
     ngOnInit() {
+        this.data
+debugger
         this.loggedInUser = this.authService.getUserData();
         this.getCustomerById();
         this.initializeSupplierForm();
@@ -81,6 +86,11 @@ export class AddSalesComponent implements OnInit {
         if (this.data.salesId) {
             this.getItemsBySalesId();
             this.getSalesById();
+            this.lastBillDue = this.data.pastDue;
+            this.calculate();
+        }
+        if (this.data.salesQuotationId) {
+            this.getItemsBySalesQuotationId()
             this.lastBillDue = this.data.pastDue;
             this.calculate();
         }
@@ -241,6 +251,23 @@ if(this.dueLimit < this.totalDue ) {
             () => { }
         );
     }
+    getItemsBySalesQuotationId() {
+        this.salesItemDataSource = [];
+
+        this.salesQuotationDetailsService.getItemsBySalesQuotationId(this.data.salesQuotationId).subscribe(
+            (response) => {
+                this.saleItems.push(...response)
+                this.calculate();
+                this.salesItemDataSource = new MatTableDataSource<ISalesBillData>(response);
+            },
+            (error) => {
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
+    }
     getItemDropDown() {
         this.selectItemLoader = true;
         this.salesService
@@ -373,14 +400,7 @@ if(this.dueLimit < this.totalDue ) {
         this.grandDueTotal = (+this.total + +this.lastBillDue);
         this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
     }
-    totalDueOverToDueLimit(value){
-        if(this.dueLimit < this.totalDue){
-          let msg = 'You are Over Due limit!'
-        return false;
-            }else{
-                return true;
-            }
-        }
+
         isCheckOverQty(){
             if(this.formSupplier.value.qty > this.availableItemById){
                 this.isCheckOverQtyColor = true;

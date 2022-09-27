@@ -231,6 +231,7 @@ export class CreateQuotationComponent implements OnInit {
     }
     getItemsBySalesQuotationId() {
         this.salesDataSource = [];
+
         this.salesQuotationDetailsService.getItemsBySalesQuotationId(this.data.id).subscribe(
             (response) => {
                 this.saleItems.push(...response)
