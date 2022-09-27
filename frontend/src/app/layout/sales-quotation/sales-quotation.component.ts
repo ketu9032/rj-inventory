@@ -10,6 +10,7 @@ import { ISalesQuotationData } from 'src/app/models/sales-quotation';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { TiersService } from '../customers/services/tiers.service';
+import { AddSalesComponent } from '../sales/add-sales/add-sales.component';
 import { CreateQuotationComponent } from './create-quotation/create-quotation.component';
 import { DeleteQuotationComponent } from './delete-quotation/delete-quotation.component';
 import { MoveSalesComponent } from './move-sales/move-sales.component';
@@ -169,17 +170,25 @@ export class SalesQuotationComponent implements OnInit {
                 }
             });
     }
-    onSelectCustomers(element) {
+    onSelectCustomers(salesQuotationId) {
         this.dialog
             .open(MoveSalesComponent, {
                 width: '400px',
                 height: 'auto',
-                data: element
+                data: salesQuotationId
             })
             .afterClosed()
-            .subscribe((result) => {
-                if (result) {
-                    this.getSalesQuotation();
+
+            .subscribe((customerId) => {
+                if (customerId) {
+                    this.dialog
+                    .open(AddSalesComponent, {
+                        width: '1000px',
+                        height: '800px',
+                        data: {salesQuotationId:salesQuotationId,
+                            customerId: customerId}
+                    })
+
                 }
             });
     }

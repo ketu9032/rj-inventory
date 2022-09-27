@@ -131,7 +131,7 @@
                     <td mat-cell *matCellDef="let element">
                         <ng-container *ngIf="loggedInUsersData.user_name === element.user_name">
                         <button mat-icon-button matTooltip="Move to sales " type="button"
-                            (click)="onSelectCustomers(element)">
+                            (click)="onSelectCustomers(element.id)">
                             <mat-icon aria-label="" class="green">device_hub</mat-icon>
                         </button>
                         </ng-container>
