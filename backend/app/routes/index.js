@@ -15,6 +15,7 @@ const sales_quotation = require('./../controllers/sales_quotation.controller');
 const sales_quotation_detail = require('./../controllers/sales_quotation_detail.controller');
 const purchase = require('./../controllers/purchase.controller');
 const purchase_details = require('./../controllers/purchase_details.controller');
+const roj_med = require('./../controllers/roj_med.controller');
 router.post('/api/addSales', sales.addSales);
 
 const tiers = require('./../controllers/tier.controller');
@@ -168,6 +169,8 @@ router.delete('/api/purchase_details', purchase_details.delete);
 router.get('/api/purchase_details', purchase_details.findAll);
 router.post('/api/purchase_details', purchase_details.add);
 router.put('/api/purchase_details', purchase_details.update);
+
+router.get('/api/roj_med', roj_med.findAll);
 
 module.exports = router;
 

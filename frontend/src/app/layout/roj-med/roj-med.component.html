@@ -1,2 +1,118 @@
+<div>
+    <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
+    <div class="flex">
+        <div>
+            <mat-form-field class="field-width-date margin">
+                <mat-label>Date</mat-label>
+                <input matInput [matDatepicker]="picker">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <button color="primary" class="margin btn" mat-raised-button>Find</button>
 
-<h2>    Roj Med</h2>
+        </div>
+        <div>
+            <!-- Select date range -->
+            <mat-form-field class="field-width margin">
+                <mat-label>Select date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker1">
+                    <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                    <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker1></mat-date-range-picker>
+            </mat-form-field>
+            <button color="primary" class="margin btn" mat-raised-button>
+                <mat-icon class="icon">cloud_download</mat-icon>
+                Download
+            </button>
+        </div>
+
+
+    </div>
+    <div class="contenier">
+        <table>
+            <tr>
+                <td class="bold">
+
+                    <div class="background-light-yellow bold">
+                       {{ currentDate | date: 'dd-MM-YYYY'}}
+                    </div>
+                    <div class="background-light-blue">
+                        Available
+                    </div>
+                    <div class="background-light-green">
+                        Sale
+                    </div>
+                    <div class=" background-light-green ">
+                        Received
+                    </div>
+                    <div class="background-light-red ">
+                        Purchase
+                    </div>
+                    <div class="background-light-red ">
+                        Transferred
+                    </div>
+                    <div class="background-light-red ">
+                        Expense
+                    </div>
+                    <div class="background-blue">
+                        EOD
+                    </div>
+                    <div class="background-green">
+                        Balance
+                    </div>
+                </td>
+                <td *ngFor="let user of users">
+                    <div class="background-light-yellow bold" >
+                         {{user.user_name | uppercase }}
+                    </div>
+                    <div class="background-light-blue">
+                        {{!user.balance ? ( 0 | currency: 'INR') : user.balance | currency: 'INR'}}
+                    </div>
+                    <div class="background-light-green font-green">
+                        {{!user.sales_payment ? ( 0 | currency: 'INR') : user.sales_payment | currency: 'INR' }}
+                    </div>
+                    <div class="background-light-green font-green">
+                        {{!user.received_amount ? ( 0 | currency: 'INR') : user.received_amount | currency: 'INR' }}
+                    </div>
+                    <div class="background-light-red font-red">
+                        {{!user.purchase_payment ? ( 0 | currency: 'INR') : user.purchase_payment | currency: 'INR' }}
+                    </div>
+                    <div class="background-light-red font-red">
+                        {{!user.transfer_amount ? ( 0 | currency: 'INR') : user.transfer_amount | currency: 'INR' }}
+                    </div>
+                    <div class="background-light-red font-red">
+                        {{!user.expense ? ( 0 | currency: 'INR') : user.expense | currency: 'INR' }}
+                    </div>
+                    <div class="background-blue">
+                        {{ (!user.sales_payment ? 0 : user.sales_payment) + (!user.received_amount ? 0 : user.received_amount)
+                        -
+                        (!user.purchase_payment ? 0 : user.purchase_payment) - (!user.transfer_amount ? 0 : user.transfer_amount) -
+                        (!user.expense ? 0 : user.expense) | currency: 'INR'}}
+                    </div>
+                    <div class="background-green bold">
+                        {{ !((user.balance) - (user.sales_payment + user.received_amount - user.purchase_payment -
+                        user.transfer_amount - user.expense)) ? ( 0 | currency: 'INR' ): (user.balance) -
+                        (user.sales_payment + user.received_amount - user.purchase_payment - user.transfer_amount -
+                        user.expense) | currency: 'INR' }}
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <br>
+     <div class="flex">
+        <button color="primary" class="margin btn" mat-raised-button>
+            Prev
+        </button> <button color="primary" class="margin btn" mat-raised-button>
+            Next
+        </button>
+
+     </div>
+
+
+
+
+    </div>
+</div>
