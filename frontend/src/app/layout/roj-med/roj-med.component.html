@@ -4,12 +4,11 @@
         <div>
             <mat-form-field class="field-width-date margin">
                 <mat-label>Date</mat-label>
-                <input matInput [matDatepicker]="picker">
+                <input matInput [matDatepicker]="picker" ngModel="currentDate">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
             <button color="primary" class="margin btn" mat-raised-button>Find</button>
-
         </div>
         <div>
             <!-- Select date range -->
@@ -18,7 +17,6 @@
                 <mat-date-range-input [rangePicker]="picker1">
                     <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
                     <input matEndDate [(ngModel)]="toDate" placeholder="End date">
-
                 </mat-date-range-input>
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-date-range-picker #picker1></mat-date-range-picker>
@@ -28,16 +26,13 @@
                 Download
             </button>
         </div>
-
-
     </div>
     <div class="contenier">
         <table>
             <tr>
                 <td class="bold">
-
                     <div class="background-light-yellow bold">
-                       {{ currentDate | date: 'dd-MM-YYYY'}}
+                        {{ currentDate }}
                     </div>
                     <div class="background-light-blue">
                         Available
@@ -65,54 +60,52 @@
                     </div>
                 </td>
                 <td *ngFor="let user of users">
-                    <div class="background-light-yellow bold" >
-                         {{user.user_name | uppercase }}
+                    <div class="background-light-yellow bold">
+                        {{user.user_name | uppercase }}
                     </div>
                     <div class="background-light-blue">
-                        {{!user.balance ? ( 0 | currency: 'INR') : user.balance | currency: 'INR'}}
+                        ₹ {{!user.balance ? 0 : user.balance }}
                     </div>
                     <div class="background-light-green font-green">
-                        {{!user.sales_payment ? ( 0 | currency: 'INR') : user.sales_payment | currency: 'INR' }}
+                        ₹ {{!user.sale_amount ? 0 : user.sale_amount }}
                     </div>
                     <div class="background-light-green font-green">
-                        {{!user.received_amount ? ( 0 | currency: 'INR') : user.received_amount | currency: 'INR' }}
+                        ₹ {{!user.receive_amount ? 0 : user.receive_amount }}
                     </div>
                     <div class="background-light-red font-red">
-                        {{!user.purchase_payment ? ( 0 | currency: 'INR') : user.purchase_payment | currency: 'INR' }}
+                        ₹ {{!user.purchase_amount ? 0 : user.purchase_amount }}
                     </div>
                     <div class="background-light-red font-red">
-                        {{!user.transfer_amount ? ( 0 | currency: 'INR') : user.transfer_amount | currency: 'INR' }}
+                        ₹ {{!user.transfers_amount ? 0 : user.transfers_amount }}
                     </div>
                     <div class="background-light-red font-red">
-                        {{!user.expense ? ( 0 | currency: 'INR') : user.expense | currency: 'INR' }}
+                        ₹ {{!user.expenses_amount ? 0 : user.expenses_amount }}
                     </div>
                     <div class="background-blue">
-                        {{ (!user.sales_payment ? 0 : user.sales_payment) + (!user.received_amount ? 0 : user.received_amount)
-                        -
-                        (!user.purchase_payment ? 0 : user.purchase_payment) - (!user.transfer_amount ? 0 : user.transfer_amount) -
-                        (!user.expense ? 0 : user.expense) | currency: 'INR'}}
+                        ₹ {{ +( !user.sale_amount ? 0 : user.sale_amount) + +(!user.receive_amount ? 0 :
+                        user.receive_amount) -
+                        +(!user.purchase_amount ? 0 : user.purchase_amount) - +(!user.expenses_amount ? 0 :
+                        user.expenses_amount)
+                        - +(!user.transfers_amount ? 0 : user.transfers_amount)
+                        }}
                     </div>
                     <div class="background-green bold">
-                        {{ !((user.balance) - (user.sales_payment + user.received_amount - user.purchase_payment -
-                        user.transfer_amount - user.expense)) ? ( 0 | currency: 'INR' ): (user.balance) -
-                        (user.sales_payment + user.received_amount - user.purchase_payment - user.transfer_amount -
-                        user.expense) | currency: 'INR' }}
+                        ₹ {{ +(user.balance) + +( !user.sale_amount ? 0 : user.sale_amount) + +(!user.receive_amount ? 0
+                        : user.receive_amount) -
+                        +(!user.purchase_amount ? 0 : user.purchase_amount) - +(!user.expenses_amount ? 0 :
+                        user.expenses_amount)
+                        - +(!user.transfers_amount ? 0 : user.transfers_amount) }}
                     </div>
                 </td>
             </tr>
         </table>
         <br>
-     <div class="flex">
-        <button color="primary" class="margin btn" mat-raised-button>
-            Prev
-        </button> <button color="primary" class="margin btn" mat-raised-button>
-            Next
-        </button>
-
-     </div>
-
-
-
-
+        <div class="flex">
+            <button color="primary" class="margin btn" mat-raised-button>
+                Prev
+            </button> <button color="primary" class="margin btn" mat-raised-button>
+                Next
+            </button>
+        </div>
     </div>
 </div>

@@ -76,8 +76,6 @@ export class AddSalesComponent implements OnInit {
         private _formBuilder: FormBuilder
     ) { }
     ngOnInit() {
-        this.data
-debugger
         this.loggedInUser = this.authService.getUserData();
         this.getCustomerById();
         this.initializeSupplierForm();

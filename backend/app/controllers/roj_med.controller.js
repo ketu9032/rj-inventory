@@ -8,48 +8,53 @@ const { dateWiseSalesSearch } = require('./sales.controller');
 
 exports.findAll = async (req, res) => {
   try {
-
-    let data = []
-    const getUserQuery = ` SELECT id, balance FROM users`
-    const response = await pool.query(getUserQuery);
-
-    for (let index = 0; index < response.rows.length; index++) {
-      const element = response.rows[index].id;
-      console.log(element);
-
-      const balanceQuery = ` SELECT  balance FROM users where id = ${element}`
-       let res = await pool.query(balanceQuery);
-       data.push(res.rows)
-
-      const saleQuery = `select user_id, SUM(payment) from sales where user_id = ${element} and date::date = now()::date group by sales.user_id`
-      res = await pool.query(saleQuery);
-      data.push(res.rows)
-
-      const receivedQuery = `select to_user_id, SUM(amount) from transfers where from_user_id =  ${element} and date::date  = now()::date group by transfers.to_user_id`
-      res = await pool.query(receivedQuery);
-      data.push(res.rows)
-
-      const transferQuery = `select from_user_id, SUM(amount) from transfers where to_user_id =  ${element} and date::date  = now()::date group by transfers.from_user_id`
-       res = await pool.query(transferQuery);
-       data.push(res.rows)
-
-      const expensesQuery = `select user_id, SUM(amount) from expenses where user_id =  ${element} and date::date = now()::date  group by expenses.user_id`
-      res = await pool.query(expensesQuery);
-      data.push(res.rows)
-
-      const purchaseQuery = `select user_id, SUM(payment) from purchase where user_id =  ${element} and date::date = now()::date  group by purchase.user_id`
-      res = await pool.query(purchaseQuery);
-      data.push(res.rows)
-
-      console.log(data);
-
-    }
+const  { date } = req.query
 
 
+    let response
+    const getUserQuery = ` SELECT id FROM users`
+    const responseUserId = await pool.query(getUserQuery);
+
+    for (let index = 0; index < responseUserId.rows.length; index++) {
+      const element = responseUserId.rows[index].id;
+
+      let balanceQuery = '';
+
+       balanceQuery = `SELECT  balance, id,user_name, sale_amount, receive_amount, transfers_amount, expenses_amount, purchase_amount
+      FROM users as users
+    left join
+      (select user_id, SUM(payment) as sale_amount from sales
+      where date::date = now()::date group by sales.user_id) as sales
+       on sales.user_id =  users.id
+    left join
+       (select to_user_id, SUM(amount) as receive_amount from transfers
+       where  date::date = now()::date group by transfers.to_user_id) as transfers_receive
+       on transfers_receive.to_user_id = users.id
+   left  join
+     (select from_user_id,  SUM(amount) as transfers_amount from transfers
+      where  date::date = now()::date group by transfers.from_user_id) as transfers
+       on transfers.from_user_id =  users.id
+    left join
+      (select user_id,  SUM(amount) as expenses_amount from expenses
+      where date::date = now()::date  group by expenses.user_id) as expenses
+       on expenses.user_id = users.id
+     left join
+      (select user_id, SUM(payment) as purchase_amount from purchase
+       where  date::date = now()::date group by purchase.user_id) as purchase
+     on purchase.user_id = users.id
+
+      `
+      console.log(balanceQuery);
+       response =   await pool.query(balanceQuery)
+      }
+      res.status(STATUS_CODE.SUCCESS).send(response.rows);
 
 
 
-  res.status(STATUS_CODE.SUCCESS).send(data);
+
+
+
+
 
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({

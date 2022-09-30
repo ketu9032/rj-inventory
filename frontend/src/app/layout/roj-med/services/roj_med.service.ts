@@ -8,8 +8,8 @@ export class RojMedService {
 
   constructor(private restService: RestService, private commonService: CommonService) {}
 
-  getRojMedData() {
-    return this.restService.get<any>(`${this.getRojMedURL}`);
+  getRojMedData(date) {
+    return this.restService.get<any>(`${this.getRojMedURL}?date=${date}`);
   }
 
 }

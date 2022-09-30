@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import * as moment from 'moment';
 import { UserService } from '../user/services/user.service';
 import { RojMedService } from './services/roj_med.service';
 
@@ -16,24 +17,11 @@ export class RojMedComponent implements OnInit {
     fromDate:  any;
     toDate: any;
     users: [] = [];
-    currentDate= new Date();
+    currentDate=   moment(new Date()).format("DD/MM/YYYY")
+
 
     dataSource: any = [];
-    // displayedColumns: string[] = [
-    //     'id',
-    //     'token',
-    //     'sales_date',
-    //     'customer_name',
-    //     'amount',
-    //     'past_due',
-    //     'total_amount',
-    //     'payment',
-    //     'total_due',
-    //     'other_payment',
-    //     'user_name',
-    //     'action',
-    //     'print'
-    // ];
+
 
 
   ngOnInit() {
@@ -50,7 +38,7 @@ export class RojMedComponent implements OnInit {
 
   getRojMed() {
     this.rojMedService
-        .getRojMedData()
+        .getRojMedData(this.currentDate)
         .subscribe(
             (response) => {
                 this.users = response
