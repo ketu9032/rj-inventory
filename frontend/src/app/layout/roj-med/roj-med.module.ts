@@ -8,9 +8,13 @@ import { MaterialModule } from 'src/app/shared/modules/material/material.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
-
+import { SaleDialogComponent } from './sale_dialog/sale_dialog.component';
+import { ReceiveDialogComponent } from './receive_dialog/receive_dialog.component';
+import { PurchaseDialogComponent } from './purchase_dialog/purchase_dialog.component';
+import { ExpenseDialogComponent } from './expense_dialog/expense_dialog.component';
+import { TransferDialogComponent } from './transfer_dialog/transfer_dialog.component';
 @NgModule({
-  declarations: [RojMedComponent],
+  declarations: [RojMedComponent, SaleDialogComponent, ReceiveDialogComponent, PurchaseDialogComponent, ExpenseDialogComponent, TransferDialogComponent],
   imports: [
     CommonModule,
     RojMedRoutingModule,

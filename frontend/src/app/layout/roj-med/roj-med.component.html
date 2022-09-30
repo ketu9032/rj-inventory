@@ -66,19 +66,19 @@
                     <div class="background-light-blue">
                         ₹ {{!user.balance ? 0 : user.balance }}
                     </div>
-                    <div class="background-light-green font-green">
+                    <div class="background-light-green font-green" (click)="saleDialog(user.id)">
                         ₹ {{!user.sale_amount ? 0 : user.sale_amount }}
                     </div>
-                    <div class="background-light-green font-green">
+                    <div class="background-light-green font-green" (click)="receiveDialog(user.id)">
                         ₹ {{!user.receive_amount ? 0 : user.receive_amount }}
                     </div>
-                    <div class="background-light-red font-red">
+                    <div class="background-light-red font-red" (click)="purchaseDialog(user.id)">
                         ₹ {{!user.purchase_amount ? 0 : user.purchase_amount }}
                     </div>
-                    <div class="background-light-red font-red">
+                    <div class="background-light-red font-red" (click)="transferDialog(user.id)">
                         ₹ {{!user.transfers_amount ? 0 : user.transfers_amount }}
                     </div>
-                    <div class="background-light-red font-red">
+                    <div class="background-light-red font-red" (click)="expenseDialog(user.id)">
                         ₹ {{!user.expenses_amount ? 0 : user.expenses_amount }}
                     </div>
                     <div class="background-blue">
