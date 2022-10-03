@@ -436,3 +436,37 @@ exports.purchasePrint = async (req, res) => {
     });
   }
 };
+
+// exports. getPurchaseByUserIdInRojMed = async (req, res) =>{
+//   try {
+//     const {
+//      userId
+//     } = req.query;
+//     const query = `
+//     SELECT
+//       p.id,
+//       p.date,
+//       p.bill_no,
+//       p.payment,
+//       other_payment,
+//       sales_bill.qty as sales_qty,
+//       sales_bill.selling_price as sales_price,
+//       cdf.company as customer,
+//       cdf.id as customer_id,
+//       users.user_name as user_name
+//     from purchase  p
+//     left join  sales_bill as sales_bill
+//       on sales_bill.sales_id = s.id
+//     join cdf as  cdf
+//       on cdf.id = s.customer_id
+//     join users as users
+//       on users.id = s.user_id
+//         where user_id = ${userId} and s.is_active = true  and s.date::date = now()::date`
+//     const response = await pool.query(query);
+//     res.status(STATUS_CODE.SUCCESS).send(response.rows);
+//   } catch (error) {
+//     res.status(STATUS_CODE.ERROR).send({
+//       message: error.message || MESSAGES.COMMON.ERROR
+//     });
+//   }
+// }

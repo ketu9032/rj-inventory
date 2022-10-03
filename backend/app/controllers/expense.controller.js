@@ -213,3 +213,30 @@ exports.approved = async (req, res) => {
     });
   }
 };
+
+exports. getExpenseByUserIdInRojMed = async (req, res) =>{
+  try {
+    const {
+     userId
+    } = req.query;
+    const query = `
+    SELECT
+     description, date, amount,
+    categories.code as category_code,
+    users.id as user_id,
+    users.user_name as user_name
+    from expenses e
+     join categories as categories
+      on categories.id = e.category_id
+     join users as users
+       on users.id = e.user_id
+
+        where user_id = ${userId} and e.is_active = true  and e.date::date = now()::date`
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+}

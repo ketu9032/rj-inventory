@@ -98,6 +98,7 @@ router.post('/api/expense', expense.add);
 router.put('/api/expense', expense.update);
 router.put('/api/expense/changeStatus', expense.changeStatus);
 router.put('/api/expense/approved', expense.approved);
+router.get('/api/expense/getSalesByUserIdInRojMed', expense.getExpenseByUserIdInRojMed);
 
 router.delete('/api/item', item.delete);
 router.get('/api/item', item.findAll);
@@ -138,6 +139,7 @@ router.get('/api/sales/isCustomerIdInSales', sales.isCustomerIdInSales);
 router.get('/api/sales/salesPrint', sales.salesPrint);
 router.get('/api/sales/dateWiseSalesSearch', sales.dateWiseSalesSearch);
 router.get('/api/sales/getSalesByUserIdInRojMed', sales.getSalesByUserIdInRojMed);
+
 
 router.delete('/api/sales_bill', sales_bill.delete);
 router.get('/api/sales_bill', sales_bill.findAll);

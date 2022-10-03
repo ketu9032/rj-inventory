@@ -19,7 +19,7 @@ export class ExpenseDialogComponent implements OnInit {
     displayedColumns: string[] = [
         'date',
         'description',
-        'remarks',
+        'category_code',
         'amount'
     ];
     constructor(
@@ -28,12 +28,12 @@ export class ExpenseDialogComponent implements OnInit {
         private snackBar: MatSnackBar,
     ) { }
     ngOnInit() {
-        this.getSalesByUsers();
+        this.getExpenseByByUsers();
     }
-    getSalesByUsers(){
+    getExpenseByByUsers(){
         this.loader = true
         this.rojMedService
-         .getSalesByUserId(this.data.userId)
+         .getExpenseByUserId(this.data.userId)
          .subscribe(
             (response: any[]) => {
                 this.dataSource = new MatTableDataSource<any>(response)
