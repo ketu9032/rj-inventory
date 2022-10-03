@@ -19,8 +19,8 @@ export class TransferDialogComponent implements OnInit {
     displayedColumns: string[] = [
         'date',
         'description',
-        'amount',
-        'to'
+        'transfer_amount',
+        'to_user_name'
     ];
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { userId: number},
@@ -28,12 +28,12 @@ export class TransferDialogComponent implements OnInit {
         private snackBar: MatSnackBar,
     ) { }
     ngOnInit() {
-        this.getSalesByUsers();
+        this.getTransferByUsers();
     }
-    getSalesByUsers(){
+    getTransferByUsers(){
         this.loader = true
         this.rojMedService
-         .getSalesByUserId(this.data.userId)
+         .getTransferByUserId(this.data.userId)
          .subscribe(
             (response: any[]) => {
                 this.dataSource = new MatTableDataSource<any>(response)

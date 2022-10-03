@@ -1,7 +1,6 @@
 const { MESSAGES } = require('../constant/messages');
 const { STATUS_CODE } = require('../constant/response-status');
 const { pool } = require('../db');
-
 exports.findAll = async (req, res) => {
   try {
     const {
@@ -17,8 +16,6 @@ exports.findAll = async (req, res) => {
       userId
     } = req.query;
     let searchQuery = 'having true';
-
-
     if (fromDate && toDate) {
       searchQuery += ` and p.date::date between  '${fromDate}'::date and '${toDate}'::date `;
     }
@@ -28,7 +25,6 @@ exports.findAll = async (req, res) => {
     if (selectSupplierId) {
       searchQuery += ` and suppliers_id = ${+selectSupplierId} `;
     }
-
     const offset = pageSize * pageNumber - pageSize;
     if (search) {
       searchQuery += ` and
@@ -65,7 +61,6 @@ exports.findAll = async (req, res) => {
       sum((COALESCE(purchase_details.qty,0) * COALESCE(purchase_details.selling_price,0)) + COALESCE(past_due,0)) - payment as total_due,
       users.id as user_id,
       users.user_name as user_name
-
     FROM purchase p
     join users as users
       on users.id = p.user_id
@@ -104,7 +99,6 @@ exports.findAll = async (req, res) => {
     });
   }
 };
-
 exports.delete = async (req, res) => {
   try {
     const { id } = req.query;
@@ -124,7 +118,6 @@ exports.delete = async (req, res) => {
     });
   }
 };
-
 exports.add = async (req, res) => {
   try {
     const loggedInUserId = res.locals.tokenData.id;
@@ -143,7 +136,6 @@ exports.add = async (req, res) => {
       remarks, payment, suppliers_id, other_payment,
       token,
       bill_no
-
     )
     VALUES
       (
@@ -158,7 +150,6 @@ exports.add = async (req, res) => {
        (select count(bill_no)+1 from purchase where suppliers_id = '${suppliers_id}')
       ) returning id
     ;`;
-
     const { rows } = await pool.query(insertPurchaseQuery);
     const purchaseId = rows[0].id;
     await this.updateValue(
@@ -170,7 +161,6 @@ exports.add = async (req, res) => {
       loggedInUserId,
       false
     );
-
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
@@ -178,7 +168,6 @@ exports.add = async (req, res) => {
     });
   }
 };
-
 exports.update = async (req, res) => {
   try {
     const loggedInUserId = res.locals.tokenData.id;
@@ -193,10 +182,8 @@ exports.update = async (req, res) => {
     } = req.body;
     const getOldPaymentQuery = `select payment from purchase where id = ${id}`;
     const paymentResponse = await pool.query(getOldPaymentQuery);
-
     const getOldPurchasePriceQuery = `SELECT qty*selling_price  AS total_price FROM purchase_details where purchase_id = ${id}`;
     const responsePurchasePrice = await pool.query(getOldPurchasePriceQuery);
-
     const updatePurchaseQuery = `UPDATE
       purchase
     SET
@@ -227,7 +214,6 @@ exports.update = async (req, res) => {
     });
   }
 };
-
 exports.changeStatus = async (req, res) => {
   try {
     const { id, status } = req.body;
@@ -279,7 +265,6 @@ exports.getPurchaseById = async (req, res) => {
     });
   }
 };
-
 exports.isSupplierIdInPurchase = async (req, res) => {
   try {
     const { supplierID } = req.query;
@@ -292,7 +277,6 @@ exports.isSupplierIdInPurchase = async (req, res) => {
     });
   }
 };
-
 exports.updateValue = async (
   supplierId,
   payment,
@@ -319,7 +303,6 @@ exports.updateValue = async (
     }
     const query3 = `delete from purchase_details where purchase_id = ${purchaseId};`;
     await pool.query(query3);
-
     for (let index = 0; index < purchaseItemDetails.length; index++) {
       const element = purchaseItemDetails[index];
       const query4 = `INSERT INTO purchase_details
@@ -343,10 +326,8 @@ exports.updateValue = async (
       await pool.query(query5);
       itemsCost = +element.selling_price * +element.qty + itemsCost;
     }
-
     let existingPayment = 0;
     let existingOtherPayment = 0;
-
     if (isPurchaseUpdate === true) {
       let query7 = `select payment, other_payment from purchase where id = ${purchaseId}`;
       const existingBillResponse = await pool.query(query7);
@@ -362,10 +343,8 @@ exports.updateValue = async (
             other_payment = COALESCE(other_payment,0) - ${existingOtherPayment} - ${otherPayment}
           where id = ${purchaseId}`;
         await pool.query(query);
-
         let query8 = `update users set balance = balance + ${paymentResponse.rows[0].payment} - ${payment}  where id = ${loggedInUserId} `;
         await pool.query(query8);
-
         let query6 = ` update suppliers set
           purchase_price = purchase_price - ${responsePurchasePrice.rows[0].total_price}  + ${itemsCost},
           purchase_payment = purchase_payment - ${paymentResponse.rows[0].payment} +  ${payment},
@@ -375,10 +354,8 @@ exports.updateValue = async (
     } else {
       let query10 = `update purchase set past_due = (select suppliers_total_due from suppliers where id = ${supplierId} ) where id = ${purchaseId}`;
       await pool.query(query10);
-
       let query8 = `update users set balance = balance  - ${payment}  where id = ${loggedInUserId} `;
       await pool.query(query8);
-
       let query6 = ` update suppliers set
       purchase_price =  COALESCE(purchase_price,0) - ${existingItemsCost}  + ${itemsCost},
       purchase_payment = COALESCE(purchase_payment,0) - ${existingPayment} + ${payment},
@@ -390,7 +367,6 @@ exports.updateValue = async (
     throw new Error(error.message || MESSAGES.COMMON.ERROR);
   }
 };
-
 exports.purchasePrint = async (req, res) => {
   try {
     const { purchaseId } = req.query;
@@ -436,37 +412,32 @@ exports.purchasePrint = async (req, res) => {
     });
   }
 };
-
-// exports. getPurchaseByUserIdInRojMed = async (req, res) =>{
-//   try {
-//     const {
-//      userId
-//     } = req.query;
-//     const query = `
-//     SELECT
-//       p.id,
-//       p.date,
-//       p.bill_no,
-//       p.payment,
-//       other_payment,
-//       sales_bill.qty as sales_qty,
-//       sales_bill.selling_price as sales_price,
-//       cdf.company as customer,
-//       cdf.id as customer_id,
-//       users.user_name as user_name
-//     from purchase  p
-//     left join  sales_bill as sales_bill
-//       on sales_bill.sales_id = s.id
-//     join cdf as  cdf
-//       on cdf.id = s.customer_id
-//     join users as users
-//       on users.id = s.user_id
-//         where user_id = ${userId} and s.is_active = true  and s.date::date = now()::date`
-//     const response = await pool.query(query);
-//     res.status(STATUS_CODE.SUCCESS).send(response.rows);
-//   } catch (error) {
-//     res.status(STATUS_CODE.ERROR).send({
-//       message: error.message || MESSAGES.COMMON.ERROR
-//     });
-//   }
-// }
+exports. getPurchaseByUserIdInRojMed = async (req, res) =>{
+  try {
+    const {
+     userId
+    } = req.query;
+    const query = `
+    SELECT
+      p.id,
+      p.date,
+      p.bill_no,
+      p.payment,
+      other_payment,
+      purchase_details.qty as purchase_qty,
+      purchase_details.selling_price as purchase_price,
+      suppliers.company as supplier_company
+    from purchase  p
+     join  purchase_details as purchase_details
+      on purchase_details.purchase_id = p.id
+        join  suppliers as suppliers
+      on suppliers.id = p.suppliers_id
+        where user_id = ${userId} and p.is_active = true  and p.date::date = now()::date`
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+}

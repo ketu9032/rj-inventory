@@ -19,7 +19,7 @@ export class PurchaseDialogComponent implements OnInit {
     displayedColumns: string[] = [
         'bill_no',
         'date',
-        'supplier',
+        'supplier_company',
         'grand_total',
         'payment',
         'other_payment',
@@ -31,12 +31,12 @@ export class PurchaseDialogComponent implements OnInit {
         private snackBar: MatSnackBar,
     ) { }
     ngOnInit() {
-        this.getSalesByUsers();
+        this.getPurchaseByUsers();
     }
-    getSalesByUsers(){
+    getPurchaseByUsers(){
         this.loader = true
         this.rojMedService
-         .getSalesByUserId(this.data.userId)
+         .getPurchaseByUserId(this.data.userId)
          .subscribe(
             (response: any[]) => {
                 this.dataSource = new MatTableDataSource<any>(response)

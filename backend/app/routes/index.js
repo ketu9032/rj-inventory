@@ -67,6 +67,9 @@ router.post('/api/transfers', transfers.add);
 router.put('/api/transfers', transfers.update);
 router.put('/api/transfers/changeStatus', transfers.changeStatus);
 router.put('/api/transfers/approved', transfers.approved);
+router.get('/api/transfers/getReceiveByUserIdInRojMed', transfers.getReceiveByUserIdInRojMed);
+router.get('/api/transfers/getTransferByUserIdInRojMed', transfers.getTransferByUserIdInRojMed);
+
 
 router.delete('/api/suppliers', suppliers.delete);
 router.get('/api/suppliers', suppliers.findAll);
@@ -167,6 +170,8 @@ router.put('/api/purchase/changeStatus', purchase.changeStatus);
 router.get('/api/purchase/getPurchaseById', purchase.getPurchaseById);
 router.get('/api/purchase/isSupplierIdInPurchase', purchase.isSupplierIdInPurchase);
 router.get('/api/purchase/purchasePrint', purchase.purchasePrint);
+router.get('/api/purchase/getPurchaseByUserIdInRojMed', purchase.getPurchaseByUserIdInRojMed);
+
 
 router.delete('/api/purchase_details', purchase_details.delete);
 router.get('/api/purchase_details', purchase_details.findAll);

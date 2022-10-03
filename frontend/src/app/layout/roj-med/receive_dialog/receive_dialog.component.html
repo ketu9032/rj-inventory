@@ -15,16 +15,16 @@ matSortDirection="desc">
         {{ element.description  }}
     </td>
 </ng-container>
-<ng-container matColumnDef="amount">
+<ng-container matColumnDef="receive_amount">
     <th mat-header-cell *matHeaderCellDef >Amount</th>
     <td mat-cell *matCellDef="let element">
-       ₹ {{  element.amount  }}
+       ₹ {{  element.receive_amount  }}
     </td>
 </ng-container>
-<ng-container matColumnDef="from">
+<ng-container matColumnDef="from_user_name">
     <th mat-header-cell *matHeaderCellDef >From</th>
     <td mat-cell *matCellDef="let element">
-       {{ element.from | uppercase }}
+       {{ element.from_user_name | uppercase }}
     </td>
 </ng-container>
  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -15,16 +15,16 @@ matSortDirection="desc">
         {{ element.date | date: 'MMM d, y, h:mm:ss' }}
     </td>
 </ng-container>
-<ng-container matColumnDef="supplier">
+<ng-container matColumnDef="supplier_company">
     <th mat-header-cell *matHeaderCellDef >Supplier</th>
     <td mat-cell *matCellDef="let element">
-        {{ element.supplier | uppercase }}
+        {{ element.supplier_company | uppercase }}
     </td>
 </ng-container>
 <ng-container matColumnDef="grand_total">
-    <th mat-header-cell *matHeaderCellDef >grand_total</th>
+    <th mat-header-cell *matHeaderCellDef >Grand Total</th>
     <td mat-cell *matCellDef="let element">
-       ₹ {{  element.grand_total }}
+       ₹ {{+element.purchase_qty *  +element.purchase_price }}
     </td>
 </ng-container>
 <ng-container matColumnDef="payment">
@@ -42,7 +42,7 @@ matSortDirection="desc">
 <ng-container matColumnDef="total_due">
     <th mat-header-cell *matHeaderCellDef >Total Due</th>
     <td mat-cell *matCellDef="let element">
-       ₹ {{ element.total_due }}
+       ₹ {{+element.purchase_qty *  +element.purchase_price - +element.payment }}
     </td>
 </ng-container>
  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -24,7 +24,7 @@ export class TransferComponent implements OnInit {
         "transferId",
         'transferDate',
         'description',
-        'amount',
+        'transfer_amount',
         'fromUserName',
         'toUserName',
         'action',

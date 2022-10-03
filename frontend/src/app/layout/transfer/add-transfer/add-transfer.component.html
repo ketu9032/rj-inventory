@@ -27,13 +27,13 @@
         <!-- Amount start -->
         <mat-form-field>
             <mat-label>Amount</mat-label>
-            <input matInput formControlName="amount" type="number"  required />
+            <input matInput formControlName="transfer_amount" type="number"  required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="
-          formGroup.controls.amount.touched &&
-          !formGroup.controls.amount.value &&
-          !formGroup.controls.amount.errors.required
+          formGroup.controls.transfer_amount.touched &&
+          !formGroup.controls.transfer_amount.value &&
+          !formGroup.controls.transfer_amount.errors.required
         ">
                 <span class="error">Amount Balance is Required</span>
 

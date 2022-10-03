@@ -19,8 +19,8 @@ export class ReceiveDialogComponent implements OnInit {
     displayedColumns: string[] = [
         'date',
         'description',
-        'amount',
-        'from'
+        'receive_amount',
+        'from_user_name'
     ];
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { userId: number},
@@ -28,12 +28,12 @@ export class ReceiveDialogComponent implements OnInit {
         private snackBar: MatSnackBar,
     ) { }
     ngOnInit() {
-        this.getSalesByUsers();
+        this.getReceiveByUsers();
     }
-    getSalesByUsers(){
+    getReceiveByUsers(){
         this.loader = true
         this.rojMedService
-         .getSalesByUserId(this.data.userId)
+         .getReceiveByUserId(this.data.userId)
          .subscribe(
             (response: any[]) => {
                 this.dataSource = new MatTableDataSource<any>(response)

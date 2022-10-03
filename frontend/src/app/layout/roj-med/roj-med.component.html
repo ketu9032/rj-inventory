@@ -64,7 +64,7 @@
                         {{user.user_name | uppercase }}
                     </div>
                     <div class="background-light-blue">
-                        ₹ {{!user.balance ? 0 : user.balance }}
+                        ₹ {{!user.balance ? 0 : user.balance    }}
                     </div>
                     <div class="background-light-green font-green" (click)="saleDialog(user.id)">
                         ₹ {{!user.sale_amount ? 0 : user.sale_amount }}
@@ -76,7 +76,7 @@
                         ₹ {{!user.purchase_amount ? 0 : user.purchase_amount }}
                     </div>
                     <div class="background-light-red font-red" (click)="transferDialog(user.id)">
-                        ₹ {{!user.transfers_amount ? 0 : user.transfers_amount }}
+                        ₹ {{!user.transfer_amount ? 0 : user.transfer_amount }}
                     </div>
                     <div class="background-light-red font-red" (click)="expenseDialog(user.id)">
                         ₹ {{!user.expenses_amount ? 0 : user.expenses_amount }}
@@ -86,7 +86,7 @@
                         user.receive_amount) -
                         +(!user.purchase_amount ? 0 : user.purchase_amount) - +(!user.expenses_amount ? 0 :
                         user.expenses_amount)
-                        - +(!user.transfers_amount ? 0 : user.transfers_amount)
+                        - +(!user.transfer_amount ? 0 : user.transfer_amount)
                         }}
                     </div>
                     <div class="background-green bold">
@@ -94,7 +94,7 @@
                         : user.receive_amount) -
                         +(!user.purchase_amount ? 0 : user.purchase_amount) - +(!user.expenses_amount ? 0 :
                         user.expenses_amount)
-                        - +(!user.transfers_amount ? 0 : user.transfers_amount) }}
+                        - +(!user.transfer_amount ? 0 : user.transfer_amount) }}
                     </div>
                 </td>
             </tr>
