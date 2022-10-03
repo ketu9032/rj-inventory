@@ -43,20 +43,18 @@ export class AddTransferComponent implements OnInit {
     }
     initializeForm(): void {
         this.formGroup = this.formBuilder.group({
-
             description: ['', Validators.required],
-            amount: ['', Validators.required],
-            // amount: ['', Validators.required, Validators.pattern(this.numberRegEx)],
+            transfer_amount: ['', Validators.required],
             toUserId: ['', Validators.required],
         });
     }
     saveTransfer(): void {
-        const { toUserId, description, amount } = this.formGroup.value;
+        const { toUserId, description, transfer_amount } = this.formGroup.value;
         const fromUserId = this.loggedInUser.id;
         this.isShowLoader = true;
         this.transferService
             .addTransfer({
-                toUserId, description, amount, fromUserId
+                toUserId, description, transfer_amount, fromUserId
             })
             .subscribe(
                 (response) => {
@@ -79,13 +77,13 @@ export class AddTransferComponent implements OnInit {
             );
     }
     updateTransfer(): void {
-        const { toUserId, description, amount } = this.formGroup.value;
+        const { toUserId, description, transfer_amount } = this.formGroup.value;
         const fromUserId = this.loggedInUser.id;
         this.isShowLoader = true;
         this.transferService
             .editTransfer({
                 transferId: this.data.transferId,
-                toUserId, description, amount, fromUserId
+                toUserId, description, transfer_amount, fromUserId
             })
             .subscribe(
                 (response) => {
@@ -115,12 +113,11 @@ export class AddTransferComponent implements OnInit {
         }
     }
     fillForm() {
-        const { toUserId, description: description, amount: amount } = this.data;
+        const { toUserId, description: description, transfer_amount: transfer_amount } = this.data;
         this.formGroup.patchValue({
             description,
-            amount,
+            transfer_amount,
             toUserId,
-
         });
     }
     getUserDropDown() {

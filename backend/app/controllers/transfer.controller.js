@@ -37,7 +37,7 @@ exports.findAll = async (req, res) => {
       searchQuery += `
         and
           (description ilike '%${search}%'
-            or amount::text ilike '%${search}%'
+            or transfer_amount::text ilike '%${search}%'
             or date::text ilike '%${search}%'
             or to_user.user_name ilike '%${search}%'
             or from_user.user_name ilike '%${search}%'
@@ -52,7 +52,7 @@ exports.findAll = async (req, res) => {
             t.id as "transferId",
             description as description,
             t.is_deleted as "isDeleted",
-            amount as amount,
+            transfer_amount as transfer_amount,
             t.to_user_id as "toUserId",
             to_user.user_name as "toUserName",
             t.date as "transferDate",
@@ -97,8 +97,8 @@ exports.delete = async (req, res) => {
 };
 exports.add = async (req, res) => {
   try {
-    const { description, amount, toUserId } = req.body;
-    if (!description || !amount || !toUserId) {
+    const { description, transfer_amount, toUserId } = req.body;
+    if (!description || !transfer_amount || !toUserId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -108,7 +108,7 @@ exports.add = async (req, res) => {
       `INSERT INTO transfers (
         from_user_id,
         description,
-        amount,
+        transfer_amount,
         date,
         to_user_id,
         is_approved
@@ -117,7 +117,7 @@ exports.add = async (req, res) => {
         (
           ${res.locals.tokenData.id},
           '${description}',
-          ${amount},
+          ${transfer_amount},
           'now()',
           ${toUserId},
           false
@@ -133,8 +133,8 @@ exports.add = async (req, res) => {
 };
 exports.update = async (req, res) => {
   try {
-    const { transferId, description, amount, toUserId } = req.body;
-    if (!toUserId || !description || !amount || !transferId) {
+    const { transferId, description, transfer_amount, toUserId } = req.body;
+    if (!toUserId || !description || !transfer_amount || !transferId) {
       res
         .status(STATUS_CODE.BAD)
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
@@ -145,7 +145,7 @@ exports.update = async (req, res) => {
         SET
           to_user_id = '${toUserId}',
           description = '${description}',
-          amount = '${amount}',
+          transfer_amount = '${transfer_amount}',
           date = 'now()'
         where
           id = ${transferId};
@@ -190,7 +190,7 @@ exports.approved = async (req, res) => {
     const query = `select
           from_user_id as "fromUserId",
           to_user_id as "toUserId",
-          amount
+          transfer_amount
         from
         transfers
         where "id" = ${transferId}`;
@@ -198,15 +198,15 @@ exports.approved = async (req, res) => {
     const transferData = response.rows ? response.rows[0] : null;
 
     if (transferData) {
-      const { fromUserId, toUserId, amount } = transferData;
+      const { fromUserId, toUserId,  transfer_amount } = transferData;
       await pool.query(
-        `update users set balance = balance - ${+amount}  where id = ${fromUserId}`
+        `update users set balance = balance - ${+transfer_amount}  where id = ${fromUserId}`
       );
       await pool.query(
-        `update users set balance = balance + ${+amount}  where id = ${toUserId}`
+        `update users set balance = balance + ${+transfer_amount}  where id = ${toUserId}`
       );
       await pool.query(
-        `UPDATE transfers SET is_approved = true where "id" = '${transferId}'`
+        `UPDATE transfers SET receive_amount = ${transfer_amount}, is_approved = true where "id" = '${transferId}'`
       );
       return res.status(STATUS_CODE.SUCCESS).send();
     }
@@ -220,3 +220,64 @@ exports.approved = async (req, res) => {
     });
   }
 };
+
+exports. getReceiveByUserIdInRojMed = async (req, res) =>{
+  try {
+    const {
+     userId
+    } = req.query;
+    const query = `
+    select
+      to_user_id,
+      receive_amount,
+      from_user_id,
+      date,
+      description,
+      users.user_name as from_user_name
+    from
+      transfers
+      join users as users on users.id = from_user_id
+    where
+      date :: date = now() :: date
+      and is_approved = true
+      and transfers.to_user_id = ${userId} `
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+}
+exports. getTransferByUserIdInRojMed = async (req, res) =>{
+  try {
+    const {
+     userId
+    } = req.query;
+    const query = `
+    select
+      from_user_id,
+      transfer_amount,
+      date,
+      description,
+      to_user_id,
+      date,
+      description,
+      users.user_name as to_user_name
+    from
+      transfers
+      join users as users on users.id = to_user_id
+    where
+      date :: date = now() :: date
+      and is_approved = true
+      and transfers.from_user_id = ${userId}
+   `
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+}
+

@@ -15,6 +15,7 @@ const sales_quotation = require('./../controllers/sales_quotation.controller');
 const sales_quotation_detail = require('./../controllers/sales_quotation_detail.controller');
 const purchase = require('./../controllers/purchase.controller');
 const purchase_details = require('./../controllers/purchase_details.controller');
+const roj_med = require('./../controllers/roj_med.controller');
 router.post('/api/addSales', sales.addSales);
 
 const tiers = require('./../controllers/tier.controller');
@@ -66,6 +67,9 @@ router.post('/api/transfers', transfers.add);
 router.put('/api/transfers', transfers.update);
 router.put('/api/transfers/changeStatus', transfers.changeStatus);
 router.put('/api/transfers/approved', transfers.approved);
+router.get('/api/transfers/getReceiveByUserIdInRojMed', transfers.getReceiveByUserIdInRojMed);
+router.get('/api/transfers/getTransferByUserIdInRojMed', transfers.getTransferByUserIdInRojMed);
+
 
 router.delete('/api/suppliers', suppliers.delete);
 router.get('/api/suppliers', suppliers.findAll);
@@ -97,6 +101,7 @@ router.post('/api/expense', expense.add);
 router.put('/api/expense', expense.update);
 router.put('/api/expense/changeStatus', expense.changeStatus);
 router.put('/api/expense/approved', expense.approved);
+router.get('/api/expense/getSalesByUserIdInRojMed', expense.getExpenseByUserIdInRojMed);
 
 router.delete('/api/item', item.delete);
 router.get('/api/item', item.findAll);
@@ -136,6 +141,8 @@ router.get('/api/sales/getSalesById', sales.getSalesById);
 router.get('/api/sales/isCustomerIdInSales', sales.isCustomerIdInSales);
 router.get('/api/sales/salesPrint', sales.salesPrint);
 router.get('/api/sales/dateWiseSalesSearch', sales.dateWiseSalesSearch);
+router.get('/api/sales/getSalesByUserIdInRojMed', sales.getSalesByUserIdInRojMed);
+
 
 router.delete('/api/sales_bill', sales_bill.delete);
 router.get('/api/sales_bill', sales_bill.findAll);
@@ -163,11 +170,15 @@ router.put('/api/purchase/changeStatus', purchase.changeStatus);
 router.get('/api/purchase/getPurchaseById', purchase.getPurchaseById);
 router.get('/api/purchase/isSupplierIdInPurchase', purchase.isSupplierIdInPurchase);
 router.get('/api/purchase/purchasePrint', purchase.purchasePrint);
+router.get('/api/purchase/getPurchaseByUserIdInRojMed', purchase.getPurchaseByUserIdInRojMed);
+
 
 router.delete('/api/purchase_details', purchase_details.delete);
 router.get('/api/purchase_details', purchase_details.findAll);
 router.post('/api/purchase_details', purchase_details.add);
 router.put('/api/purchase_details', purchase_details.update);
+
+router.get('/api/roj_med', roj_med.findAll);
 
 module.exports = router;
 
