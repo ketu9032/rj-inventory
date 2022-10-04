@@ -481,10 +481,31 @@ exports.updateValue = async (
         cdf_total_due = (COALESCE(balance,0) - ${existingItemsCost}  + ${itemsCost}) - (COALESCE(payment,0) - ${existingPayment} + ${payment})
       where id = ${customerId} returning cdf_total_due`;
     await pool.query(query6);
+
+    let query11 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`
+    const response = await pool.query(query11);
+    console.log(response.rows);
+    if(response.rows.length === 0 ){
+    let query12 = `select balance from users where id = ${loggedInUserId}`
+     const userResponse = await pool.query(query12);
+    const loggedInUserBalance = userResponse.rows[0].balance;
+
+     let query13 = ` INSERT INTO rojmed (
+      date, balance, sale, user_id)  VALUES (now(), ${loggedInUserBalance}, ${payment}, ${loggedInUserId})`
+      console.log(query13);
+    await pool.query(query13);
+    } else {
+      const query14 = `update rojmed set sale = COALESCE(sale,0) + ${payment} where user_id = ${loggedInUserId}`
+      await pool.query(query14)
+    }
+
+
     let query8 = `update users set balance = balance - ${existingPayment} - ${existingOtherPayment} + ${+payment}  + ${
       +otherPayment ? otherPayment : 0
     }  where id = ${loggedInUserId}`;
     await pool.query(query8);
+
+
   } catch (error) {
     throw new Error(error.message || MESSAGES.COMMON.ERROR);
   }

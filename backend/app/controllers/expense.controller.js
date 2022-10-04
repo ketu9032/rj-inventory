@@ -100,6 +100,7 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
+    const loggedInUserId = res.locals.tokenData.id;
     const { description, amount, categoryId, isCashIn } = req.body;
 
     if (!description || !amount || !categoryId) {
@@ -114,6 +115,23 @@ exports.add = async (req, res) => {
     `;
 
     await pool.query(query);
+    let query1 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`
+    const response = await pool.query(query1);
+    console.log(response.rows);
+    if(response.rows.length === 0 ){
+    let query2 = `select balance from users where id = ${loggedInUserId}`
+     const userResponse = await pool.query(query2);
+    const loggedInUserBalance = userResponse.rows[0].balance;
+
+     let query3 = ` INSERT INTO rojmed (
+      date, balance, expense, user_id)  VALUES (now(), ${loggedInUserBalance}, ${amount}, ${loggedInUserId})`
+      console.log(query3);
+    await pool.query(query3);
+    } else {
+      const query4 = `update rojmed set expense = COALESCE(expense,0) + ${amount} where user_id = ${loggedInUserId}`
+      console.log(query4);
+      await pool.query(query4)
+    }
 
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
