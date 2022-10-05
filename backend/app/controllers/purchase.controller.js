@@ -329,9 +329,10 @@ exports.updateValue = async (
         item_id,
         qty,
         selling_price,
-        purchase_id
+        purchase_id,
+        weight
         )
-        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price},   ${purchaseId}) ;
+        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price},   ${purchaseId}, ${element.weight}) ;
         `;
       await pool.query(query4);
       let query5 = `
@@ -408,6 +409,7 @@ exports.purchasePrint = async (req, res) => {
         p.past_due as past_due,
         purchase_details.item_id as purchase_item_id,
         purchase_details.qty as purchase_details_qty,
+        purchase_details.weight as purchase_details_weight,
         purchase_details.selling_price as purchase_details_selling_price,
         item.item_code as item_item_code
        FROM purchase p

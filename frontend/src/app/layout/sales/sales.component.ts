@@ -64,7 +64,6 @@ export class SalesComponent implements OnInit {
     fromDate: string;
     toDate: string;
     userId?: number;
-    //  userId: number;
     sr: number;
     token: number;
     qty: number;
@@ -74,6 +73,7 @@ export class SalesComponent implements OnInit {
     totalQty: number = 0;
     total: number = 0;
     lastDue: number = 0;
+    weight: number = 0;
     grandDueTotal: number;
     payment: number;
     other_payment: number;
@@ -124,7 +124,6 @@ export class SalesComponent implements OnInit {
         if (this.selectedCustomerId && +this.selectedCustomerId !== 0) {
             this.tableParams.selectedCustomerId = this.selectedCustomerId;
         }
-
         if (this.fromDate) {
             this.tableParams.fromDate = moment(this.fromDate).format('YYYY-MM-DD');
         }
@@ -269,8 +268,6 @@ export class SalesComponent implements OnInit {
                 () => { }
             );
     }
-
-
     clearSearch() {
         this.fromDate = '';
         this.toDate = '';
@@ -296,13 +293,13 @@ export class SalesComponent implements OnInit {
         WinPrint.document.close();
         WinPrint.focus();
         WinPrint.print();
-        window.open();
     }
      salesPrint() {
         this.saleItems = [];
         this.loader = true;
         this.totalQty = 0
         this.total = 0;
+        this.weight = 0
         this.salesService.salesPrint(this.salesId)
             .subscribe(
                 (response) => {
@@ -319,6 +316,7 @@ export class SalesComponent implements OnInit {
                     this.saleItems.forEach(saleItem => {
                         this.totalQty = +this.totalQty + +saleItem.sales_bill_qty;
                         this.total = +this.total + (+saleItem.sales_bill_qty * +saleItem.sales_bill_selling_price);
+                        this.weight = +this.weight + (+saleItem.sales_bill_qty * +saleItem.sales_weight)
                     })
                     setTimeout(() => {
                         this.print();
@@ -332,6 +330,4 @@ export class SalesComponent implements OnInit {
                 () => { }
             );
     }
-
-
 }

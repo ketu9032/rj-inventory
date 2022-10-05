@@ -14,11 +14,11 @@ exports.findAll = async (req, res) => {
           item_code as item_code,
           qty,
           selling_price,
-          sales_id
+          sales_id,
+          sales_bill.weight
       FROM sales_bill
       join item as item
       on item.id = sales_bill.item_id
-
       where sales_id = ${salesId} `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -48,7 +48,7 @@ exports.delete = async (req, res) => {
 };
 exports.add = async (req, res) => {
   try {
-    const { item_id, qty, available, selling_price, total } = req.body;
+    const { item_id, qty, available, selling_price, total, weight } = req.body;
     if (!item_id || !qty || !available || !selling_price || !total) {
       res
         .status(STATUS_CODE.BAD)
@@ -62,9 +62,10 @@ exports.add = async (req, res) => {
         qty,
         available,
         selling_price,
-        total
+        total,
+        weight
          )
-      VALUES('${item_id}', '${qty}', '${available}', '${selling_price}', '${total}');
+      VALUES('${item_id}', ${qty}, ${available}, ${selling_price}, ${total}, ${weight});
       `
     );
     res.status(STATUS_CODE.SUCCESS).send();

@@ -72,6 +72,13 @@
                     <input matInput formControlName="selling_price" matTooltip="Not Editable" readonly />
                 </mat-form-field>
             </div>
+            <!-- weight start -->
+            <div class="block">
+                <mat-form-field class="input_width">
+                    <mat-label>Weight</mat-label>
+                    <input matInput formControlName="weight" matTooltip="Not Editable" readonly />
+                </mat-form-field>
+            </div>
             <!-- total start -->
             <div class="block">
                 <mat-form-field class="input_width">
@@ -150,7 +157,7 @@
                 <div class="width">
                     <mat-form-field>
                         <mat-label>Last Bill No</mat-label>
-                        <input matInput disable [(ngModel)]="lastBillNo" [value]="this.lastBillNo" />
+                        <input matInput disable [value]="this.lastBillNo" />
                     </mat-form-field>
                 </div>
             </span>
@@ -174,13 +181,23 @@
         <br>
         <div class="flex remakesAndPayment">
             <div class="remakes">
-                <mat-form-field style="width: 500px; ">
-                    <textarea matInput class="padding" placeholder="Enter Remarks..."
-                        formControlName="remarks"></textarea>
+                <mat-form-field>
+                    <textarea matInput class="padding" cdkAutosizeMinRows="8" cdkAutosizeMaxRows="8"
+                        placeholder="Enter Remarks..." formControlName="remarks"></textarea>
                 </mat-form-field>
                 <ng-container *ngIf="isShowRemarksError ">
                     <span class="error"><br>Please enter remarks</span>
                 </ng-container>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                <span>
+                    <mat-form-field>
+                        <mat-label>Weight</mat-label>
+                        <input matInput disable matTooltip="Not Editable" readonly [value]="weight" />
+                    </mat-form-field>
+                </span>
             </div>
             <div class="payment">
                 <div class="float">

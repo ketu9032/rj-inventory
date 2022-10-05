@@ -79,6 +79,13 @@
                     <input matInput formControlName="selling_price" matTooltip="Not Editable" readonly />
                 </mat-form-field>
             </div>
+                 <!-- weight start -->
+                 <div class="block">
+                    <mat-form-field class="input_width">
+                        <mat-label>Weight</mat-label>
+                        <input matInput formControlName="weight" matTooltip="Not Editable" readonly />
+                    </mat-form-field>
+                </div>
             <!-- total start -->
             <div class="block">
                 <mat-form-field class="input_width">
@@ -129,7 +136,7 @@
                     <mat-icon aria-label="Edit">edit</mat-icon>
                 </button>
                 <button mat-icon-button matTooltip="Click to Delete" color="warn"
-                    (click)=" removeSalesQuotationDetails(element.id)">
+                    (click)=" removeSalesQuotationDetails(+element.item_id)">
                     <mat-icon aria-label="Delete">delete</mat-icon>
                 </button>
             </td>
@@ -150,7 +157,6 @@
                         <input matInput disable matTooltip="Not Editable" readonly [value]="totalQty" />
                     </mat-form-field>
                 </div>
-
             </span>
             <span class="totalAndBill_content-2">
                 <div class="width">
@@ -169,6 +175,16 @@
                     <textarea matInput class="padding" id="" cdkAutosizeMinRows="8" cdkAutosizeMaxRows="8"
                         placeholder="Enter Remarks..." formControlName="remarks"></textarea>
                 </mat-form-field>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                <span>
+                    <mat-form-field>
+                        <mat-label>Weight</mat-label>
+                        <input matInput disable matTooltip="Not Editable" readonly [value]="weight" />
+                    </mat-form-field>
+                </span>
             </div>
             <div class="payment">
                 <div class="float">

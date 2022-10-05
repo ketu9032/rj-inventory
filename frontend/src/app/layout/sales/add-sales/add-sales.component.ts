@@ -28,6 +28,7 @@ export class AddSalesComponent implements OnInit {
     lastBillNo: number = 0;
     bill_no: number = 0;
     availableItemById = 0;
+    weight: number = 0;
     isShowOtherPayment: boolean = false;
     isEditSalesItem = false;
     isShowLoader = false;
@@ -62,15 +63,17 @@ export class AddSalesComponent implements OnInit {
     isCheckOverQtyColor: boolean = false;
     isShowRemarksError: boolean = false;
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: { customerId: number, salesId?: number, pastDue: number,
-            salesQuotationId: number },
+        @Inject(MAT_DIALOG_DATA) public data: {
+            customerId: number, salesId?: number, pastDue: number,
+            salesQuotationId: number
+        },
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<AddSalesComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
         private salesQuotationService: salesQuotationService,
         private salesService: SalesService,
-        private   salesQuotationDetailsService:  salesQuotationDetailsService,
+        private salesQuotationDetailsService: salesQuotationDetailsService,
         private salesBillService: SalesBillService,
         public authService: AuthService,
         private _formBuilder: FormBuilder
@@ -98,14 +101,16 @@ export class AddSalesComponent implements OnInit {
             item_id: [''],
             qty: [''],
             selling_price: [''],
-            available_qty: ['']
+            available_qty: [''],
+            weight: ['']
         });
     }
     initializeSalesBillForm(): void {
         this.formBill = this.formBuilder.group({
             payment: [0, Validators.required],
             otherPayment: [0],
-            remarks: ['']
+            remarks: [''],
+            weight: ['']
         });
     }
     saveSales(): void {
@@ -178,23 +183,22 @@ export class AddSalesComponent implements OnInit {
             );
     }
     onSubmit() {
-if(this.dueLimit < this.totalDue ) {
-    this.confirmDialog();
-
-}else{
-    if (this.data.salesId) {
-        this.updateSales();
-    } else {
-        this.saveSales();
-    }
-
-}
+        if (this.dueLimit < this.totalDue) {
+            this.confirmDialog();
+        } else {
+            if (this.data.salesId) {
+                this.updateSales();
+            } else {
+                this.saveSales();
+            }
+        }
     }
     addSalesQuotation() {
         const {
             item_id,
             qty,
             selling_price,
+            weight
         } = this.formSupplier.value;
         const item = this.items.find(x => x.id === item_id);
         const salesItem = this.saleItems.find(x => +x.item_id === +item_id);
@@ -207,9 +211,9 @@ if(this.dueLimit < this.totalDue ) {
                 item_id,
                 qty,
                 selling_price,
+                weight
             });
         }
-
         if (qty <= 0) {
             this.isShowRemarksError = true;
             this.formBill.get("remarks").setValidators(Validators.required);
@@ -217,7 +221,6 @@ if(this.dueLimit < this.totalDue ) {
                 this.formBill.get("remarks").updateValueAndValidity()
             })
         }
-
         this.isEditSalesItem = false;
         this.salesItemDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
         this.availableItemById = 0;
@@ -251,7 +254,6 @@ if(this.dueLimit < this.totalDue ) {
     }
     getItemsBySalesQuotationId() {
         this.salesItemDataSource = [];
-
         this.salesQuotationDetailsService.getItemsBySalesQuotationId(this.data.salesQuotationId).subscribe(
             (response) => {
                 this.saleItems.push(...response)
@@ -291,19 +293,20 @@ if(this.dueLimit < this.totalDue ) {
         this.availableItemById = (+item.int_qty + +item.item_purchased - +item.item_sold);
         this.formSupplier.patchValue({
             item_id: item.id,
-            selling_price: item.silver
+            selling_price: item.silver,
+            weight: item.weight
         });
     }
     supplierFillForm(itemId: number) {
         this.isEditSalesItem = true;
         const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
-        const { item_id, qty, selling_price, } = filteredItem;
+        const { item_id, qty, selling_price, weight } = filteredItem;
         this.formSupplier.patchValue({
             item_id,
             qty,
             selling_price,
+            weight
         });
-
         this.fillSellingPrice(itemId)
     }
     removeItem(itemId: number): void {
@@ -389,39 +392,38 @@ if(this.dueLimit < this.totalDue ) {
         return 0;
     }
     calculate() {
-        this.totalQty = 0
+        this.totalQty = 0;
         this.total = 0;
+        this.weight = 0;
         this.saleItems.forEach(saleItem => {
             this.totalQty = +this.totalQty + +saleItem.qty;
             this.total = +this.total + (+saleItem.qty * +saleItem.selling_price);
+            this.weight = +this.weight + (+saleItem.qty * +saleItem.weight)
         });
         this.grandDueTotal = (+this.total + +this.lastBillDue);
         this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
     }
-
-        isCheckOverQty(){
-            if(this.formSupplier.value.qty > this.availableItemById){
-                this.isCheckOverQtyColor = true;
-            }else{
-
-                this.isCheckOverQtyColor = false;
-            }
-
+    isCheckOverQty() {
+        if (this.formSupplier.value.qty > this.availableItemById) {
+            this.isCheckOverQtyColor = true;
+        } else {
+            this.isCheckOverQtyColor = false;
         }
-        confirmDialog(): void {
-            this.dialog
-                .open(ConfirmBoxComponent, {
-                    maxWidth: '500px',
-                })
-                .afterClosed()
-                .subscribe((result) => {
-                    if (result && result.data === true) {
-                        if (this.data.salesId) {
-                            this.updateSales();
-                        } else {
-                            this.saveSales();
-                        }
+    }
+    confirmDialog(): void {
+        this.dialog
+            .open(ConfirmBoxComponent, {
+                maxWidth: '500px',
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result && result.data === true) {
+                    if (this.data.salesId) {
+                        this.updateSales();
+                    } else {
+                        this.saveSales();
                     }
-                });
-        }
+                }
+            });
+    }
 }

@@ -28,14 +28,12 @@ exports.findAll = async (req, res) => {
         (
            sr::text like '%${search}%'
           or s.date::text like '%${search}%'
-
           or s.qty::text like '%${search}%'
           or s.amount::text like '%${search}%'
           or total_due::text like '%${search}%'
           or shipping::text like '%${search}%'
           or gst::text like '%${search}%'
           or tier_id::text like '%${search}%'
-
           or remarks like '%${search}%'
           )`;
         }
@@ -156,9 +154,10 @@ exports.add = async (req, res) => {
         item_id,
         qty,
         selling_price,
-        sales_quotation_id
+        sales_quotation_id,
+        weight
       )
-        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price}, ${salesQuotationId}) ;
+        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price}, ${salesQuotationId}, ${element.weight}) ;
         `;
       await pool.query(insertSalesQuotationDetailsQuery);
 
@@ -179,7 +178,6 @@ exports.update = async (req, res) => {
       total_due,
       shipping,
       gst,
-
       tier_id,
       remarks,
       sales
@@ -213,9 +211,10 @@ exports.update = async (req, res) => {
       item_id,
        qty,
        selling_price,
-       sales_quotation_id
+       sales_quotation_id,
+       weight
         )
-        VALUES( '${element.qty}', '${element.item_id}', '${element.selling_price}', '${id}') ;
+        VALUES( '${element.qty}', '${element.item_id}', '${element.selling_price}', '${id}', ${element,weight}) ;
         `;
 
          await pool.query(updateSalesQuotationDetailsQuery);
@@ -265,6 +264,7 @@ exports.salesQuotationPrint = async (req, res) => {
         s.total_due as past_due,
         sales_quotation_details.item_id as sales_quotation_details_item_id,
         sales_quotation_details.qty as sales_quotation_details_qty,
+        sales_quotation_details.weight as sales_quotation_details_weight,
         sales_quotation_details.selling_price as sales_quotation_details_selling_price,
         item.item_code as item_item_code
        FROM sales_quotation s

@@ -65,7 +65,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>Int. Qty</mat-label>
-                    <input matInput formControlName="int_qty" type="tel"  maxlength="4" required />
+                    <input matInput formControlName="int_qty" type="tel" maxlength="4" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -80,7 +80,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>SILVER</mat-label>
-                    <input type="tel"  maxlength="4" matInput formControlName="silver" required />
+                    <input type="tel" maxlength="4" matInput formControlName="silver" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -97,7 +97,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>RETAIL</mat-label>
-                    <input matInput formControlName="retail" type="tel"  maxlength="4" required />
+                    <input matInput formControlName="retail" type="tel" maxlength="4" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -111,13 +111,13 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>GOLD</mat-label>
-                    <input matInput formControlName="gold" type="tel"  maxlength="4" required />
+                    <input matInput formControlName="gold" type="tel" maxlength="4" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
           formGroup.controls.gold.touched &&
           !formGroup.controls.gold.value
-        ">
+         ">
                         <span class="error">Gold is Required</span>
                     </ng-container>
                 </div>
@@ -126,7 +126,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>INDIAMART</mat-label>
-                    <input matInput formControlName="india_mart" type="tel"  maxlength="4" required />
+                    <input matInput formControlName="india_mart" type="tel" maxlength="4" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -141,7 +141,7 @@
             <div class="block">
                 <mat-form-field>
                     <mat-label>DEALER</mat-label>
-                    <input matInput formControlName="dealer" type="tel"  maxlength="4" required />
+                    <input matInput formControlName="dealer" type="tel" maxlength="4" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="
@@ -152,11 +152,28 @@
                     </ng-container>
                 </div>
             </div>
+
+            <!-- Weight start -->
+            <div class="block">
+                <mat-form-field>
+                    <mat-label>Weight</mat-label>
+                    <input matInput formControlName="weight" required />
+                </mat-form-field>
+                <div>
+                    <ng-container *ngIf="
+          formGroup.controls.weight.touched &&
+          !formGroup.controls.weight.value">
+                        <span class="error">Weight is Required</span>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <div class="box">
             <!-- Comment start -->
             <div class="block">
                 <mat-form-field>
                     <mat-label>Comment</mat-label>
-                    <textarea matInput formControlName="comment"></textarea>
+                    <input matInput formControlName="comment" />
                 </mat-form-field>
             </div>
         </div>
@@ -192,8 +209,8 @@
             <div class="block">
                 <mat-form-field class="input_width">
                     <mat-label>Rate</mat-label>
-                    <input matInput formControlName="item_supplier_rate" [(ngModel)]="supplierRate" type="tel"  maxlength="4"
-                        required />
+                    <input matInput formControlName="item_supplier_rate" [(ngModel)]="supplierRate" type="tel"
+                        maxlength="4" required />
                 </mat-form-field>
                 <div>
                     <ng-container *ngIf="

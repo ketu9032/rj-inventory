@@ -38,11 +38,12 @@ export class AddPurchaseComponent implements OnInit {
         active: true
     }
     selectItemLoader: boolean = false;
-    lastBillNo: number;
+    lastBillNo: number = 0;
     lastBillDue: number;
     dueLimit: number;
     grandDueTotal: number;
     totalDue: number;
+    weight: number = 0;
     sales = [];
     loggedInUser: any;
     currentDate = new Date();
@@ -89,13 +90,15 @@ export class AddPurchaseComponent implements OnInit {
             item_id: [''],
             qty: [''],
             selling_price: [''],
+            weight: ['']
         });
     }
     initializeSalesBillForm(): void {
         this.formBill = this.formBuilder.group({
             payment: [0, Validators.required],
             otherPayment: [0],
-            remarks: ['']
+            remarks: [''],
+            weight: ['']
         });
     }
     savePurchase(): void {
@@ -179,6 +182,7 @@ export class AddPurchaseComponent implements OnInit {
             item_id,
             qty,
             selling_price,
+            weight
         } = this.formSupplier.value;
         const item = this.items.find(x => x.id === item_id);
         const salesItem = this.saleItems.find(x => +x.item_id === +item_id);
@@ -191,6 +195,7 @@ export class AddPurchaseComponent implements OnInit {
                 item_id,
                 qty,
                 selling_price,
+                weight
             });
         }
         if (qty <= 0) {
@@ -239,17 +244,19 @@ export class AddPurchaseComponent implements OnInit {
         this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
         this.formSupplier.patchValue({
             item_id: item.id,
-            selling_price: item.silver
+            selling_price: item.silver,
+            weight: item.weight
         });
     }
     supplierFillForm(itemId: number) {
         this.isEditSalesItem = true;
         const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
-        const { item_id, qty, selling_price, } = filteredItem;
+        const { item_id, qty, selling_price, weight } = filteredItem;
         this.formSupplier.patchValue({
             item_id,
             qty,
             selling_price,
+            weight
         });
         this.fillSellingPrice(itemId)
     }
@@ -335,11 +342,13 @@ export class AddPurchaseComponent implements OnInit {
         return 0;
     }
     calculate() {
-        this.totalQty = 0
+        this.totalQty = 0;
         this.total = 0;
+        this.weight = 0;
         this.saleItems.forEach(saleItem => {
             this.totalQty = +this.totalQty + +saleItem.qty;
             this.total = +this.total + (+saleItem.qty * +saleItem.selling_price);
+            this.weight = +this.weight + (+saleItem.qty * +saleItem.weight)
         });
         this.grandDueTotal = (+this.total + +this.lastBillDue);
         this.totalDue = +this.grandDueTotal - +this.formBill.value.payment;
