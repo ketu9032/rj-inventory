@@ -12,9 +12,10 @@ exports.findAll = async (req, res) => {
       item.item_code as item_code,
       item_id,
       item_code as item_code,
-        qty,
-        selling_price,
-        purchase_id
+      qty,
+      selling_price,
+      purchase_id,
+      purchase_details.weight
     FROM purchase_details
     join item as item
     on item.id = purchase_details.item_id

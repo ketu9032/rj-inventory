@@ -64,37 +64,38 @@
                         {{user.user_name | uppercase }}
                     </div>
                     <div class="background-light-blue">
-                        ₹ {{!user.balance ? 0 : user.balance    }}
+                        ₹ {{!user.balance ? 0 : user.balance }}
                     </div>
-                    <div class="background-light-green font-green" (click)="saleDialog(user.id)">
-                        ₹ {{!user.sale_amount ? 0 : user.sale_amount }}
+                    <div class="background-light-green font-green" (click)="saleDialog(user.user_id)">
+                        ₹ {{!user.sale? 0 : user.sale}}
                     </div>
-                    <div class="background-light-green font-green" (click)="receiveDialog(user.id)">
-                        ₹ {{!user.receive_amount ? 0 : user.receive_amount }}
+                    <div class="background-light-green font-green" (click)="receiveDialog(user.user_id)">
+                        ₹ {{!user.receive ? 0 : user.receive }}
                     </div>
-                    <div class="background-light-red font-red" (click)="purchaseDialog(user.id)">
-                        ₹ {{!user.purchase_amount ? 0 : user.purchase_amount }}
+                    <div class="background-light-red font-red" (click)="purchaseDialog(user.user_id)">
+                        ₹ {{!user.purchase ? 0 : user.purchase }}
                     </div>
-                    <div class="background-light-red font-red" (click)="transferDialog(user.id)">
-                        ₹ {{!user.transfer_amount ? 0 : user.transfer_amount }}
+                    <div class="background-light-red font-red" (click)="transferDialog(user.user_id)">
+                        ₹ {{!user.transfer ? 0 : user.transfer }}
                     </div>
-                    <div class="background-light-red font-red" (click)="expenseDialog(user.id)">
-                        ₹ {{!user.expenses_amount ? 0 : user.expenses_amount }}
+                    <div class="background-light-red font-red" (click)="expenseDialog(user.user_id)">
+                        ₹ {{!user.expense ? 0 : user.expense }}
                     </div>
                     <div class="background-blue">
-                        ₹ {{ +( !user.sale_amount ? 0 : user.sale_amount) + +(!user.receive_amount ? 0 :
-                        user.receive_amount) -
-                        +(!user.purchase_amount ? 0 : user.purchase_amount) - +(!user.expenses_amount ? 0 :
-                        user.expenses_amount)
-                        - +(!user.transfer_amount ? 0 : user.transfer_amount)
+                        ₹ {{ +( !user.sale ? 0 : user.sale ) + +(!user.receive ? 0 :
+                        user.receive ) -
+                        +(!user.purchase ? 0 : user.purchase ) - +(!user.expense ? 0 :
+                        user.expense )
+                        - +(!user.transfer ? 0 : user.transfer )
                         }}
                     </div>
                     <div class="background-green bold">
-                        ₹ {{ +(user.balance) + +( !user.sale_amount ? 0 : user.sale_amount) + +(!user.receive_amount ? 0
-                        : user.receive_amount) -
-                        +(!user.purchase_amount ? 0 : user.purchase_amount) - +(!user.expenses_amount ? 0 :
-                        user.expenses_amount)
-                        - +(!user.transfer_amount ? 0 : user.transfer_amount) }}
+                        ₹ {{ +(!user.balance ? 0 : user.balance) +   +( !user.sale ? 0 : user.sale ) + +(!user.receive ? 0 :
+                            user.receive ) -
+                            +(!user.purchase ? 0 : user.purchase ) - +(!user.expense ? 0 :
+                            user.expense )
+                            - +(!user.transfer ? 0 : user.transfer )
+                            }}
                     </div>
                 </td>
             </tr>

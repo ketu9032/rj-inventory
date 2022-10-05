@@ -1,17 +1,20 @@
-.main-header{
+.main-header {
     display: flex;
     justify-content: space-between;
     // margin-bottom: 10px;
     font-size: 14px;
-l    .mat-dialog-title {
- //       margin: 5px 0 0  0;
+
+    l .mat-dialog-title {
+        //       margin: 5px 0 0  0;
         display: block;
     }
+
     .mat-button {
         min-width: 40px;
-      //  padding: 0 5px;
+        //  padding: 0 5px;
     }
 }
+
 .item-form {
     .box {
         display: flex;
@@ -39,7 +42,7 @@ l    .mat-dialog-title {
 
         mat-form-field {
             margin: 0 15px 0 15px;
-            width: 120px;
+            width: 110px;
             font-size: 14px;
         }
     }
@@ -55,9 +58,10 @@ table {
     width: 100%;
 
     tr.mat-header-row,
-tr.mat-row {
-    height: 40px;
-}
+    tr.mat-row {
+        height: 40px;
+    }
+
     th {
         color: rgb(0, 0, 0);
         font-size: 15px;
@@ -68,21 +72,19 @@ tr.mat-row {
         font-size: 14px;
     }
 }
+
 .bill-container {
     .flex {
-
         display: flex;
         justify-content: space-between;
     }
 
     .totalAndBill {
         margin-left: 160px;
-
     }
 
     .remakesAndPayment {
         .padding {
-
             padding: 10px 0 0 15px;
         }
     }
@@ -101,25 +103,30 @@ tr.mat-row {
         }
     }
 }
+
 .margin {
     margin-right: 10px;
 }
+
 .loader {
     bottom: -12px;
     float: right;
     right: 60px;
 }
-mat-spinner{
+
+mat-spinner {
     margin: 7px;
 }
-.uppercase{
+
+.uppercase {
     text-transform: uppercase;
 }
-.checkbox-margin{
+
+.checkbox-margin {
     margin-top: 23px;
     margin-right: 14px;
 }
-.float{
-    float:right;
-}
 
+.float {
+    float: right;
+}

@@ -68,6 +68,7 @@ receiveDialog(userId: number): void {
         })
         .afterClosed()
         .subscribe(() => {
+
         });
 }
 transferDialog(userId: number): void {

@@ -36,16 +36,15 @@ export class SaleDialogComponent implements OnInit {
         this.getSalesByUsers();
     }
     getSalesByUsers(){
-this.loader = true
+        this.loader = true
         this.rojMedService
          .getSalesByUserId(this.data.userId)
          .subscribe(
             (response: any[]) => {
+                this.loader = false;
                 this.dataSource = new MatTableDataSource<any>(response)
                 this.user_name = response[0].user_name;
                 this.date = response[0].date;
-                this.loader = false;
-               // this.sales = response
             },
             (error) => {
                 this.loader = false;
@@ -56,7 +55,9 @@ this.loader = true
                 }
                 );
             },
-            () => { }
+            () => {
+                this.loader = false;
+            }
         );
     }
 }

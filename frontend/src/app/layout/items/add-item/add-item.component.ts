@@ -80,6 +80,7 @@ export class AddItemComponent implements OnInit {
             gold: ['', Validators.required],
             india_mart: ['', Validators.required],
             dealer: ['', Validators.required],
+            weight: ['']
         });
     }
     initializeSupplierForm(): void {
@@ -90,12 +91,13 @@ export class AddItemComponent implements OnInit {
     }
     saveItems(): void {
         const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer,
-            category: categoryId } = this.formGroup.value;
+            category: categoryId, weight } = this.formGroup.value;
         this.isShowLoader = true;
+
         this.itemsService
             .addItems({
                 item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers,
-                categoryId
+                categoryId, weight
             })
             .subscribe(
                 (response) => {
@@ -118,11 +120,11 @@ export class AddItemComponent implements OnInit {
             );
     }
     updateItems(): void {
-        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category: categoryId } = this.formGroup.value;
+        const { item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, category: categoryId, weight } = this.formGroup.value;
         this.isShowLoader = true;
         this.itemsService
             .editItems({
-                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers, categoryId
+                id: this.data.id, item_code, item_name, category, comment, int_qty, silver, retail, gold, india_mart, dealer, suppliers: this.suppliers, categoryId, weight
             })
             .subscribe(
                 (response) => {

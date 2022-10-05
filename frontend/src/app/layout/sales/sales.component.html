@@ -127,14 +127,12 @@
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let element">
-
                     <ng-container
                         *ngIf="loggedInUsersData.user_name === element.user_name && (element.date | date: 'M/d/yy')  ===  (currentDate | date: 'M/d/yy')">
                         <ng-container *ngIf="element.is_editable === true
                         ">
                         <button mat-icon-button matTooltip="Click to Edit" color="primary" type="button"
                             (click)="onEditNewSales(element)">
-
                             <mat-icon aria-label="Edit">edit</mat-icon>
                         </button>
                         <button mat-icon-button
@@ -144,18 +142,14 @@
                         </mat-icon>
                     </button>
                     </ng-container>
-
                             <ng-container *ngIf="element.is_editable === false && tableParams.active === false ">
-
                         <button mat-icon-button
                             [matTooltip]="tableParams.active? 'Click to de-active': 'Click to Active'"
                             [color]="tableParams.active? 'warn': 'primary'" (click)="changeStatus(element.id)">
                             <mat-icon aria-label="Delete">{{tableParams.active? 'visibility_off': 'visibility'}}
                             </mat-icon>
                         </button>
-
                     </ng-container>
-
                     </ng-container>
                     <ng-container
                         *ngIf="element.qty < 0  && loggedInUsersData.role !== 'Employees' && loggedInUsersData.user_name !== element.user_name ">
@@ -237,10 +231,14 @@
                         </div>
                     </div>
                 </div>
-                <div style="float: right;">
-                    LB Due {{lastDue | currency: 'INR'}}
+                <div style="display: flex; justify-content: space-between;">
+                    <div>Weight: {{weight}}</div>
+                    <div>
+                        <div>
+                            LB Due {{lastDue | currency: 'INR'}}
+                        </div>
+                    </div>
                 </div>
-                <br>
                 <div style="border-top: 2px solid black;"></div>
                 <div style="display: flex; justify-content: space-between;">
                     <div>
@@ -303,10 +301,14 @@
                         </div>
                     </div>
                 </div>
-                <div style="float: right;">
-                    LB Due {{lastDue | currency: 'INR'}}
+                <div style="display: flex; justify-content: space-between;">
+                    <div>Weight: {{weight}}</div>
+                    <div>
+                        <div>
+                            LB Due {{lastDue | currency: 'INR'}}
+                        </div>
+                    </div>
                 </div>
-                <br>
                 <div style="border-top: 2px solid black;"></div>
                 <div style="float: right; "><b> Grand Total : {{+total + +lastDue | currency: 'INR'}}</b></div><br>
                 <div style="float: right;">Payment: {{payment | currency: 'INR'}}</div><br>

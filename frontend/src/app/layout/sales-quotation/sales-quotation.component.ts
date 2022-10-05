@@ -44,7 +44,7 @@ export class SalesQuotationComponent implements OnInit {
     selectTireLoader: boolean = false;
     totalRows: number;
     tireId?: number;
-    isShow:boolean = false;
+    isShow: boolean = false;
     loggedInUsersData: any;
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
@@ -65,6 +65,7 @@ export class SalesQuotationComponent implements OnInit {
     totalQty: number = 0;
     total: number = 0;
     lastDue: number = 0;
+    weight: number = 0;
     grandDueTotal: number;
     shipping: number;
     gst: number;
@@ -96,7 +97,7 @@ export class SalesQuotationComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
     }
     toggleCreateButton() {
-        if (this.tireId ) {
+        if (this.tireId) {
             this.isShow = true
         } else {
             this.isShow = false
@@ -110,7 +111,7 @@ export class SalesQuotationComponent implements OnInit {
         if (this.toDate) {
             this.tableParams.toDate = moment(this.toDate).format('YYYY-MM-DD');
         }
-        if (this.tireId && this.tireId !== 0 ) {
+        if (this.tireId && this.tireId !== 0) {
             this.tableParams.tireId = this.tireId;
         } else {
             this.tableParams.tireId = '';
@@ -182,12 +183,14 @@ export class SalesQuotationComponent implements OnInit {
             .subscribe((customerId) => {
                 if (customerId) {
                     this.dialog
-                    .open(AddSalesComponent, {
-                        width: '1000px',
-                        height: '800px',
-                        data: {salesQuotationId:salesQuotationId,
-                            customerId: customerId}
-                    })
+                        .open(AddSalesComponent, {
+                            width: '1000px',
+                            height: '800px',
+                            data: {
+                                salesQuotationId: salesQuotationId,
+                                customerId: customerId
+                            }
+                        })
 
                 }
             });
@@ -245,10 +248,10 @@ export class SalesQuotationComponent implements OnInit {
         this.tableParams.tireId = '';
         this.getSalesQuotation();
     }
-    getPrintData(id: number ) {
+    getPrintData(id: number) {
         this.salesQuotationId = id;
         this.salesQuotationPrint();
-  }
+    }
     print() {
         let prtContent = document.getElementById("print");
         let WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
@@ -256,13 +259,13 @@ export class SalesQuotationComponent implements OnInit {
         WinPrint.document.close();
         WinPrint.focus();
         WinPrint.print();
-        window.open();
     }
     salesQuotationPrint() {
         this.salesQuotationItems = [];
         this.loader = true;
         this.totalQty = 0
         this.total = 0;
+        this.weight = 0;
         this.salesQuotationService.salesQuotationPrint(this.salesQuotationId)
             .subscribe(
                 (response) => {
@@ -276,6 +279,7 @@ export class SalesQuotationComponent implements OnInit {
                     this.salesQuotationItems.forEach(salesQuotationItems => {
                         this.totalQty = +this.totalQty + +salesQuotationItems.sales_quotation_details_qty;
                         this.total = +this.total + (+salesQuotationItems.sales_quotation_details_qty * +salesQuotationItems.sales_quotation_details_selling_price);
+                        this.weight = +this.weight + (+salesQuotationItems.sales_quotation_details_qty * +salesQuotationItems.sales_quotation_details_weight)
                     })
                     setTimeout(() => {
                         this.print();

@@ -12,7 +12,7 @@ exports.findAll = async (req, res) => {
         s.id,
         item.item_code as item_code,
         item_id,
-
+        s.weight,
         s.qty,
         available,
         selling_price,
@@ -51,7 +51,7 @@ exports.delete = async (req, res) => {
 };
 exports.add = async (req, res) => {
   try {
-    const { item_id, qty, available, selling_price,  total } = req.body;
+    const { item_id, qty, available, selling_price,  total,  weight} = req.body;
     if (!item_id || !qty|| !available|| !selling_price|| !total) {
       res
         .status(STATUS_CODE.BAD)
@@ -65,9 +65,10 @@ exports.add = async (req, res) => {
         qty,
         available,
         selling_price,
-        total
+        total,
+        weight
          )
-      VALUES('${item_id}', '${qty}', '${available}', '${selling_price}', '${total}');
+      VALUES('${item_id}', '${qty}', '${available}', '${selling_price}', '${total}', ${weight});
       `
     );
     res.status(STATUS_CODE.SUCCESS).send();

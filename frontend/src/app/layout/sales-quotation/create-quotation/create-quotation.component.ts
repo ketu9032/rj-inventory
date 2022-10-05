@@ -71,6 +71,7 @@ export class CreateQuotationComponent implements OnInit {
     tier;
     remarks: string = "";
     invoiceNo: number = 0;
+    weight: number = 0;
     currentDate = new Date();
     isShippingChecked: boolean = false;
     availableItemById = 0;
@@ -105,13 +106,15 @@ export class CreateQuotationComponent implements OnInit {
             item_id: [''],
             qty: [''],
             selling_price: [''],
+            weight: ['']
         });
     }
     initializeSalesBillForm(): void {
         this.formBill = this.formBuilder.group({
             shipping: [0],
             gst: [0],
-            remarks: ['', Validators.required]
+            remarks: ['', Validators.required],
+            weight: ['']
         });
     }
     saveSalesQuotation(): void {
@@ -197,6 +200,7 @@ export class CreateQuotationComponent implements OnInit {
             item_id,
             qty,
             selling_price,
+            weight
         } = this.formSupplier.value;
         const item = this.items.find(x => x.id === item_id);
         const salesItem = this.saleItems.find(x => +x.item_id === +item_id);
@@ -209,6 +213,7 @@ export class CreateQuotationComponent implements OnInit {
                 item_id,
                 qty,
                 selling_price,
+                weight
             });
         }
         if (qty <= 0) {
@@ -219,6 +224,7 @@ export class CreateQuotationComponent implements OnInit {
         }
         this.isEditSalesItem = false;
         this.salesDataSource = new MatTableDataSource<IItemSupplierData>(this.saleItems);
+
         this.availableItemById = 0;
         this.calculate();
         this.clearSalesDetailsForm();
@@ -271,17 +277,19 @@ export class CreateQuotationComponent implements OnInit {
         this.availableItemById = +item.int_qty + +item.item_purchased - +item.item_sold;
         this.formSupplier.patchValue({
             item_id: item.id,
-            selling_price: item.silver
+            selling_price: item.silver,
+            weight: item.weight
         });
     }
     supplierFillForm(itemId: number) {
         this.isEditSalesItem = true;
         const filteredItem = this.saleItems.find(x => +x.item_id === +itemId);
-        const { item_id, qty, selling_price, } = filteredItem;
+        const { item_id, qty, selling_price, weight } = filteredItem;
         this.formSupplier.patchValue({
             item_id,
             qty,
             selling_price,
+            weight
         });
         this.fillSellingPrice(itemId)
     }
@@ -337,9 +345,11 @@ export class CreateQuotationComponent implements OnInit {
     calculate() {
         this.totalQty = 0
         this.total = 0;
+        this.weight = 0;
         this.saleItems.forEach(saleItem => {
             this.totalQty = +this.totalQty + +saleItem.qty;
             this.total = +this.total + (+saleItem.qty * +saleItem.selling_price);
+            this.weight = +this.weight + (+saleItem.qty * +saleItem.weight)
         });
         this.grandDueTotal = (+this.total + +this.lastBillDue);
         this.totalDue = +this.grandDueTotal + +this.formBill.value.shipping + +this.formBill.value.gst;

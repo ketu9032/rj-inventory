@@ -13,7 +13,6 @@ import { SalesService } from '../sales/services/sales.service';
 import { UserService } from '../user/services/user.service';
 import { AddPurchaseComponent } from './add-purchase/add-purchase.component';
 import { PurchaseService } from './services/purchase.service';
-
 @Component({
     selector: 'app-purchase',
     templateUrl: './purchase.component.html',
@@ -47,7 +46,6 @@ export class PurchaseComponent implements OnInit {
     totalRows: number;
     payment: number = 0;
     selectSupplierId?: number;
-
     tableParams: IMatTableParams = {
         pageSize: this.defaultPageSize,
         pageNumber: 1,
@@ -69,6 +67,7 @@ export class PurchaseComponent implements OnInit {
     totalQty: number = 0;
     total: number = 0;
     lastDue: number = 0;
+    weight: number = 0;
     grandDueTotal: number;
     other_payment: number;
     remarks: string;
@@ -78,8 +77,6 @@ export class PurchaseComponent implements OnInit {
     purchaseId: number;
     purchaseItems = [];
     date: string;
-
-
     loggedInUsersData: any;
     constructor(
         public dialog: MatDialog,
@@ -118,7 +115,6 @@ export class PurchaseComponent implements OnInit {
         if (this.userId && +this.userId !== 0) {
             this.tableParams.userId = this.userId;
         }
-
         this.purchaseService.getPurchase(this.tableParams).subscribe(
             (newPurchase: any[]) => {
                 this.dataSource = new MatTableDataSource<IPurchaseData>(newPurchase);
@@ -154,7 +150,6 @@ export class PurchaseComponent implements OnInit {
                 }
             });
     }
-
     onEditNewPurchase(element) {
         this.dialog
             .open(AddPurchaseComponent, {
@@ -210,7 +205,6 @@ export class PurchaseComponent implements OnInit {
         this.tableParams.active = !this.tableParams.active;
         this.tableParams.pageNumber = 1;
         this.getPurchase();
-
     }
     toggleCreateAddPurchaseButton() {
         this.isShowAddPurchase = false;
@@ -220,10 +214,6 @@ export class PurchaseComponent implements OnInit {
             this.isShowAddPurchase = false;
         }
     }
-
-
-
-
     getSuppliersDropDown() {
         this.selectSupplierLoader = true;
         this.purchaseService
@@ -244,7 +234,6 @@ export class PurchaseComponent implements OnInit {
                 () => { }
             );
     }
-
     getUserDropDown() {
         this.selectUserLoader = true;
         this.userService
@@ -265,7 +254,6 @@ export class PurchaseComponent implements OnInit {
                 () => { }
             );
     }
-
     clearSearch() {
         this.fromDate = '';
         this.toDate = '';
@@ -279,7 +267,6 @@ export class PurchaseComponent implements OnInit {
         this.tableParams.userId = '';
         this.getPurchase();
     }
-
     getPrintData(id: number) {
         this.purchaseId = id;
         this.purchasePrint();
@@ -291,17 +278,16 @@ export class PurchaseComponent implements OnInit {
         WinPrint.document.close();
         WinPrint.focus();
         WinPrint.print();
-        window.open();
     }
     purchasePrint() {
         this.purchaseItems = [];
         this.loader = true;
         this.totalQty = 0
         this.total = 0;
+        this.weight = 0;
         this.purchaseService.purchasePrint(this.purchaseId)
             .subscribe(
                 (response) => {
-
                     this.loader = false;
                     this.purchaseItems = response;
                     this.token = this.purchaseItems[0].token;
@@ -316,6 +302,7 @@ export class PurchaseComponent implements OnInit {
                     this.purchaseItems.forEach(purchaseItems => {
                         this.totalQty = +this.totalQty + +purchaseItems.purchase_details_qty;
                         this.total = +this.total + (+purchaseItems.purchase_details_qty * +purchaseItems.purchase_details_selling_price);
+                        this.weight = +this.weight + (+purchaseItems.purchase_details_qty * +purchaseItems.purchase_details_weight)
                     })
                     setTimeout(() => {
                         this.print();

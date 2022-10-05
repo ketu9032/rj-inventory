@@ -59,6 +59,7 @@ exports.findAll = async (req, res) => {
       gold,
       india_mart,
       dealer,
+      weight,
       category_id as category_id,
       c.name as category_name,
       c.code as category_code
@@ -108,7 +109,8 @@ exports.add = async (req, res) => {
       india_mart,
       dealer,
       suppliers,
-      categoryId
+      categoryId,
+      weight
     } = req.body;
     if (
       !item_code ||
@@ -122,6 +124,7 @@ exports.add = async (req, res) => {
       !dealer ||
       !suppliers ||
       !categoryId ||
+      !weight ||
       suppliers.length === 0
     ) {
       res
@@ -142,9 +145,10 @@ exports.add = async (req, res) => {
       dealer,
       category_id,
       item_purchased,
-      item_sold
+      item_sold,
+      weight
         )
-      VALUES(now(), '${item_code}','${item_name}', ${int_qty}, '${comment}', ${silver}, ${retail}, ${gold}, ${india_mart}, ${dealer},  '${categoryId}', 0 , 0) returning id;
+      VALUES(now(), '${item_code}','${item_name}', ${int_qty}, '${comment}', ${silver}, ${retail}, ${gold}, ${india_mart}, ${dealer},  '${categoryId}', 0 , 0, ${weight}) returning id;
       `;
 
     const { rows } = await pool.query(insertItemQuery);
@@ -182,7 +186,8 @@ exports.update = async (req, res) => {
       india_mart,
       dealer,
       suppliers,
-      categoryId
+      categoryId,
+      weight
     } = req.body;
     if (
       !item_code ||
@@ -196,6 +201,7 @@ exports.update = async (req, res) => {
       !dealer ||
       !suppliers ||
       !categoryId ||
+      !weight ||
       !id
     ) {
       res
@@ -218,6 +224,7 @@ exports.update = async (req, res) => {
     india_mart = ${india_mart},
     dealer = ${dealer},
     category_id = ${categoryId},
+    weight = ${weight},
     date = now()
   where
     id = ${id}`;
@@ -245,7 +252,7 @@ exports.update = async (req, res) => {
 exports.getItemDropDown = async (req, res) => {
   try {
     const response = await pool.query(
-      `select id, item_code, int_qty, item_purchased, item_sold, silver FROM item where is_active = true`
+      `select id, item_code, int_qty, item_purchased, item_sold,weight, silver FROM item where is_active = true`
     );
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
