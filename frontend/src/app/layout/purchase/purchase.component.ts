@@ -43,6 +43,7 @@ export class PurchaseComponent implements OnInit {
     selectUserLoader: boolean = false;
     selectSupplierLoader: boolean = false;
     isShowAddPurchase: boolean = true;
+    loggedInUser: boolean = true;
     totalRows: number;
     payment: number = 0;
     selectSupplierId?: number;
@@ -237,7 +238,7 @@ export class PurchaseComponent implements OnInit {
     getUserDropDown() {
         this.selectUserLoader = true;
         this.userService
-            .getUserDropDown()
+            .getUserDropDown(this.loggedInUser)
             .subscribe(
                 (response) => {
                     this.userData = response;

@@ -20,7 +20,8 @@ export class AddTransferComponent implements OnInit {
     users = []
     isShowLoader = false;
     currentDate = new Date();
-    loggedInUser: any;
+    loggedInUserId: any;
+    loggedInUser: boolean = false;
     numberRegEx = /\-?\d*\.?\d{1,2}/;
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: ITransferData,
@@ -36,7 +37,7 @@ export class AddTransferComponent implements OnInit {
     ngOnInit() {
         this.initializeForm();
         this.getUserDropDown()
-        this.loggedInUser = this.authService.getUserData();
+        this.loggedInUserId = this.authService.getUserData();
         if (this.data && this.data.transferId) {
             this.fillForm();
         }
@@ -50,7 +51,7 @@ export class AddTransferComponent implements OnInit {
     }
     saveTransfer(): void {
         const { toUserId, description, transfer_amount } = this.formGroup.value;
-        const fromUserId = this.loggedInUser.id;
+        const fromUserId = this.loggedInUserId.id;
         this.isShowLoader = true;
         this.transferService
             .addTransfer({
@@ -78,7 +79,7 @@ export class AddTransferComponent implements OnInit {
     }
     updateTransfer(): void {
         const { toUserId, description, transfer_amount } = this.formGroup.value;
-        const fromUserId = this.loggedInUser.id;
+        const fromUserId = this.loggedInUserId.id;
         this.isShowLoader = true;
         this.transferService
             .editTransfer({
@@ -122,7 +123,7 @@ export class AddTransferComponent implements OnInit {
     }
     getUserDropDown() {
         this.userService
-            .getUserDropDown()
+            .getUserDropDown(this.loggedInUser)
             .subscribe(
                 (response) => {
                     this.users = response

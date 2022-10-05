@@ -172,10 +172,15 @@ exports.update = async (req, res) => {
 
 exports.getUserDropDown = async (req, res) => {
   try {
-    const response = await pool.query(
-      `select id, user_name FROM users where is_deleted = false and is_active = true `
-    );
-
+    const loggedInUserId = res.locals.tokenData.id;
+    const {loggedInUser} = req.query;
+    let whereClause = ' where is_deleted = false and is_active = true ';
+    if (loggedInUser === 'false'){
+      whereClause += `and id != ${loggedInUserId}`
+    }
+    let query = `select id, user_name FROM users ${whereClause} `
+    console.log(query);
+    const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({

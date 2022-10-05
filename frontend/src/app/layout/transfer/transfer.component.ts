@@ -36,6 +36,7 @@ export class TransferComponent implements OnInit {
     public pageSizeOptions = PAGE_SIZE_OPTION;
     @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
+    loggedInUser: boolean = true;
     totalRows: number;
     tableParams: IMatTableParamsWithSearchParams = {
         pageSize: this.defaultPageSize,
@@ -239,7 +240,7 @@ export class TransferComponent implements OnInit {
 
     getUserDropDown() {
         this.userService
-            .getUserDropDown()
+            .getUserDropDown(this.loggedInUser)
             .subscribe(
                 (response) => {
                     this.users = response
