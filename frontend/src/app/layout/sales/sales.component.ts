@@ -87,6 +87,7 @@ export class SalesComponent implements OnInit {
     salesId: number;
     date = new Date();
     isPrintHide: boolean = false;
+    loggedInUser: boolean = true;
     salesItemDataSource: any = [];
     saleItems = [];
     salesData = [];
@@ -251,7 +252,7 @@ export class SalesComponent implements OnInit {
     getUserDropDown() {
         this.selectUserLoader = true;
         this.userService
-            .getUserDropDown()
+            .getUserDropDown(this.loggedInUser)
             .subscribe(
                 (response) => {
                     this.userData = response;

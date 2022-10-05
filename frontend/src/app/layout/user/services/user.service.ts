@@ -29,8 +29,8 @@ export class UserService {
   public removeUser(id: string) {
     return this.restService.delete(`${this.url}?id=${id}`);
   }
-  public getUserDropDown() {
-    return this.restService.get<any>(`${this.getUserDropDownURL}`);
+  public getUserDropDown(loggedInUser: boolean) {
+    return this.restService.get<any>(`${this.getUserDropDownURL}?loggedInUser=${loggedInUser}`);
   }
   public changeStatus(user: IUserActiveParams) {
     return this.restService.put(`${this.changeStatusURL}`, user);

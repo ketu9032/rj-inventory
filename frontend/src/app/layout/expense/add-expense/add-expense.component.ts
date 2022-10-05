@@ -17,9 +17,10 @@ import { ExpenseService } from '../services/expense.service';
 export class AddExpenseComponent implements OnInit {
     formGroup: FormGroup;
     selectedRole: string
-    users = []
+
     categories = []
     isShowLoader = false;
+    loggedInUser: boolean = true;
     amount = true
     currentDate = new Date()
 
@@ -37,7 +38,7 @@ export class AddExpenseComponent implements OnInit {
 
     ngOnInit() {
         this.initializeForm();
-        this.getUserDropDown()
+
         this.getCategoryDropDown('Expense')
         if (this.data && this.data.expenseId) {
             this.fillForm();
@@ -54,7 +55,7 @@ export class AddExpenseComponent implements OnInit {
     }
 
     saveExpense(): void {
-        const {description, amount, categoryId,  isCashIn} = this.formGroup.value;
+        const { description, amount, categoryId, isCashIn } = this.formGroup.value;
         this.isShowLoader = true;
         this.expenseService
             .addExpense({
@@ -82,7 +83,7 @@ export class AddExpenseComponent implements OnInit {
     }
 
     updateExpense(): void {
-        const { description, amount, categoryId, isCashIn} = this.formGroup.value;
+        const { description, amount, categoryId, isCashIn } = this.formGroup.value;
         this.isShowLoader = true;
         this.expenseService
             .editExpense({
@@ -119,8 +120,8 @@ export class AddExpenseComponent implements OnInit {
     }
 
     fillForm() {
-       const {  description, amount,  categoryId, isCashIn } = this.data;
-         this.formGroup.patchValue({
+        const { description, amount, categoryId, isCashIn } = this.data;
+        this.formGroup.patchValue({
             description,
             amount,
             categoryId,
@@ -128,25 +129,7 @@ export class AddExpenseComponent implements OnInit {
         });
     }
 
-    getUserDropDown() {
-        this.userService
-            .getUserDropDown()
-            .subscribe(
-                (response) => {
-                    this.users = response
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
 
-    }
     getCategoryDropDown(type: string) {
         this.categoriesService
             .getCategoryDropDown(type)
