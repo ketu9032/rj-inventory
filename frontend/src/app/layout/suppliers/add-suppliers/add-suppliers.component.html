@@ -9,10 +9,22 @@
 <div class="container">
     <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
         <!-- company start -->
-        <mat-form-field>
+        <!-- <ng-container *ngIf="this.data.company">
+            <mat-form-field>
+                <mat-label>Company</mat-label>
+                <input  matInput formControlName="company" readonly     matTooltip="Not Editable"/>
+
+
+            </mat-form-field>
+        </ng-container> -->
+        <ng-container >
+
+
+        <mat-form-field  >
             <mat-label>Company</mat-label>
-                <input *ngIf="this.data.company"  matInput formControlName="company" readonly     matTooltip="Not Editable"/>
-                <input *ngIf="!this.data.company" matInput  formControlName="company" (keyup)="onSupplierCompanyExistCheck()" />
+
+
+                <input  matInput  formControlName="company" (keyup)="onSupplierCompanyExistCheck()" />
         </mat-form-field>
         <div>
             <ng-container *ngIf="!isSupplierCompanyExist">
@@ -25,6 +37,7 @@
                 <span class="error">Company is Required</span>
             </ng-container>
         </div>
+    </ng-container>
         <!--dueLimit start -->
         <mat-form-field>
             <mat-label>Due Limit</mat-label>
@@ -41,8 +54,9 @@
         <!-- Balance start -->
         <mat-form-field>
             <mat-label>Balance</mat-label>
-            <input *ngIf="this.data.balance" matInput formControlName="balance" type="number" readonly matTooltip="Not Editable" />
-            <input  *ngIf="!this.data.balance" matInput formControlName="balance" type="number" required />
+            <!-- <input *ngIf="this.data.balance" matInput formControlName="balance" type="number" readonly matTooltip="Not Editable" /> -->
+            <!-- <input  *ngIf="!this.data.balance" matInput formControlName="balance" type="number" required /> -->
+            <input   matInput formControlName="balance" type="number" required />
         </mat-form-field>
         <div>
             <ng-container *ngIf="

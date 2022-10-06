@@ -1,95 +1,433 @@
 <div>
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
-    <div class="header">
-        <h1>Smart Purchase Target (SPT)</h1>
+    <div >
+        <h1 class="center">Smart Purchase Target (SPT)</h1>
+    </div>
+    <div class="flex">
         <div>
-            <mat-form-field appearance="fill">
-            <mat-label>All Categories</mat-label>
-            <mat-select [formControl]="toppings" multiple>
-
-              <mat-option *ngFor="let topping of toppingList" [value]="topping">{{topping}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+            <!-- Categories start -->
+            <mat-form-field class="field-width margin">
+                <mat-label>All Categories</mat-label>
+                <mat-select #select multiple class="select-width">
+                    <div class="select-all">
+                        <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
+                            (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
+                    </div>
+                    <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
+                        {{category.code}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- Suppliers start -->
+            <mat-form-field class="field-width margin">
+                <mat-label>All Suppliers</mat-label>
+                <mat-select #select1 multiple>
+                    <div class="select-all">
+                        <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
+                            (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
+                    </div>
+                    <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
+                        {{supplier.company}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- items start -->
+            <mat-form-field class="field-width margin">
+                <mat-label>All Items</mat-label>
+                <mat-select #select2 multiple>
+                    <div class="select-all">
+                        <mat-checkbox [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
+                            (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
+                    </div>
+                    <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
+                        {{item.item_code}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- 30 day start -->
+            <mat-form-field class="field-width margin">
+                <mat-label>30 days %</mat-label>
+                <input matInput type="number">
+            </mat-form-field>
+             <!-- 15 day start -->
+            <mat-form-field class="field-width margin">
+                <mat-label>15 days %</mat-label>
+                <input matInput type="number">
+            </mat-form-field>
+             <!-- 7 day start -->
+            <mat-form-field class="field-width margin">
+                <mat-label>7 days %</mat-label>
+                <input matInput type="number">
+            </mat-form-field>
+             <!-- Future day start -->
+            <mat-form-field class="field-width margin">
+                <mat-label>Future days </mat-label>
+                <input matInput type="number">
+            </mat-form-field>
+            <!-- button start -->
+            <button color="primary" class=" btn" mat-raised-button >
+                Submit
+            </button>
+               <button color="primary" class="margin btn" mat-raised-button >
+                Download
+            </button>
         </div>
         <div>
+            <!-- search start -->
             <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
-                <input matInput type="text" [(ngModel)]="tableParams.search" (keyup.enter)="getItems()">
+                <input matInput type="text" [(ngModel)]="tableParams.search" >
             </mat-form-field>
-            <button color="primary" class="margin btn" mat-raised-button (click)="getItems()">
+            <button color="primary" class="margin btn" mat-raised-button >
                 Search
             </button>
-
-        </div>
-        <div>
-            <mat-slide-toggle color="primary" (change)="toggleType()" [checked]="tableParams.active">Active
-            </mat-slide-toggle>
         </div>
     </div>
     <br />
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="company"
             matSortDirection="asc">
-
             <ng-container matColumnDef="code">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.code}}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="item_name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Name</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.item_name }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="thirty_days">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Last 30 Days</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.thirty_days }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="fifteen_days">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Last 15 Days </th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.fifteen_days }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="seven_days">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Last 7 Days </th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.seven_days }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="prediction_target">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Prediction/Target</th>
                 <td mat-cell *matCellDef="let element">
                     {{ element.prediction_target }}
                 </td>
             </ng-container>
-
             <ng-container matColumnDef="actual_stock">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Actual Stock</th>
                 <td mat-cell *matCellDef="let element">{{ element.actual_stock }}</td>
             </ng-container>
-
             <ng-container matColumnDef="required">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>% Required</th>
                 <td mat-cell *matCellDef="let element">{{ element.required }}</td>
             </ng-container>
-
-
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
         </table>
-
         <mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="defaultPageSize" showFirstLastButtons
             (page)="pageChanged($event)" [length]="+totalRows" aria-label="Select page of elements">
         </mat-paginator>
     </div>
 </div>
+<!-- Profit  chart container start -->
+<br>
+<div class="flex">
+    <div>
+     <!-- Select date range -->
+      <mat-form-field class="field-width margin">
+        <mat-label>Select date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+              <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+              <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+          <!-- Categories start -->
+          <mat-form-field class="field-width margin">
+            <mat-label>All Categories</mat-label>
+            <mat-select #select multiple class="select-width">
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
+                    {{category.code}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- Suppliers start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>All Suppliers</mat-label>
+            <mat-select #select1 multiple>
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
+                    {{supplier.company}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- items start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>All Items</mat-label>
+            <mat-select #select2 multiple>
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
+                    {{item.item_code}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- customers start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>All Customers</mat-label>
+            <mat-select #select3 multiple>
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedCustomers" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionByCustomers()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickCustomers()" *ngFor="let customer of customers" [value]="customer.id">
+                    {{customer.company}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+         <!-- button start -->
+         <button color="primary" class=" btn" mat-raised-button >
+            Submit
+        </button>
+           <button color="primary" class="margin btn" mat-raised-button >
+            Download
+        </button>
+    </div>
+    <div>
+        <button color="primary" class=" btn" mat-raised-button >
+            Line
+        </button>
+           <button color="primary" class="btn" mat-raised-button >
+            Bar
+        </button>
+    </div>
+</div>
+<!-- chart content -->
+<div>
+    <div class="header-content">
+        <h1 class="center">Profit Chart</h1>
+        <div class="center total-count">
+            <span>Total Sale: {{222222}}, </span>
+            <span>Total Profit: {{021021}} |  </span>
+            <span>Avg Sale: {{222222}}, </span>
+            <span>Avg Profit: {{15522}} </span>
+        </div>
+    </div>
+    <div>
+        <h1> chart</h1>
+    </div>
+
+</div>
+<!-- Sale   chart container start -->
+<br>
+<div class="flex">
+    <div>
+     <!-- Select date range -->
+      <mat-form-field class="field-width margin">
+        <mat-label>Select date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+              <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+              <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+          <!-- Categories start -->
+          <mat-form-field class="field-width margin">
+            <mat-label>All Categories</mat-label>
+            <mat-select #select multiple class="select-width">
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
+                    {{category.code}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- Suppliers start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>All Suppliers</mat-label>
+            <mat-select #select1 multiple>
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
+                    {{supplier.company}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- items start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>All Items</mat-label>
+            <mat-select #select2 multiple>
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
+                    {{item.item_code}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- customers start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>All Customers</mat-label>
+            <mat-select #select3 multiple>
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedCustomers" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionByCustomers()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickCustomers()" *ngFor="let customer of customers" [value]="customer.id">
+                    {{customer.company}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+         <!-- button start -->
+         <button color="primary" class=" btn" mat-raised-button >
+            Submit
+        </button>
+           <button color="primary" class="margin btn" mat-raised-button >
+            Download
+        </button>
+    </div>
+    <div>
+        <button color="primary" class=" btn" mat-raised-button >
+            Line
+        </button>
+           <button color="primary" class="btn" mat-raised-button >
+            Bar
+        </button>
+    </div>
+</div>
+<!-- chart content -->
+<div>
+    <div class="header-content">
+        <h1 class="center">Sale Chart</h1>
+        <div class="center total-count">
+            <span>Total Sale: {{222222}}, </span>
+            <span>Total Qty: {{021021}} |  </span>
+            <span>Avg Sale: {{222222}}, </span>
+            <span>Avg Qty: {{15522}} </span>
+        </div>
+    </div>
+    <div>
+        <h1> chart</h1>
+    </div>
+
+</div>
+<!-- Purchase   chart container start -->
+<br>
+<div class="flex">
+    <div>
+     <!-- Select date range -->
+      <mat-form-field class="field-width margin">
+        <mat-label>Select date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+              <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+              <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+          <!-- Categories start -->
+          <mat-form-field class="field-width margin">
+            <mat-label>All Categories</mat-label>
+            <mat-select #select multiple class="select-width">
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
+                    {{category.code}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- Suppliers start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>All Suppliers</mat-label>
+            <mat-select #select1 multiple>
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
+                    {{supplier.company}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- items start -->
+        <mat-form-field class="field-width margin">
+            <mat-label>All Items</mat-label>
+            <mat-select #select2 multiple>
+                <div class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
+                        (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
+                </div>
+                <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
+                    {{item.item_code}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!-- button start -->
+         <button color="primary" class=" btn" mat-raised-button >
+            Submit
+        </button>
+           <button color="primary" class="margin btn" mat-raised-button >
+            Download
+        </button>
+    </div>
+    <div>
+        <button color="primary" class=" btn" mat-raised-button >
+            Line
+        </button>
+           <button color="primary" class="btn" mat-raised-button >
+            Bar
+        </button>
+    </div>
+</div>
+<!-- chart content -->
+<div>
+    <div class="header-content">
+        <h1 class="center">Purchase Chart</h1>
+        <div class="center total-count">
+            <span>Total Purchase: {{222222}}, </span>
+            <span>Total Qty: {{021021}} |  </span>
+            <span>Avg Purchase: {{222222}}, </span>
+            <span>Avg Qty: {{15522}} </span>
+        </div>
+    </div>
+    <div>
+        <h1> chart</h1>
+    </div>
+
+</div>
+<br><br>
+
+<div id="action-description">
+    <p>
+        This Angular column chart example visualizes the medal count from the Rio Olympics with the default column series in the chart.
+    </p>
+</div>
+

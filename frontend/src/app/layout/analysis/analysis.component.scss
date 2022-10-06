@@ -1,6 +1,7 @@
-* {
-    font-size: 14px;
-}
+
+
+
+
 
 table {
     width: 100%;
@@ -26,10 +27,15 @@ table {
     height: 33px;
 }
 
-.header {
+.flex {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+   justify-content: space-between;
+}
+.center{
+    font-size: 20px;
+    text-align: center;
+
 }
 
 tr.mat-header-row,
@@ -46,3 +52,10 @@ td {
     color: rgb(73 70 70 / 87%);
     font-size: 14px;
 }
+.select-all{
+    margin: 5px 17px;
+  }
+  .total-count{
+font-size: 17px;
+color: #474747;
+  }
