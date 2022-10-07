@@ -15,6 +15,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 // AoT requires an exported function for factories
 export const createTranslateLoader = (http: HttpClient) => {
   /* for development
@@ -29,6 +30,8 @@ export const createTranslateLoader = (http: HttpClient) => {
 @NgModule({
   declarations: [AppComponent],
   imports: [
+
+    NgxChartsModule,
     ReactiveFormsModule,
     BrowserModule,
     AppRoutingModule,

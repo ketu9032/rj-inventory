@@ -59,3 +59,18 @@ td {
 font-size: 17px;
 color: #474747;
   }
+  ngx-charts-bar-vertical-2d{
+    width: 100%;
+  }
+
+ chart-legend  legend-labels {
+    line-height: 85%;
+    list-style: none;
+float: none;
+    width: 100%;
+    border-radius: 3px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: nowrap;
+    background :none;
+    text-align: center;}

@@ -1,6 +1,6 @@
 <div>
     <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
-    <div >
+    <div>
         <h1 class="center">Smart Purchase Target (SPT)</h1>
     </div>
     <div class="flex">
@@ -13,7 +13,8 @@
                         <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
                             (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
                     </div>
-                    <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
+                    <mat-option (click)="optionClickCategories()" *ngFor="let category of categories"
+                        [value]="category.id">
                         {{category.code}}
                     </mat-option>
                 </mat-select>
@@ -26,7 +27,8 @@
                         <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
                             (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
                     </div>
-                    <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
+                    <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers"
+                        [value]="supplier.id">
                         {{supplier.company}}
                     </mat-option>
                 </mat-select>
@@ -49,26 +51,26 @@
                 <mat-label>30 days %</mat-label>
                 <input matInput type="number">
             </mat-form-field>
-             <!-- 15 day start -->
+            <!-- 15 day start -->
             <mat-form-field class="field-width margin">
                 <mat-label>15 days %</mat-label>
                 <input matInput type="number">
             </mat-form-field>
-             <!-- 7 day start -->
+            <!-- 7 day start -->
             <mat-form-field class="field-width margin">
                 <mat-label>7 days %</mat-label>
                 <input matInput type="number">
             </mat-form-field>
-             <!-- Future day start -->
+            <!-- Future day start -->
             <mat-form-field class="field-width margin">
                 <mat-label>Future days </mat-label>
                 <input matInput type="number">
             </mat-form-field>
             <!-- button start -->
-            <button color="primary" class=" btn" mat-raised-button >
+            <button color="primary" class=" btn" mat-raised-button>
                 Submit
             </button>
-               <button color="primary" class="margin btn" mat-raised-button >
+            <button color="primary" class="margin btn" mat-raised-button>
                 Download
             </button>
         </div>
@@ -76,9 +78,9 @@
             <!-- search start -->
             <mat-form-field class="field-width">
                 <mat-label>Search...</mat-label>
-                <input matInput type="text" [(ngModel)]="tableParams.search" >
+                <input matInput type="text" [(ngModel)]="tableParams.search">
             </mat-form-field>
-            <button color="primary" class="margin btn" mat-raised-button >
+            <button color="primary" class="margin btn" mat-raised-button>
                 Search
             </button>
         </div>
@@ -143,18 +145,18 @@
 <br>
 <div class="flex">
     <div>
-     <!-- Select date range -->
-      <mat-form-field class="field-width margin">
-        <mat-label>Select date range</mat-label>
-        <mat-date-range-input [rangePicker]="picker">
-              <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
-              <input matEndDate [(ngModel)]="toDate" placeholder="End date">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
-          <!-- Categories start -->
-          <mat-form-field class="field-width margin">
+        <!-- Select date range -->
+        <mat-form-field class="field-width margin">
+            <mat-label>Select date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+                <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        <!-- Categories start -->
+        <mat-form-field class="field-width margin">
             <mat-label>All Categories</mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
@@ -205,19 +207,19 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-         <!-- button start -->
-         <button color="primary" class=" btn" mat-raised-button >
+        <!-- button start -->
+        <button color="primary" class=" btn" mat-raised-button>
             Submit
         </button>
-           <button color="primary" class="margin btn" mat-raised-button >
+        <button color="primary" class="margin btn" mat-raised-button>
             Download
         </button>
     </div>
     <div>
-        <button color="primary" class=" btn" mat-raised-button >
+        <button color="primary" class=" btn" mat-raised-button>
             Line
         </button>
-           <button color="primary" class="btn" mat-raised-button >
+        <button color="primary" class="btn" mat-raised-button>
             Bar
         </button>
     </div>
@@ -228,32 +230,53 @@
         <h1 class="center">Profit Chart</h1>
         <div class="center total-count">
             <span>Total Sale: {{222222}}, </span>
-            <span>Total Profit: {{021021}} |  </span>
+            <span>Total Profit: {{021021}} | </span>
             <span>Avg Sale: {{222222}}, </span>
             <span>Avg Profit: {{15522}} </span>
         </div>
-    </div>
-    <div>
-        <h1> chart</h1>
+
+        <div >
+        <!-- <div style=""> -->
+          <ngx-charts-bar-vertical-2d
+            [view]="view"
+              [scheme]="colorScheme"
+               [results]="multi"
+               [gradient]="gradient"
+                [xAxis]="showXAxis"
+                [yAxisLabel]="yAxisLabel"
+                 [yAxis]="showYAxis"
+                  [legend]="showLegend"
+                  [legendTitle]="legendTitle"
+                  [legendPosition]="legendPosition"
+                  [showGridLines]="showGridLines"
+                  [roundDomains]="roundDomains"
+                [showYAxisLabel]="showYAxisLabel"
+                  >
+                </ngx-charts-bar-vertical-2d>
+                <!-- [strokeColor]="strokeColor"
+[strokeWidth]="strokeWidth" -->
+        </div>
     </div>
 
 </div>
+
+
 <!-- Sale   chart container start -->
 <br>
 <div class="flex">
     <div>
-     <!-- Select date range -->
-      <mat-form-field class="field-width margin">
-        <mat-label>Select date range</mat-label>
-        <mat-date-range-input [rangePicker]="picker">
-              <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
-              <input matEndDate [(ngModel)]="toDate" placeholder="End date">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
-          <!-- Categories start -->
-          <mat-form-field class="field-width margin">
+        <!-- Select date range -->
+        <mat-form-field class="field-width margin">
+            <mat-label>Select date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+                <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        <!-- Categories start -->
+        <mat-form-field class="field-width margin">
             <mat-label>All Categories</mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
@@ -304,19 +327,19 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-         <!-- button start -->
-         <button color="primary" class=" btn" mat-raised-button >
+        <!-- button start -->
+        <button color="primary" class=" btn" mat-raised-button>
             Submit
         </button>
-           <button color="primary" class="margin btn" mat-raised-button >
+        <button color="primary" class="margin btn" mat-raised-button>
             Download
         </button>
     </div>
     <div>
-        <button color="primary" class=" btn" mat-raised-button >
+        <button color="primary" class=" btn" mat-raised-button>
             Line
         </button>
-           <button color="primary" class="btn" mat-raised-button >
+        <button color="primary" class="btn" mat-raised-button>
             Bar
         </button>
     </div>
@@ -327,32 +350,46 @@
         <h1 class="center">Sale Chart</h1>
         <div class="center total-count">
             <span>Total Sale: {{222222}}, </span>
-            <span>Total Qty: {{021021}} |  </span>
+            <span>Total Qty: {{021021}} | </span>
             <span>Avg Sale: {{222222}}, </span>
             <span>Avg Qty: {{15522}} </span>
         </div>
     </div>
     <div>
-        <h1> chart</h1>
+        <ngx-charts-bar-vertical-2d
+        [view]="view"
+          [scheme]="colorScheme"
+           [results]="multi"
+           [gradient]="gradient"
+            [xAxis]="showXAxis"
+            [yAxisLabel]="yAxisLabel"
+             [yAxis]="showYAxis"
+              [legend]="showLegend"
+              [legendTitle]="legendTitle"
+              [legendPosition]="legendPosition"
+              [showGridLines]="showGridLines"
+              [roundDomains]="roundDomains"
+            [showYAxisLabel]="showYAxisLabel"
+              >
+            </ngx-charts-bar-vertical-2d>
     </div>
-
 </div>
 <!-- Purchase   chart container start -->
 <br>
 <div class="flex">
     <div>
-     <!-- Select date range -->
-      <mat-form-field class="field-width margin">
-        <mat-label>Select date range</mat-label>
-        <mat-date-range-input [rangePicker]="picker">
-              <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
-              <input matEndDate [(ngModel)]="toDate" placeholder="End date">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
-          <!-- Categories start -->
-          <mat-form-field class="field-width margin">
+        <!-- Select date range -->
+        <mat-form-field class="field-width margin">
+            <mat-label>Select date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+                <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
+                <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        <!-- Categories start -->
+        <mat-form-field class="field-width margin">
             <mat-label>All Categories</mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
@@ -391,18 +428,18 @@
             </mat-select>
         </mat-form-field>
         <!-- button start -->
-         <button color="primary" class=" btn" mat-raised-button >
+        <button color="primary" class=" btn" mat-raised-button>
             Submit
         </button>
-           <button color="primary" class="margin btn" mat-raised-button >
+        <button color="primary" class="margin btn" mat-raised-button>
             Download
         </button>
     </div>
     <div>
-        <button color="primary" class=" btn" mat-raised-button >
+        <button color="primary" class=" btn" mat-raised-button>
             Line
         </button>
-           <button color="primary" class="btn" mat-raised-button >
+        <button color="primary" class="btn" mat-raised-button>
             Bar
         </button>
     </div>
@@ -413,21 +450,35 @@
         <h1 class="center">Purchase Chart</h1>
         <div class="center total-count">
             <span>Total Purchase: {{222222}}, </span>
-            <span>Total Qty: {{021021}} |  </span>
+            <span>Total Qty: {{021021}} | </span>
             <span>Avg Purchase: {{222222}}, </span>
             <span>Avg Qty: {{15522}} </span>
         </div>
     </div>
     <div>
-        <h1> chart</h1>
+        <ngx-charts-bar-vertical-2d
+        [view]="view"
+          [scheme]="colorScheme"
+           [results]="multi"
+           [gradient]="gradient"
+            [xAxis]="showXAxis"
+            [yAxisLabel]="yAxisLabel"
+             [yAxis]="showYAxis"
+              [legend]="showLegend"
+              [legendTitle]="legendTitle"
+              [legendPosition]="legendPosition"
+              [showGridLines]="showGridLines"
+              [roundDomains]="roundDomains"
+            [showYAxisLabel]="showYAxisLabel"
+              >
+            </ngx-charts-bar-vertical-2d>
     </div>
-
 </div>
 <br><br>
-
 <div id="action-description">
     <p>
-        This Angular column chart example visualizes the medal count from the Rio Olympics with the default column series in the chart.
+        This Angular column chart example visualizes the medal count from the Rio Olympics with the default column
+        series in the chart.
     </p>
 </div>
 
