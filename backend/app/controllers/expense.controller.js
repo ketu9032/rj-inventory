@@ -100,7 +100,6 @@ exports.delete = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const loggedInUserId = res.locals.tokenData.id;
     const { description, amount, categoryId, isCashIn } = req.body;
 
     if (!description || !amount || !categoryId) {
@@ -115,23 +114,6 @@ exports.add = async (req, res) => {
     `;
 
     await pool.query(query);
-    let query1 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`
-    const response = await pool.query(query1);
-    console.log(response.rows);
-    if(response.rows.length === 0 ){
-    let query2 = `select balance from users where id = ${loggedInUserId}`
-     const userResponse = await pool.query(query2);
-    const loggedInUserBalance = userResponse.rows[0].balance;
-
-     let query3 = ` INSERT INTO rojmed (
-      date, balance, expense, user_id)  VALUES (now(), ${loggedInUserBalance}, ${amount}, ${loggedInUserId})`
-      console.log(query3);
-    await pool.query(query3);
-    } else {
-      const query4 = `update rojmed set expense = COALESCE(expense,0) + ${amount} where user_id = ${loggedInUserId}`
-      console.log(query4);
-      await pool.query(query4)
-    }
 
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -193,6 +175,7 @@ exports.changeStatus = async (req, res) => {
 };
 exports.approved = async (req, res) => {
   try {
+    const loggedInUserId = res.locals.tokenData.id;
     const { expenseId } = req.body;
     if (!expenseId) {
       res
@@ -210,6 +193,27 @@ exports.approved = async (req, res) => {
     const response = await pool.query(query);
     const expenseData = response.rows ? response.rows[0] : null;
 
+    const query1 = `UPDATE expenses SET is_approved = true where "id" = '${expenseId}'`;
+    await pool.query(query1);
+
+    let query2 = ` select id, date from rojmed where date::date = now()::date and user_id = ${expenseData.userId}`;
+    const rojMedResponse = await pool.query(query2);
+    console.log(rojMedResponse.rows);
+    if (rojMedResponse.rows.length === 0) {
+      let query3 = `select balance from users where id = ${expenseData.userId}`;
+      const userResponse = await pool.query(query3);
+      const loggedInUserBalance = userResponse.rows[0].balance;
+
+      let query4 = ` INSERT INTO rojmed (
+      date, balance, expense, user_id)  VALUES (now(), ${loggedInUserBalance}, ${expenseData.amount}, ${expenseData.userId})`;
+      console.log(query4);
+      await pool.query(query4);
+    } else {
+      const query5 = `update rojmed set expense = COALESCE(expense,0) + ${expenseData.amount} where user_id = ${expenseData.userId}`;
+      console.log(query5);
+      await pool.query(query5);
+    }
+
     if (expenseData) {
       const { userId, amount, isCashIn } = expenseData;
       let query1 = `update users set balance = balance - ${+amount}  where id = ${userId}`;
@@ -217,8 +221,7 @@ exports.approved = async (req, res) => {
         query1 = `update users set balance = balance + ${+amount}  where id = ${userId}`;
       }
       await pool.query(query1);
-      const query2 = `UPDATE expenses SET is_approved = true where "id" = '${expenseId}'`;
-      await pool.query(query2);
+
       return res.status(STATUS_CODE.SUCCESS).send();
     }
 
@@ -232,11 +235,9 @@ exports.approved = async (req, res) => {
   }
 };
 
-exports. getExpenseByUserIdInRojMed = async (req, res) =>{
+exports.getExpenseByUserIdInRojMed = async (req, res) => {
   try {
-    const {
-     userId
-    } = req.query;
+    const { userId } = req.query;
     const query = `
     SELECT
      description, date, amount,
@@ -249,7 +250,7 @@ exports. getExpenseByUserIdInRojMed = async (req, res) =>{
      join users as users
        on users.id = e.user_id
 
-        where user_id = ${userId} and e.is_active = true  and e.date::date = now()::date`
+        where user_id = ${userId} and e.is_active = true and is_approved = true  and e.date::date = now()::date`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -257,4 +258,4 @@ exports. getExpenseByUserIdInRojMed = async (req, res) =>{
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
-}
+};

@@ -46,11 +46,10 @@ const { dateWiseSalesSearch } = require('./sales.controller');
 //   }
 // };
 
-
 exports.findAll = async (req, res) => {
   try {
-   const  { date } = req.query
-   const query = `SELECT
+    const { date } = req.query;
+    const query = `SELECT
     user_id,
     date,
     r.balance,
@@ -62,15 +61,14 @@ exports.findAll = async (req, res) => {
     transfer
     from rojmed as r
     join users as users
-     on users.id = r.user_id
-    `
-    let response = await pool.query(query)
-      res.status(STATUS_CODE.SUCCESS).send(response.rows);
+     on users.id = r.user_id  where CAST(date as DATE)::date = '${date}';
+    `;
+    console.log(query);
+    let response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
 };
-
-

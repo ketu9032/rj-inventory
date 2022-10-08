@@ -127,7 +127,7 @@ exports.add = async (req, res) => {
       customer_id,
       other_payment
     } = req.body;
-    const query = `update sales set  is_editable = false where customer_id =  ${customer_id} and user_id=${user_id} `
+    const query = `update sales set  is_editable = false where customer_id =  ${customer_id} and user_id=${user_id} `;
     await pool.query(query);
     const insertSalesQuotationQuery = `INSERT INTO sales
     (
@@ -264,15 +264,15 @@ exports.changeStatus = async (req, res) => {
         .send({ message: MESSAGES.COMMON.INVALID_PARAMETERS });
       return;
     }
-    const activeStatusQuery = `UPDATE sales SET is_active = ${status} where "id" = '${id}'`
+    const activeStatusQuery = `UPDATE sales SET is_active = ${status} where "id" = '${id}'`;
     await pool.query(activeStatusQuery);
-    const getSalesQuery = `select customer_id, user_id, payment, other_payment from sales where id =  ${id}`
+    const getSalesQuery = `select customer_id, user_id, payment, other_payment from sales where id =  ${id}`;
     const salesResponse = await pool.query(getSalesQuery);
-    const getSalesBillQuery = `select selling_price, qty, item_id from sales_bill where sales_id = ${id}`
+    const getSalesBillQuery = `select selling_price, qty, item_id from sales_bill where sales_id = ${id}`;
     const existingItemResponse = await pool.query(getSalesBillQuery);
     const existingItems = existingItemResponse.rows;
-    if( status ===  false) {
-      const usersBalance = `update users set balance = balance - ${salesResponse.rows[0].payment} - ${salesResponse.rows[0].other_payment} where id = ${salesResponse.rows[0].user_id}`
+    if (status === false) {
+      const usersBalance = `update users set balance = balance - ${salesResponse.rows[0].payment} - ${salesResponse.rows[0].other_payment} where id = ${salesResponse.rows[0].user_id}`;
       console.log(usersBalance);
       await pool.query(usersBalance);
       for (let index = 0; index < existingItems.length; index++) {
@@ -280,24 +280,24 @@ exports.changeStatus = async (req, res) => {
         console.log(element);
         const updateSalesBillQuery = `update item set
          item_sold =  item_sold - ${element.qty}
-        where id =  ${element.item_id}`
+        where id =  ${element.item_id}`;
         console.log(updateSalesBillQuery);
         await pool.query(updateSalesBillQuery);
         itemsCost = +element.selling_price * +element.qty + itemsCost;
-       }
-       const customerQuery = `
+      }
+      const customerQuery = `
           update cdf set
            balance = balance - ${itemsCost},
            payment = payment - COALESCE(${salesResponse.rows[0].payment},0)
           where
-           id = ${salesResponse.rows[0].customer_id}`
-        await pool.query(customerQuery);
-        const salesEditQuery1 = `update sales set
+           id = ${salesResponse.rows[0].customer_id}`;
+      await pool.query(customerQuery);
+      const salesEditQuery1 = `update sales set
            is_editable = false   where
-          id= ${id}`
-          console.log(salesEditQuery1);
-          await pool.query(salesEditQuery1)
-          const query2 = `
+          id= ${id}`;
+      console.log(salesEditQuery1);
+      await pool.query(salesEditQuery1);
+      const query2 = `
           select
             id
           from
@@ -305,44 +305,45 @@ exports.changeStatus = async (req, res) => {
            customer_id = ${salesResponse.rows[0].customer_id} and
            user_id = ${salesResponse.rows[0].user_id} and
            is_active = true
-          order by id desc limit 1 `
-          const response = await pool.query(query2);
-          const findSalesEditableId = response.rowCount > 0 ? response.rows[0].id: null;
-      if(findSalesEditableId){
+          order by id desc limit 1 `;
+      const response = await pool.query(query2);
+      const findSalesEditableId =
+        response.rowCount > 0 ? response.rows[0].id : null;
+      if (findSalesEditableId) {
         const salesEditQuery2 = `update sales set
            is_editable = true   where
-          id = ${findSalesEditableId}`
-          console.log(salesEditQuery2);
-          await pool.query(salesEditQuery2)
+          id = ${findSalesEditableId}`;
+        console.log(salesEditQuery2);
+        await pool.query(salesEditQuery2);
       }
     }
-    if( status ===  true) {
-      const usersBalance = `update users set balance = balance + ${salesResponse.rows[0].payment} + ${salesResponse.rows[0].other_payment} where id = ${salesResponse.rows[0].user_id}`
+    if (status === true) {
+      const usersBalance = `update users set balance = balance + ${salesResponse.rows[0].payment} + ${salesResponse.rows[0].other_payment} where id = ${salesResponse.rows[0].user_id}`;
       console.log(usersBalance);
       await pool.query(usersBalance);
       for (let index = 0; index < existingItems.length; index++) {
         let element = existingItems[index];
         const updateSalesBillQuery = `update item set
           item_sold =  item_sold + ${+element.qty}
-          where id =  ${element.item_id}`
-          console.log(updateSalesBillQuery);
+          where id =  ${element.item_id}`;
+        console.log(updateSalesBillQuery);
         await pool.query(updateSalesBillQuery);
         itemsCost = +element.selling_price * +element.qty + itemsCost;
-       }
-       const customerQuery = `
+      }
+      const customerQuery = `
           update cdf set
                balance = balance + ${itemsCost},
                payment = payment + ${salesResponse.rows[0].payment}
            where
-               id = ${salesResponse.rows[0].customer_id}`
-          console.log(customerQuery);
-        await pool.query(customerQuery);
-        const salesEditQuery1 = `update sales set
+               id = ${salesResponse.rows[0].customer_id}`;
+      console.log(customerQuery);
+      await pool.query(customerQuery);
+      const salesEditQuery1 = `update sales set
            is_editable = false   where
-          id= ${id}`
-          console.log(salesEditQuery1);
-          await pool.query(salesEditQuery1);
-          const query2 = `
+          id= ${id}`;
+      console.log(salesEditQuery1);
+      await pool.query(salesEditQuery1);
+      const query2 = `
           select
             id
           from
@@ -350,16 +351,17 @@ exports.changeStatus = async (req, res) => {
            customer_id = ${salesResponse.rows[0].customer_id} and
            user_id = ${salesResponse.rows[0].user_id} and
            is_active = true
-          order by id desc limit 1 `
-          const response = await pool.query(query2);
-          const findSalesEditableId = response.rowCount > 0 ? response.rows[0].id: null;
-          if(findSalesEditableId){
-            const salesEditQuery2 = `update sales set
+          order by id desc limit 1 `;
+      const response = await pool.query(query2);
+      const findSalesEditableId =
+        response.rowCount > 0 ? response.rows[0].id : null;
+      if (findSalesEditableId) {
+        const salesEditQuery2 = `update sales set
                is_editable = true   where
-              id = ${findSalesEditableId}`
-              console.log(salesEditQuery2);
-              await pool.query(salesEditQuery2)
-          }
+              id = ${findSalesEditableId}`;
+        console.log(salesEditQuery2);
+        await pool.query(salesEditQuery2);
+      }
     }
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
@@ -483,30 +485,27 @@ exports.updateValue = async (
       where id = ${customerId} returning cdf_total_due`;
     await pool.query(query6);
 
-    let query11 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`
+    let query11 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`;
     const response = await pool.query(query11);
     console.log(response.rows);
-    if(response.rows.length === 0 ){
-    let query12 = `select balance from users where id = ${loggedInUserId}`
-     const userResponse = await pool.query(query12);
-    const loggedInUserBalance = userResponse.rows[0].balance;
+    if (response.rows.length === 0) {
+      let query12 = `select balance from users where id = ${loggedInUserId}`;
+      const userResponse = await pool.query(query12);
+      const loggedInUserBalance = userResponse.rows[0].balance;
 
-     let query13 = ` INSERT INTO rojmed (
-      date, balance, sale, user_id)  VALUES (now(), ${loggedInUserBalance}, ${payment}, ${loggedInUserId})`
+      let query13 = ` INSERT INTO rojmed (
+      date, balance, sale, user_id)  VALUES (now(), ${loggedInUserBalance}, ${payment}, ${loggedInUserId})`;
       console.log(query13);
-    await pool.query(query13);
+      await pool.query(query13);
     } else {
-      const query14 = `update rojmed set sale = COALESCE(sale,0) + ${payment} where user_id = ${loggedInUserId}`
-      await pool.query(query14)
+      const query14 = `update rojmed set sale = COALESCE(sale,0) + ${payment} where user_id = ${loggedInUserId}`;
+      await pool.query(query14);
     }
-
 
     let query8 = `update users set balance = balance - ${existingPayment} - ${existingOtherPayment} + ${+payment}  + ${
       +otherPayment ? otherPayment : 0
     }  where id = ${loggedInUserId}`;
     await pool.query(query8);
-
-
   } catch (error) {
     throw new Error(error.message || MESSAGES.COMMON.ERROR);
   }
@@ -570,12 +569,9 @@ exports.salesPrint = async (req, res) => {
     });
   }
 };
-exports.dateWiseSalesSearch = async (req, res) =>{
+exports.dateWiseSalesSearch = async (req, res) => {
   try {
-    const {
-      startDate,
-      endDate
-    } = req.query;
+    const { startDate, endDate } = req.query;
     const query = `
       SELECT
         s.id,
@@ -599,7 +595,7 @@ exports.dateWiseSalesSearch = async (req, res) =>{
         sales_bill.qty,
         sales_bill.selling_price
      having s.date::date between ${startDate}::date and ${endDate}::date
-    `
+    `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -607,16 +603,14 @@ exports.dateWiseSalesSearch = async (req, res) =>{
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
-}
-exports. getSalesByUserIdInRojMed = async (req, res) =>{
+};
+exports.getSalesByUserIdInRojMed = async (req, res) => {
   try {
-    const {
-     userId
-    } = req.query;
+    const { userId, date } = req.query;
     const query = `
     SELECT
       s.id,
-      s.date,
+    s.date,
       s.bill_no,
       s.payment,
       other_payment,
@@ -632,7 +626,8 @@ exports. getSalesByUserIdInRojMed = async (req, res) =>{
       on cdf.id = s.customer_id
     join users as users
       on users.id = s.user_id
-        where user_id = ${userId} and s.is_active = true  and s.date::date = now()::date`
+        where user_id = ${userId} and s.is_active = true  and CAST(s.date as DATE)::date = '${date}'`;
+    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -640,4 +635,4 @@ exports. getSalesByUserIdInRojMed = async (req, res) =>{
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
-}
+};
