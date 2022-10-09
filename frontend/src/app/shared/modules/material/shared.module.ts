@@ -17,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ReactiveFormsModule,
     MaterialModule,
     MatProgressSpinnerModule
+
   ],
   exports: [
     CommonModule,

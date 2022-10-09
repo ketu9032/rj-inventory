@@ -6,20 +6,34 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
+import * as Highcharts from 'highcharts';
+
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { CategoriesService } from '../expense/services/categories.service';
 import { ItemsService } from '../items/services/items.service';
 import { SalesService } from '../sales/services/sales.service';
+import { Chart } from 'chart.js';
 
+// declare var require: any;
+// const More = require('highcharts/highcharts-more');
+// More(Highcharts);
 
+// const Exporting = require('highcharts/modules/exporting');
+// Exporting(Highcharts);
 
+// const ExportData = require('highcharts/modules/export-data');
+// ExportData(Highcharts);
+
+// const Accessibility = require('highcharts/modules/accessibility');
+// Accessibility(Highcharts);
 @Component({
     selector: 'app-analysis',
     templateUrl: './analysis.component.html',
     styleUrls: ['./analysis.component.scss']
 })
 export class AnalysisComponent implements OnInit {
+
     displayedColumns: string[] = [
         'code',
         'item_name',
@@ -39,447 +53,69 @@ export class AnalysisComponent implements OnInit {
     toDate: string;
 
     //
-    name = 'Angular';
-     view: any[] = [1450, 750];
-   //view: any[];
-//   width = 500;
-//     height = 300
-
-     fitContainer: boolean = true;
-
-    public multi = [
-        {
-          "name": "China",
-          "series": [
-            {
-              "name": "sale",
-              "value": '22172'
-            },
-            {
-              "name": "profit",
-              "value": '12270'
+    public options: any = {
+        chart: {
+            type: 'column'
+        },
+        accessibility: {
+            description: '',
+        },
+        title: {
+            text: ''
+        },
+        // subtitle: {
+        //     text: '{{sss}}'
+        // },
+        xAxis: {
+            categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania'],
+            tickmarkPlacement: 'on',
+            title: {
+                enabled: false
             }
-          ]
+        },
+        yAxis: {
+            min: 0,
+
+            title: {
+                text: 'Amount (RS.)',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ' millions'
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'below',
+            x: -40,
+            y: 80,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+            shadow: true
+        },
+        series: [{
+            name: 'Sale',
+            data: [12016, 10001, 40436, 73008, 40000, 12016, 10001, 40436, 738, 400, 12016, 10001, 44036, 7308, 400, 12106, 10001, 44306, 738, 4000, 10216, 10001, 4436, 7380, 400, 12106, 10001, 44306, 7308, 400,]
         }, {
-            "name": "Cqhina",
-            "series": [
-              {
-                "name": "sale",
-                "value": '2211'
-              },
-              {
-                "name": "profit",
-                "value": '12270'
-              }
-            ]
-          },
-          {
-            "name": "Ch.ina",
-            "series": [
-              {
-                "name": "sale",
-                "value": 22172
-              },
-              {
-                "name": "profit",
-                "value": 12270
-              }
-            ]
-          }, {
-            "name": "China1",
-            "series": [
-              {
-                "name": "sale",
-                "value": 22172
-              },
-              {
-                "name": "profit",
-                "value": 12270
-              }
-            ]
-          }, {
-            "name": "Ch1ina",
-            "series": [
-              {
-                "name": "sale",
-                "value": 22172
-              },
-              {
-                "name": "profit",
-                "value": 12270
-              }
-            ]
-          }, {
-            "name": "Chin1a",
-            "series": [
-              {
-                "name": "sale",
-                "value": 22172
-              },
-              {
-                "name": "profit",
-                "value": 12270
-              }
-            ]
-          },
-        {
-          "name": "USA",
-          "series": [
-            {
-                "name": "sale",
-              "value": 6000
-            },
-            {
-                "name": "profit",
-              "value": 766
-            }
-          ]
-        },
-        {
-          "name": "Norway",
-          "series": [
-            {
-                "name": "sale",
-              "value": 29625
-            },
-            {
-                "name": "profit",
-              "value": 2092
-            }          ]
-        },
-        {
-          "name": "Japan",
-          "series": [
-            {
-                "name": "sale",
-              "value": 25763
-            },
-            {
-                "name": "profit",
-              "value": 20550
-            }
-          ]
-        },
-        {
-          "name": "Germany",
-          "series": [
-            {
-                "name": "sale",
-              "value": 29650
-            },
-            {
-                "name": "profit",
-              "value": 12946
-            }
-          ]
-        },
-        {
-          "name": "Fran04ce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            { "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "France0",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "F30rance",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "F7ran4ce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        },
-        {
-          "name": "Fra0nce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        },
+            name: 'Profit',
+            data: [1416, 1101, 44086, 70000, 405, 1416, 1101, 44860, 7500, 405, 14016, 11001, 4486, 750, 405, 14016, 1101, 44086, 4750, 405, 1416, 1101, 4486, 750, 405, 1416, 11001, 4486, 7500, 40005,]
+        }]
+    }
+    //
 
-        {
-          "name": "Fra4nce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-         } ,
-        {
-          "name": "Fran2ce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "Fra44nce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "Fr4e",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "anceaaq",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        },
-        {
-          "name": "Frn12121ce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "3t6hgfFrance",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "74545",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-        }
-        ,
-        {
-          "name": "43",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-
-        }
-        ,
-        {
-          "name": "7raghknce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-
-        }
-        ,
-        {
-          "name": "Fragh7kn",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-
-        }
-        ,
-        {
-          "name": "Fragh244knce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-
-        }
-        ,
-        {
-          "name": "Fra14hknce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-
-        }
-        ,
-        {
-          "name": "Fraghke",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-
-        }
-        ,
-        {
-          "name": "Fraknce",
-          "series": [
-            {
-                "name": "sale",
-              "value": 24617
-            },
-            {
-                "name": "profit",
-              "value": 19797
-            }
-          ]
-
-        }
-
-      ];
-
-
-    showXAxis = true;
-    showYAxis = true;
-    gradient = true;
-    showLegend = true;
-    legendTitle= 'chart';
-    legendPosition = 'below';
-    showGridLines = true;
-    roundDomains= true;
-    roundEdges = false;
-   // strokeColor = '#FFFFFF';
-    strokeWidth = 2;
-    showYAxisLabel = true
-    yAxisLabel = 'Amount (RS.) ';
-    timeline = true;
-    doughnut = true;
-    colorScheme = {
-      domain: ['blue', 'gray']
-    };
-    // colorScheme = {
-    //   domain: ['#9370DB', '#87CEFA', '#FA8072', '#FF7F50', '#90EE90', '#9370DB']
-    // };
 
 
 
@@ -515,7 +151,7 @@ export class AnalysisComponent implements OnInit {
         public snackBar: MatSnackBar,
         private categoriesService: CategoriesService,
         private salesService: SalesService,
-    ) {}
+    ) { }
 
 
 
@@ -524,6 +160,11 @@ export class AnalysisComponent implements OnInit {
         this.getSuppliersDropDown();
         this.getItemDropDown();
         this.getCustomerDropDown();
+        Highcharts.chart('container', this.options);
+        //
+
+        //
+
     }
 
     sortData(sort: Sort) {
@@ -630,13 +271,13 @@ export class AnalysisComponent implements OnInit {
     }
 
     getItemDropDown() {
-      //  this.selectItemLoader = true;
+        //  this.selectItemLoader = true;
         this.salesService
             .getItemDropDown()
             .subscribe(
                 (response) => {
                     this.items = response;
-              //      this.selectItemLoader = false;
+                    //      this.selectItemLoader = false;
                 },
                 (error) => {
                     this.snackBar.open(
@@ -667,13 +308,13 @@ export class AnalysisComponent implements OnInit {
     }
 
     getCustomerDropDown() {
-//this.selectCustomerLoader = true;
+        //this.selectCustomerLoader = true;
         this.salesService
             .getCustomerDropDown()
             .subscribe(
                 (response) => {
                     this.customers = response;
-                //    this.selectCustomerLoader = false;
+                    //    this.selectCustomerLoader = false;
                 },
                 (error) => {
                     this.snackBar.open(
