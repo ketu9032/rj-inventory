@@ -7,11 +7,12 @@
         <div>
             <!-- Categories start -->
             <mat-form-field class="field-width margin">
-                <mat-label>All Categories</mat-label>
+                <mat-label>All Categories <b> ({{categories.length}})</b></mat-label>
                 <mat-select #select multiple class="select-width">
                     <div class="select-all">
-                        <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
-                            (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
+                        <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
+                            [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCategories()">Select All
+                        </mat-checkbox>
                     </div>
                     <mat-option (click)="optionClickCategories()" *ngFor="let category of categories"
                         [value]="category.id">
@@ -21,11 +22,12 @@
             </mat-form-field>
             <!-- Suppliers start -->
             <mat-form-field class="field-width margin">
-                <mat-label>All Suppliers</mat-label>
+                <mat-label>All Suppliers <b> ({{suppliers.length}}) </b></mat-label>
                 <mat-select #select1 multiple>
                     <div class="select-all">
-                        <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
-                            (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
+                        <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
+                            [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionBySuppliers()">Select All
+                        </mat-checkbox>
                     </div>
                     <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers"
                         [value]="supplier.id">
@@ -35,11 +37,12 @@
             </mat-form-field>
             <!-- items start -->
             <mat-form-field class="field-width margin">
-                <mat-label>All Items</mat-label>
+                <mat-label>All Items <b> ({{items.length}})</b></mat-label>
                 <mat-select #select2 multiple>
                     <div class="select-all">
-                        <mat-checkbox [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
-                            (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
+                        <mat-checkbox color="primary" [(ngModel)]="allSelectedItems"
+                            [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByItems()">Select All
+                        </mat-checkbox>
                     </div>
                     <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
                         {{item.item_code}}
@@ -49,22 +52,22 @@
             <!-- 30 day start -->
             <mat-form-field class="field-width margin">
                 <mat-label>30 days %</mat-label>
-                <input matInput type="number">
+                <input matInput type="number" [(ngModel)]="thirtyDays" (keyup.enter)="getAnalysis()">
             </mat-form-field>
             <!-- 15 day start -->
             <mat-form-field class="field-width margin">
                 <mat-label>15 days %</mat-label>
-                <input matInput type="number">
+                <input matInput type="number" [(ngModel)]="fifteenDays" (keyup.enter)="getAnalysis()">
             </mat-form-field>
             <!-- 7 day start -->
             <mat-form-field class="field-width margin">
                 <mat-label>7 days %</mat-label>
-                <input matInput type="number">
+                <input matInput type="number" [(ngModel)]="sevenDays" (keyup.enter)="getAnalysis()">
             </mat-form-field>
             <!-- Future day start -->
             <mat-form-field class="field-width margin">
                 <mat-label>Future days </mat-label>
-                <input matInput type="number">
+                <input matInput type="number" [(ngModel)]="futureDays" (keyup.enter)="getAnalysis()">
             </mat-form-field>
             <!-- button start -->
             <button color="primary" class=" btn" mat-raised-button>
@@ -89,10 +92,10 @@
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="company"
             matSortDirection="asc">
-            <ng-container matColumnDef="code">
+            <ng-container matColumnDef="item_code">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.code}}
+                    {{ element.item_code}}
                 </td>
             </ng-container>
             <ng-container matColumnDef="item_name">
@@ -101,37 +104,39 @@
                     {{ element.item_name }}
                 </td>
             </ng-container>
-            <ng-container matColumnDef="thirty_days">
+            <ng-container matColumnDef="qty_30_days">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Last 30 Days</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.thirty_days }}
+                    {{ !element.qty_30_days? 0 : element.qty_30_days }}
                 </td>
             </ng-container>
-            <ng-container matColumnDef="fifteen_days">
+            <ng-container matColumnDef="qty_15_days">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Last 15 Days </th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.fifteen_days }}
+                    {{ !element.qty_15_days ? 0 : element.qty_15_days }}
                 </td>
             </ng-container>
-            <ng-container matColumnDef="seven_days">
+            <ng-container matColumnDef="qty_7_days">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Last 7 Days </th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.seven_days }}
+                    {{ !element.qty_7_days ? 0 : element.qty_7_days }}
                 </td>
             </ng-container>
             <ng-container matColumnDef="prediction_target">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Prediction/Target</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.prediction_target }}
+                    {{ getPrediction(element.qty_30_days, element.qty_15_days, element.qty_7_days) | number: '1.0-0' }}
                 </td>
             </ng-container>
-            <ng-container matColumnDef="actual_stock">
+            <ng-container matColumnDef="int_qty">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Actual Stock</th>
-                <td mat-cell *matCellDef="let element">{{ element.actual_stock }}</td>
+                <td mat-cell *matCellDef="let element">{{ !element.int_qty ? 0 : element.int_qty }}</td>
             </ng-container>
             <ng-container matColumnDef="required">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>% Required</th>
-                <td mat-cell *matCellDef="let element">{{ element.required }}</td>
+                <td mat-cell *matCellDef="let element">{{
+                    getRequired(element.int_qty,element.qty_30_days, element.qty_15_days, element.qty_7_days) | number:
+                    '1.0-0' }}%</td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let element; columns: displayedColumns"></tr>
@@ -157,11 +162,12 @@
         </mat-form-field>
         <!-- Categories start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Categories</mat-label>
+            <mat-label>All Categories <b> ({{categories.length}}) </b></mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
+                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCategories()">Select All
+                    </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
                     {{category.code}}
@@ -170,11 +176,12 @@
         </mat-form-field>
         <!-- Suppliers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Suppliers</mat-label>
+            <mat-label>All Suppliers <b> ({{suppliers.length}}) </b></mat-label>
             <mat-select #select1 multiple>
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
+                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionBySuppliers()">Select All
+                    </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
                     {{supplier.company}}
@@ -183,10 +190,10 @@
         </mat-form-field>
         <!-- items start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Items</mat-label>
+            <mat-label>All Items <b> ({{items.length}}) </b></mat-label>
             <mat-select #select2 multiple>
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
                         (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
@@ -196,11 +203,12 @@
         </mat-form-field>
         <!-- customers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Customers</mat-label>
+            <mat-label>All Customers <b> ({{customers.length}}) </b></mat-label>
             <mat-select #select3 multiple>
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedCustomers" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionByCustomers()">Select All</mat-checkbox>
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedCustomers"
+                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCustomers()">Select All
+                    </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCustomers()" *ngFor="let customer of customers" [value]="customer.id">
                     {{customer.company}}
@@ -251,11 +259,12 @@
         </mat-form-field>
         <!-- Categories start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Categories</mat-label>
+            <mat-label>All Categories <b>({{categories.length}}) </b></mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
+                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCategories()">Select All
+                    </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
                     {{category.code}}
@@ -264,11 +273,12 @@
         </mat-form-field>
         <!-- Suppliers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Suppliers</mat-label>
+            <mat-label>All Suppliers <b>({{suppliers.length}}) </b></mat-label>
             <mat-select #select1 multiple>
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
+                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionBySuppliers()">Select All
+                    </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
                     {{supplier.company}}
@@ -277,10 +287,10 @@
         </mat-form-field>
         <!-- items start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Items</mat-label>
+            <mat-label>All Items <b>({{items.length}}) </b></mat-label>
             <mat-select #select2 multiple>
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
                         (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
@@ -290,11 +300,12 @@
         </mat-form-field>
         <!-- customers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Customers</mat-label>
+            <mat-label>All Customers <b>({{customers.length}}) </b></mat-label>
             <mat-select #select3 multiple>
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedCustomers" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionByCustomers()">Select All</mat-checkbox>
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedCustomers"
+                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCustomers()">Select All
+                    </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCustomers()" *ngFor="let customer of customers" [value]="customer.id">
                     {{customer.company}}
@@ -342,11 +353,12 @@
         </mat-form-field>
         <!-- Categories start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Categories</mat-label>
+            <mat-label>All Categories <b>({{categories.length}}) </b></mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedCategories" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionByCategories()">Select All</mat-checkbox>
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
+                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCategories()">Select All
+                    </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
                     {{category.code}}
@@ -355,11 +367,12 @@
         </mat-form-field>
         <!-- Suppliers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Suppliers</mat-label>
+            <mat-label>All Suppliers <b>({{suppliers.length}}) </b></mat-label>
             <mat-select #select1 multiple>
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedSuppliers" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionBySuppliers()">Select All</mat-checkbox>
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
+                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionBySuppliers()">Select All
+                    </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
                     {{supplier.company}}
@@ -368,10 +381,10 @@
         </mat-form-field>
         <!-- items start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Items</mat-label>
+            <mat-label>All Items <b>({{items.length}}) </b></mat-label>
             <mat-select #select2 multiple>
                 <div class="select-all">
-                    <mat-checkbox [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
+                    <mat-checkbox color="primary" [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
                         (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">

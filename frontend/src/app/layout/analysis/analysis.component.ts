@@ -7,13 +7,15 @@ import { MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import * as Highcharts from 'highcharts';
-
+import { MatTableDataSource } from '@angular/material/table';
 import { IMatTableParams } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { CategoriesService } from '../expense/services/categories.service';
 import { ItemsService } from '../items/services/items.service';
 import { SalesService } from '../sales/services/sales.service';
 import { Chart } from 'chart.js';
+import { AnalysisService } from './services/analysis.service';
+import { IAnalysisData } from 'src/app/models/analysis';
 
 // declare var require: any;
 // const More = require('highcharts/highcharts-more');
@@ -35,13 +37,13 @@ import { Chart } from 'chart.js';
 export class AnalysisComponent implements OnInit {
 
     displayedColumns: string[] = [
-        'code',
+        'item_code',
         'item_name',
-        'thirty_days',
-        'fifteen_days',
-        'seven_days',
+        'qty_30_days',
+        'qty_15_days',
+        'qty_7_days',
         'prediction_target',
-        'actual_stock',
+        'int_qty',
         'required'
     ];
 
@@ -133,7 +135,12 @@ export class AnalysisComponent implements OnInit {
         direction: "desc",
         search: '',
         active: true
+
     }
+    thirtyDays: number = 20;
+    fifteenDays: number = 30;
+    sevenDays: number = 50;
+    futureDays: number = 7;
 
     @ViewChild('select') select: MatSelect;
     allSelectedCategories: boolean = false;
@@ -151,20 +158,46 @@ export class AnalysisComponent implements OnInit {
         public snackBar: MatSnackBar,
         private categoriesService: CategoriesService,
         private salesService: SalesService,
+        private analysisService: AnalysisService
     ) { }
-
-
 
     ngOnInit(): void {
         this.getCategoryDropDown('Item');
         this.getSuppliersDropDown();
         this.getItemDropDown();
         this.getCustomerDropDown();
+        this.getAnalysis();
         Highcharts.chart('container', this.options);
-        //
+    }
 
-        //
-
+    getAnalysis() {
+        this.loader = true;
+        if (this.fromDate) {
+            this.tableParams.fromDate = this.fromDate
+        }
+        if (this.toDate) {
+            this.tableParams.toDate = this.toDate
+        }
+        this.analysisService.getAnalysis(this.tableParams).subscribe(
+            (newAnalysis: any[]) => {
+                this.dataSource = new MatTableDataSource<IAnalysisData>(newAnalysis);
+                if (newAnalysis.length > 0) {
+                    this.totalRows = newAnalysis[0].total;
+                }
+                setTimeout(() => {
+                    this.paginator.pageIndex = this.tableParams.pageNumber - 1;
+                    this.paginator.length = +this.totalRows;
+                });
+                this.loader = false;
+            },
+            (error) => {
+                this.loader = false;
+                this.snackBar.open(error.error.message || error.message, 'Ok', {
+                    duration: 3000
+                });
+            },
+            () => { }
+        );
     }
 
     sortData(sort: Sort) {
@@ -326,6 +359,14 @@ export class AnalysisComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+
+    getPrediction(qty30Days, qty15Days, qty7Days) {
+        return (+(+(+(qty30Days * this.thirtyDays) / 100) + +((qty15Days * this.fifteenDays) / 100) + +((qty7Days * 50) / 100)) / (30)) * this.futureDays;
+    }
+
+    getRequired(intQty, qty30Days, qty15Days, qty7Days) {
+        return (+intQty * 100) / ((((+((+qty30Days * this.thirtyDays) / 100) + ((+qty15Days * this.fifteenDays) / 100) + ((+qty7Days * this.sevenDays) / 100)) / (30)) * this.futureDays) * this.futureDays)
     }
 
 }
