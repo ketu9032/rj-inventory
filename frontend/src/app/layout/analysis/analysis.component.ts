@@ -260,7 +260,19 @@ export class AnalysisComponent implements OnInit {
     startDate: Date;
     endDate: Date;
     daysArray = []
-    formatChangeDate
+    formatChangeDate;
+    totalSaleInProfitChartWise: number = 0;
+    totalProfitInProfitChartWise: number = 0;
+    averageSaleInProfitChartWise: number = 0;
+    averageProfitInProfitChartWise: number = 0;
+    totalSaleInSaleChartWise: number = 0;
+    totalQtyInSaleChartWise: number = 0;
+    averageSaleInSaleChartWise: number = 0;
+    averageQtyInSaleChartWise: number = 0;
+    totalPurchaseInPurchaseChartWise: number = 0;
+    totalQtyInPurchaseChartWise: number = 0;
+    averagePurchaseInPurchaseChartWise: number = 0;
+    averageQtyInPurchaseChartWise: number = 0;
 
     selectedDate: ISelectedDate = {
         startDate: moment(moment(), "DD-MM-YYYY").add(-11, 'days'),
@@ -342,6 +354,22 @@ export class AnalysisComponent implements OnInit {
             .subscribe(
                 (response) => {
                     this.profitChart = response
+
+                    for (let index = 0; index < this.profitChart.res1.length; index++) {
+                        const element = this.profitChart.res1[index];
+                        this.totalSaleInProfitChartWise =       +this.totalSaleInProfitChartWise + +element.sa
+
+                        this.averageSaleInProfitChartWise = (this.totalSaleInProfitChartWise / 30)
+
+                    }
+
+                    for (let index = 0; index < this.profitChart.res2.length; index++) {
+                        const element = this.profitChart.res2[index];
+                        this.totalProfitInProfitChartWise =        +this.totalProfitInProfitChartWise + +element.pa
+                        this.averageProfitInProfitChartWise =  (this.totalProfitInProfitChartWise / 30)
+
+                    }
+
                     for (let index = 0; index < this.daysArray.length; index++) {
                         const arraySignalDate = this.daysArray[index];
                         const salesDate = this.profitChart.res1.find(x => {
@@ -392,8 +420,17 @@ export class AnalysisComponent implements OnInit {
             )
             .subscribe(
                 (response) => {
-
                     this.saleChart = response
+                    for (let index = 0; index < this.saleChart.length; index++) {
+                        const element = this.saleChart[index];
+                       this.totalSaleInSaleChartWise =  +this.totalSaleInSaleChartWise + +element.sales_amount;
+                       this.totalQtyInSaleChartWise = +this.totalQtyInSaleChartWise + +element.sales_qty;
+                       this.averageSaleInSaleChartWise =  (this.totalSaleInSaleChartWise / 30)
+                       this.averageQtyInSaleChartWise = (this.totalQtyInSaleChartWise / 30)
+                    }
+
+
+
                     for (let index = 0; index < this.daysArray.length; index++) {
                         const arraySignalDate = this.daysArray[index];
                         const salesDate = this.saleChart.find(x => {
@@ -438,8 +475,17 @@ export class AnalysisComponent implements OnInit {
             )
             .subscribe(
                 (response) => {
-
                     this.purchaseChart = response
+
+                    for (let index = 0; index < this.purchaseChart.length; index++) {
+                        const element = this.purchaseChart[index];
+
+                      this.totalPurchaseInPurchaseChartWise = +this.totalPurchaseInPurchaseChartWise + +element.purchase_amount;
+                      this.totalQtyInPurchaseChartWise = +this.totalQtyInPurchaseChartWise + +element.purchase_qty;
+                      this.averagePurchaseInPurchaseChartWise = (this.totalPurchaseInPurchaseChartWise / 30);
+                      this.averageQtyInPurchaseChartWise = (this.totalQtyInPurchaseChartWise / 30);
+
+                    }
                     for (let index = 0; index < this.daysArray.length; index++) {
                         const arraySignalDate = this.daysArray[index];
                         const purchaseDate = this.purchaseChart.find(x => {

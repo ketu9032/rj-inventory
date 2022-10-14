@@ -224,15 +224,15 @@
         </button>
     </div>
 </div>
-<!-- chart content -->
+<!-- profit chart content -->
 <div>
     <div class="header-content">
         <h1 class="center">Profit Chart</h1>
         <div class="center total-count">
-            <span>Total Sale: {{222222}}, </span>
-            <span>Total Profit: {{021021}} | </span>
-            <span>Avg Sale: {{222222}}, </span>
-            <span>Avg Profit: {{15522}} </span>
+             <span>Total Sale:<b> {{totalSaleInProfitChartWise}}</b>, </span>
+            <span>Total Profit: <b> {{totalProfitInProfitChartWise}}</b> | </span>
+            <span>Avg Sale:  <b> {{averageSaleInProfitChartWise | number: '1.0-0'}}</b>, </span>
+            <span>Avg Profit:   <b> {{averageProfitInProfitChartWise | number: '1.0-0'}}</b> </span>
         </div>
 
         <div>
@@ -328,10 +328,10 @@
     <div class="header-content">
         <h1 class="center">Sale Chart</h1>
         <div class="center total-count">
-            <span>Total Sale: {{222222}}, </span>
-            <span>Total Qty: {{021021}} | </span>
-            <span>Avg Sale: {{222222}}, </span>
-            <span>Avg Qty: {{15522}} </span>
+            <span>Total Sale:<b> {{totalSaleInSaleChartWise}}</b>, </span>
+            <span>Total Qty: <b> {{totalQtyInSaleChartWise}}</b> | </span>
+            <span>Avg Sale:  <b> {{averageSaleInSaleChartWise | number: '1.0-0'}}</b>, </span>
+            <span>Avg Qty:   <b> {{averageQtyInSaleChartWise | number: '1.0-0'}}</b> </span>
         </div>
     </div>
     <div>
@@ -408,10 +408,11 @@
     <div class="header-content">
         <h1 class="center">Purchase Chart</h1>
         <div class="center total-count">
-            <span>Total Purchase: {{222222}}, </span>
-            <span>Total Qty: {{021021}} | </span>
-            <span>Avg Purchase: {{222222}}, </span>
-            <span>Avg Qty: {{15522}} </span>
+
+            <span>Total Purchase:<b> {{totalPurchaseInPurchaseChartWise}}</b>, </span>
+            <span>Total Qty: <b> {{totalQtyInPurchaseChartWise}}</b> | </span>
+            <span>Avg Purchase:  <b> {{averagePurchaseInPurchaseChartWise | number: '1.0-0'}}</b>, </span>
+            <span>Avg Qty:   <b> {{averageQtyInPurchaseChartWise | number: '1.0-0'}}</b> </span>
         </div>
     </div>
     <div>
