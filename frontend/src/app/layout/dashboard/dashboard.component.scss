@@ -1,44 +1,35 @@
-.flex {
-  display: flex;
-  justify-content: space-around;
+.center {
+    font-size: 22px;
+    text-align: center;
+}
+.flex{
+    display: flex;
+}
+.justify-content{
+    justify-content: space-between;
 }
 
-.account-holder-box {
-  border: 1px solid;
-  margin: 10px;
-  padding: 10px;
-  width: 100%;
-  color: white;
+.summary-box{
+    border: 1px solid black;
+    padding: 20px 50px;
+    border-radius: 5px;
+    width: 8%;
 }
-.account-holder-name {
-  font-size: 18px;
-  font-weight: bolder;
-  vertical-align: super;
+.primary{
+    color: #3f51b5;
 }
-
-.mat-card-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  mat-card-title {
-    vertical-align: -webkit-baseline-middle;
-  }
+.font-size-14{
+    font-size: 17px;
+    padding-top: 8px;
+    font-weight: bold;
 }
-.box-1 {
-  background: linear-gradient(60deg, #ec407a, #d81b60);
+.btn {
+    font-size: 13px;
+    height: 33px;
 }
-.box-2 {
-  background: linear-gradient(60deg, #ffa726, #fb8c00);
-}
-.box-3 {
-  background: linear-gradient(60deg, #66bb6a, #43a047);
-}
-.box-4 {
-  background: linear-gradient(60deg, #26c6da, #00acc1);
-}
-.box-5 {
-  background: linear-gradient(60deg, #605ea8, #2f2fb2);
-}
-.box-6 {
-  background: linear-gradient(60deg, #c24a4a, #c01515);
+.company-box{
+    border: 1px solid black;
+    padding: 20px 70px;
+    border-radius: 5px;
+    width: 14%;
 }
