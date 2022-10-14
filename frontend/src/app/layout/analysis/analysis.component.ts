@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import * as Highcharts from 'highcharts';
 import { MatTableDataSource } from '@angular/material/table';
-import { IMatTableParams } from 'src/app/models/table';
+import { IMatTableParams, ISelectedDate } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { CategoriesService } from '../expense/services/categories.service';
 import { ItemsService } from '../items/services/items.service';
@@ -16,6 +16,7 @@ import { SalesService } from '../sales/services/sales.service';
 import { Chart } from 'chart.js';
 import { AnalysisService } from './services/analysis.service';
 import { IAnalysisData } from 'src/app/models/analysis';
+import * as moment from 'moment';
 
 // declare var require: any;
 // const More = require('highcharts/highcharts-more');
@@ -55,7 +56,7 @@ export class AnalysisComponent implements OnInit {
     toDate: string;
 
     //
-    public options: any = {
+    public profit: any = {
         chart: {
             type: 'column'
         },
@@ -65,11 +66,8 @@ export class AnalysisComponent implements OnInit {
         title: {
             text: ''
         },
-        // subtitle: {
-        //     text: '{{sss}}'
-        // },
         xAxis: {
-            categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania', 'Africa', 'America', 'Asia', 'Europe', 'Oceania'],
+            categories: [],
             tickmarkPlacement: 'on',
             title: {
                 enabled: false
@@ -87,7 +85,7 @@ export class AnalysisComponent implements OnInit {
             }
         },
         tooltip: {
-            valueSuffix: ' millions'
+            valueSuffix: ''
         },
         plotOptions: {
             bar: {
@@ -110,10 +108,126 @@ export class AnalysisComponent implements OnInit {
         },
         series: [{
             name: 'Sale',
-            data: [12016, 10001, 40436, 73008, 40000, 12016, 10001, 40436, 738, 400, 12016, 10001, 44036, 7308, 400, 12106, 10001, 44306, 738, 4000, 10216, 10001, 4436, 7380, 400, 12106, 10001, 44306, 7308, 400,]
+            data: []
         }, {
             name: 'Profit',
-            data: [1416, 1101, 44086, 70000, 405, 1416, 1101, 44860, 7500, 405, 14016, 11001, 4486, 750, 405, 14016, 1101, 44086, 4750, 405, 1416, 1101, 4486, 750, 405, 1416, 11001, 4486, 7500, 40005,]
+            data: []
+        }]
+    }
+    public sale: any = {
+        chart: {
+            type: 'column'
+        },
+        accessibility: {
+            description: '',
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            categories: [],
+            tickmarkPlacement: 'on',
+            title: {
+                enabled: false
+            }
+        },
+        yAxis: {
+            min: 0,
+
+            title: {
+                text: 'Amount (RS.)',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'below',
+            x: -40,
+            y: 80,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+            shadow: true
+        },
+        series: [{
+            name: 'Sale',
+            data: []
+        }, {
+            name: 'Qty',
+            data: []
+        }]
+    }
+    public purchase: any = {
+        chart: {
+            type: 'column'
+        },
+        accessibility: {
+            description: '',
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            categories: [],
+            tickmarkPlacement: 'on',
+            title: {
+                enabled: false
+            }
+        },
+        yAxis: {
+            min: 0,
+
+            title: {
+                text: 'Amount (RS.)',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'below',
+            x: -40,
+            y: 80,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+            shadow: true
+        },
+        series: [{
+            name: 'Purchase',
+            data: []
+        }, {
+            name: 'Qty',
+            data: []
         }]
     }
     //
@@ -135,12 +249,24 @@ export class AnalysisComponent implements OnInit {
         direction: "desc",
         search: '',
         active: true
-
     }
     thirtyDays: number = 20;
     fifteenDays: number = 30;
     sevenDays: number = 50;
     futureDays: number = 7;
+    profitChart;
+    saleChart;
+    purchaseChart;
+    startDate: Date;
+    endDate: Date;
+    daysArray = []
+    formatChangeDate
+
+    selectedDate: ISelectedDate = {
+        startDate: moment(moment(), "DD-MM-YYYY").add(-11, 'days'),
+        endDate: moment(moment(), "DD-MM-YYYY").add(18, 'days'),
+    }
+
 
     @ViewChild('select') select: MatSelect;
     allSelectedCategories: boolean = false;
@@ -167,7 +293,7 @@ export class AnalysisComponent implements OnInit {
         this.getItemDropDown();
         this.getCustomerDropDown();
         this.getAnalysis();
-        Highcharts.chart('container', this.options);
+        this.getDaysArray(this.selectedDate.startDate, this.selectedDate.endDate);
     }
 
     getAnalysis() {
@@ -199,6 +325,164 @@ export class AnalysisComponent implements OnInit {
             () => { }
         );
     }
+    getProfitChart() {
+        debugger
+        if (this.startDate) {
+            this.selectedDate.startDate = moment(this.startDate).format("DD-MM-YYYY")
+
+        }
+        if (this.endDate) {
+            this.selectedDate.endDate = moment(this.endDate).format("DD-MM-YYYY")
+        }
+        let convertedSalesDate;
+        let convertedPurchaseDate;
+        this.analysisService
+            .profitChart(this.selectedDate
+            )
+            .subscribe(
+                (response) => {
+                    this.profitChart = response
+                    for (let index = 0; index < this.daysArray.length; index++) {
+                        const arraySignalDate = this.daysArray[index];
+                        const salesDate = this.profitChart.res1.find(x => {
+                            convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                            return convertedSalesDate === arraySignalDate;
+                        })
+                        if (arraySignalDate !== convertedSalesDate) {
+                            this.profit.xAxis.categories.push(arraySignalDate)
+                            this.profit.series[0].data.push(0);
+                        } else (
+                            this.profit.xAxis.categories.push(arraySignalDate),
+                            this.profit.series[0].data.push(+salesDate.sa)
+                        )
+                        const purchaseDate = this.profitChart.res2.find(x => {
+                            convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                            return convertedPurchaseDate === arraySignalDate;
+                        })
+                        if (arraySignalDate !== convertedPurchaseDate) {
+                            this.profit.series[1].data.push(0);
+                        } else (
+                            this.profit.series[1].data.push(+purchaseDate.pa)
+                        )
+                    }
+                    Highcharts.chart('profitChartData', this.profit);
+
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+    getSaleChart() {
+        if (this.startDate) {
+            this.selectedDate.startDate = moment(this.startDate).format("DD-MM-YYYY")
+        }
+        if (this.endDate) {
+            this.selectedDate.endDate = moment(this.endDate).format("DD-MM-YYYY")
+        }
+        let convertedSalesDate;
+        this.analysisService
+            .saleChart(this.selectedDate
+            )
+            .subscribe(
+                (response) => {
+
+                    this.saleChart = response
+                    for (let index = 0; index < this.daysArray.length; index++) {
+                        const arraySignalDate = this.daysArray[index];
+                        const salesDate = this.saleChart.find(x => {
+                            convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                            return convertedSalesDate === arraySignalDate;
+                        })
+                        if (arraySignalDate !== convertedSalesDate) {
+                            this.sale.xAxis.categories.push(arraySignalDate)
+                            this.sale.series[0].data.push(0);
+                            this.sale.series[1].data.push(0);
+                        } else (
+                            this.sale.xAxis.categories.push(arraySignalDate),
+                            this.sale.series[0].data.push(+salesDate.sales_amount),
+                            this.sale.series[1].data.push(+salesDate.sales_qty)
+                        )
+
+                    }
+                    Highcharts.chart('saleChartData', this.sale);
+
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+    getPurchaseChart() {
+        if (this.startDate) {
+            this.selectedDate.startDate = moment(this.startDate).format("DD-MM-YYYY")
+        }
+        if (this.endDate) {
+            this.selectedDate.endDate = moment(this.endDate).format("DD-MM-YYYY")
+        }
+        let convertedSalesDate;
+        this.analysisService
+            .purchaseChart(this.selectedDate
+            )
+            .subscribe(
+                (response) => {
+
+                    this.purchaseChart = response
+                    for (let index = 0; index < this.daysArray.length; index++) {
+                        const arraySignalDate = this.daysArray[index];
+                        const purchaseDate = this.purchaseChart.find(x => {
+                            convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                            return convertedSalesDate === arraySignalDate;
+                        })
+                        if (arraySignalDate !== convertedSalesDate) {
+                            this.purchase.xAxis.categories.push(arraySignalDate)
+                            this.purchase.series[0].data.push(0);
+                            this.purchase.series[1].data.push(0);
+                        } else (
+                            this.purchase.xAxis.categories.push(arraySignalDate),
+                            this.purchase.series[0].data.push(+purchaseDate.purchase_amount),
+                            this.purchase.series[1].data.push(+purchaseDate.purchase_qty)
+                        )
+
+                    }
+                    Highcharts.chart('purchaseChartData', this.purchase);
+
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
+
+    getDaysArray(startDate, endDate) {
+        for (var arr = [], dt = new Date(startDate); dt <= new Date(endDate); dt.setDate(dt.getDate() + 1)) {
+            arr.push(new Date(dt));
+        }
+        for (let index = 0; index < arr.length; index++) {
+            const element = arr[index];
+            this.formatChangeDate = moment(element).format("DD-MM-YYYY");
+            this.daysArray.push(this.formatChangeDate)
+        }
+        return this.daysArray;
+    };
 
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;

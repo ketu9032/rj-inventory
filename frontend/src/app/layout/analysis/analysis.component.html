@@ -7,7 +7,7 @@
         <div>
             <!-- Categories start -->
             <mat-form-field class="field-width margin">
-                <mat-label>All Categories <b> ({{categories.length}})</b></mat-label>
+                <mat-label>All Categories </mat-label>
                 <mat-select #select multiple class="select-width">
                     <div class="select-all">
                         <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
@@ -16,13 +16,13 @@
                     </div>
                     <mat-option (click)="optionClickCategories()" *ngFor="let category of categories"
                         [value]="category.id">
-                        {{category.code}}
+                        {{category.code | uppercase}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
             <!-- Suppliers start -->
             <mat-form-field class="field-width margin">
-                <mat-label>All Suppliers <b> ({{suppliers.length}}) </b></mat-label>
+                <mat-label>All Suppliers </mat-label>
                 <mat-select #select1 multiple>
                     <div class="select-all">
                         <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
@@ -31,13 +31,13 @@
                     </div>
                     <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers"
                         [value]="supplier.id">
-                        {{supplier.company}}
+                        {{supplier.company | uppercase}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
             <!-- items start -->
             <mat-form-field class="field-width margin">
-                <mat-label>All Items <b> ({{items.length}})</b></mat-label>
+                <mat-label>All Items </mat-label>
                 <mat-select #select2 multiple>
                     <div class="select-all">
                         <mat-checkbox color="primary" [(ngModel)]="allSelectedItems"
@@ -45,7 +45,7 @@
                         </mat-checkbox>
                     </div>
                     <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
-                        {{item.item_code}}
+                        {{item.item_code | uppercase}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -154,15 +154,15 @@
         <mat-form-field class="field-width margin">
             <mat-label>Select date range</mat-label>
             <mat-date-range-input [rangePicker]="picker">
-                <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
-                <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+                <input matStartDate [(ngModel)]="startDate" placeholder="Start date">
+                <input matEndDate [(ngModel)]="endDate" placeholder="End date">
             </mat-date-range-input>
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
         <!-- Categories start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Categories <b> ({{categories.length}}) </b></mat-label>
+            <mat-label>All Categories</mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
@@ -170,13 +170,13 @@
                     </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
-                    {{category.code}}
+                    {{category.code | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- Suppliers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Suppliers <b> ({{suppliers.length}}) </b></mat-label>
+            <mat-label>All Suppliers</mat-label>
             <mat-select #select1 multiple>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
@@ -184,26 +184,26 @@
                     </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
-                    {{supplier.company}}
+                    {{supplier.company | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- items start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Items <b> ({{items.length}}) </b></mat-label>
+            <mat-label>All Items </mat-label>
             <mat-select #select2 multiple>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
                         (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
-                    {{item.item_code}}
+                    {{item.item_code | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- customers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Customers <b> ({{customers.length}}) </b></mat-label>
+            <mat-label>All Customers </mat-label>
             <mat-select #select3 multiple>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedCustomers"
@@ -211,12 +211,12 @@
                     </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCustomers()" *ngFor="let customer of customers" [value]="customer.id">
-                    {{customer.company}}
+                    {{customer.company | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- button start -->
-        <button color="primary" class=" btn" mat-raised-button>
+        <button color="primary" class=" btn" mat-raised-button (click)="getProfitChart()">
             Submit
         </button>
         <button color="primary" class="margin btn" mat-raised-button>
@@ -236,7 +236,8 @@
         </div>
 
         <div>
-            <div id="container"></div>
+            <div id="profitChartData"></div>
+
         </div>
     </div>
 
@@ -259,7 +260,7 @@
         </mat-form-field>
         <!-- Categories start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Categories <b>({{categories.length}}) </b></mat-label>
+            <mat-label>All Categories </mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
@@ -267,13 +268,13 @@
                     </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
-                    {{category.code}}
+                    {{category.code | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- Suppliers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Suppliers <b>({{suppliers.length}}) </b></mat-label>
+            <mat-label>All Suppliers </mat-label>
             <mat-select #select1 multiple>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
@@ -281,26 +282,26 @@
                     </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
-                    {{supplier.company}}
+                    {{supplier.company | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- items start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Items <b>({{items.length}}) </b></mat-label>
+            <mat-label>All Items </mat-label>
             <mat-select #select2 multiple>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
                         (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
-                    {{item.item_code}}
+                    {{item.item_code | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- customers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Customers <b>({{customers.length}}) </b></mat-label>
+            <mat-label>All Customers </mat-label>
             <mat-select #select3 multiple>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedCustomers"
@@ -308,12 +309,12 @@
                     </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCustomers()" *ngFor="let customer of customers" [value]="customer.id">
-                    {{customer.company}}
+                    {{customer.company | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- button start -->
-        <button color="primary" class=" btn" mat-raised-button>
+        <button color="primary" class=" btn" mat-raised-button (click)="getSaleChart()">
             Submit
         </button>
         <button color="primary" class="margin btn" mat-raised-button>
@@ -322,7 +323,7 @@
     </div>
 
 </div>
-<!-- chart content -->
+<!-- sale chart content -->
 <div>
     <div class="header-content">
         <h1 class="center">Sale Chart</h1>
@@ -334,7 +335,7 @@
         </div>
     </div>
     <div>
-        <div id="container"></div>
+        <div id="saleChartData"></div>
     </div>
 </div>
 <!-- Purchase   chart container start -->
@@ -353,7 +354,7 @@
         </mat-form-field>
         <!-- Categories start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Categories <b>({{categories.length}}) </b></mat-label>
+            <mat-label>All Categories</mat-label>
             <mat-select #select multiple class="select-width">
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
@@ -361,13 +362,13 @@
                     </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
-                    {{category.code}}
+                    {{category.code | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- Suppliers start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Suppliers <b>({{suppliers.length}}) </b></mat-label>
+            <mat-label>All Suppliers </mat-label>
             <mat-select #select1 multiple>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
@@ -375,25 +376,25 @@
                     </mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
-                    {{supplier.company}}
+                    {{supplier.company | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- items start -->
         <mat-form-field class="field-width margin">
-            <mat-label>All Items <b>({{items.length}}) </b></mat-label>
+            <mat-label>All Items </mat-label>
             <mat-select #select2 multiple>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
                         (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
                 </div>
                 <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
-                    {{item.item_code}}
+                    {{item.item_code | uppercase}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <!-- button start -->
-        <button color="primary" class=" btn" mat-raised-button>
+        <button color="primary" class=" btn" mat-raised-button (click)="getPurchaseChart()">
             Submit
         </button>
         <button color="primary" class="margin btn" mat-raised-button>
@@ -414,6 +415,6 @@
         </div>
     </div>
     <div>
-        <!-- <div id="container"></div> -->
+        <div id="purchaseChartData"></div>
     </div>
 </div>

@@ -180,6 +180,9 @@ router.put('/api/purchase_details', purchase_details.update);
 router.get('/api/roj_med', roj_med.findAll);
 
 router.get('/api/analysis', analysis.findAll);
+router.get('/api/analysis/profitChart', analysis.profitChart);
+router.get('/api/analysis/saleChart', analysis.saleChart);
+router.get('/api/analysis/purchaseChart', analysis.purchaseChart);
 
 module.exports = router;
 

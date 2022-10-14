@@ -21,3 +21,8 @@ export interface IMatTableParamsWithSearchParams {
     // toDate: string;
     [key: string]: any;
 }
+
+export interface ISelectedDate {
+    startDate: any;
+    endDate: any;
+}

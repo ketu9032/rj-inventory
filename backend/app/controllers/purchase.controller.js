@@ -289,23 +289,22 @@ exports.updateValue = async (
   responsePurchasePrice
 ) => {
   try {
-
-    let query11 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`
+    let query11 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`;
     const response = await pool.query(query11);
     console.log(response.rows);
-    if(response.rows.length === 0 ){
-    let query12 = `select balance from users where id = ${loggedInUserId}`
-     const userResponse = await pool.query(query12);
-    const loggedInUserBalance = userResponse.rows[0].balance;
+    if (response.rows.length === 0) {
+      let query12 = `select balance from users where id = ${loggedInUserId}`;
+      const userResponse = await pool.query(query12);
+      const loggedInUserBalance = userResponse.rows[0].balance;
 
-     let query13 = ` INSERT INTO rojmed (
-      date, balance, purchase, user_id)  VALUES (now(), ${loggedInUserBalance}, ${payment}, ${loggedInUserId})`
+      let query13 = ` INSERT INTO rojmed (
+      date, balance, purchase, user_id)  VALUES (now(), ${loggedInUserBalance}, ${payment}, ${loggedInUserId})`;
       console.log(query13);
-    await pool.query(query13);
+      await pool.query(query13);
     } else {
-      const query14 = `update rojmed set purchase = COALESCE(purchase,0) + ${payment} where user_id = ${loggedInUserId}`
+      const query14 = `update rojmed set purchase = COALESCE(purchase,0) + ${payment} where user_id = ${loggedInUserId}`;
       console.log(query14);
-      await pool.query(query14)
+      await pool.query(query14);
     }
 
     let itemsCost = 0;
@@ -330,9 +329,10 @@ exports.updateValue = async (
         qty,
         selling_price,
         purchase_id,
-        weight
+        weight,
+        date
         )
-        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price},   ${purchaseId}, ${element.weight}) ;
+        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price},   ${purchaseId}, ${element.weight}, now()) ;
         `;
       await pool.query(query4);
       let query5 = `
@@ -423,7 +423,7 @@ exports.purchasePrint = async (req, res) => {
        on purchase_details.item_id = item.id
      join categories
        on categories.id = item.category_id
-       where p.is_active = true and p.id = ${ purchaseId }
+       where p.is_active = true and p.id = ${purchaseId}
        order by categories.name asc ; `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -433,11 +433,9 @@ exports.purchasePrint = async (req, res) => {
     });
   }
 };
-exports. getPurchaseByUserIdInRojMed = async (req, res) =>{
+exports.getPurchaseByUserIdInRojMed = async (req, res) => {
   try {
-    const {
-     userId
-    } = req.query;
+    const { userId } = req.query;
     const query = `
     SELECT
       p.id,
@@ -453,7 +451,7 @@ exports. getPurchaseByUserIdInRojMed = async (req, res) =>{
       on purchase_details.purchase_id = p.id
         join  suppliers as suppliers
       on suppliers.id = p.suppliers_id
-        where user_id = ${userId} and p.is_active = true  and p.date::date = now()::date`
+        where user_id = ${userId} and p.is_active = true  and p.date::date = now()::date`;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -461,4 +459,4 @@ exports. getPurchaseByUserIdInRojMed = async (req, res) =>{
       message: error.message || MESSAGES.COMMON.ERROR
     });
   }
-}
+};

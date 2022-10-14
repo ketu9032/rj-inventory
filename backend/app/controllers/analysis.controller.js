@@ -22,7 +22,8 @@ exports.findAll = async (req, res) => {
     searchQuery += ` and is_active = ${active}`;
 
     const query = `
-                  select
+
+    select
             sbi.item_id,
             sbi.item_name,
             sbi.item_code,
@@ -49,9 +50,161 @@ exports.findAll = async (req, res) => {
           ) as sbi
           `;
     // ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
-    console.log(query);
     const response = await pool.query(query);
 
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+
+exports.profitChart = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let whereClause = 'where ';
+
+    if ((startDate, endDate)) {
+      whereClause += `
+   date :: date between ${startDate}::date
+    and ${endDate}::date
+    `;
+    } else {
+      whereClause += ` date :: date between (now() - interval '30 day')
+      and (now() ) :: date`;
+    }
+
+    console.log(whereClause);
+    const query = `
+    select
+    CAST(sb.date as DATE):: date,
+      sum(sb.sales_amount) as sa
+  from
+      (
+        select
+          CAST(date as DATE):: date as date,
+          qty * selling_price as sales_amount
+        from
+          sales_bill
+      ) as sb
+      ${whereClause}
+
+   group by  date
+          `;
+    console.log(query);
+    const response1 = await pool.query(query);
+    let res1 = response1.rows;
+
+    const query1 = `
+         select
+         CAST(sb.date as DATE):: date,
+            sum(sb.purchase_amount) as pa
+          from
+            (
+              select
+                CAST(date as DATE):: date as date,
+                qty * selling_price as purchase_amount
+              from
+                purchase_details
+            ) as sb
+            ${whereClause}  group by date
+    `;
+    console.log(query1);
+    const response2 = await pool.query(query1);
+    let res2 = response2.rows;
+    const response = { res1, res2 };
+    res.status(STATUS_CODE.SUCCESS).send(response);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+exports.saleChart = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let whereClause = 'where ';
+
+    if ((startDate, endDate)) {
+      whereClause += `
+   date :: date between ${startDate}::date
+    and ${endDate}::date
+    `;
+    } else {
+      whereClause += ` date :: date between CAST(now() - interval '30 day' as DATE)::date
+      and CAST(now() as DATE ) :: date`;
+    }
+
+    console.log(whereClause);
+    const query = `
+    select
+    CAST(sb.date as DATE):: date,
+      sum(sb.sales_amount) as sales_amount,
+	  sum(qty) as sales_qty
+  from
+      (
+        select
+          CAST(date as DATE):: date as date,
+		      sum(qty) as qty,
+          qty * selling_price as sales_amount
+        from
+          sales_bill
+		  group by date, qty, selling_price
+      ) as sb
+      where date :: date between (now() - interval '30 day')
+      and (now() ) :: date
+   group by  date
+          `;
+    console.log(query);
+    const response = await pool.query(query);
+    res.status(STATUS_CODE.SUCCESS).send(response.rows);
+  } catch (error) {
+    res.status(STATUS_CODE.ERROR).send({
+      message: error.message || MESSAGES.COMMON.ERROR
+    });
+  }
+};
+exports.purchaseChart = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let whereClause = 'where ';
+
+    if ((startDate, endDate)) {
+      whereClause += `
+   date :: date between ${startDate}::date
+    and ${endDate}::date
+    `;
+    } else {
+      whereClause += ` date :: date between CAST(now() - interval '30 day' as DATE)::date
+      and CAST(now() as DATE ) :: date`;
+    }
+
+    console.log(whereClause);
+    const query = `
+    select
+         CAST(pd.date as DATE):: date,
+            sum(pd.purchase_amount) as purchase_amount,
+            sum(qty) as purchase_qty
+          from
+            (
+              select
+                CAST(date as DATE):: date as date,
+                sum(qty) as qty,
+                qty * selling_price as purchase_amount
+              from
+                purchase_details
+                group by date, qty, selling_price
+      ) as pd
+      where date :: date between (now() - interval '30 day')
+      and (now() ) :: date
+   group by  date
+          `;
+    console.log(query);
+    const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
     res.status(STATUS_CODE.ERROR).send({

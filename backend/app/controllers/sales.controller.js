@@ -440,9 +440,10 @@ exports.updateValue = async (
         qty,
         selling_price,
         sales_id,
-        weight
+        weight,
+        date
         )
-        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price},   ${salesId}, ${element.weight}) ;
+        VALUES(${element.item_id}, ${element.qty},  ${element.selling_price},   ${salesId}, ${element.weight}, now()) ;
         `;
       await pool.query(query4);
       let query5 = `
