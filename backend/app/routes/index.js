@@ -17,6 +17,7 @@ const purchase = require('./../controllers/purchase.controller');
 const purchase_details = require('./../controllers/purchase_details.controller');
 const roj_med = require('./../controllers/roj_med.controller');
 const analysis = require('./../controllers/analysis.controller');
+const dashboard = require('./../controllers/dashboard.controller')
 
 const tiers = require('./../controllers/tier.controller');
 const { STATUS_CODE, RESPONSE_STATUS } = require('../constant/response-status');
@@ -183,6 +184,10 @@ router.get('/api/analysis', analysis.findAll);
 router.get('/api/analysis/profitChart', analysis.profitChart);
 router.get('/api/analysis/saleChart', analysis.saleChart);
 router.get('/api/analysis/purchaseChart', analysis.purchaseChart);
+
+router.get('/api/dashboard/dayWiseSalesAndProfitChart', dashboard.dayWiseSalesAndProfitChart);
+router.get('/api/dashboard/customerChart', dashboard.customerChart);
+
 
 module.exports = router;
 
