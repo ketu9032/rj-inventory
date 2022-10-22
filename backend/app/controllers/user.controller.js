@@ -179,7 +179,6 @@ exports.getUserDropDown = async (req, res) => {
       whereClause += `and id != ${loggedInUserId}`
     }
     let query = `select id, user_name FROM users ${whereClause} `
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

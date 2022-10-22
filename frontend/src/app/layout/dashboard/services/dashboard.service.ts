@@ -7,21 +7,17 @@ import { RestService } from 'src/app/shared/services';
 export class DashboardService {
 
 
-    // private url = 'api/analysis';
-    private dayWiseSalesAndProfitChartUrl = 'api/dashboard/dayWiseSalesAndProfitChart';
+    private todaySummaryUrl = 'api/dashboard/todaySummary';
+
     // private saleChartUrl = 'api/analysis/saleChart';
     // private purchaseChartUrl = 'api/analysis/purchaseChart';
 
     constructor(private restService: RestService, private commonService: CommonService) { }
 
-    // public getAnalysis(tablePrams: IMatTableParams) {
-    //     const queryString = this.commonService.toQueryString(tablePrams);
-    //     return this.restService.get<any>(`${this.url}${queryString}`);
-    // }
-    public dayWiseSalesAndProfitChart(selectedDate: ISelectedDate) {
-        const queryString = this.commonService.toQueryString(selectedDate);
-        return this.restService.get(`${this.dayWiseSalesAndProfitChartUrl}${queryString}`);
+    public todaySummary() {
+        return this.restService.get<any>(`${this.todaySummaryUrl}`);
     }
+
 
     // public saleChart(selectedDate: ISelectedDate) {
     //     const queryString = this.commonService.toQueryString(selectedDate);

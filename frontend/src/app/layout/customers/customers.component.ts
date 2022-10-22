@@ -198,7 +198,6 @@ export class CustomersComponent implements OnInit {
         this.customersService.dateWiseSalesSearch(this.fromDate, this.toDate)
         .subscribe(
             (response) => {
-                console.log(response);
 
 
             }

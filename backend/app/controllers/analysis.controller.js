@@ -22,32 +22,50 @@ exports.findAll = async (req, res) => {
     searchQuery += ` and is_active = ${active}`;
 
     const query = `
-
     select
-            sbi.item_id,
-            sbi.item_name,
-            sbi.item_code,
-            int_qty,
+    sbi.item_id,
+    sbi.item_name,
+    sbi.item_code,
+    int_qty,
+    (
+      select sum(qty) from sales_bill as sb
+       where
+        date::date between CAST (now() - interval '30 day' as DATE):: date
+        And CAST (now() as DATE):: date
+        and sb.item_id = sbi.item_id
+    ) as qty_30_days,
+    (
+      select sum(qty) from sales_bill as sb
+      where
+        date::date between CAST (now() - interval '15 day' as DATE):: date
+        And CAST (now() as DATE):: date
+        and sb.item_id = sbi.item_id
+    ) as qty_15_days,
+    (
+      select sum(qty) from sales_bill as sb
+      where
+        date::date between CAST (now() - interval '7 day' as DATE):: date
+        And CAST (now() as DATE):: date
+        and sb.item_id = sbi.item_id
+    ) as qty_7_days
+  from
+    (
+      select
+        item_id,
+        item_name,
+        item_code,
+        int_qty
+      from
+        sales_bill
+        left join item as item on item.id = sales_bill.item_id
+      group by
+        sales_bill.item_id,
+        item.item_name,
+        item.item_code,
+        item.int_qty,
+        item.id
+    ) as sbi
 
-            (select
-              sum(qty)
-            from sales_bill as sb
-            where date between (now()  - interval '30 day')::date And  now()::date and sb.item_id = sbi.item_id) as qty_30_days,
-            (select
-              sum(qty)
-            from sales_bill as sb
-            where date between (now()  - interval '15 day')::date And  now()::date and sb.item_id = sbi.item_id) as qty_15_days,
-            (select
-              sum(qty)
-            from sales_bill as sb
-            where date between (now()  - interval '7 day')::date And  now()::date and sb.item_id = sbi.item_id) as qty_7_days
-          from (
-            select item_id, item_name,item_code, int_qty
-              from sales_bill
-            left join  item as item
-              on  item.id = sales_bill.item_id
-              group by sales_bill.item_id, item.item_name, item.item_code, item.int_qty, item.id
-          ) as sbi
           `;
     // ${searchQuery} order by ${orderBy} ${direction} OFFSET ${offset} LIMIT ${pageSize}
     const response = await pool.query(query);
@@ -64,19 +82,6 @@ exports.profitChart = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    let whereClause = 'where ';
-
-    if ((startDate, endDate)) {
-      whereClause += `
-   date :: date between ${startDate}::date
-    and ${endDate}::date
-    `;
-    } else {
-      whereClause += ` date :: date between (now() - interval '30 day')
-      and (now() ) :: date`;
-    }
-
-    console.log(whereClause);
     const query = `
     select
     CAST(sb.date as DATE):: date,
@@ -84,16 +89,15 @@ exports.profitChart = async (req, res) => {
   from
       (
         select
-          CAST(date as DATE):: date as date,
+          CAST(date + interval '1 day' as DATE):: date,
           qty * selling_price as sales_amount
         from
           sales_bill
+          where date :: date between  '${startDate}'
+          and '${endDate}'
       ) as sb
-      ${whereClause}
-
    group by  date
           `;
-    console.log(query);
     const response1 = await pool.query(query);
     let res1 = response1.rows;
 
@@ -104,14 +108,15 @@ exports.profitChart = async (req, res) => {
           from
             (
               select
-                CAST(date as DATE):: date as date,
+                CAST(date + interval '1 day' as DATE):: date,
                 qty * selling_price as purchase_amount
               from
                 purchase_details
+                  where date :: date between  '${startDate}'
+                  and '${endDate}'
             ) as sb
-            ${whereClause}  group by date
+             group by date
     `;
-    console.log(query1);
     const response2 = await pool.query(query1);
     let res2 = response2.rows;
     const response = { res1, res2 };
@@ -138,7 +143,6 @@ exports.saleChart = async (req, res) => {
       and CAST(now() as DATE ) :: date`;
     }
 
-    console.log(whereClause);
     const query = `
     select
     CAST(sb.date as DATE):: date,
@@ -158,7 +162,6 @@ exports.saleChart = async (req, res) => {
       and (now() ) :: date
    group by  date
           `;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
@@ -183,7 +186,6 @@ exports.purchaseChart = async (req, res) => {
       and CAST(now() as DATE ) :: date`;
     }
 
-    console.log(whereClause);
     const query = `
     select
          CAST(pd.date as DATE):: date,
@@ -203,7 +205,6 @@ exports.purchaseChart = async (req, res) => {
       and (now() ) :: date
    group by  date
           `;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

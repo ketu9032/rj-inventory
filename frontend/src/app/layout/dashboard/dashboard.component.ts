@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import * as Highcharts from 'highcharts';
 import * as moment from 'moment';
 import { ISelectedDate } from 'src/app/models/table';
+import { AnalysisService } from '../analysis/services/analysis.service';
 import { DashboardService } from './services/dashboard.service';
 
 
@@ -14,12 +15,12 @@ import { DashboardService } from './services/dashboard.service';
 })
 export class DashboardComponent implements OnInit {
     loader: boolean = false;
-    invoice: number = 9999999;
-    sales: number = 9999999;
-    profit: number = 9999999;
-    payment: number = 9999999;
-    qty: number = 9999999;
-    expense: number = 9999999;
+    invoice: number = 0;
+    sales: number = 0;
+    profit: number = 0;
+    payment: number = 0;
+    qty: number = 0;
+    expense: number = 0;
     startDate: any;
     endDate: any;
     totalSaleInDayWise: number = 0;
@@ -33,6 +34,8 @@ export class DashboardComponent implements OnInit {
     dayChart;
     formatChangeDate;
     daysArray = []
+
+    todaySummary: any;
 
 
     selectedDate: ISelectedDate = {
@@ -210,25 +213,29 @@ export class DashboardComponent implements OnInit {
     constructor(
         private dashboardService: DashboardService,
         public snackBar: MatSnackBar,
+        private analysisService: AnalysisService
 
     ) { }
     ngOnInit() {
+        this.getTodaySummaryData();
         this.getDayWiseSalesProfitChart();
         Highcharts.chart('customerChartData', this.customerChart);
         Highcharts.chart('supplierChartData', this.purchaseChart);
     }
+
+
     getDayWiseSalesProfitChart() {
-        if (this.startDate) {
-            this.selectedDate.startDate = moment(this.startDate).format("DD-MM-YYYY")
+        if (this.selectedDate.startDate) {
+            this.selectedDate.startDate = moment(this.startDate).format("YYYY-MM-DD")
 
         }
-        if (this.endDate) {
-            this.selectedDate.endDate = moment(this.endDate).format("DD-MM-YYYY")
+        if (this.selectedDate.endDate) {
+            this.selectedDate.endDate = moment(this.endDate).format("YYYY-MM-DD")
         }
         let convertedSalesDate;
         let convertedPurchaseDate;
-        this.dashboardService
-            .dayWiseSalesAndProfitChart(this.selectedDate
+        this.analysisService
+            .profitChart(this.selectedDate
             )
             .subscribe(
                 (response) => {
@@ -236,15 +243,17 @@ export class DashboardComponent implements OnInit {
 
                     for (let index = 0; index < this.dayChart.res1.length; index++) {
                         const element = this.dayChart.res1[index];
-                        this.totalSaleInDayWise = +this.totalSaleInDayWise + +element.sa
+                        this.totalSaleInDayWise =       +this.totalSaleInDayWise + +element.sa
+
                         this.averageSaleInDayWise = (this.totalSaleInDayWise / 30)
 
                     }
 
                     for (let index = 0; index < this.dayChart.res2.length; index++) {
                         const element = this.dayChart.res2[index];
-                        this.totalProfitInDayWise = +this.totalProfitInDayWise + +element.pa
-                        this.averageProfitInDayWise = (this.totalProfitInDayWise / 30)
+                        this.totalProfitInDayWise =        +this.totalProfitInDayWise + +element.pa
+                        this.averageProfitInDayWise =  (this.totalProfitInDayWise / 30)
+
                     }
 
                     for (let index = 0; index < this.daysArray.length; index++) {
@@ -269,10 +278,9 @@ export class DashboardComponent implements OnInit {
                         } else (
                             this.dayWiseChart.series[1].data.push(+purchaseDate.pa)
                         )
-                    }
-                    Highcharts.chart('dayWiseChartData', this.dayWiseChart);
 
-                    console.log(this.dayWiseChart);
+                    }
+                    Highcharts.chart('profitChartData', this.dayWiseChart);
 
                 },
                 (error) => {
@@ -298,5 +306,40 @@ export class DashboardComponent implements OnInit {
         }
 
     };
+
+    getTodaySummaryData() {
+        this.dashboardService
+            .todaySummary()
+            .subscribe(
+                (response) => {
+                    this.todaySummary = response;
+
+                         this.invoice = response.res1[0].invoice
+                         this.payment = response.res1[0].payment
+                        this.sales = response.res2[0].sales_amount;
+                        this.qty = response.res2[0].sales_qty;
+
+                        if(response.res3[0].purchase === null && response.res3[0].purchase === undefined ){
+                            response.res3[0].purchase = 0
+
+                        }
+                        this.profit = +this.sales -  +response.res3[0].purchase
+                        if( response.res4[0].cash_out === null &&  response.res4[0].cash_out === undefined ){
+                            response.res4[0].cash_out = 0
+
+                        }
+                    this.expense = response.res4[0].cash_in - response.res4[0].cash_out
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                },
+                () => { }
+            );
+    }
 
 }

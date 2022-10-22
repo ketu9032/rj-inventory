@@ -13,30 +13,16 @@ import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config'
 import { CategoriesService } from '../expense/services/categories.service';
 import { ItemsService } from '../items/services/items.service';
 import { SalesService } from '../sales/services/sales.service';
-import { Chart } from 'chart.js';
 import { AnalysisService } from './services/analysis.service';
 import { IAnalysisData } from 'src/app/models/analysis';
 import * as moment from 'moment';
 
-// declare var require: any;
-// const More = require('highcharts/highcharts-more');
-// More(Highcharts);
-
-// const Exporting = require('highcharts/modules/exporting');
-// Exporting(Highcharts);
-
-// const ExportData = require('highcharts/modules/export-data');
-// ExportData(Highcharts);
-
-// const Accessibility = require('highcharts/modules/accessibility');
-// Accessibility(Highcharts);
 @Component({
     selector: 'app-analysis',
     templateUrl: './analysis.component.html',
     styleUrls: ['./analysis.component.scss']
 })
 export class AnalysisComponent implements OnInit {
-
     displayedColumns: string[] = [
         'item_code',
         'item_name',
@@ -47,14 +33,12 @@ export class AnalysisComponent implements OnInit {
         'int_qty',
         'required'
     ];
-
     categories = [];
     suppliers;
     items = [];
     customers = [];
     fromDate: string;
     toDate: string;
-
     //
     public profit: any = {
         chart: {
@@ -75,7 +59,6 @@ export class AnalysisComponent implements OnInit {
         },
         yAxis: {
             min: 0,
-
             title: {
                 text: 'Amount (RS.)',
                 align: 'high'
@@ -133,7 +116,6 @@ export class AnalysisComponent implements OnInit {
         },
         yAxis: {
             min: 0,
-
             title: {
                 text: 'Amount (RS.)',
                 align: 'high'
@@ -191,7 +173,6 @@ export class AnalysisComponent implements OnInit {
         },
         yAxis: {
             min: 0,
-
             title: {
                 text: 'Amount (RS.)',
                 align: 'high'
@@ -231,10 +212,6 @@ export class AnalysisComponent implements OnInit {
         }]
     }
     //
-
-
-
-
     dataSource: any = [];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     public defaultPageSize = PAGE_SIZE;
@@ -254,17 +231,13 @@ export class AnalysisComponent implements OnInit {
     fifteenDays: number = 30;
     sevenDays: number = 50;
     futureDays: number = 7;
-    profitChart;
     saleChart;
     purchaseChart;
-    startDate: Date;
-    endDate: Date;
+    startDate = moment().add(-30, 'days').format("YYYY-MM-DD");
+    endDate = moment().format("YYYY-MM-DD");
     daysArray = []
     formatChangeDate;
-    totalSaleInProfitChartWise: number = 0;
-    totalProfitInProfitChartWise: number = 0;
-    averageSaleInProfitChartWise: number = 0;
-    averageProfitInProfitChartWise: number = 0;
+
     totalSaleInSaleChartWise: number = 0;
     totalQtyInSaleChartWise: number = 0;
     averageSaleInSaleChartWise: number = 0;
@@ -274,11 +247,12 @@ export class AnalysisComponent implements OnInit {
     averagePurchaseInPurchaseChartWise: number = 0;
     averageQtyInPurchaseChartWise: number = 0;
 
-    selectedDate: ISelectedDate = {
-        startDate: moment(moment(), "DD-MM-YYYY").add(-11, 'days'),
-        endDate: moment(moment(), "DD-MM-YYYY").add(18, 'days'),
-    }
-
+    profitChartSummary= {
+        totalSale: 0,
+        totalProfit: 0,
+        averageSale: 0,
+        averageProfit: 0
+    };
 
     @ViewChild('select') select: MatSelect;
     allSelectedCategories: boolean = false;
@@ -288,8 +262,6 @@ export class AnalysisComponent implements OnInit {
     allSelectedItems: boolean = false;
     @ViewChild('select3') select3: MatSelect;
     allSelectedCustomers: boolean = false;
-
-
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
@@ -298,16 +270,13 @@ export class AnalysisComponent implements OnInit {
         private salesService: SalesService,
         private analysisService: AnalysisService
     ) { }
-
     ngOnInit(): void {
         this.getCategoryDropDown('Item');
         this.getSuppliersDropDown();
         this.getItemDropDown();
         this.getCustomerDropDown();
         this.getAnalysis();
-        this.getDaysArray(this.selectedDate.startDate, this.selectedDate.endDate);
     }
-
     getAnalysis() {
         this.loader = true;
         if (this.fromDate) {
@@ -338,63 +307,61 @@ export class AnalysisComponent implements OnInit {
         );
     }
     getProfitChart() {
-        debugger
-        if (this.startDate) {
-            this.selectedDate.startDate = moment(this.startDate).format("DD-MM-YYYY")
-
-        }
-        if (this.endDate) {
-            this.selectedDate.endDate = moment(this.endDate).format("DD-MM-YYYY")
-        }
-        let convertedSalesDate;
-        let convertedPurchaseDate;
+        this.getDaysArray(this.startDate, this.endDate);
         this.analysisService
-            .profitChart(this.selectedDate
+            .profitChart(
+                { startDate: moment(this.startDate).format("YYYY-MM-DD"), endDate: moment(this.endDate).format("YYYY-MM-DD") } as ISelectedDate
             )
             .subscribe(
-                (response) => {
-                    this.profitChart = response
+                (response: {res1: any[], res2: any[]}) => {
+                    this.profitChartSummary.totalSale = 0;
+                    this.profitChartSummary.averageSale = 0;
+                    this.profitChartSummary.totalProfit = 0;
+                    this.profitChartSummary.averageProfit = 0;
+                    this.profit.xAxis.categories = [];
+                    this.profit.series[0].data = [];
+                    this.profit.series[1].data = [];
 
-                    for (let index = 0; index < this.profitChart.res1.length; index++) {
-                        const element = this.profitChart.res1[index];
-                        this.totalSaleInProfitChartWise =       +this.totalSaleInProfitChartWise + +element.sa
-
-                        this.averageSaleInProfitChartWise = (this.totalSaleInProfitChartWise / 30)
-
-                    }
-
-                    for (let index = 0; index < this.profitChart.res2.length; index++) {
-                        const element = this.profitChart.res2[index];
-                        this.totalProfitInProfitChartWise =        +this.totalProfitInProfitChartWise + +element.pa
-                        this.averageProfitInProfitChartWise =  (this.totalProfitInProfitChartWise / 30)
-
-                    }
+                    let totalPurchase = 0;
 
                     for (let index = 0; index < this.daysArray.length; index++) {
                         const arraySignalDate = this.daysArray[index];
-                        const salesDate = this.profitChart.res1.find(x => {
+                        let convertedSalesDate;;
+                        let convertedPurchaseDate;
+
+                        const salesDate = response.res1.find(x => {
                             convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
                             return convertedSalesDate === arraySignalDate;
                         })
                         if (arraySignalDate !== convertedSalesDate) {
                             this.profit.xAxis.categories.push(arraySignalDate)
                             this.profit.series[0].data.push(0);
-                        } else (
-                            this.profit.xAxis.categories.push(arraySignalDate),
-                            this.profit.series[0].data.push(+salesDate.sa)
-                        )
-                        const purchaseDate = this.profitChart.res2.find(x => {
+                        } else {
+                            this.profitChartSummary.totalSale = this.profitChartSummary.totalSale + +salesDate.sa;
+                            this.profit.xAxis.categories.push(arraySignalDate);
+                            this.profit.series[0].data.push(+salesDate.sa);
+                        }
+
+                        const purchaseDate = response.res2.find(x => {
                             convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
                             return convertedPurchaseDate === arraySignalDate;
                         })
                         if (arraySignalDate !== convertedPurchaseDate) {
                             this.profit.series[1].data.push(0);
-                        } else (
+                        } else {
+                            totalPurchase = totalPurchase + +purchaseDate.pa
                             this.profit.series[1].data.push(+purchaseDate.pa)
-                        )
-                    }
-                    Highcharts.chart('profitChartData', this.profit);
+                        }
 
+                        const dayWiseSales = this.profit.series[0].data[index];
+                        const dayWisePurchase =  this.profit.series[1].data[index];
+                        this.profit.series[1].data[index] = dayWiseSales - dayWisePurchase;
+                    }
+
+                    this.profitChartSummary.totalProfit =   this.profitChartSummary.totalSale - totalPurchase;
+                    this.profitChartSummary.averageProfit = this.profitChartSummary.totalProfit / this.daysArray.length;
+                    this.profitChartSummary.averageSale = this.profitChartSummary.totalSale / this.daysArray.length;
+                    Highcharts.chart('profitChartData', this.profit);
                 },
                 (error) => {
                     this.snackBar.open(
@@ -408,29 +375,20 @@ export class AnalysisComponent implements OnInit {
             );
     }
     getSaleChart() {
-        if (this.startDate) {
-            this.selectedDate.startDate = moment(this.startDate).format("DD-MM-YYYY")
-        }
-        if (this.endDate) {
-            this.selectedDate.endDate = moment(this.endDate).format("DD-MM-YYYY")
-        }
         let convertedSalesDate;
         this.analysisService
-            .saleChart(this.selectedDate
+            .saleChart({ startDate: this.startDate, endDate: this.endDate } as ISelectedDate
             )
             .subscribe(
                 (response) => {
                     this.saleChart = response
                     for (let index = 0; index < this.saleChart.length; index++) {
                         const element = this.saleChart[index];
-                       this.totalSaleInSaleChartWise =  +this.totalSaleInSaleChartWise + +element.sales_amount;
-                       this.totalQtyInSaleChartWise = +this.totalQtyInSaleChartWise + +element.sales_qty;
-                       this.averageSaleInSaleChartWise =  (this.totalSaleInSaleChartWise / 30)
-                       this.averageQtyInSaleChartWise = (this.totalQtyInSaleChartWise / 30)
+                        this.totalSaleInSaleChartWise = +this.totalSaleInSaleChartWise + +element.sales_amount;
+                        this.totalQtyInSaleChartWise = +this.totalQtyInSaleChartWise + +element.sales_qty;
+                        this.averageSaleInSaleChartWise = (this.totalSaleInSaleChartWise / 30)
+                        this.averageQtyInSaleChartWise = (this.totalQtyInSaleChartWise / 30)
                     }
-
-
-
                     for (let index = 0; index < this.daysArray.length; index++) {
                         const arraySignalDate = this.daysArray[index];
                         const salesDate = this.saleChart.find(x => {
@@ -446,10 +404,8 @@ export class AnalysisComponent implements OnInit {
                             this.sale.series[0].data.push(+salesDate.sales_amount),
                             this.sale.series[1].data.push(+salesDate.sales_qty)
                         )
-
                     }
                     Highcharts.chart('saleChartData', this.sale);
-
                 },
                 (error) => {
                     this.snackBar.open(
@@ -463,28 +419,30 @@ export class AnalysisComponent implements OnInit {
             );
     }
     getPurchaseChart() {
-        if (this.startDate) {
-            this.selectedDate.startDate = moment(this.startDate).format("DD-MM-YYYY")
-        }
-        if (this.endDate) {
-            this.selectedDate.endDate = moment(this.endDate).format("DD-MM-YYYY")
-        }
         let convertedSalesDate;
         this.analysisService
-            .purchaseChart(this.selectedDate
+            .purchaseChart({ startDate: this.startDate, endDate: this.endDate } as ISelectedDate
             )
             .subscribe(
                 (response) => {
-                    this.purchaseChart = response
-
+                    this.purchaseChart = response;
+                    this.totalPurchaseInPurchaseChartWise = 0;
+                    this.totalQtyInPurchaseChartWise = 0;
+                    this.averagePurchaseInPurchaseChartWise = 0;
+                    this.averageQtyInPurchaseChartWise = 0;
+                    //    while( this.purchase.series.length > 0) {
+                    //        this.purchase.series[0].remove(true);
+                    //     }
+                    //     while( this.purchase.xAxis.categories.length > 0) {
+                    //         this.purchase.xAxis.categories.remove(true);
+                    //      }
+                    //     Highcharts.chart('purchaseChartData', this.purchase);
                     for (let index = 0; index < this.purchaseChart.length; index++) {
                         const element = this.purchaseChart[index];
-
-                      this.totalPurchaseInPurchaseChartWise = +this.totalPurchaseInPurchaseChartWise + +element.purchase_amount;
-                      this.totalQtyInPurchaseChartWise = +this.totalQtyInPurchaseChartWise + +element.purchase_qty;
-                      this.averagePurchaseInPurchaseChartWise = (this.totalPurchaseInPurchaseChartWise / 30);
-                      this.averageQtyInPurchaseChartWise = (this.totalQtyInPurchaseChartWise / 30);
-
+                        this.totalPurchaseInPurchaseChartWise = +this.totalPurchaseInPurchaseChartWise + +element.purchase_amount;
+                        this.totalQtyInPurchaseChartWise = +this.totalQtyInPurchaseChartWise + +element.purchase_qty;
+                        this.averagePurchaseInPurchaseChartWise = (this.totalPurchaseInPurchaseChartWise / 30);
+                        this.averageQtyInPurchaseChartWise = (this.totalQtyInPurchaseChartWise / 30);
                     }
                     for (let index = 0; index < this.daysArray.length; index++) {
                         const arraySignalDate = this.daysArray[index];
@@ -501,10 +459,8 @@ export class AnalysisComponent implements OnInit {
                             this.purchase.series[0].data.push(+purchaseDate.purchase_amount),
                             this.purchase.series[1].data.push(+purchaseDate.purchase_qty)
                         )
-
                     }
                     Highcharts.chart('purchaseChartData', this.purchase);
-
                 },
                 (error) => {
                     this.snackBar.open(
@@ -517,8 +473,8 @@ export class AnalysisComponent implements OnInit {
                 () => { }
             );
     }
-
     getDaysArray(startDate, endDate) {
+        this.daysArray = [];
         for (var arr = [], dt = new Date(startDate); dt <= new Date(endDate); dt.setDate(dt.getDate() + 1)) {
             arr.push(new Date(dt));
         }
@@ -527,15 +483,12 @@ export class AnalysisComponent implements OnInit {
             this.formatChangeDate = moment(element).format("DD-MM-YYYY");
             this.daysArray.push(this.formatChangeDate)
         }
-        return this.daysArray;
     };
-
     sortData(sort: Sort) {
         this.tableParams.orderBy = sort.active;
         this.tableParams.direction = sort.direction;
         this.tableParams.pageNumber = 1;
     }
-
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
     }
@@ -543,7 +496,6 @@ export class AnalysisComponent implements OnInit {
         this.tableParams.pageSize = event.pageSize;
         this.tableParams.pageNumber = event.pageIndex + 1;
     }
-
     toggleAllSelectionByCategories() {
         if (this.allSelectedCategories) {
             this.select.options.forEach((item: MatOption) => item.select());
@@ -560,7 +512,6 @@ export class AnalysisComponent implements OnInit {
         });
         this.allSelectedCategories = newStatus;
     }
-
     getCategoryDropDown(type: string) {
         this.categoriesService
             .getCategoryDropDown(type)
@@ -595,7 +546,6 @@ export class AnalysisComponent implements OnInit {
         });
         this.allSelectedSuppliers = newStatus;
     }
-
     getSuppliersDropDown() {
         // this.selectSupplierLoader = true;
         this.itemsService
@@ -632,7 +582,6 @@ export class AnalysisComponent implements OnInit {
         });
         this.allSelectedSuppliers = newStatus;
     }
-
     getItemDropDown() {
         //  this.selectItemLoader = true;
         this.salesService
@@ -669,7 +618,6 @@ export class AnalysisComponent implements OnInit {
         });
         this.allSelectedCustomers = newStatus;
     }
-
     getCustomerDropDown() {
         //this.selectCustomerLoader = true;
         this.salesService
@@ -690,13 +638,10 @@ export class AnalysisComponent implements OnInit {
                 () => { }
             );
     }
-
     getPrediction(qty30Days, qty15Days, qty7Days) {
         return (+(+(+(qty30Days * this.thirtyDays) / 100) + +((qty15Days * this.fifteenDays) / 100) + +((qty7Days * 50) / 100)) / (30)) * this.futureDays;
     }
-
     getRequired(intQty, qty30Days, qty15Days, qty7Days) {
         return (+intQty * 100) / ((((+((+qty30Days * this.thirtyDays) / 100) + ((+qty15Days * this.fifteenDays) / 100) + ((+qty7Days * this.sevenDays) / 100)) / (30)) * this.futureDays) * this.futureDays)
     }
-
 }
