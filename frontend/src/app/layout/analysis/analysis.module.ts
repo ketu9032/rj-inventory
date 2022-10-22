@@ -9,10 +9,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from 'src/app/shared/modules/material/shared.module';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { SmartPurchaseComponent } from './smart-purchase/smart-purchase.component';
+import { ProfitChartComponent } from './profit-chart/profit-chart.component';
+import { SaleChartComponent } from './sale-chart/sale-chart.component';
+import { PurchaseChartComponent } from './purchase-chart/purchase-chart.component';
 
 
 @NgModule({
-    declarations: [AnalysisComponent],
+    declarations: [AnalysisComponent, SmartPurchaseComponent, ProfitChartComponent, SaleChartComponent, PurchaseChartComponent],
     imports: [
 
         CommonModule,
