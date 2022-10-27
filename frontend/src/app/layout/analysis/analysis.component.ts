@@ -28,47 +28,13 @@ export class AnalysisComponent implements OnInit {
     suppliers;
     items = [];
     customers = [];
-
-
-
-    //
-    dataSource: any = [];
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    public defaultPageSize = PAGE_SIZE;
-    public pageSizeOptions = PAGE_SIZE_OPTION;
-    @ViewChild(MatSort) sort: MatSort;
     loader: boolean = false;
-
-    saleChart;
-    purchaseChart;
-
-
-    totalSaleInSaleChartWise: number = 0;
-    totalQtyInSaleChartWise: number = 0;
-    averageSaleInSaleChartWise: number = 0;
-    averageQtyInSaleChartWise: number = 0;
-    totalPurchaseInPurchaseChartWise: number = 0;
-    totalQtyInPurchaseChartWise: number = 0;
-    averagePurchaseInPurchaseChartWise: number = 0;
-    averageQtyInPurchaseChartWise: number = 0;
-
-
-
-    @ViewChild('select') select: MatSelect;
-    allSelectedCategories: boolean = false;
-    @ViewChild('select1') select1: MatSelect;
-    allSelectedSuppliers: boolean = false;
-    @ViewChild('select2') select2: MatSelect;
-    allSelectedItems: boolean = false;
-    @ViewChild('select3') select3: MatSelect;
-    allSelectedCustomers: boolean = false;
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
         public snackBar: MatSnackBar,
         private categoriesService: CategoriesService,
         private salesService: SalesService,
-        private analysisService: AnalysisService
     ) { }
     ngOnInit(): void {
         this.getCategoryDropDown('Item');
@@ -76,108 +42,6 @@ export class AnalysisComponent implements OnInit {
         this.getItemDropDown();
         this.getCustomerDropDown();
     }
-
-    // getSaleChart() {
-    //     let convertedSalesDate;
-    //     this.analysisService
-    //         .saleChart({ startDate: this.startDate, endDate: this.endDate } as ISelectedDate
-    //         )
-    //         .subscribe(
-    //             (response) => {
-    //                 this.saleChart = response
-    //                 for (let index = 0; index < this.saleChart.length; index++) {
-    //                     const element = this.saleChart[index];
-    //                     this.totalSaleInSaleChartWise = +this.totalSaleInSaleChartWise + +element.sales_amount;
-    //                     this.totalQtyInSaleChartWise = +this.totalQtyInSaleChartWise + +element.sales_qty;
-    //                     this.averageSaleInSaleChartWise = (this.totalSaleInSaleChartWise / 30)
-    //                     this.averageQtyInSaleChartWise = (this.totalQtyInSaleChartWise / 30)
-    //                 }
-    //                 for (let index = 0; index < this.daysArray.length; index++) {
-    //                     const arraySignalDate = this.daysArray[index];
-    //                     const salesDate = this.saleChart.find(x => {
-    //                         convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-    //                         return convertedSalesDate === arraySignalDate;
-    //                     })
-    //                     if (arraySignalDate !== convertedSalesDate) {
-    //                         this.sale.xAxis.categories.push(arraySignalDate)
-    //                         this.sale.series[0].data.push(0);
-    //                         this.sale.series[1].data.push(0);
-    //                     } else (
-    //                         this.sale.xAxis.categories.push(arraySignalDate),
-    //                         this.sale.series[0].data.push(+salesDate.sales_amount),
-    //                         this.sale.series[1].data.push(+salesDate.sales_qty)
-    //                     )
-    //                 }
-    //                 Highcharts.chart('saleChartData', this.sale);
-    //             },
-    //             (error) => {
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok', {
-    //                     duration: 3000
-    //                 }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-    // }
-    // getPurchaseChart() {
-    //     let convertedSalesDate;
-    //     this.analysisService
-    //         .purchaseChart({ startDate: this.startDate, endDate: this.endDate } as ISelectedDate
-    //         )
-    //         .subscribe(
-    //             (response) => {
-    //                 this.purchaseChart = response;
-    //                 this.totalPurchaseInPurchaseChartWise = 0;
-    //                 this.totalQtyInPurchaseChartWise = 0;
-    //                 this.averagePurchaseInPurchaseChartWise = 0;
-    //                 this.averageQtyInPurchaseChartWise = 0;
-    //                 //    while( this.purchase.series.length > 0) {
-    //                 //        this.purchase.series[0].remove(true);
-    //                 //     }
-    //                 //     while( this.purchase.xAxis.categories.length > 0) {
-    //                 //         this.purchase.xAxis.categories.remove(true);
-    //                 //      }
-    //                 //     Highcharts.chart('purchaseChartData', this.purchase);
-    //                 for (let index = 0; index < this.purchaseChart.length; index++) {
-    //                     const element = this.purchaseChart[index];
-    //                     this.totalPurchaseInPurchaseChartWise = +this.totalPurchaseInPurchaseChartWise + +element.purchase_amount;
-    //                     this.totalQtyInPurchaseChartWise = +this.totalQtyInPurchaseChartWise + +element.purchase_qty;
-    //                     this.averagePurchaseInPurchaseChartWise = (this.totalPurchaseInPurchaseChartWise / 30);
-    //                     this.averageQtyInPurchaseChartWise = (this.totalQtyInPurchaseChartWise / 30);
-    //                 }
-    //                 for (let index = 0; index < this.daysArray.length; index++) {
-    //                     const arraySignalDate = this.daysArray[index];
-    //                     const purchaseDate = this.purchaseChart.find(x => {
-    //                         convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-    //                         return convertedSalesDate === arraySignalDate;
-    //                     })
-    //                     if (arraySignalDate !== convertedSalesDate) {
-    //                         this.purchase.xAxis.categories.push(arraySignalDate)
-    //                         this.purchase.series[0].data.push(0);
-    //                         this.purchase.series[1].data.push(0);
-    //                     } else (
-    //                         this.purchase.xAxis.categories.push(arraySignalDate),
-    //                         this.purchase.series[0].data.push(+purchaseDate.purchase_amount),
-    //                         this.purchase.series[1].data.push(+purchaseDate.purchase_qty)
-    //                     )
-    //                 }
-    //                 Highcharts.chart('purchaseChartData', this.purchase);
-    //             },
-    //             (error) => {
-    //                 this.snackBar.open(
-    //                     (error.error && error.error.message) || error.message,
-    //                     'Ok', {
-    //                     duration: 3000
-    //                 }
-    //                 );
-    //             },
-    //             () => { }
-    //         );
-    // }
-
-
 
     getCategoryDropDown(type: string) {
         this.categoriesService
@@ -199,13 +63,13 @@ export class AnalysisComponent implements OnInit {
     }
 
     getSuppliersDropDown() {
-        // this.selectSupplierLoader = true;
+
         this.itemsService
             .getSupplierDropDown()
             .subscribe(
                 (response) => {
                     this.suppliers = response;
-                    //this.selectSupplierLoader = false;
+
                 },
                 (error) => {
                     this.snackBar.open(
@@ -220,13 +84,12 @@ export class AnalysisComponent implements OnInit {
     }
 
     getItemDropDown() {
-        //  this.selectItemLoader = true;
+
         this.salesService
             .getItemDropDown()
             .subscribe(
                 (response) => {
                     this.items = response;
-                    //      this.selectItemLoader = false;
                 },
                 (error) => {
                     this.snackBar.open(
@@ -241,13 +104,11 @@ export class AnalysisComponent implements OnInit {
     }
 
     getCustomerDropDown() {
-        //this.selectCustomerLoader = true;
         this.salesService
             .getCustomerDropDown()
             .subscribe(
                 (response) => {
                     this.customers = response;
-                    //    this.selectCustomerLoader = false;
                 },
                 (error) => {
                     this.snackBar.open(
