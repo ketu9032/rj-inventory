@@ -135,7 +135,7 @@ export class SaleChartComponent implements OnInit {
             return x.value;
         });
 
-        let profitChartFilter: ISaleChartFilter = {
+        let saleChartFilter: ISaleChartFilter = {
             startDate: moment(this.startDate).format("YYYY-MM-DD"),
             endDate: moment(this.endDate).format("YYYY-MM-DD"),
             categories: selectedCategories,
@@ -144,8 +144,8 @@ export class SaleChartComponent implements OnInit {
             customers: selectedCustomers,
         }
         this.analysisService
-            .profitChart(
-                profitChartFilter
+            .saleChart(
+                saleChartFilter
             )
             .subscribe(
                 (response: { res1: any[], res2: any[] }) => {
@@ -172,9 +172,9 @@ export class SaleChartComponent implements OnInit {
                             this.sale.xAxis.categories.push(arraySignalDate)
                             this.sale.series[0].data.push(0);
                         } else {
-                            this.saleChartSummary.totalSale = this.saleChartSummary.totalSale + +salesDate.sa;
+                            this.saleChartSummary.totalSale = this.saleChartSummary.totalSale + +salesDate.sales_amount;
                             this.sale.xAxis.categories.push(arraySignalDate);
-                            this.sale.series[0].data.push(+salesDate.sa);
+                            this.sale.series[0].data.push(+salesDate.sales_amount);
                         }
 
                         const purchaseDate = response.res2.find(x => {
@@ -184,7 +184,7 @@ export class SaleChartComponent implements OnInit {
                         if (arraySignalDate !== convertedPurchaseDate) {
                             this.sale.series[1].data.push(0);
                         } else {
-                            totalPurchase = totalPurchase + +purchaseDate.pa
+                            totalPurchase = totalPurchase + +purchaseDate.sales_qty
                             this.sale.series[1].data.push(+purchaseDate.pa)
                         }
 

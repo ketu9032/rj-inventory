@@ -82,10 +82,6 @@ exports.profitChart = async (req, res) => {
   try {
     const { startDate, endDate, categories,  suppliers, items, customers} = req.query;
 
-    console.log(categories);
-    console.log(suppliers);
-    console.log(items);
-    console.log(customers);
 
     let whereClause = 'where true ';
     if (startDate && endDate) {
@@ -158,38 +154,45 @@ exports.profitChart = async (req, res) => {
 };
 exports.saleChart = async (req, res) => {
   try {
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, categories,  suppliers, items, customers } = req.query;
 
-    let whereClause = 'where ';
+    let whereClause = 'where true ';
+    if (startDate && endDate) {
+      whereClause+= ` and date :: date between  '${startDate}'
+      and '${endDate}'`
+    }
 
-    if ((startDate, endDate)) {
-      whereClause += `
-   date :: date between ${startDate}::date
-    and ${endDate}::date
-    `;
-    } else {
-      whereClause += ` date :: date between CAST(now() - interval '30 day' as DATE)::date
-      and CAST(now() as DATE ) :: date`;
+    if (categories) {
+      whereClause+= ` and categories.id in (${categories})`
+    }
+    if (suppliers) {
+      whereClause+= ``;
+
+    }
+    if (items) {
+      whereClause+= ` and item.id in (${items})`
+    }
+    if (customers) {
+      whereClause+= ` and sales.customer_id in (${customers})`
     }
 
     const query = `
     select
-    CAST(sb.date as DATE):: date,
-      sum(sb.sales_amount) as sales_amount,
-	  sum(qty) as sales_qty
-  from
-      (
-        select
-          CAST(date as DATE):: date as date,
-		      sum(qty) as qty,
-          qty * selling_price as sales_amount
-        from
-          sales_bill
-		  group by date, qty, selling_price
-      ) as sb
-      where date :: date between (now() - interval '30 day')
-      and (now() ) :: date
-   group by  date
+   CAST(sb.date as DATE):: date,
+     sum(sb.sales_amount) as sales_amount,
+   sum(qty) as sales_qty
+ from
+     (
+       select
+         CAST(date as DATE):: date as date,
+         sum(qty) as qty,
+         qty * selling_price as sales_amount
+       from
+         sales_bill
+    ${whereClause}
+     group by date, qty, selling_price
+     ) as sb
+  group by  date
           `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
