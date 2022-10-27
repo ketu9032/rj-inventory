@@ -273,15 +273,12 @@ exports.changeStatus = async (req, res) => {
     const existingItems = existingItemResponse.rows;
     if (status === false) {
       const usersBalance = `update users set balance = balance - ${salesResponse.rows[0].payment} - ${salesResponse.rows[0].other_payment} where id = ${salesResponse.rows[0].user_id}`;
-      console.log(usersBalance);
       await pool.query(usersBalance);
       for (let index = 0; index < existingItems.length; index++) {
         const element = existingItems[index];
-        console.log(element);
         const updateSalesBillQuery = `update item set
          item_sold =  item_sold - ${element.qty}
         where id =  ${element.item_id}`;
-        console.log(updateSalesBillQuery);
         await pool.query(updateSalesBillQuery);
         itemsCost = +element.selling_price * +element.qty + itemsCost;
       }
@@ -295,7 +292,6 @@ exports.changeStatus = async (req, res) => {
       const salesEditQuery1 = `update sales set
            is_editable = false   where
           id= ${id}`;
-      console.log(salesEditQuery1);
       await pool.query(salesEditQuery1);
       const query2 = `
           select
@@ -313,20 +309,17 @@ exports.changeStatus = async (req, res) => {
         const salesEditQuery2 = `update sales set
            is_editable = true   where
           id = ${findSalesEditableId}`;
-        console.log(salesEditQuery2);
         await pool.query(salesEditQuery2);
       }
     }
     if (status === true) {
       const usersBalance = `update users set balance = balance + ${salesResponse.rows[0].payment} + ${salesResponse.rows[0].other_payment} where id = ${salesResponse.rows[0].user_id}`;
-      console.log(usersBalance);
       await pool.query(usersBalance);
       for (let index = 0; index < existingItems.length; index++) {
         let element = existingItems[index];
         const updateSalesBillQuery = `update item set
           item_sold =  item_sold + ${+element.qty}
           where id =  ${element.item_id}`;
-        console.log(updateSalesBillQuery);
         await pool.query(updateSalesBillQuery);
         itemsCost = +element.selling_price * +element.qty + itemsCost;
       }
@@ -336,12 +329,10 @@ exports.changeStatus = async (req, res) => {
                payment = payment + ${salesResponse.rows[0].payment}
            where
                id = ${salesResponse.rows[0].customer_id}`;
-      console.log(customerQuery);
       await pool.query(customerQuery);
       const salesEditQuery1 = `update sales set
            is_editable = false   where
           id= ${id}`;
-      console.log(salesEditQuery1);
       await pool.query(salesEditQuery1);
       const query2 = `
           select
@@ -359,7 +350,6 @@ exports.changeStatus = async (req, res) => {
         const salesEditQuery2 = `update sales set
                is_editable = true   where
               id = ${findSalesEditableId}`;
-        console.log(salesEditQuery2);
         await pool.query(salesEditQuery2);
       }
     }
@@ -488,7 +478,6 @@ exports.updateValue = async (
 
     let query11 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`;
     const response = await pool.query(query11);
-    console.log(response.rows);
     if (response.rows.length === 0) {
       let query12 = `select balance from users where id = ${loggedInUserId}`;
       const userResponse = await pool.query(query12);
@@ -496,7 +485,6 @@ exports.updateValue = async (
 
       let query13 = ` INSERT INTO rojmed (
       date, balance, sale, user_id)  VALUES (now(), ${loggedInUserBalance}, ${payment}, ${loggedInUserId})`;
-      console.log(query13);
       await pool.query(query13);
     } else {
       const query14 = `update rojmed set sale = COALESCE(sale,0) + ${payment} where user_id = ${loggedInUserId}`;
@@ -628,7 +616,6 @@ exports.getSalesByUserIdInRojMed = async (req, res) => {
     join users as users
       on users.id = s.user_id
         where user_id = ${userId} and s.is_active = true  and CAST(s.date as DATE)::date = '${date}'`;
-    console.log(query);
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

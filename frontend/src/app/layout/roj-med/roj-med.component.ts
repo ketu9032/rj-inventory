@@ -51,7 +51,6 @@ export class RojMedComponent implements OnInit {
             );
     }
     saleDialog(userId: number): void {
-        console.log(this.currentDate);
         this.dialog
             .open(SaleDialogComponent, {
                 width: '1000px',

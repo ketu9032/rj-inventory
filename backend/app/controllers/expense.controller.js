@@ -198,7 +198,6 @@ exports.approved = async (req, res) => {
 
     let query2 = ` select id, date from rojmed where date::date = now()::date and user_id = ${expenseData.userId}`;
     const rojMedResponse = await pool.query(query2);
-    console.log(rojMedResponse.rows);
     if (rojMedResponse.rows.length === 0) {
       let query3 = `select balance from users where id = ${expenseData.userId}`;
       const userResponse = await pool.query(query3);
@@ -206,11 +205,9 @@ exports.approved = async (req, res) => {
 
       let query4 = ` INSERT INTO rojmed (
       date, balance, expense, user_id)  VALUES (now(), ${loggedInUserBalance}, ${expenseData.amount}, ${expenseData.userId})`;
-      console.log(query4);
       await pool.query(query4);
     } else {
       const query5 = `update rojmed set expense = COALESCE(expense,0) + ${expenseData.amount} where user_id = ${expenseData.userId}`;
-      console.log(query5);
       await pool.query(query5);
     }
 

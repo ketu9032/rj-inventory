@@ -291,7 +291,6 @@ exports.updateValue = async (
   try {
     let query11 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`;
     const response = await pool.query(query11);
-    console.log(response.rows);
     if (response.rows.length === 0) {
       let query12 = `select balance from users where id = ${loggedInUserId}`;
       const userResponse = await pool.query(query12);
@@ -299,11 +298,9 @@ exports.updateValue = async (
 
       let query13 = ` INSERT INTO rojmed (
       date, balance, purchase, user_id)  VALUES (now(), ${loggedInUserBalance}, ${payment}, ${loggedInUserId})`;
-      console.log(query13);
       await pool.query(query13);
     } else {
       const query14 = `update rojmed set purchase = COALESCE(purchase,0) + ${payment} where user_id = ${loggedInUserId}`;
-      console.log(query14);
       await pool.query(query14);
     }
 

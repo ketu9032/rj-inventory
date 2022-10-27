@@ -1,6 +1,6 @@
 import { CommonService } from './../../../shared/services/common.service';
 import { Injectable } from '@angular/core';
-import { IMatTableParams, ISelectedDate } from 'src/app/models/table';
+import { IMatTableParams, IProfitChartFilter, ISelectedDate } from 'src/app/models/table';
 import { RestService } from 'src/app/shared/services';
 
 @Injectable({ providedIn: 'root' })
@@ -16,8 +16,8 @@ export class AnalysisService {
         const queryString = this.commonService.toQueryString(tablePrams);
         return this.restService.get<any>(`${this.url}${queryString}`);
     }
-    public profitChart(selectedDate: ISelectedDate) {
-        const queryString = this.commonService.toQueryString(selectedDate);
+    public profitChart(profitChartFilter: IProfitChartFilter) {
+        const queryString = this.commonService.toQueryString(profitChartFilter);
         return this.restService.get(`${this.profitChartUrl}${queryString}`);
     }
 

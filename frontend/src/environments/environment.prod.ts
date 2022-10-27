@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://bhanderi-inventory-api.herokuapp.com/',
+  apiUrl: 'http://173.208.182.211:4000/',
 };

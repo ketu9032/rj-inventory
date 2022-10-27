@@ -204,27 +204,22 @@ exports.approved = async (req, res) => {
 
     let query11 = ` select id, date from rojmed where date::date = now()::date and user_id = ${loggedInUserId}`
     const response = await pool.query(query11);
-    console.log(response.rows);
 
     if(response.rows.length === 0 ){
     let query12 = `select balance from users where id = ${toUserId}`
      const userResponse = await pool.query(query12);
     const loggedInUserBalance = userResponse.rows[0].balance;
-    console.log(loggedInUserBalance);
 
      let query13 = ` INSERT INTO rojmed (
       date, balance, transfer, user_id)  VALUES (now(), ${loggedInUserBalance}, ${transfer_amount}, ${fromUserId})`
-      console.log(query13);
     await pool.query(query13);
 
     let query17 = `select balance from users where id = ${fromUserId}`
     const toUserResponse = await pool.query(query17);
    const toUserBalance = toUserResponse.rows[0].balance;
-   console.log(toUserBalance);
 
      let query14 = ` INSERT INTO rojmed (
       date, balance, receive, user_id)  VALUES (now(), ${toUserBalance}, ${transfer_amount}, ${toUserId})`
-      console.log(query14);
     await pool.query(query14);
     } else {
       const query15 = `update rojmed set transfer = COALESCE(transfer,0) + ${transfer_amount} where user_id = ${fromUserId}`

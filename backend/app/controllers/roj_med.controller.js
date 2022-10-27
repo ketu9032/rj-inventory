@@ -35,7 +35,6 @@ const { dateWiseSalesSearch } = require('./sales.controller');
 //        where  date::date = now()::date group by purchase.user_id) as purchase
 //     on purchase.user_id = users.id
 //       `
-//       console.log(balanceQuery);
 //        response =   await pool.query(balanceQuery)
 //       }
 //       res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -63,7 +62,6 @@ exports.findAll = async (req, res) => {
     join users as users
      on users.id = r.user_id  where CAST(date as DATE)::date = '${date}';
     `;
-    console.log(query);
     let response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {
