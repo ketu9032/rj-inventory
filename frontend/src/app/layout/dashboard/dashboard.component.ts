@@ -234,65 +234,65 @@ export class DashboardComponent implements OnInit {
         }
         let convertedSalesDate;
         let convertedPurchaseDate;
-        this.analysisService
-            .profitChart(this.selectedDate
-            )
-            .subscribe(
-                (response) => {
-                    this.dayChart = response
+        // this.analysisService
+        //     .profitChart(this.selectedDate
+        //     )
+        //     .subscribe(
+        //         (response) => {
+        //             this.dayChart = response
 
-                    for (let index = 0; index < this.dayChart.res1.length; index++) {
-                        const element = this.dayChart.res1[index];
-                        this.totalSaleInDayWise =       +this.totalSaleInDayWise + +element.sa
+        //             for (let index = 0; index < this.dayChart.res1.length; index++) {
+        //                 const element = this.dayChart.res1[index];
+        //                 this.totalSaleInDayWise =       +this.totalSaleInDayWise + +element.sa
 
-                        this.averageSaleInDayWise = (this.totalSaleInDayWise / 30)
+        //                 this.averageSaleInDayWise = (this.totalSaleInDayWise / 30)
 
-                    }
+        //             }
 
-                    for (let index = 0; index < this.dayChart.res2.length; index++) {
-                        const element = this.dayChart.res2[index];
-                        this.totalProfitInDayWise =        +this.totalProfitInDayWise + +element.pa
-                        this.averageProfitInDayWise =  (this.totalProfitInDayWise / 30)
+        //             for (let index = 0; index < this.dayChart.res2.length; index++) {
+        //                 const element = this.dayChart.res2[index];
+        //                 this.totalProfitInDayWise =        +this.totalProfitInDayWise + +element.pa
+        //                 this.averageProfitInDayWise =  (this.totalProfitInDayWise / 30)
 
-                    }
+        //             }
 
-                    for (let index = 0; index < this.daysArray.length; index++) {
-                        const arraySignalDate = this.daysArray[index];
-                        const salesDate = this.dayChart.res1.find(x => {
-                            convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-                            return convertedSalesDate === arraySignalDate;
-                        })
-                        if (arraySignalDate !== convertedSalesDate) {
-                            this.dayWiseChart.xAxis.categories.push(arraySignalDate)
-                            this.dayWiseChart.series[0].data.push(0);
-                        } else (
-                            this.dayWiseChart.xAxis.categories.push(arraySignalDate),
-                            this.dayWiseChart.series[0].data.push(+salesDate.sa)
-                        )
-                        const purchaseDate = this.dayChart.res2.find(x => {
-                            convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-                            return convertedPurchaseDate === arraySignalDate;
-                        })
-                        if (arraySignalDate !== convertedPurchaseDate) {
-                            this.dayWiseChart.series[1].data.push(0);
-                        } else (
-                            this.dayWiseChart.series[1].data.push(+purchaseDate.pa)
-                        )
+        //             for (let index = 0; index < this.daysArray.length; index++) {
+        //                 const arraySignalDate = this.daysArray[index];
+        //                 const salesDate = this.dayChart.res1.find(x => {
+        //                     convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+        //                     return convertedSalesDate === arraySignalDate;
+        //                 })
+        //                 if (arraySignalDate !== convertedSalesDate) {
+        //                     this.dayWiseChart.xAxis.categories.push(arraySignalDate)
+        //                     this.dayWiseChart.series[0].data.push(0);
+        //                 } else (
+        //                     this.dayWiseChart.xAxis.categories.push(arraySignalDate),
+        //                     this.dayWiseChart.series[0].data.push(+salesDate.sa)
+        //                 )
+        //                 const purchaseDate = this.dayChart.res2.find(x => {
+        //                     convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+        //                     return convertedPurchaseDate === arraySignalDate;
+        //                 })
+        //                 if (arraySignalDate !== convertedPurchaseDate) {
+        //                     this.dayWiseChart.series[1].data.push(0);
+        //                 } else (
+        //                     this.dayWiseChart.series[1].data.push(+purchaseDate.pa)
+        //                 )
 
-                    }
-                    Highcharts.chart('profitChartData', this.dayWiseChart);
+        //             }
+        //             Highcharts.chart('profitChartData', this.dayWiseChart);
 
-                },
-                (error) => {
-                    this.snackBar.open(
-                        (error.error && error.error.message) || error.message,
-                        'Ok', {
-                        duration: 3000
-                    }
-                    );
-                },
-                () => { }
-            );
+        //         },
+        //         (error) => {
+        //             this.snackBar.open(
+        //                 (error.error && error.error.message) || error.message,
+        //                 'Ok', {
+        //                 duration: 3000
+        //             }
+        //             );
+        //         },
+        //         () => { }
+        //     );
     }
 
     getDaysArray(startDate, endDate) {

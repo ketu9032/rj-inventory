@@ -2,8 +2,8 @@
 <br>
 <app-profit-chart  [categories]="categories" [suppliers]="suppliers" [items]="items" [customers]="customers"></app-profit-chart>
 <br>
-<!-- <app-sale-chart></app-sale-chart> -->
+ <app-sale-chart  [categories]="categories" [suppliers]="suppliers" [items]="items" [customers]="customers"></app-sale-chart>
 <br>
-<!-- <app-purchase-chart></app-purchase-chart> -->
+<app-purchase-chart  [categories]="categories" [suppliers]="suppliers" [items]="items" [customers]="customers"></app-purchase-chart>
 
 <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>

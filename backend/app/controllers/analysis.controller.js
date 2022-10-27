@@ -80,7 +80,38 @@ exports.findAll = async (req, res) => {
 
 exports.profitChart = async (req, res) => {
   try {
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, categories,  suppliers, items, customers} = req.query;
+
+    console.log(categories);
+    console.log(suppliers);
+    console.log(items);
+    console.log(customers);
+
+    let whereClause = 'where true ';
+    if (startDate && endDate) {
+      whereClause+= ` and date :: date between  '${startDate}'
+      and '${endDate}'`
+    }
+
+    if (categories) {
+      whereClause+= ` and categories.id in (${categories})`
+    }
+    if (suppliers) {
+      whereClause+= ``;
+
+    }
+    if (items) {
+      whereClause+= ` and item.id in (${items})`
+    }
+    if (customers) {
+      whereClause+= ` and sales.customer_id in (${customers})`
+    }
+
+    // join sales on sales_bill.sales_id = sales.id
+    //       join cdf on cdf.id = sales.customer_id
+    //       join item on item.id = sales_bill.item_id
+    //       join categories on categories.id = item.category_id
+    //       ${whereClause}
 
     const query = `
     select
@@ -89,12 +120,11 @@ exports.profitChart = async (req, res) => {
   from
       (
         select
-          CAST(date + interval '1 day' as DATE):: date,
+          CAST(sales_bill.date + interval '1 day' as DATE):: date,
           qty * selling_price as sales_amount
         from
           sales_bill
-          where date :: date between  '${startDate}'
-          and '${endDate}'
+          ${whereClause}
       ) as sb
    group by  date
           `;
@@ -112,8 +142,7 @@ exports.profitChart = async (req, res) => {
                 qty * selling_price as purchase_amount
               from
                 purchase_details
-                  where date :: date between  '${startDate}'
-                  and '${endDate}'
+                ${whereClause}
             ) as sb
              group by date
     `;

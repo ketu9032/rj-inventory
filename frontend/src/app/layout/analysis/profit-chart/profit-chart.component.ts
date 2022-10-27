@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import * as Highcharts from 'highcharts';
 import { MatTableDataSource } from '@angular/material/table';
-import { IMatTableParams, ISelectedDate } from 'src/app/models/table';
+import { IMatTableParams, IProfitChartFilter, ISelectedDate } from 'src/app/models/table';
 import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
 import { IAnalysisData } from 'src/app/models/analysis';
 import * as moment from 'moment';
@@ -26,12 +26,13 @@ export class ProfitChartComponent implements OnInit {
     startDate = moment().add(-30, 'days').format("YYYY-MM-DD");
     endDate = moment().format("YYYY-MM-DD");
     daysArray = []
-    profitChartSummary= {
+    profitChartSummary = {
         totalSale: 0,
         totalProfit: 0,
         averageSale: 0,
         averageProfit: 0
     };
+
     profit: any = {
         chart: {
             type: 'column'
@@ -117,17 +118,38 @@ export class ProfitChartComponent implements OnInit {
         private analysisService: AnalysisService
     ) { }
 
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
 
     getProfitChart() {
         this.getDaysArray(this.startDate, this.endDate);
+        const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
+            return x.value;
+        });
+        const selectedSuppliers= ((this.supplier.selected) as MatOption[]).map((x: MatOption)=>{
+            return x.value;
+        });
+        const selectedItems= ((this.item.selected) as MatOption[]).map((x: MatOption)=>{
+            return x.value;
+        });
+        const selectedCustomers= ((this.customer.selected) as MatOption[]).map((x: MatOption)=>{
+            return x.value;
+        });
+
+        let profitChartFilter: IProfitChartFilter = {
+            startDate: moment(this.startDate).format("YYYY-MM-DD"),
+            endDate: moment(this.endDate).format("YYYY-MM-DD"),
+            categories: selectedCategories,
+            suppliers: selectedSuppliers,
+            items: selectedItems,
+            customers: selectedCustomers,
+        }
         this.analysisService
             .profitChart(
-                { startDate: moment(this.startDate).format("YYYY-MM-DD"), endDate: moment(this.endDate).format("YYYY-MM-DD") } as ISelectedDate
+                profitChartFilter
             )
             .subscribe(
-                (response: {res1: any[], res2: any[]}) => {
+                (response: { res1: any[], res2: any[] }) => {
                     this.profitChartSummary.totalSale = 0;
                     this.profitChartSummary.averageSale = 0;
                     this.profitChartSummary.totalProfit = 0;
@@ -168,11 +190,11 @@ export class ProfitChartComponent implements OnInit {
                         }
 
                         const dayWiseSales = this.profit.series[0].data[index];
-                        const dayWisePurchase =  this.profit.series[1].data[index];
+                        const dayWisePurchase = this.profit.series[1].data[index];
                         this.profit.series[1].data[index] = dayWiseSales - dayWisePurchase;
                     }
 
-                    this.profitChartSummary.totalProfit =   this.profitChartSummary.totalSale - totalPurchase;
+                    this.profitChartSummary.totalProfit = this.profitChartSummary.totalSale - totalPurchase;
                     this.profitChartSummary.averageProfit = this.profitChartSummary.totalProfit / this.daysArray.length;
                     this.profitChartSummary.averageSale = this.profitChartSummary.totalSale / this.daysArray.length;
                     Highcharts.chart('profitChartData', this.profit);

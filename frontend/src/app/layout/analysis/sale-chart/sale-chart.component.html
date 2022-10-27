@@ -1,10 +1,10 @@
-<!-- <div class="flex">
+<div class="flex">
     <div>
         <mat-form-field class="field-width margin">
             <mat-label>Select date range</mat-label>
             <mat-date-range-input [rangePicker]="picker1">
-                <input matStartDate [(ngModel)]="fromDate" placeholder="Start date">
-                <input matEndDate [(ngModel)]="toDate" placeholder="End date">
+                <input matStartDate [(ngModel)]="startDate" placeholder="Start date">
+                <input matEndDate [(ngModel)]="endDate" placeholder="End date">
             </mat-date-range-input>
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-date-range-picker #picker1></mat-date-range-picker>
@@ -73,13 +73,13 @@
     <div class="header-content">
         <h1 class="center">Sale Chart</h1>
         <div class="center total-count">
-            <span>Total Sale:<b> {{totalSaleInSaleChartWise}}</b>, </span>
-            <span>Total Qty: <b> {{totalQtyInSaleChartWise}}</b> | </span>
-            <span>Avg Sale:  <b> {{averageSaleInSaleChartWise | number: '1.0-0'}}</b>, </span>
-            <span>Avg Qty:   <b> {{averageQtyInSaleChartWise | number: '1.0-0'}}</b> </span>
+            <span>Total Sale:<b> {{saleChartSummary. totalSale}}</b>, </span>
+            <span>Total Qty: <b> {{saleChartSummary. totalProfit}}</b> | </span>
+            <span>Avg Sale:  <b> {{saleChartSummary. averageSale | number: '1.0-0'}}</b>, </span>
+            <span>Avg Qty:   <b> {{saleChartSummary. averageProfit | number: '1.0-0'}}</b> </span>
         </div>
     </div>
     <div>
         <div id="saleChartData"></div>
     </div>
-</div> -->
+</div>

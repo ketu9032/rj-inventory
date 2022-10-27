@@ -11,7 +11,7 @@
         </mat-form-field>
         <mat-form-field class="field-width margin">
             <mat-label>All Categories</mat-label>
-            <mat-select #category multiple class="select-width">
+            <mat-select #category multiple class="select-width" disabled>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
                         [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCategories()">Select All
@@ -24,7 +24,7 @@
         </mat-form-field>
         <mat-form-field class="field-width margin">
             <mat-label>All Suppliers</mat-label>
-            <mat-select #supplier multiple>
+            <mat-select #supplier multiple disabled>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
                         [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionBySuppliers()">Select All
@@ -37,7 +37,7 @@
         </mat-form-field>
         <mat-form-field class="field-width margin">
             <mat-label>All Items </mat-label>
-            <mat-select #item multiple>
+            <mat-select #item multiple disabled>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
                         (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
@@ -49,7 +49,7 @@
         </mat-form-field>
         <mat-form-field class="field-width margin">
             <mat-label>All Customers </mat-label>
-            <mat-select #customer multiple>
+            <mat-select #customer multiple disabled>
                 <div class="select-all">
                     <mat-checkbox color="primary" [(ngModel)]="allSelectedCustomers"
                         [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCustomers()">Select All
