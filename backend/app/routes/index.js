@@ -186,6 +186,8 @@ router.get('/api/analysis/saleChart', analysis.saleChart);
 router.get('/api/analysis/purchaseChart', analysis.purchaseChart);
 
 router.get('/api/dashboard/todaySummary', dashboard.todaySummary);
+router.get('/api/dashboard/monthWiseData', dashboard.monthWiseData);
+router.get('/api/dashboard/companyBalance', dashboard.companyBalance);
 
 router.get('/api/dashboard/customerChart', dashboard.customerChart);
 

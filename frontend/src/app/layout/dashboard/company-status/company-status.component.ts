@@ -1,54 +1,49 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatOption } from '@angular/material/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort, Sort } from '@angular/material/sort';
-import * as Highcharts from 'highcharts';
-import { MatTableDataSource } from '@angular/material/table';
-import { IMatTableParams, ISelectedDate } from 'src/app/models/table';
-import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { CategoriesService } from '../expense/services/categories.service';
-import { ItemsService } from '../items/services/items.service';
-import { SalesService } from '../sales/services/sales.service';
-import { AnalysisService } from './services/analysis.service';
-import { IAnalysisData } from 'src/app/models/analysis';
-import * as moment from 'moment';
+import { ItemsService } from '../../items/services/items.service';
+import { CategoriesService } from '../../expense/services/categories.service';
+import { SalesService } from '../../sales/services/sales.service';
+import { DashboardService } from '../services/dashboard.service';
 
 @Component({
-    selector: 'app-analysis',
-    templateUrl: './analysis.component.html',
-    styleUrls: ['./analysis.component.scss']
+    selector: 'app-company-status',
+    templateUrl: './company-status.component.html',
+    styleUrls: ['./company-status.component.scss']
 })
-export class AnalysisComponent implements OnInit {
+export class CompanyStatusComponent implements OnInit {
+    customer: number = 0;
+    supplier: any = 0;
+    product: number = 0;
+    companyBalance: number = 0;
+    stock: number = 0;
+    userBalance: number = 0;
+    totalBalance: number = 0;
+    customersDue: number = 0;
+    suppliersDue: number = 0;
 
-    categories = [];
-    suppliers;
-    items = [];
-    customers = [];
-    loader: boolean = false;
     constructor(
         public dialog: MatDialog,
         private itemsService: ItemsService,
         public snackBar: MatSnackBar,
         private categoriesService: CategoriesService,
         private salesService: SalesService,
+        private dashboardService: DashboardService
     ) { }
+
     ngOnInit(): void {
-        this.getCategoryDropDown('Item');
+        this.getCustomerDropDown();
         this.getSuppliersDropDown();
         this.getItemDropDown();
-        this.getCustomerDropDown();
+        this.getCompanyBalance();
     }
 
-    getCategoryDropDown(type: string) {
-        this.categoriesService
-            .getCategoryDropDown(type)
+    getCustomerDropDown() {
+        this.salesService
+            .getCustomerDropDown()
             .subscribe(
                 (response) => {
-                    this.categories = response
+                    this.customer = response.length;
                 },
                 (error) => {
                     this.snackBar.open(
@@ -63,12 +58,13 @@ export class AnalysisComponent implements OnInit {
     }
 
     getSuppliersDropDown() {
-
+        let suppliers
         this.itemsService
             .getSupplierDropDown()
             .subscribe(
                 (response) => {
-                    this.suppliers = response;
+                    suppliers = response;
+                    this.supplier = suppliers.length
 
                 },
                 (error) => {
@@ -88,7 +84,7 @@ export class AnalysisComponent implements OnInit {
             .getItemDropDown()
             .subscribe(
                 (response) => {
-                    this.items = response;
+                    this.product = response.length;
                 },
                 (error) => {
                     this.snackBar.open(
@@ -102,12 +98,17 @@ export class AnalysisComponent implements OnInit {
             );
     }
 
-    getCustomerDropDown() {
-        this.salesService
-            .getCustomerDropDown()
+    getCompanyBalance() {
+        this.dashboardService
+            .companyBalance()
             .subscribe(
                 (response) => {
-                    this.customers = response;
+                    this.userBalance = response.res1[0].user_balance;
+                    this.customersDue = response.res2[0].cdf_remaining_balance;
+                    this.stock = response.res3[0].sales_stock;
+                    this.suppliersDue = response.res4[0].supplier_due;
+
+                    this.totalBalance = (+this.userBalance + +this.customersDue + +this.stock) - +this.suppliersDue;
                 },
                 (error) => {
                     this.snackBar.open(

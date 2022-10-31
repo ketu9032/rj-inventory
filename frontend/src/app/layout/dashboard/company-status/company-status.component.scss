@@ -1,0 +1,67 @@
+.container {
+    margin-bottom: 30px;
+}
+
+.center {
+    font-size: 22px;
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-content {
+    justify-content: space-between;
+}
+
+.company-box {
+    border: 1px solid black;
+    padding: 20px 70px;
+    border-radius: 5px;
+    width: 14%;
+}
+
+.primary {
+    color: #3f51b5;
+}
+
+.font-size-17 {
+    font-size: 17px;
+    padding-top: 8px;
+    font-weight: bold;
+}
+
+.font-size-14 {
+    font-size: 14px;
+    padding-top: 8px;
+    font-weight: bold;
+}
+
+.main-box {
+    width: 35%;
+    margin: auto;
+}
+
+.main-content-box {
+    border: 1px solid black;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.content-box {
+    border: 1px solid black;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+}
+
+.text-box {
+    text-align: center;
+    margin: 40px auto;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
