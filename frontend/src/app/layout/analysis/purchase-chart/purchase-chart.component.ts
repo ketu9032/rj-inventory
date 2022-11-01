@@ -26,6 +26,7 @@ export class PurchaseChartComponent implements OnInit {
     startDate = moment().add(-30, 'days').format("YYYY-MM-DD");
     endDate = moment().format("YYYY-MM-DD");
     daysArray = []
+    loader: boolean = false;
 
     @Input() categories = []
     @Input() suppliers = []
@@ -120,6 +121,7 @@ export class PurchaseChartComponent implements OnInit {
     ngOnInit(): void { }
 
     getPurchaseChart() {
+        this.loader = true;
         this.getDaysArray(this.startDate, this.endDate);
 
         let saleChartFilter: IPurchaseChartFilter = {
@@ -149,7 +151,7 @@ export class PurchaseChartComponent implements OnInit {
                     // console.log(this.sale.series[1].data);
                     Highcharts.chart('purchaseChartData', this.purchase);
 
-
+this.loader = false;
                 },
                 (error) => {
                     this.snackBar.open(

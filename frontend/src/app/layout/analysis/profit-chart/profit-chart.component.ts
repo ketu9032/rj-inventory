@@ -20,6 +20,8 @@ export class ProfitChartComponent implements OnInit {
     startDate = moment().add(-30, 'days').format("YYYY-MM-DD");
     endDate = moment().format("YYYY-MM-DD");
     daysArray = []
+
+    loader: boolean = false;
     profitChartSummary = {
         totalSale: 0,
         totalProfit: 0,
@@ -116,6 +118,7 @@ export class ProfitChartComponent implements OnInit {
 
 
     getProfitChart() {
+        this.loader = true;
         this.getDaysArray(this.startDate, this.endDate);
         // const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
         //     return x.value;
@@ -192,6 +195,7 @@ export class ProfitChartComponent implements OnInit {
                     this.profitChartSummary.averageProfit = this.profitChartSummary.totalProfit / this.daysArray.length;
                     this.profitChartSummary.averageSale = this.profitChartSummary.totalSale / this.daysArray.length;
                     Highcharts.chart('profitChartData', this.profit);
+                    this.loader = false;
                 },
                 (error) => {
                     this.snackBar.open(
@@ -201,7 +205,9 @@ export class ProfitChartComponent implements OnInit {
                     }
                     );
                 },
-                () => { }
+                () => {
+                    this.loader = false;
+                }
             );
     }
 

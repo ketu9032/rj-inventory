@@ -20,6 +20,7 @@ export class DayWiseSaleProfitChartComponent implements OnInit {
     startDate = moment().add(-30, 'days').format("YYYY-MM-DD");
     endDate = moment().format("YYYY-MM-DD");
     daysArray = []
+    loader: boolean = false;
 
     @Input() categories = []
     @Input() suppliers = []
@@ -115,6 +116,7 @@ export class DayWiseSaleProfitChartComponent implements OnInit {
     ngOnInit(): void {}
 
     getDayWiseChart() {
+        this.loader = true;
         this.getDaysArray(this.startDate, this.endDate);
         // const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
         //     return x.value;
@@ -192,6 +194,7 @@ export class DayWiseSaleProfitChartComponent implements OnInit {
                     this.dayWiseChartSummary.averageProfit = this.dayWiseChartSummary.totalProfit / this.daysArray.length;
                     this.dayWiseChartSummary.averageSale = this.dayWiseChartSummary.totalSale / this.daysArray.length;
                     Highcharts.chart('dayWiseChartData', this.dayWise);
+                    this.loader = false;
                 },
                 (error) => {
                     this.snackBar.open(
