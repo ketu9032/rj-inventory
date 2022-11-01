@@ -1,21 +1,18 @@
+.flex {
+    display: flex;
+}
+
+.customer-chart-width {
+    width: 50%;
+}
+
 .center {
     font-size: 22px;
     text-align: center;
 }
 
-.flex {
-    display: flex;
-}
-
 .justify-content {
     justify-content: space-between;
-}
-
-.summary-box {
-    border: 1px solid black;
-    padding: 20px 50px;
-    border-radius: 5px;
-    width: 8%;
 }
 
 .primary {
@@ -28,11 +25,9 @@
     font-weight: bold;
 }
 
-.btn {
-    font-size: 13px;
-    height: 33px;
+.summary-box {
+    border: 1px solid black;
+    padding: 20px 50px;
+    border-radius: 5px;
+    width: 8%;
 }
-
-
-
-

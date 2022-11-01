@@ -1,28 +1,22 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort, Sort } from '@angular/material/sort';
 import * as Highcharts from 'highcharts';
-import { MatTableDataSource } from '@angular/material/table';
-import { IMatTableParams, ISaleChartFilter, ISelectedDate } from 'src/app/models/table';
-import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { IAnalysisData } from 'src/app/models/analysis';
+import {  IProfitChartFilter } from 'src/app/models/table';
 import * as moment from 'moment';
 import { ItemsService } from '../../items/services/items.service';
 import { CategoriesService } from '../../expense/services/categories.service';
 import { SalesService } from '../../sales/services/sales.service';
-import { AnalysisService } from '../services/analysis.service';
+import { AnalysisService } from '../../analysis/services/analysis.service';
 
 @Component({
-    selector: 'app-sale-chart',
-    templateUrl: './sale-chart.component.html',
-    styleUrls: ['./sale-chart.component.scss']
+    selector: 'app-day-wise-sale-profit-chart',
+    templateUrl: './day-wise-sale-profit-chart.component.html',
+    styleUrls: ['./day-wise-sale-profit-chart.component.scss']
 })
-export class SaleChartComponent implements OnInit {
+export class DayWiseSaleProfitChartComponent implements OnInit {
     startDate = moment().add(-30, 'days').format("YYYY-MM-DD");
     endDate = moment().format("YYYY-MM-DD");
     daysArray = []
@@ -44,7 +38,7 @@ export class SaleChartComponent implements OnInit {
     @ViewChild('customer') customer: MatSelect;
     allSelectedCustomers: boolean = false;
 
-    public sale: any = {
+    public dayWise: any = {
         chart: {
             type: 'column'
         },
@@ -93,7 +87,6 @@ export class SaleChartComponent implements OnInit {
                 Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
             shadow: true
         },
-
         series: [{
             name: 'Sale',
             data: []
@@ -103,7 +96,7 @@ export class SaleChartComponent implements OnInit {
         }]
     }
 
-    saleChartSummary = {
+    dayWiseChartSummary = {
         totalSale: 0,
         totalProfit: 0,
         averageSale: 0,
@@ -119,9 +112,9 @@ export class SaleChartComponent implements OnInit {
         private analysisService: AnalysisService
     ) { }
 
-    ngOnInit(): void { }
+    ngOnInit(): void {}
 
-    getSaleChart() {
+    getDayWiseChart() {
         this.getDaysArray(this.startDate, this.endDate);
         // const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
         //     return x.value;
@@ -136,7 +129,7 @@ export class SaleChartComponent implements OnInit {
         //     return x.value;
         // });
 
-        let saleChartFilter: ISaleChartFilter = {
+        let dayWiseProfitChartFilter: IProfitChartFilter = {
             startDate: moment(this.startDate).format("YYYY-MM-DD"),
             endDate: moment(this.endDate).format("YYYY-MM-DD"),
             // categories: selectedCategories,
@@ -145,76 +138,60 @@ export class SaleChartComponent implements OnInit {
             // customers: selectedCustomers,
         }
         this.analysisService
-            .saleChart(
-                saleChartFilter
+            .profitChart(
+                dayWiseProfitChartFilter
+
             )
             .subscribe(
-                // (response: { res1: any[], res2: any[] }) => {
-                //     this.saleChartSummary.totalSale = 0;
-                //     this.saleChartSummary.averageSale = 0;
-                //     this.saleChartSummary.totalProfit = 0;
-                //     this.saleChartSummary.averageProfit = 0;
-                //     this.sale.xAxis.categories = [];
-                //     this.sale.series[0].data = [];
-                //     this.sale.series[1].data = [];
+                (response: { res1: any[], res2: any[] }) => {
+                    this.dayWiseChartSummary.totalSale = 0;
+                    this.dayWiseChartSummary.averageSale = 0;
+                    this.dayWiseChartSummary.totalProfit = 0;
+                    this.dayWiseChartSummary.averageProfit = 0;
+                    this.dayWise.xAxis.categories = [];
+                    this.dayWise.series[0].data = [];
+                    this.dayWise.series[1].data = [];
 
-                //     let totalPurchase = 0;
+                    let totalPurchase = 0;
 
-                //     for (let index = 0; index < this.daysArray.length; index++) {
-                //         const arraySignalDate = this.daysArray[index];
-                //         let convertedSalesDate;;
-                //         let convertedPurchaseDate;
+                    for (let index = 0; index < this.daysArray.length; index++) {
+                        const arraySignalDate = this.daysArray[index];
+                        let convertedSalesDate;;
+                        let convertedPurchaseDate;
 
-                //         const salesDate = response.res1.find(x => {
-                //             convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-                //             return convertedSalesDate === arraySignalDate;
-                //         })
-                //         if (arraySignalDate !== convertedSalesDate) {
-                //             this.sale.xAxis.categories.push(arraySignalDate)
-                //             this.sale.series[0].data.push(0);
-                //         } else {
-                //             this.saleChartSummary.totalSale = this.saleChartSummary.totalSale + +salesDate.sales_amount;
-                //             this.sale.xAxis.categories.push(arraySignalDate);
-                //             this.sale.series[0].data.push(+salesDate.sales_amount);
-                //         }
+                        const salesDate = response.res1.find(x => {
+                            convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                            return convertedSalesDate === arraySignalDate;
+                        })
+                        if (arraySignalDate !== convertedSalesDate) {
+                            this.dayWise.xAxis.categories.push(arraySignalDate)
+                            this.dayWise.series[0].data.push(0);
+                        } else {
+                            this.dayWiseChartSummary.totalSale = this.dayWiseChartSummary.totalSale + +salesDate.sa;
+                            this.dayWise.xAxis.categories.push(arraySignalDate);
+                            this.dayWise.series[0].data.push(+salesDate.sa);
+                        }
 
-                //         const purchaseDate = response.res2.find(x => {
-                //             convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-                //             return convertedPurchaseDate === arraySignalDate;
-                //         })
-                //         if (arraySignalDate !== convertedPurchaseDate) {
-                //             this.sale.series[1].data.push(0);
-                //         } else {
-                //             totalPurchase = totalPurchase + +purchaseDate.sales_qty
-                //             this.sale.series[1].data.push(+purchaseDate.pa)
-                //         }
+                        const purchaseDate = response.res2.find(x => {
+                            convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                            return convertedPurchaseDate === arraySignalDate;
+                        })
+                        if (arraySignalDate !== convertedPurchaseDate) {
+                            this.dayWise.series[1].data.push(0);
+                        } else {
+                            totalPurchase = totalPurchase + +purchaseDate.pa
+                            this.dayWise.series[1].data.push(+purchaseDate.pa)
+                        }
 
-                //         const dayWiseSales = this.sale.series[0].data[index];
-                //         const dayWisePurchase = this.sale.series[1].data[index];
-                //         this.sale.series[1].data[index] = dayWiseSales - dayWisePurchase;
-                //     }
-
-                //     this.saleChartSummary.totalProfit = this.saleChartSummary.totalSale - totalPurchase;
-                //     this.saleChartSummary.averageProfit = this.saleChartSummary.totalProfit / this.daysArray.length;
-                //     this.saleChartSummary.averageSale = this.saleChartSummary.totalSale / this.daysArray.length;
-                //     Highcharts.chart('saleChartData', this.sale);
-                // },
-                (response: any) => {
-                    for (let index = 0; index < response.length; index++) {
-                        const element = response[index];
-                        this.sale.xAxis.categories.push(moment(element.date).subtract(1).format("DD-MM-YYYY"))
-                        this.sale.series[0].data.push(element.sales_amount);
-                        this.sale.series[1].data.push(element.sales_qty);
+                        const dayWiseSales = this.dayWise.series[0].data[index];
+                        const dayWisePurchase = this.dayWise.series[1].data[index];
+                        this.dayWise.series[1].data[index] = dayWiseSales - dayWisePurchase;
                     }
 
-                    console.log(this.sale.xAxis.categories);
-                    console.log(this.sale.series[0].data);
-                    console.log(this.sale.series[1].data);
-                    console.log(this.sale);
-
-                    Highcharts.chart('saleChartData', this.sale);
-
-
+                    this.dayWiseChartSummary.totalProfit = this.dayWiseChartSummary.totalSale - totalPurchase;
+                    this.dayWiseChartSummary.averageProfit = this.dayWiseChartSummary.totalProfit / this.daysArray.length;
+                    this.dayWiseChartSummary.averageSale = this.dayWiseChartSummary.totalSale / this.daysArray.length;
+                    Highcharts.chart('dayWiseChartData', this.dayWise);
                 },
                 (error) => {
                     this.snackBar.open(
@@ -224,9 +201,7 @@ export class SaleChartComponent implements OnInit {
                     }
                     );
                 },
-                () => {
-
-                }
+                () => { }
             );
     }
 

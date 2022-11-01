@@ -1,16 +1,10 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort, Sort } from '@angular/material/sort';
 import * as Highcharts from 'highcharts';
-import { MatTableDataSource } from '@angular/material/table';
-import { IMatTableParams, IProfitChartFilter, ISelectedDate } from 'src/app/models/table';
-import { PAGE_SIZE, PAGE_SIZE_OPTION } from 'src/app/shared/global/table-config';
-import { IAnalysisData } from 'src/app/models/analysis';
+import { IProfitChartFilter } from 'src/app/models/table';
 import * as moment from 'moment';
 import { ItemsService } from '../../items/services/items.service';
 import { CategoriesService } from '../../expense/services/categories.service';
@@ -123,26 +117,26 @@ export class ProfitChartComponent implements OnInit {
 
     getProfitChart() {
         this.getDaysArray(this.startDate, this.endDate);
-        const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedSuppliers= ((this.supplier.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedItems= ((this.item.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedCustomers= ((this.customer.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
+        // const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
+        //     return x.value;
+        // });
+        // const selectedSuppliers= ((this.supplier.selected) as MatOption[]).map((x: MatOption)=>{
+        //     return x.value;
+        // });
+        // const selectedItems= ((this.item.selected) as MatOption[]).map((x: MatOption)=>{
+        //     return x.value;
+        // });
+        // const selectedCustomers= ((this.customer.selected) as MatOption[]).map((x: MatOption)=>{
+        //     return x.value;
+        // });
 
         let profitChartFilter: IProfitChartFilter = {
             startDate: moment(this.startDate).format("YYYY-MM-DD"),
             endDate: moment(this.endDate).format("YYYY-MM-DD"),
-            categories: selectedCategories,
-            suppliers: selectedSuppliers,
-            items: selectedItems,
-            customers: selectedCustomers,
+            //     categories: selectedCategories,
+            //     suppliers: selectedSuppliers,
+            //     items: selectedItems,
+            //     customers: selectedCustomers,
         }
         this.analysisService
             .profitChart(
