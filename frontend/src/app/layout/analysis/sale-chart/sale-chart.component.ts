@@ -93,6 +93,7 @@ export class SaleChartComponent implements OnInit {
                 Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
             shadow: true
         },
+
         series: [{
             name: 'Sale',
             data: []
@@ -118,85 +119,102 @@ export class SaleChartComponent implements OnInit {
         private analysisService: AnalysisService
     ) { }
 
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
     getSaleChart() {
         this.getDaysArray(this.startDate, this.endDate);
-        const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedSuppliers= ((this.supplier.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedItems= ((this.item.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedCustomers= ((this.customer.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
+        // const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
+        //     return x.value;
+        // });
+        // const selectedSuppliers= ((this.supplier.selected) as MatOption[]).map((x: MatOption)=>{
+        //     return x.value;
+        // });
+        // const selectedItems= ((this.item.selected) as MatOption[]).map((x: MatOption)=>{
+        //     return x.value;
+        // });
+        // const selectedCustomers= ((this.customer.selected) as MatOption[]).map((x: MatOption)=>{
+        //     return x.value;
+        // });
 
         let saleChartFilter: ISaleChartFilter = {
             startDate: moment(this.startDate).format("YYYY-MM-DD"),
             endDate: moment(this.endDate).format("YYYY-MM-DD"),
-            categories: selectedCategories,
-            suppliers: selectedSuppliers,
-            items: selectedItems,
-            customers: selectedCustomers,
+            // categories: selectedCategories,
+            // suppliers: selectedSuppliers,
+            // items: selectedItems,
+            // customers: selectedCustomers,
         }
         this.analysisService
             .saleChart(
                 saleChartFilter
             )
             .subscribe(
-                (response: { res1: any[], res2: any[] }) => {
-                    this.saleChartSummary.totalSale = 0;
-                    this.saleChartSummary.averageSale = 0;
-                    this.saleChartSummary.totalProfit = 0;
-                    this.saleChartSummary.averageProfit = 0;
-                    this.sale.xAxis.categories = [];
-                    this.sale.series[0].data = [];
-                    this.sale.series[1].data = [];
+                // (response: { res1: any[], res2: any[] }) => {
+                //     this.saleChartSummary.totalSale = 0;
+                //     this.saleChartSummary.averageSale = 0;
+                //     this.saleChartSummary.totalProfit = 0;
+                //     this.saleChartSummary.averageProfit = 0;
+                //     this.sale.xAxis.categories = [];
+                //     this.sale.series[0].data = [];
+                //     this.sale.series[1].data = [];
 
-                    let totalPurchase = 0;
+                //     let totalPurchase = 0;
 
-                    for (let index = 0; index < this.daysArray.length; index++) {
-                        const arraySignalDate = this.daysArray[index];
-                        let convertedSalesDate;;
-                        let convertedPurchaseDate;
+                //     for (let index = 0; index < this.daysArray.length; index++) {
+                //         const arraySignalDate = this.daysArray[index];
+                //         let convertedSalesDate;;
+                //         let convertedPurchaseDate;
 
-                        const salesDate = response.res1.find(x => {
-                            convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-                            return convertedSalesDate === arraySignalDate;
-                        })
-                        if (arraySignalDate !== convertedSalesDate) {
-                            this.sale.xAxis.categories.push(arraySignalDate)
-                            this.sale.series[0].data.push(0);
-                        } else {
-                            this.saleChartSummary.totalSale = this.saleChartSummary.totalSale + +salesDate.sales_amount;
-                            this.sale.xAxis.categories.push(arraySignalDate);
-                            this.sale.series[0].data.push(+salesDate.sales_amount);
-                        }
+                //         const salesDate = response.res1.find(x => {
+                //             convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                //             return convertedSalesDate === arraySignalDate;
+                //         })
+                //         if (arraySignalDate !== convertedSalesDate) {
+                //             this.sale.xAxis.categories.push(arraySignalDate)
+                //             this.sale.series[0].data.push(0);
+                //         } else {
+                //             this.saleChartSummary.totalSale = this.saleChartSummary.totalSale + +salesDate.sales_amount;
+                //             this.sale.xAxis.categories.push(arraySignalDate);
+                //             this.sale.series[0].data.push(+salesDate.sales_amount);
+                //         }
 
-                        const purchaseDate = response.res2.find(x => {
-                            convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-                            return convertedPurchaseDate === arraySignalDate;
-                        })
-                        if (arraySignalDate !== convertedPurchaseDate) {
-                            this.sale.series[1].data.push(0);
-                        } else {
-                            totalPurchase = totalPurchase + +purchaseDate.sales_qty
-                            this.sale.series[1].data.push(+purchaseDate.pa)
-                        }
+                //         const purchaseDate = response.res2.find(x => {
+                //             convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                //             return convertedPurchaseDate === arraySignalDate;
+                //         })
+                //         if (arraySignalDate !== convertedPurchaseDate) {
+                //             this.sale.series[1].data.push(0);
+                //         } else {
+                //             totalPurchase = totalPurchase + +purchaseDate.sales_qty
+                //             this.sale.series[1].data.push(+purchaseDate.pa)
+                //         }
 
-                        const dayWiseSales = this.sale.series[0].data[index];
-                        const dayWisePurchase = this.sale.series[1].data[index];
-                        this.sale.series[1].data[index] = dayWiseSales - dayWisePurchase;
+                //         const dayWiseSales = this.sale.series[0].data[index];
+                //         const dayWisePurchase = this.sale.series[1].data[index];
+                //         this.sale.series[1].data[index] = dayWiseSales - dayWisePurchase;
+                //     }
+
+                //     this.saleChartSummary.totalProfit = this.saleChartSummary.totalSale - totalPurchase;
+                //     this.saleChartSummary.averageProfit = this.saleChartSummary.totalProfit / this.daysArray.length;
+                //     this.saleChartSummary.averageSale = this.saleChartSummary.totalSale / this.daysArray.length;
+                //     Highcharts.chart('saleChartData', this.sale);
+                // },
+                (response: any) => {
+                    for (let index = 0; index < response.length; index++) {
+                        const element = response[index];
+                        this.sale.xAxis.categories.push(moment(element.date).subtract(1).format("DD-MM-YYYY"))
+                        this.sale.series[0].data.push(element.sales_amount);
+                        this.sale.series[1].data.push(element.sales_qty);
                     }
 
-                    this.saleChartSummary.totalProfit = this.saleChartSummary.totalSale - totalPurchase;
-                    this.saleChartSummary.averageProfit = this.saleChartSummary.totalProfit / this.daysArray.length;
-                    this.saleChartSummary.averageSale = this.saleChartSummary.totalSale / this.daysArray.length;
+                    console.log(this.sale.xAxis.categories);
+                    console.log(this.sale.series[0].data);
+                    console.log(this.sale.series[1].data);
+                    console.log(this.sale);
+
                     Highcharts.chart('saleChartData', this.sale);
+
+
                 },
                 (error) => {
                     this.snackBar.open(
@@ -206,7 +224,9 @@ export class SaleChartComponent implements OnInit {
                     }
                     );
                 },
-                () => { }
+                () => {
+
+                }
             );
     }
 

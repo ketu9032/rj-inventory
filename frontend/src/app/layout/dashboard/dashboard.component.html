@@ -3,45 +3,9 @@
     <div>
         <h1 class="center">Today's Summary</h1>
     </div>
-   <app-today-summary></app-today-summary>
-    <!-- performance start -->
-    <div>
-        <h1 class="center">Performance</h1>
-    </div>
-    <div>
-        <!-- Select date range -->
-        <mat-form-field class="field-width margin">
-            <mat-label>Select date range</mat-label>
-            <mat-date-range-input [rangePicker]="picker">
-                <input matStartDate [(ngModel)]="startDate" placeholder="Start date">
-                <input matEndDate [(ngModel)]="endDate" placeholder="End date">
-            </mat-date-range-input>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker></mat-date-range-picker>
-        </mat-form-field>
-        <!-- button start -->
-        <button color="primary" class=" btn" mat-raised-button>
-            Submit
-        </button>
-    </div>
-    <div>
-        <!-- day wise chart -->
-        <div class="chart-font center">
-            <div>Day Wise Sales & Profit Chart </div>
-            <div class="center total-count">
-                <span>Total Sale:<b> {{totalSaleInDayWise}}</b>, </span>
-                <span>Total Profit: <b> {{totalProfitInDayWise}}</b> | </span>
-                <span>Avg Sale: <b> {{averageSaleInDayWise | number: '1.0-0'}}</b>, </span>
-                <span>Avg Profit: <b> {{averageProfitInDayWise | number: '1.0-0'}}</b> </span>
-            </div>
-        </div>
-        <!-- chart start -->
-        <div>
-            <div id="dayWiseChartData"></div>
-        </div>
-    </div>
-
-<app-customer-suppliers-chart></app-customer-suppliers-chart>
-<app-company-status></app-company-status>
+    <app-today-summary></app-today-summary>
+    <app-day-wise-sale-profit-chart></app-day-wise-sale-profit-chart>
+    <app-customer-suppliers-chart></app-customer-suppliers-chart>
+    <app-company-status></app-company-status>
 
 </div>

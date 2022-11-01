@@ -1,85 +1,37 @@
-<div class="flex">
-    <div>
-        <mat-form-field class="field-width margin">
-            <mat-label>Select date range</mat-label>
-            <mat-date-range-input [rangePicker]="picker1">
-                <input matStartDate [(ngModel)]="startDate" placeholder="Start date">
-                <input matEndDate [(ngModel)]="endDate" placeholder="End date">
-            </mat-date-range-input>
-            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker1></mat-date-range-picker>
-        </mat-form-field>
-        <mat-form-field class="field-width margin">
-            <mat-label>All Categories </mat-label>
-            <mat-select #select multiple class="select-width">
-                <div class="select-all">
-                    <mat-checkbox color="primary" [(ngModel)]="allSelectedCategories"
-                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCategories()">Select All
-                    </mat-checkbox>
-                </div>
-                <mat-option (click)="optionClickCategories()" *ngFor="let category of categories" [value]="category.id">
-                    {{category.code | uppercase}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field class="field-width margin">
-            <mat-label>All Suppliers </mat-label>
-            <mat-select #select1 multiple>
-                <div class="select-all">
-                    <mat-checkbox color="primary" [(ngModel)]="allSelectedSuppliers"
-                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionBySuppliers()">Select All
-                    </mat-checkbox>
-                </div>
-                <mat-option (click)="optionClickSuppliers()" *ngFor="let supplier of suppliers" [value]="supplier.id">
-                    {{supplier.company | uppercase}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field class="field-width margin">
-            <mat-label>All Items </mat-label>
-            <mat-select #select2 multiple>
-                <div class="select-all">
-                    <mat-checkbox color="primary" [(ngModel)]="allSelectedItems" [ngModelOptions]="{standalone: true}"
-                        (change)="toggleAllSelectionByItems()">Select All</mat-checkbox>
-                </div>
-                <mat-option (click)="optionClickItems()" *ngFor="let item of items" [value]="item.id">
-                    {{item.item_code | uppercase}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field class="field-width margin">
-            <mat-label>All Customers </mat-label>
-            <mat-select #select3 multiple>
-                <div class="select-all">
-                    <mat-checkbox color="primary" [(ngModel)]="allSelectedCustomers"
-                        [ngModelOptions]="{standalone: true}" (change)="toggleAllSelectionByCustomers()">Select All
-                    </mat-checkbox>
-                </div>
-                <mat-option (click)="optionClickCustomers()" *ngFor="let customer of customers" [value]="customer.id">
-                    {{customer.company | uppercase}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button color="primary" class=" btn" mat-raised-button (click)="getSaleChart()">
-            Submit
-        </button>
-        <button color="primary" class="margin btn" mat-raised-button>
-            Download
-        </button>
+<!-- performance start -->
+<div>
+    <h1 class="center">Performance</h1>
+</div>
+<div>
+    <!-- Select date range -->
+    <mat-form-field class="field-width margin">
+        <mat-label>Select date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate [(ngModel)]="startDate" placeholder="Start date">
+            <input matEndDate [(ngModel)]="endDate" placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+    <!-- button start -->
+    <button color="primary" class=" btn" mat-raised-button (click)="getDayWiseChart()">
+        Submit
+    </button>
+</div>
+<div>
+    <!-- day wise chart -->
+    <div class="chart-font center">
+        <div>Day Wise Sales & Profit Chart </div>
+        <div class="center total-count">
+            <span>Total Sale:<b> {{dayWiseChartSummary.totalSale}}</b>, </span>
+            <span>Total Profit: <b> {{dayWiseChartSummary.totalProfit}}</b> | </span>
+            <span>Avg Sale: <b> {{dayWiseChartSummary.averageSale| number: '1.0-0'}}</b>, </span>
+            <span>Avg Profit: <b> {{dayWiseChartSummary.averageProfit| number: '1.0-0'}}</b> </span>
+        </div>
     </div>
+    <!-- chart start -->
 
 </div>
 <div>
-    <div class="header-content">
-        <h1 class="center">Sale Chart</h1>
-        <div class="center total-count">
-            <span>Total Sale:<b> {{saleChartSummary. totalSale}}</b>, </span>
-            <span>Total Qty: <b> {{saleChartSummary. totalProfit}}</b> | </span>
-            <span>Avg Sale:  <b> {{saleChartSummary. averageSale | number: '1.0-0'}}</b>, </span>
-            <span>Avg Qty:   <b> {{saleChartSummary. averageProfit | number: '1.0-0'}}</b> </span>
-        </div>
-    </div>
-    <div>
-        <div id="saleChartData"></div>
-    </div>
+    <div id="dayWiseChartData"></div>
 </div>

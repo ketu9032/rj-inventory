@@ -117,85 +117,39 @@ export class PurchaseChartComponent implements OnInit {
         private salesService: SalesService,
         private analysisService: AnalysisService
     ) { }
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
     getPurchaseChart() {
         this.getDaysArray(this.startDate, this.endDate);
-        const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedSuppliers= ((this.supplier.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedItems= ((this.item.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
-        const selectedCustomers= ((this.customer.selected) as MatOption[]).map((x: MatOption)=>{
-            return x.value;
-        });
 
-        let profitChartFilter: IPurchaseChartFilter = {
+        let saleChartFilter: IPurchaseChartFilter = {
             startDate: moment(this.startDate).format("YYYY-MM-DD"),
             endDate: moment(this.endDate).format("YYYY-MM-DD"),
-            categories: selectedCategories,
-            suppliers: selectedSuppliers,
-            items: selectedItems,
-            customers: selectedCustomers,
+            // categories: selectedCategories,
+            // suppliers: selectedSuppliers,
+            // items: selectedItems,
+            // customers: selectedCustomers,
         }
         this.analysisService
-            .profitChart(
-                profitChartFilter
+            .saleChart(
+                saleChartFilter
             )
             .subscribe(
-                (response: { res1: any[], res2: any[] }) => {
-                    this.purchaseChartSummary.totalSale = 0;
-                    this.purchaseChartSummary.averageSale = 0;
-                    this.purchaseChartSummary.totalProfit = 0;
-                    this.purchaseChartSummary.averageProfit = 0;
-                    this.purchase.xAxis.categories = [];
-                    this.purchase.series[0].data = [];
-                    this.purchase.series[1].data = [];
 
-                    let totalPurchase = 0;
-
-                    for (let index = 0; index < this.daysArray.length; index++) {
-                        const arraySignalDate = this.daysArray[index];
-                        let convertedSalesDate;;
-                        let convertedPurchaseDate;
-
-                        const salesDate = response.res1.find(x => {
-                            convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-                            return convertedSalesDate === arraySignalDate;
-                        })
-                        if (arraySignalDate !== convertedSalesDate) {
-                            this.purchase.xAxis.categories.push(arraySignalDate)
-                            this.purchase.series[0].data.push(0);
-                        } else {
-                            this.purchaseChartSummary.totalSale = this.purchaseChartSummary.totalSale + +salesDate.sa;
-                            this.purchase.xAxis.categories.push(arraySignalDate);
-                            this.purchase.series[0].data.push(+salesDate.sa);
-                        }
-
-                        const purchaseDate = response.res2.find(x => {
-                            convertedPurchaseDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
-                            return convertedPurchaseDate === arraySignalDate;
-                        })
-                        if (arraySignalDate !== convertedPurchaseDate) {
-                            this.purchase.series[1].data.push(0);
-                        } else {
-                            totalPurchase = totalPurchase + +purchaseDate.pa
-                            this.purchase.series[1].data.push(+purchaseDate.pa)
-                        }
-
-                        const dayWiseSales = this.purchase.series[0].data[index];
-                        const dayWisePurchase = this.purchase.series[1].data[index];
-                        this.purchase.series[1].data[index] = dayWiseSales - dayWisePurchase;
+                (response: any) => {
+                    for (let index = 0; index < response.length; index++) {
+                        const element = response[index];
+                        this.purchase.xAxis.categories.push(moment(element.date).subtract(1).format("DD-MM-YYYY"))
+                        this.purchase.series[0].data.push(element.purchase_amount);
+                        this.purchase.series[1].data.push(element.purchase_qty);
                     }
 
-                    this.purchaseChartSummary.totalProfit = this.purchaseChartSummary.totalSale - totalPurchase;
-                    this.purchaseChartSummary.averageProfit = this.purchaseChartSummary.totalProfit / this.daysArray.length;
-                    this.purchaseChartSummary.averageSale = this.purchaseChartSummary.totalSale / this.daysArray.length;
+                    // console.log(this.sale.xAxis.categories);
+                    // console.log(this.sale.series[0].data);
+                    // console.log(this.sale.series[1].data);
                     Highcharts.chart('purchaseChartData', this.purchase);
+
+
                 },
                 (error) => {
                     this.snackBar.open(
@@ -205,8 +159,12 @@ export class PurchaseChartComponent implements OnInit {
                     }
                     );
                 },
-                () => { }
+                () => {
+
+                }
             );
+
+
     }
 
     getDaysArray(startDate, endDate) {

@@ -31,24 +31,24 @@ export interface ISelectedDate {
 export interface IProfitChartFilter {
     startDate: any;
     endDate: any;
-    categories: any;
-    suppliers: any;
-    items: any;
-    customers: any;
-}
+    // categories: any;
+    // suppliers: any;
+    // items: any;
+    // customers: any;
+ }
 export interface ISaleChartFilter {
     startDate: any;
     endDate: any;
-    categories: any;
-    suppliers: any;
-    items: any;
-    customers: any;
+    // categories: any;
+    // suppliers: any;
+    // items: any;
+    // customers: any;
 }
 export interface IPurchaseChartFilter {
     startDate: any;
     endDate: any;
-    categories: any;
-    suppliers: any;
-    items: any;
-    customers: any;
+    // categories: any;
+    // suppliers: any;
+    // items: any;
+    // customers: any;
 }
