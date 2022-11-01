@@ -26,6 +26,7 @@ export class SaleChartComponent implements OnInit {
     startDate = moment().add(-30, 'days').format("YYYY-MM-DD");
     endDate = moment().format("YYYY-MM-DD");
     daysArray = []
+    loader: boolean = false;
 
     @Input() categories = []
     @Input() suppliers = []
@@ -122,6 +123,7 @@ export class SaleChartComponent implements OnInit {
     ngOnInit(): void { }
 
     getSaleChart() {
+        this.loader = true;
         this.getDaysArray(this.startDate, this.endDate);
         // const selectedCategories = ((this.category.selected) as MatOption[]).map((x: MatOption)=>{
         //     return x.value;
@@ -213,7 +215,7 @@ export class SaleChartComponent implements OnInit {
                     console.log(this.sale);
 
                     Highcharts.chart('saleChartData', this.sale);
-
+ this.loader = false;
 
                 },
                 (error) => {

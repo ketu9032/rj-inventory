@@ -1,3 +1,4 @@
+<h1 class="center">Purchase Chart</h1>
 <div class="flex">
     <div>
         <mat-form-field class="field-width margin">
@@ -47,8 +48,12 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <button color="primary" class=" btn" mat-raised-button (click)="getPurchaseChart()">
-            Submit
+
+        <button color="primary" class=" btn" mat-raised-button (click)="getPurchaseChart()" [disabled]="loader">
+            <span *ngIf="!loader"> Submit</span>
+            <span>
+                <mat-spinner *ngIf="loader" diameter="20"></mat-spinner>
+            </span>
         </button>
         <button color="primary" class="margin btn" mat-raised-button>
             Download
@@ -58,7 +63,7 @@
 </div>
 <div>
     <div class="header-content">
-        <h1 class="center">Purchase Chart</h1>
+
         <div class="center total-count">
 
             <span>Total Purchase:<b> {{purchaseChartSummary.totalSale}}</b>, </span>
