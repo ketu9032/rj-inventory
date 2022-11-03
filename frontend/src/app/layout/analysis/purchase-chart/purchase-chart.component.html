@@ -63,13 +63,11 @@
 </div>
 <div>
     <div class="header-content">
-
         <div class="center total-count">
-
-            <span>Total Purchase:<b> {{purchaseChartSummary.totalSale}}</b>, </span>
-            <span>Total Qty: <b>     {{purchaseChartSummary.totalProfit}}</b> | </span>
-            <span>Avg Purchase:  <b> {{purchaseChartSummary.averageSale | number: '1.0-0'}}</b>, </span>
-            <span>Avg Qty:   <b>     {{purchaseChartSummary.averageProfit | number: '1.0-0'}}</b> </span>
+            <span>Total Purchase:<b> {{purchaseChartSummary.totalPurchase}}</b>, </span>
+            <span>Total Qty: <b> {{purchaseChartSummary.totalQty}}</b> | </span>
+            <span>Avg Purchase: <b> {{purchaseChartSummary.averagePurchase| number: '1.0-0'}}</b>, </span>
+            <span>Avg Qty: <b> {{purchaseChartSummary.averageQty| number: '1.0-0'}}</b> </span>
         </div>
     </div>
     <div>
