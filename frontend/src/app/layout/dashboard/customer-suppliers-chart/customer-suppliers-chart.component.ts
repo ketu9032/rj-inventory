@@ -6,6 +6,8 @@ import { ItemsService } from '../../items/services/items.service';
 import { SalesService } from '../../sales/services/sales.service';
 import { AnalysisService } from '../../analysis/services/analysis.service';
 import { DashboardService } from '../services/dashboard.service';
+import { response } from 'express';
+import { C } from '@angular/cdk/keycodes';
 
 @Component({
     selector: 'app-customer-suppliers-chart',
@@ -32,11 +34,11 @@ export class CustomerSuppliersChartComponent implements OnInit {
             text: 'Customer Wise Sales'
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            pointFormat: '{series.name}: <b>{point.y}₹</b>'
         },
         accessibility: {
             point: {
-                valueSuffix: '%'
+                valueSuffix: '₹'
             }
         },
         plotOptions: {
@@ -45,34 +47,20 @@ export class CustomerSuppliersChartComponent implements OnInit {
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    format: '<b>{point.name}</b>: {point.y} ₹',
                     connectorColor: 'silver'
                 }
             }
         },
-
         radialGradient: {
             cx: 5.50,
             cy: 4.3,
             r: 0.7
         },
-
-
-
         series: [{
-            name: 'Share',
+            name: 'Customer',
             data: [
-                { name: 'Chrome', y: 10.24 },
-                { name: 'Edge', y: 12.93 },
-                { name: 'Firefox', y: 4.73 },
-                { name: 'Safari', y: 2.50 },
-                { name: 'Internet Explorer', y: 1.65 },
-                { name: 'Other', y: 4.93 },
-                { name: 'Chrome', y: 10.24 },
-                { name: 'Edge', y: 12.93 },
-                { name: 'Firefox', y: 4.73 },
 
-                { name: 'Other', y: 4.93 }
             ]
         }]
     }
@@ -87,7 +75,7 @@ export class CustomerSuppliersChartComponent implements OnInit {
             text: 'Supplier Wise Purchase'
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            pointFormat: '{series.name}: <b>{point.y}₹</b>'
         },
         accessibility: {
             point: {
@@ -100,52 +88,85 @@ export class CustomerSuppliersChartComponent implements OnInit {
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    format: '<b>{point.name}</b>: {point.y} ₹',
                     connectorColor: 'silver'
                 }
             }
         },
-
         radialGradient: {
             cx: 5.50,
             cy: 4.3,
             r: 0.7
         },
-
-
-
         series: [{
-            name: 'Share',
+            name: 'Supplier',
             data: [
-                { name: 'Chrome', y: 10.24 },
-                { name: 'Edge', y: 12.93 },
-                { name: 'Firefox', y: 4.73 },
-                { name: 'Safari', y: 2.50 },
-                { name: 'Internet Explorer', y: 1.65 },
-                { name: 'Safari', y: 2.50 },
-                { name: 'Internet Explorer', y: 1.65 },
-                { name: 'Other', y: 4.93 }
+
             ]
         }]
     }
 
-
-
-
     constructor(
         public dialog: MatDialog,
-        private itemsService: ItemsService,
         public snackBar: MatSnackBar,
         private dashboardService: DashboardService,
-        private salesService: SalesService,
-        private analysisService: AnalysisService
     ) { }
 
     ngOnInit(): void {
         this.getMonthWiseData();
+        this.getCustomerChart();
+        this.getSupplierChart();
+    }
 
-        Highcharts.chart('customerChartData', this.customerChart);
-        Highcharts.chart('supplierChartData', this.purchaseChart);
+    getCustomerChart() {
+        this.dashboardService
+            .customerChart()
+            .subscribe(
+                (response) => {
+                    for (let index = 0; index < response.length; index++) {
+                        const element = response[index];
+                        this.customerChart.series[0].data.push({ name: element.company, y: +element.customer_sales });
+                    }
+                    Highcharts.chart('customerChartData', this.customerChart);
+                    console.log(this.customerChart);
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                }, () => {
+
+                }
+
+            )
+    }
+    getSupplierChart() {
+        this.dashboardService
+            .supplierChart()
+            .subscribe(
+                (response) => {
+                    for (let index = 0; index < response.length; index++) {
+                        const element = response[index];
+                        this.purchaseChart.series[0].data.push({ name: element.company, y: +element.purchase_sales });
+                    }
+                    Highcharts.chart('supplierChartData', this.purchaseChart);
+                    console.log(this.customerChart);
+                },
+                (error) => {
+                    this.snackBar.open(
+                        (error.error && error.error.message) || error.message,
+                        'Ok', {
+                        duration: 3000
+                    }
+                    );
+                }, () => {
+
+                }
+
+            )
     }
 
 

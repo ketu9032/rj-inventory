@@ -91,23 +91,26 @@ exports.monthWiseData = async (req, res) => {
 exports.customerChart = async (req, res) => {
   try {
     const query = `
-    select
-    CAST(sb.date as DATE):: date,
-      sum(sb.sales_amount) as sales_amount,
-	  sum(qty) as sales_qty
-  from
-      (
-        select
-          CAST(date as DATE):: date as date,
-		      sum(qty) as qty,
-          qty * selling_price as sales_amount
-        from
-          sales_bill
-		  group by date, qty, selling_price
-      ) as sb
-      where date :: date = now()::date
+          select
+        customer_id,
+        customer_sales,
+        sales_bill.date,
+        cdf.company
+      from
+        sales as sales
+        left join (
+          select
+            sales_id,
+            date,
+            qty * selling_price as customer_sales
+          from
+            sales_bill
+          where
+            date :: date between CAST (now() - interval '30 day' as DATE):: date
+            And CAST (now() as DATE):: date
+        ) as sales_bill on sales_bill.sales_id = sales.id
+        left join cdf as cdf on cdf.id = sales.customer_id
 
-   group by  date
           `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
@@ -120,22 +123,25 @@ exports.customerChart = async (req, res) => {
 exports.supplierChart = async (req, res) => {
   try {
     const query = `
-    select
-         CAST(pd.date as DATE):: date,
-            sum(pd.purchase_amount) as purchase_amount,
-            sum(qty) as purchase_qty
-          from
-            (
-              select
-                CAST(date as DATE):: date as date,
-                sum(qty) as qty,
-                qty * selling_price as purchase_amount
-              from
-                purchase_details
-                group by date, qty, selling_price
-      ) as pd
-      where date::date =  now():: date
-   group by  date
+          select
+          suppliers_id,
+          purchase_sales,
+          purchase_details.date,
+          suppliers.company
+        from
+          purchase as purchase
+          left join (
+            select
+              purchase_id,
+              date,
+              qty * selling_price as purchase_sales
+            from
+              purchase_details
+            where
+              date :: date between CAST (now() - interval '30 day' as DATE):: date
+              And CAST (now() as DATE):: date
+          ) as purchase_details on purchase_details.purchase_id = purchase.id
+          left join suppliers as suppliers on suppliers.id = purchase.suppliers_id
           `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

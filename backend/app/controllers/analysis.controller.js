@@ -218,25 +218,25 @@ exports.purchaseChart = async (req, res) => {
       and '${endDate}'`;
     }
     const query = `
-          select
-          CAST(pd.date as DATE):: date,
-          sum(pd.purchase_amount) as purchase_amount,
-          sum(qty) as purchase_qty
-        from
-          (
             select
-              CAST(date as DATE):: date as date,
-              sum(qty) as purchase_qty,
-              qty * selling_price as purchase_amount
-            from
-              purchase_details ${whereClause}
-            group by
-              date,
-              qty,
-              selling_price
-          ) as pd
-        group by
-          date
+            CAST(pd.date as DATE):: date,
+            sum(pd.purchase_amount) as purchase_amount,
+            purchase_qty
+          from
+            (
+              select
+                CAST(date as DATE):: date as date,
+                sum(qty) as purchase_qty,
+                qty * selling_price as purchase_amount
+              from
+                purchase_details ${whereClause}
+              group by
+                date,
+                qty,
+                selling_price
+            ) as pd
+          group by
+            date, purchase_qty
           `;
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);

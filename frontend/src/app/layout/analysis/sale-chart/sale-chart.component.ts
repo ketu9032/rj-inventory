@@ -205,8 +205,8 @@ export class SaleChartComponent implements OnInit {
                     for (let index = 0; index < response.length; index++) {
                         const element = response[index];
                         this.sale.xAxis.categories.push(moment(element.date).subtract(1).format("DD-MM-YYYY"))
-                        this.sale.series[0].data.push(element.sales_amount);
-                        this.sale.series[1].data.push(element.sales_qty);
+                        this.sale.series[0].data.push(+element.sales_amount);
+                        this.sale.series[1].data.push(+element.sales_qty);
                     }
 
                     console.log(this.sale.xAxis.categories);

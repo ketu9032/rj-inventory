@@ -8,19 +8,19 @@
     <div class="performance-content flex justify-content">
         <div class="center company-box">
             <div><b>{{customer}}</b></div>
-            <div class="primary font-size-17">Customers</div>
+            <a class="primary font-size-17"  [routerLink]="['/customers']">Customers</a>
         </div>
         <div class="center  company-box">
             <div><b>{{supplier}}</b></div>
-            <div class="primary font-size-17">Suppliers</div>
+            <a class="primary font-size-17"  [routerLink]="['/suppliers']">Suppliers</a>
         </div>
         <div class="center company-box">
             <div><b>{{product}}</b></div>
-            <div class="primary font-size-17">Products</div>
+            <a class="primary font-size-17" [routerLink]="['/items']">Products</a>
         </div>
         <div class="center  company-box">
             <div><b>₹ {{totalBalance}}</b></div>
-            <div class="primary font-size-17">Company Balance</div>
+            <a class="primary font-size-17" [routerLink]="['']">Company Balance</a>
         </div>
 
     </div>
