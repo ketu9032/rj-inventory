@@ -70,9 +70,10 @@ exports.add = async (req, res) => {
       `INSERT INTO item_supplier
       (
         suppliers_id,
-        item_supplier_rate
+        item_supplier_rate,
+        date
          )
-      VALUES('${suppliersId}', '${item_supplier_rate}');
+      VALUES('${suppliersId}', '${item_supplier_rate}', now());
       `
     );
     res.status(STATUS_CODE.SUCCESS).send();
@@ -93,7 +94,7 @@ exports.update = async (req, res) => {
     }
     await pool.query(
       `UPDATE item_supplier
-      SET  suppliers_id='${suppliersId}', item_supplier_rate='${item_supplier_rate}' where id = ${id};`
+      SET  suppliers_id='${suppliersId}', item_supplier_rate='${item_supplier_rate}', date=now() where id = ${id};`
     );
     res.status(STATUS_CODE.SUCCESS).send();
   } catch (error) {
