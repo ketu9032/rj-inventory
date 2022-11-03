@@ -200,6 +200,7 @@ exports.saleChart = async (req, res) => {
       group by
         date
           `;
+          console.log(query)
     const response = await pool.query(query);
     res.status(STATUS_CODE.SUCCESS).send(response.rows);
   } catch (error) {

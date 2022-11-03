@@ -128,7 +128,6 @@ export class CustomerSuppliersChartComponent implements OnInit {
                         this.customerChart.series[0].data.push({ name: element.company, y: +element.customer_sales });
                     }
                     Highcharts.chart('customerChartData', this.customerChart);
-                    console.log(this.customerChart);
                 },
                 (error) => {
                     this.snackBar.open(
@@ -153,7 +152,6 @@ export class CustomerSuppliersChartComponent implements OnInit {
                         this.purchaseChart.series[0].data.push({ name: element.company, y: +element.purchase_sales });
                     }
                     Highcharts.chart('supplierChartData', this.purchaseChart);
-                    console.log(this.customerChart);
                 },
                 (error) => {
                     this.snackBar.open(

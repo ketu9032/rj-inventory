@@ -104,18 +104,15 @@ export class PurchaseChartComponent implements OnInit {
     }
 
     purchaseChartSummary = {
-        totalSale: 0,
-        totalProfit: 0,
-        averageSale: 0,
-        averageProfit: 0
+        totalPurchase: 0,
+        totalQty: 0,
+        averagePurchase: 0,
+        averageQty: 0
     };
 
     constructor(
         public dialog: MatDialog,
-        private itemsService: ItemsService,
         public snackBar: MatSnackBar,
-        private categoriesService: CategoriesService,
-        private salesService: SalesService,
         private analysisService: AnalysisService
     ) { }
     ngOnInit(): void { }
@@ -139,16 +136,35 @@ export class PurchaseChartComponent implements OnInit {
             .subscribe(
 
                 (response: any) => {
-                    for (let index = 0; index < response.length; index++) {
-                        const element = response[index];
-                        this.purchase.xAxis.categories.push(moment(element.date).subtract(1).format("DD-MM-YYYY"))
-                        this.purchase.series[0].data.push(+element.purchase_amount);
-                        this.purchase.series[1].data.push(+element.purchase_qty);
-                    }
+                    this.purchaseChartSummary.totalPurchase = 0;
+                    this.purchaseChartSummary.totalQty = 0;
+                    this.purchaseChartSummary.averagePurchase = 0;
+                    this.purchaseChartSummary.averageQty = 0;
+                    this.purchase.xAxis.categories = [];
+                    this.purchase.series[0].data = [];
+                    this.purchase.series[1].data = [];
 
-                    // console.log(this.sale.xAxis.categories);
-                    // console.log(this.sale.series[0].data);
-                    // console.log(this.sale.series[1].data);
+                    for (let index = 0; index < this.daysArray.length; index++) {
+                        const arraySignalDate = this.daysArray[index];
+                        let convertedSalesDate;;
+                        const purchaseDate = response.find(x => {
+                            convertedSalesDate = moment(x.date).subtract(1).format("DD-MM-YYYY")
+                            return convertedSalesDate === arraySignalDate;
+                        })
+                        if (arraySignalDate !== convertedSalesDate) {
+                            this.purchase.xAxis.categories.push(arraySignalDate)
+                            this.purchase.series[0].data.push(0);
+                            this.purchase.series[1].data.push(0);
+                        } else {
+                            this.purchase.xAxis.categories.push(arraySignalDate);
+                            this.purchase.series[0].data.push(+purchaseDate.purchase_amount);
+                            this.purchase.series[1].data.push(+purchaseDate.purchase_qty);
+                            this.purchaseChartSummary.totalPurchase= this.purchaseChartSummary.totalPurchase+ +purchaseDate.sales_amount;
+                            this.purchaseChartSummary.totalQty = this.purchaseChartSummary.totalQty + +purchaseDate.purchase_qty;
+                            this.purchaseChartSummary.averagePurchase= +this.purchaseChartSummary.totalPurchase/ +this.daysArray.length
+                            this.purchaseChartSummary.averageQty = +this.purchaseChartSummary.totalQty / +this.daysArray.length
+                        }
+                    }
                     Highcharts.chart('purchaseChartData', this.purchase);
 
 this.loader = false;
