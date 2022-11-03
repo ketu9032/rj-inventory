@@ -133,7 +133,7 @@ export class PurchaseChartComponent implements OnInit {
             // customers: selectedCustomers,
         }
         this.analysisService
-            .saleChart(
+            .purchaseChart(
                 saleChartFilter
             )
             .subscribe(
@@ -142,8 +142,8 @@ export class PurchaseChartComponent implements OnInit {
                     for (let index = 0; index < response.length; index++) {
                         const element = response[index];
                         this.purchase.xAxis.categories.push(moment(element.date).subtract(1).format("DD-MM-YYYY"))
-                        this.purchase.series[0].data.push(element.purchase_amount);
-                        this.purchase.series[1].data.push(element.purchase_qty);
+                        this.purchase.series[0].data.push(+element.purchase_amount);
+                        this.purchase.series[1].data.push(+element.purchase_qty);
                     }
 
                     // console.log(this.sale.xAxis.categories);
