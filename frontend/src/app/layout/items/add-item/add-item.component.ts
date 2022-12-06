@@ -54,7 +54,7 @@ export class AddItemComponent implements OnInit {
         private formBuilder: FormBuilder,
         private itemsCategoriesService: ItemsCategoriesService,
         public snackBar: MatSnackBar,
-        private router: Router,
+
         private itemsService: ItemsService,
         private itemsSuppliersService: ItemsSuppliersService
     ) { }

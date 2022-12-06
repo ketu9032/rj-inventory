@@ -83,7 +83,7 @@ export class SalesComponent implements OnInit {
     item_code: string;
     customer: string
     tier: string;
-     selling_price: number;
+    selling_price: number;
     salesId: number;
     date = new Date();
     isPrintHide: boolean = false;
@@ -99,7 +99,6 @@ export class SalesComponent implements OnInit {
         private snackBar: MatSnackBar,
         private authService: AuthService,
         private userService: UserService,
-        private salesBillService: SalesBillService,
     ) { }
     ngOnInit(): void {
         this.currentDate = moment().format('YYYY-MM-DD');
@@ -295,7 +294,7 @@ export class SalesComponent implements OnInit {
         WinPrint.focus();
         WinPrint.print();
     }
-     salesPrint() {
+    salesPrint() {
         this.saleItems = [];
         this.loader = true;
         this.totalQty = 0

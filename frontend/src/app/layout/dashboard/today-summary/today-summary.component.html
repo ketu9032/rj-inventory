@@ -1,29 +1,42 @@
- <!-- summary start -->
- <div class="summary-container">
+<div class="summary-container">
     <div class="summary-content flex justify-content">
-        <div class="center summary-box">
-            <div><b>{{invoice}}</b></div>
-            <a class="primary font-size-14 " [routerLink]="['/sales']">Invoices</a>
-        </div>
-        <div class="center summary-box">
-            <div><b>₹ {{sales}}</b></div>
-            <a class="primary font-size-14" [routerLink]="['/sales']">Sales</a>
-        </div>
-        <div class="center summary-box">
-            <div><b>₹ {{profit}}</b></div>
-            <a class="primary font-size-14" [routerLink]="['/sales']">Profit</a>
-        </div>
-        <div class="center summary-box">
-            <div><b>₹ {{payment}}</b></div>
-            <a class="primary font-size-14" [routerLink]="['/sales']">Payments</a>
-        </div>
-        <div class="center summary-box">
-            <div><b>{{qty}}</b></div>
-            <a class="primary font-size-14" [routerLink]="['/sales']">Qty</a>
-        </div>
-        <div class="center summary-box">
-            <div><b>₹ {{expense}}</b></div>
-            <a class="primary font-size-14" [routerLink]="['/expenses']">Expenses</a>
-        </div>
+        <mat-card class="center  summary-box">
+            <mat-card-content>
+                <div><b>{{invoice}}</b></div>
+                <a class="primary font-size-14 " [routerLink]="['/sales']">Invoices</a>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="center  summary-box">
+            <mat-card-content>
+                <div><b>₹ {{sales}}</b></div>
+                <a class="primary font-size-14" [routerLink]="['/sales']">Sales</a>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="center  summary-box">
+            <mat-card-content>
+                <div><b>₹ {{profit}}</b></div>
+                <a class="primary font-size-14" [routerLink]="['/sales']">Profit</a>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="center  summary-box">
+            <mat-card-content>
+                <div><b>₹ {{payment}}</b></div>
+                <a class="primary font-size-14" [routerLink]="['/sales']">Payments</a>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="center  summary-box">
+            <mat-card-content>
+                <div><b>{{qty}}</b></div>
+                <a class="primary font-size-14" [routerLink]="['/sales']">Qty</a>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="center  summary-box">
+            <mat-card-content>
+                <div><b>₹ {{expense}}</b></div>
+                <a class="primary font-size-14" [routerLink]="['/expenses']">Expenses</a>
+            </mat-card-content>
+        </mat-card>
+
+
     </div>
 </div>
