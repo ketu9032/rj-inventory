@@ -26,7 +26,6 @@ export class CompanyStatusComponent implements OnInit {
         public dialog: MatDialog,
         private itemsService: ItemsService,
         public snackBar: MatSnackBar,
-        private categoriesService: CategoriesService,
         private salesService: SalesService,
         private dashboardService: DashboardService
     ) { }

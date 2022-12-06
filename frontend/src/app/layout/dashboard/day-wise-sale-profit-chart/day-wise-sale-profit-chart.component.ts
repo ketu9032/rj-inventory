@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as Highcharts from 'highcharts';
-import {  IProfitChartFilter } from 'src/app/models/table';
+import { IProfitChartFilter } from 'src/app/models/table';
 import * as moment from 'moment';
 import { ItemsService } from '../../items/services/items.service';
 import { CategoriesService } from '../../expense/services/categories.service';
@@ -106,14 +106,11 @@ export class DayWiseSaleProfitChartComponent implements OnInit {
 
     constructor(
         public dialog: MatDialog,
-        private itemsService: ItemsService,
         public snackBar: MatSnackBar,
-        private categoriesService: CategoriesService,
-        private salesService: SalesService,
         private analysisService: AnalysisService
     ) { }
 
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
     getDayWiseChart() {
         this.loader = true;

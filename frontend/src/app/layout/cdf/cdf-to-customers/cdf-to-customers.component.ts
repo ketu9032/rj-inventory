@@ -26,9 +26,7 @@ export class CdfToCustomersComponent implements OnInit {
         public dialogRef: MatDialogRef<CdfToCustomersComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
-        private router: Router,
         private tiersService: TiersService,
-        private customersService: CustomersService,
         private cdfService: CdfService
     ) { }
     ngOnInit() {
@@ -54,8 +52,8 @@ export class CdfToCustomersComponent implements OnInit {
     }
 
     cdfToCustomers(): void {
-        const {  name, address,
-            dueLimit, balance,  tier: tierId } = this.formGroup.value;
+        const { name, address,
+            dueLimit, balance, tier: tierId } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .editCdfToCustomers({
@@ -125,7 +123,7 @@ export class CdfToCustomersComponent implements OnInit {
     }
 
     findTierName(id) {
-        this.tierName =  this.tiers.find(value => {
+        this.tierName = this.tiers.find(value => {
             return (value.id) === id
         })
 

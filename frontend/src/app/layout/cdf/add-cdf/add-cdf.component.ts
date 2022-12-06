@@ -38,7 +38,7 @@ export class AddCdfComponent implements OnInit {
         public dialogRef: MatDialogRef<AddCdfComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
-        private router: Router,
+
         private cdfService: CdfService
     ) { }
     ngOnInit() {
@@ -113,7 +113,7 @@ export class AddCdfComponent implements OnInit {
         });
     }
     saveCdf(): void {
-        const { email, name, company, date, reference, referencePerson,  other, mobile, address } = this.formGroup.value;
+        const { email, name, company, date, reference, referencePerson, other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .addCdf({
@@ -140,12 +140,12 @@ export class AddCdfComponent implements OnInit {
             );
     }
     updateCdf(): void {
-        const { email, name, company, date, reference, referencePerson,  other, mobile, address } = this.formGroup.value;
+        const { email, name, company, date, reference, referencePerson, other, mobile, address } = this.formGroup.value;
         this.isShowLoader = true;
         this.cdfService
             .editCdf({
                 id: this.data.id,
-                email, name, company, date, reference, referencePerson, brands: this.brands, displayNames:this.displayNames, platforms: this.platforms, other, mobile, address
+                email, name, company, date, reference, referencePerson, brands: this.brands, displayNames: this.displayNames, platforms: this.platforms, other, mobile, address
             })
             .subscribe(
                 (response) => {

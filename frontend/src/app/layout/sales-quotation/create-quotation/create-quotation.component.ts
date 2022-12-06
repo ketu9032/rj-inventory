@@ -83,7 +83,6 @@ export class CreateQuotationComponent implements OnInit {
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<CreateQuotationComponent>,
         private formBuilder: FormBuilder,
-        private _formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
         private tiersService: TiersService,
         private salesQuotationService: salesQuotationService,

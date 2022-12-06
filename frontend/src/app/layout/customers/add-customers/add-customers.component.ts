@@ -26,7 +26,6 @@ export class AddCustomersComponent implements OnInit {
         public dialogRef: MatDialogRef<AddCustomersComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
-        private router: Router,
         private tiersService: TiersService,
         private customersService: CustomersService
     ) { }
@@ -44,7 +43,7 @@ export class AddCustomersComponent implements OnInit {
             company: ['', Validators.required],
             name: ['', Validators.required],
             address: ['', Validators.required],
-            email: ['', [Validators.required,Validators.email] ],
+            email: ['', [Validators.required, Validators.email]],
             mobile: ['', Validators.required],
             dueLimit: ['', Validators.required],
             balance: ['', Validators.required],

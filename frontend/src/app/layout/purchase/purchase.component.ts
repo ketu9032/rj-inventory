@@ -81,7 +81,6 @@ export class PurchaseComponent implements OnInit {
     loggedInUsersData: any;
     constructor(
         public dialog: MatDialog,
-        private salesService: SalesService,
         private purchaseService: PurchaseService,
         public snackBar: MatSnackBar,
         private userService: UserService,

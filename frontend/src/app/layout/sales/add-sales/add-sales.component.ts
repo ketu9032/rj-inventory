@@ -71,12 +71,11 @@ export class AddSalesComponent implements OnInit {
         public dialogRef: MatDialogRef<AddSalesComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
-        private salesQuotationService: salesQuotationService,
         private salesService: SalesService,
         private salesQuotationDetailsService: salesQuotationDetailsService,
         private salesBillService: SalesBillService,
         public authService: AuthService,
-        private _formBuilder: FormBuilder
+
     ) { }
     ngOnInit() {
         this.loggedInUser = this.authService.getUserData();

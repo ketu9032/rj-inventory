@@ -30,9 +30,8 @@ export class AddExpenseComponent implements OnInit {
         public dialogRef: MatDialogRef<AddExpenseComponent>,
         private formBuilder: FormBuilder,
         public snackBar: MatSnackBar,
-        private router: Router,
+
         private expenseService: ExpenseService,
-        private userService: UserService,
         private categoriesService: CategoriesService
     ) { }
 

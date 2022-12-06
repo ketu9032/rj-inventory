@@ -107,10 +107,9 @@ export class ProfitChartComponent implements OnInit {
 
     constructor(
         public dialog: MatDialog,
-        private itemsService: ItemsService,
+
         public snackBar: MatSnackBar,
-        private categoriesService: CategoriesService,
-        private salesService: SalesService,
+
         private analysisService: AnalysisService
     ) { }
 

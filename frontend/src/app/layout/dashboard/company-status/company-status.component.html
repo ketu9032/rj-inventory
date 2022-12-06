@@ -6,22 +6,32 @@
         <h1 class="center">Company Status</h1>
     </div>
     <div class="performance-content flex justify-content">
-        <div class="center company-box">
-            <div><b>{{customer}}</b></div>
-            <a class="primary font-size-17"  [routerLink]="['/customers']">Customers</a>
-        </div>
-        <div class="center  company-box">
-            <div><b>{{supplier}}</b></div>
-            <a class="primary font-size-17"  [routerLink]="['/suppliers']">Suppliers</a>
-        </div>
-        <div class="center company-box">
-            <div><b>{{product}}</b></div>
-            <a class="primary font-size-17" [routerLink]="['/items']">Products</a>
-        </div>
-        <div class="center  company-box">
-            <div><b>₹ {{totalBalance}}</b></div>
-            <a class="primary font-size-17" [routerLink]="['']">Company Balance</a>
-        </div>
+
+        <mat-card class="center  company-box">
+            <mat-card-content>
+                <div><b>{{customer}}</b></div>
+                <a class="primary font-size-17" [routerLink]="['/customers']">Customers</a>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="center  company-box">
+            <mat-card-content>
+                <div><b>{{supplier}}</b></div>
+                <a class="primary font-size-17" [routerLink]="['/suppliers']">Suppliers</a>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="center  company-box">
+            <mat-card-content>
+                <div><b>{{product}}</b></div>
+                <a class="primary font-size-17" [routerLink]="['/items']">Products</a>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="center  company-box">
+            <mat-card-content>
+                <div><b>₹ {{totalBalance}}</b></div>
+                <a class="primary font-size-17" [routerLink]="['']">Company Balance</a>
+            </mat-card-content>
+        </mat-card>
+
 
     </div>
 

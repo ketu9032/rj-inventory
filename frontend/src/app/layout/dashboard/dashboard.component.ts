@@ -94,19 +94,13 @@ export class DashboardComponent implements OnInit {
         }]
     }
 
-
-
     constructor(
-        private dashboardService: DashboardService,
         public snackBar: MatSnackBar,
-        private analysisService: AnalysisService
 
     ) { }
     ngOnInit() {
         this.getDayWiseSalesProfitChart();
-
     }
-
 
     getDayWiseSalesProfitChart() {
         if (this.selectedDate.startDate) {
