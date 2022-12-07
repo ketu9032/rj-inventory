@@ -46,7 +46,7 @@ export class SidebarComponent implements OnInit {
         {
             link: '/sales',
             name: 'Sales',
-            icon: 'payment',
+            icon: 'add_shopping_cart',
             key: 'sales'
         },  {
             link: '/salesQuotation',
