@@ -1,14 +1,21 @@
 <div>
-    <mat-spinner *ngIf="loader" class="loader" diameter="40"></mat-spinner>
+    <mat-spinner *ngIf="loaders.loader" class="loader" diameter="40"></mat-spinner>
     <div class="flex">
         <div>
             <mat-form-field class="field-width-date margin">
                 <mat-label>Date</mat-label>
-                <input matInput [matDatepicker]="picker" ngModel="currentDate">
+                <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
-            <button color="primary" class="margin btn" mat-raised-button>Find</button>
+            <button color="primary" class="margin btn" mat-raised-button (click)="getRojMedBySelectedDate()"
+                [disabled]="loaders.findBtnLoader">
+
+                <ng-container *ngIf="!loaders.findBtnLoader"> Find</ng-container>
+
+                <mat-spinner *ngIf="loaders.findBtnLoader" diameter="20"></mat-spinner>
+
+            </button>
         </div>
         <div>
             <!-- Select date range -->
@@ -32,7 +39,7 @@
             <tr>
                 <td class="bold">
                     <div class="background-light-yellow bold">
-                        {{ currentDate }}
+                        {{ date | date: 'dd-MM-YYYY' }}
                     </div>
                     <div class="background-light-blue">
                         Available
@@ -90,22 +97,33 @@
                         }}
                     </div>
                     <div class="background-green bold">
-                        ₹ {{ +(!user.balance ? 0 : user.balance) +   +( !user.sale ? 0 : user.sale ) + +(!user.receive ? 0 :
-                            user.receive ) -
-                            +(!user.purchase ? 0 : user.purchase ) - +(!user.expense ? 0 :
-                            user.expense )
-                            - +(!user.transfer ? 0 : user.transfer )
-                            }}
+                        ₹ {{ +(!user.balance ? 0 : user.balance) + +( !user.sale ? 0 : user.sale ) + +(!user.receive ? 0
+                        :
+                        user.receive ) -
+                        +(!user.purchase ? 0 : user.purchase ) - +(!user.expense ? 0 :
+                        user.expense )
+                        - +(!user.transfer ? 0 : user.transfer )
+                        }}
                     </div>
                 </td>
             </tr>
         </table>
         <br>
         <div class="flex">
-            <button color="primary" class="margin btn" mat-raised-button>
-                Prev
-            </button> <button color="primary" class="margin btn" mat-raised-button>
-                Next
+            <button color="primary" class="margin btn" mat-raised-button (click)="getRojMedByPreviousDate()">
+
+                <ng-container *ngIf="!loaders.prevBtnLoader">
+                    Prev
+                </ng-container>
+                <mat-spinner *ngIf="loaders.prevBtnLoader" diameter="20"></mat-spinner>
+
+            </button>
+            <button color="primary" class="margin btn" mat-raised-button (click)="getRojMedByNextDate()">
+                <ng-container *ngIf="!loaders.nextBtnLoader">
+                    Next
+                </ng-container>
+                <mat-spinner *ngIf="loaders.nextBtnLoader" diameter="20"></mat-spinner>
+
             </button>
         </div>
     </div>
