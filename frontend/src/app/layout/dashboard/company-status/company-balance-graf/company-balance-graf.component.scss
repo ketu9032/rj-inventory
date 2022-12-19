@@ -1,0 +1,173 @@
+.main-header{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    .mat-dialog-title {
+        margin: 5px 0 0  0;
+        display: block;
+    }
+    .mat-button {
+        min-width: 40px;
+        padding: 0 10px;
+    }
+}
+.container {
+    margin-bottom: 30px;
+}
+
+.center {
+    font-size: 22px;
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-content {
+    justify-content: space-between;
+}
+
+.company-box {
+    // border: 1px solid black;
+    padding: 20px 70px;
+    border-radius: 5px;
+    width: 14%;
+}
+
+.primary {
+    color: #3f51b5;
+}
+
+.font-size-17 {
+    font-size: 17px;
+    padding-top: 8px;
+    font-weight: bold;
+}
+
+.font-size-14 {
+    font-size: 14px;
+    padding-top: 8px;
+    font-weight: bold;
+}
+
+.main-box {
+    width: 60%;
+    margin: auto;
+}
+
+.main-content-box {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
+
+.content-box {
+
+    width: 160px;
+    height: 140px;
+    border-radius: 50%;
+}
+
+.text-box {
+    text-align: center;
+    margin: 40px auto;
+}
+.main-box {
+    // text-align: center;
+    // margin-right: 100px;
+}
+.main-text-box{
+
+    margin: 85px auto 85px;
+
+}
+
+
+.justify-content-center {
+    justify-content: center;
+}
+
+a {
+    text-decoration: none;
+}
+.blue{
+    background-color: #1b1464;
+    color: white;
+}
+.pink{
+    background-color: #817808;
+    color: white;
+}
+.red{
+    background-color: #f00f17;
+    color: white;
+}
+.lightGray{
+    background-color: #5695e2;
+    color: white;
+}
+.green{
+    background-color: #006837;
+    color: white;
+}
+
+.stock-arrow{
+    transform: rotate(45deg);
+    color: #1b1464;
+    font-size: 167px;
+    height: 167px;
+    width: 167px;
+}
+.stock-box{
+    position: relative;
+    bottom: 53px;
+    left: 90px;
+ }
+
+.cash-arrow{
+    transform: rotate(133deg);
+    color: #006837;
+    font-size: 167px;
+    height: 167px;
+    width: 167px;
+}
+.cash-box{
+    position: relative;
+    right: 89px;
+    bottom: 46px;
+}
+
+.customers-arrow{
+    transform: rotate(-43deg);
+    color: #817808;
+    font-size: 167px;
+    height: 167px;
+    width: 167px;
+}
+.customers-box{
+    position: relative;
+    bottom: 226px;
+    left: 95px;
+}
+
+.suppliers-arrow{
+    transform: rotate(44deg);
+    color: #f00f17;
+    font-size: 167px;
+    height: 167px;
+    width: 167px;
+}
+.suppliers-box{
+    position: relative;
+    bottom: 225px;
+    right: 101px;
+}
+
+.main-arrow{
+    transform: rotate(45deg);
+    color: red;
+    font-size: 167px;
+    height: 167px;
+    width: 167px;
+}

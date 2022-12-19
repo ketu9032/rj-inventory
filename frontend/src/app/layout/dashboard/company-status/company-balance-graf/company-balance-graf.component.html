@@ -1,0 +1,83 @@
+<div class="main-header">
+    <h1 mat-dialog-title><b> Company Balance</b> </h1>
+    <button mat-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-divider></mat-divider>
+<br>
+<br>
+<!-- company  balance chart -->
+<div class="center main-box">
+    <div class="flex justify-content">
+
+        <div class="content-box blue">
+            <div class="text-box">
+
+                <div class="font-size-14">Stock</div>
+                <div class="font-size-14">{{data.stock | currency: 'INR'}}</div>
+
+
+            </div>
+
+
+            <div class="stock-box">
+
+                <mat-icon class="stock-arrow">arrow_right_alt</mat-icon>
+            </div>
+        </div>
+
+
+
+        <div class="content-box green">
+            <div class="text-box">
+
+                <div class="font-size-14">Cash on Hand</div>
+                <div class="font-size-14">{{ data.userBalance  | currency: 'INR'}}</div>
+            </div>
+            <div class="cash-box">
+
+                <mat-icon class="cash-arrow">arrow_right_alt</mat-icon>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <div class="flex justify-content-center">
+        <div class="main-content-box lightGray">
+            <div class="main-text-box">
+                {{data.totalBalance | currency: 'INR'}}
+            </div>
+        </div>
+     </div>
+    <br>
+
+    <div class="flex justify-content">
+
+        <div class="content-box pink">
+            <div class="text-box">
+                <div class="font-size-14">Customers Due</div>
+                <div class="font-size-14">{{data.customersDue | currency: 'INR'}}</div>
+            </div>
+
+            <div class="customers-box">
+
+                <mat-icon class="customers-arrow">arrow_right_alt</mat-icon>
+            </div>
+        </div>
+
+
+        <div class="content-box red">
+
+            <div class="text-box">
+                <div class="font-size-14">Suppliers Due</div>
+                <div class="font-size-14">{{data.suppliersDue | currency: 'INR'}}</div>
+            </div>
+            <div class="suppliers-box">
+                <mat-icon class="suppliers-arrow">arrow_right_alt</mat-icon>
+
+            </div>
+        </div>
+    </div>
+
+</div>

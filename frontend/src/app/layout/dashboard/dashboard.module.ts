@@ -12,9 +12,10 @@ import { DayWiseSaleProfitChartComponent } from './day-wise-sale-profit-chart/da
 import { TodaySummaryComponent } from './today-summary/today-summary.component';
 import { CustomerSuppliersChartComponent } from './customer-suppliers-chart/customer-suppliers-chart.component';
 import { CompanyStatusComponent } from './company-status/company-status.component';
+import {  CompanyBalanceGrafComponent } from './company-status/company-balance-graf/company-balance-graf.component';
 
 @NgModule({
-  declarations: [DashboardComponent,DayWiseSaleProfitChartComponent, TodaySummaryComponent, CustomerSuppliersChartComponent, CompanyStatusComponent ],
+  declarations: [DashboardComponent,DayWiseSaleProfitChartComponent, TodaySummaryComponent, CustomerSuppliersChartComponent, CompanyStatusComponent, CompanyBalanceGrafComponent ],
   imports: [
     CommonModule,
     DashboardRoutingModule,

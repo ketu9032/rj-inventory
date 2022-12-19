@@ -1,3 +1,11 @@
+.container {
+    margin-bottom: 30px;
+}
+
+.center {
+    font-size: 22px;
+    text-align: center;
+}
 table {
     width: 100%;
 }
@@ -28,11 +36,6 @@ table {
     justify-content: space-between;
 }
 
-.center {
-    font-size: 20px;
-    text-align: center;
-
-}
 
 tr.mat-header-row,
 tr.mat-row {

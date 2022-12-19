@@ -1,12 +1,9 @@
 <div class="container">
     <!-- company status start  -->
-
-
     <div>
         <h1 class="center">Company Status</h1>
     </div>
     <div class="performance-content flex justify-content">
-
         <mat-card class="center  company-box">
             <mat-card-content>
                 <div><b>{{customer}}</b></div>
@@ -28,63 +25,9 @@
         <mat-card class="center  company-box">
             <mat-card-content>
                 <div><b>₹ {{totalBalance}}</b></div>
-                <a class="primary font-size-17" [routerLink]="['']">Company Balance</a>
+                <a class="primary font-size-17 pointer" (click)="onCompanyBalanceGraf()">Company Balance</a>
             </mat-card-content>
         </mat-card>
-
-
     </div>
-
-    <!-- company  balance chart -->
-    <!-- <div class="center main-box">
-    <div class="flex justify-content">
-
-        <div class="content-box">
-            <div class="text-box">
-
-                <div class="font-size-14">Stock</div>
-                <div class="font-size-14">{{stock}}</div>
-            </div>
-
-            <svg xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M35.9 35.7 15.3 15.1V34h-3V10h24v3H17.4L38 33.6Z"/></svg>
-
-
-        </div>
-
-        <div class="content-box">
-            <div class="text-box">
-
-                <div class="font-size-14">Cash on Hand</div>
-                <div class="font-size-14">{{ userBalance }}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex justify-content-center">
-        <div class="main-content-box">
-            <div class="text-box">
-            {{totalBalance}}
-            </div>
-        </div>
-    </div>
-
-    <div class="flex justify-content">
-        <div class="content-box">
-            <div class="text-box">
-                <div class="font-size-14">Customers Due</div>
-                <div class="font-size-14">{{customersDue}}</div>
-            </div>
-        </div>
-
-        <svg xmlns="http://www.w3.org/2000/svg" class="primary" height="100" width="100"><path d="M35.9 35.7 15.3 15.1V34h-3V10h24v3H17.4L38 33.6Z"/></svg>
-        <div class="content-box">
-
-            <div class="text-box">
-                <div class="font-size-14">Suppliers Due</div>
-                <div class="font-size-14">{{suppliersDue}}</div>
-            </div>
-        </div>
-    </div>
-
-</div> -->
 </div>
+<br>

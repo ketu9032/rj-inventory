@@ -5,6 +5,7 @@ import { ItemsService } from '../../items/services/items.service';
 import { CategoriesService } from '../../expense/services/categories.service';
 import { SalesService } from '../../sales/services/sales.service';
 import { DashboardService } from '../services/dashboard.service';
+import { CompanyBalanceGrafComponent } from './company-balance-graf/company-balance-graf.component';
 
 @Component({
     selector: 'app-company-status',
@@ -119,6 +120,22 @@ export class CompanyStatusComponent implements OnInit {
                 },
                 () => { }
             );
+    }
+
+    onCompanyBalanceGraf(): void {
+        this.dialog
+            .open(CompanyBalanceGrafComponent, {
+                width: '1000px',
+                height: '700px',
+                data: {stock: this.stock,
+                userBalance:this.userBalance,totalBalance:this.totalBalance,customersDue:this.customersDue, suppliersDue:this.suppliersDue}
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result) {
+                  //  this.getTransfer();
+                }
+            });
     }
 
 }
